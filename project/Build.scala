@@ -28,16 +28,21 @@ object BuildSettings {
         art.copy(`classifier` = Some("assembly"))
     }) ++ addArtifact(artifact in(Compile, assembly), assembly)
 
+  object Dependencies {
+    val gson = "com.google.code.gson" % "gson" % "2.2.4"
+  }
+
 }
 
 object TargetSegmentingBuild extends Build {
 
   import BuildSettings._
+  import Dependencies._
 
   val root = Project(
     id = "target-segmenting",
     base = file("."),
-    settings = buildSettings210
+    settings = buildSettings210 ++ Seq(libraryDependencies ++= Seq(gson))
   )
 }
 
