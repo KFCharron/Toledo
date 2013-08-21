@@ -1,5 +1,6 @@
 package com.mediacrossing.segment_targeting;
 
+import java.util.ArrayList;
 /**
  * Created with IntelliJ IDEA.
  * User: charronkyle
@@ -15,6 +16,25 @@ public class Profile {
     private String maxDayImps;
     private String minMinutesPerImp;
     private String maxPageImps;
+
+    public String getSegementBool() {
+        return segementBool;
+    }
+
+    public void setSegementBool(String segementBool) {
+        this.segementBool = segementBool;
+    }
+
+    public ArrayList<Target> getSegmentGroupTargetList() {
+        return segmentGroupTargetList;
+    }
+
+    public void setSegmentGroupTargetList(ArrayList<Target> segmentGroupTargetList) {
+        this.segmentGroupTargetList = segmentGroupTargetList;
+    }
+
+    private String segementBool;
+    private ArrayList<Target> segmentGroupTargetList = new ArrayList<Target>();
 
     public String getId() {
         return id;
