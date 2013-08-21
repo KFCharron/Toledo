@@ -109,6 +109,7 @@ public class FetchData {
         return rawJSON;
     }
 
+    //Parse JSON into Profile Objects, add them to a list
     private ArrayList<Profile> parseData(String data) {
 
         //Parse JSON, obtain data
@@ -116,10 +117,18 @@ public class FetchData {
         JsonObject  jobject = jelement.getAsJsonObject();
         jobject = jobject.getAsJsonObject("response");
         JsonArray jarray = jobject.getAsJsonArray("profiles");
+
+        //Create a profile list
         ArrayList<Profile> profileList = new ArrayList<Profile>();
+
+        //Add each profile to the list
         for(int x = 0; x < jarray.size(); x++) {
+
+            //Create new profile
             Profile newProfile = new Profile();
             jobject = jarray.get(x).getAsJsonObject();
+
+            //Add id, frequency metrics
             newProfile.setId(jobject.get("id").toString());
             newProfile.setMaxDayImps(jobject.get("max_day_imps").toString());
             newProfile.setMaxLifetimeImps(jobject.get("max_lifetime_imps").toString());
@@ -127,12 +136,15 @@ public class FetchData {
             newProfile.setMaxSessionImps(jobject.get("max_session_imps").toString());
             newProfile.setMinMinutesPerImp(jobject.get("min_minutes_per_imp").toString());
             newProfile.setMinSessionImps(jobject.get("min_session_imps").toString());
+
+            //Add completed profile to the list
             profileList.add(x, newProfile);
         }
 
         return profileList;
     }
 
+    //Take profileList, write to CSV file
     private static final String CSV_SEPARATOR = ",";
     private static void writeToCSV(ArrayList<Profile> profileList)
     {
