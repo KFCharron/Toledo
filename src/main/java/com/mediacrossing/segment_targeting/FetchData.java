@@ -21,7 +21,8 @@ public class FetchData {
 
         FetchData http = new FetchData();
         String authToken = http.requestAuthorizationToken();
-        http.requestProfiles(authToken);
+        String profileData = http.requestProfiles(authToken);
+        http.parseData(profileData);
     }
 
     // HTTP POST request
@@ -75,7 +76,7 @@ public class FetchData {
     }
 
     // HTTP GET request
-    private void requestProfiles(String token) throws Exception {
+    private String requestProfiles(String token) throws Exception {
 
         String url = "http://api.appnexus.com/profile?advertiser_id=184587";
 
@@ -104,6 +105,22 @@ public class FetchData {
         //print result
         String rawJSON = response.toString();
         System.out.println(rawJSON);
+
+        return rawJSON;
+    }
+
+    private void parseData(String data) {
+
+        //Parse JSON, obtain data
+        JsonElement jelement = new JsonParser().parse(data);
+        JsonObject  jobject = jelement.getAsJsonObject();
+        jobject = jobject.getAsJsonObject("response");
+        JsonArray jarray = jobject.getAsJsonArray("profiles");
+        for(int x = 0; x < jarray.size(); x++) {
+            jobject = jarray.get(x).getAsJsonObject();
+            String result = jobject.get("id").toString();
+            System.out.println(result);
+        }
 
     }
 }

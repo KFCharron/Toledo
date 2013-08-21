@@ -30,6 +30,7 @@ object BuildSettings {
 
   object Dependencies {
     val gson = "com.google.code.gson" % "gson" % "2.2.4"
+    val javacsv = "net.sourceforge.javacsv" % "javacsv" % "2.0"
   }
 
 }
@@ -42,7 +43,7 @@ object TargetSegmentingBuild extends Build {
   val root = Project(
     id = "target-segmenting",
     base = file("."),
-    settings = buildSettings210 ++ Seq(libraryDependencies ++= Seq(gson))
+    settings = buildSettings210 ++ Seq(libraryDependencies ++= Seq(gson, javacsv))
   )
 }
 
