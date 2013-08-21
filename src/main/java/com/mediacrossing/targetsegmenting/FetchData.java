@@ -1,4 +1,4 @@
-package com.mediacrossing.segment_targeting;
+package com.mediacrossing.targetsegmenting;
 
 import java.io.*;
 import java.net.HttpURLConnection;
