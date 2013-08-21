@@ -1,12 +1,10 @@
 package com.mediacrossing.segment_targeting;
-import scala.util.parsing.json.JSONArray;
-import scala.util.parsing.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLEncoder;
 import javax.net.ssl.HttpsURLConnection;
 import com.google.gson.*;
 
@@ -19,20 +17,15 @@ import com.google.gson.*;
  */
 public class FetchData {
 
-    private final String USER_AGENT = "Mozilla/5.0";
-
     public static void main(String[] args) throws Exception {
 
         FetchData http = new FetchData();
-
-        System.out.println("Testing 1 - Send Http GET request");
-        http.sendGet();
-        http.sendAuthorization();
-
+        String authToken = http.requestAuthorizationToken();
+        http.requestProfiles(authToken);
     }
 
     // HTTP POST request
-    private void sendAuthorization() throws Exception {
+    private String requestAuthorizationToken() throws Exception {
 
         String url = "https://api.appnexus.com/auth";
         URL obj = new URL(url);
@@ -40,7 +33,6 @@ public class FetchData {
 
         //add request header
         con.setRequestMethod("POST");
-        con.setRequestProperty("User-Agent", USER_AGENT);
         con.setRequestProperty("Content-Type", "application/json");
 
         //Authorization JSON data
@@ -67,33 +59,34 @@ public class FetchData {
         }
         in.close();
 
+        //Received JSON data
         String rawJSON = response.toString();
-
-        //print result
         System.out.println(rawJSON);
 
+        //Parse JSON, obtain token
         JsonElement jelement = new JsonParser().parse(rawJSON);
         JsonObject  jobject = jelement.getAsJsonObject();
         jobject = jobject.getAsJsonObject("response");
         String token = jobject.get("token").toString();
         token = token.replace("\"","");
         System.out.println(token);
+
+        return token;
     }
 
     // HTTP GET request
-    private void sendGet() throws Exception {
+    private void requestProfiles(String token) throws Exception {
 
-        String url = "http://www.google.com/search?q=mkyong";
+        String url = "http://api.appnexus.com/profile?advertiser_id=184587";
 
         URL obj = new URL(url);
         HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+        //default connection is GET
 
-        // optional default is GET
-        con.setRequestMethod("GET");
+        //add token header
+        con.setRequestProperty("Authorization", token);
 
-        //add request header
-        con.setRequestProperty("User-Agent", USER_AGENT);
-
+        //Send GET request
         int responseCode = con.getResponseCode();
         System.out.println("\nSending 'GET' request to URL : " + url);
         System.out.println("Response Code : " + responseCode);
@@ -109,7 +102,8 @@ public class FetchData {
         in.close();
 
         //print result
-        System.out.println(response.toString());
+        String rawJSON = response.toString();
+        System.out.println(rawJSON);
 
     }
 }
