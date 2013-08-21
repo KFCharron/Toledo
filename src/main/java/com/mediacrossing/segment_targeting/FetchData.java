@@ -1,10 +1,9 @@
 package com.mediacrossing.segment_targeting;
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import javax.net.ssl.HttpsURLConnection;
 import com.google.gson.*;
 
@@ -22,7 +21,8 @@ public class FetchData {
         FetchData http = new FetchData();
         String authToken = http.requestAuthorizationToken();
         String profileData = http.requestProfiles(authToken);
-        http.parseData(profileData);
+        ArrayList<Profile> profileList = http.parseData(profileData);
+        http.writeToCSV(profileList);
     }
 
     // HTTP POST request
@@ -109,18 +109,62 @@ public class FetchData {
         return rawJSON;
     }
 
-    private void parseData(String data) {
+    private ArrayList<Profile> parseData(String data) {
 
         //Parse JSON, obtain data
         JsonElement jelement = new JsonParser().parse(data);
         JsonObject  jobject = jelement.getAsJsonObject();
         jobject = jobject.getAsJsonObject("response");
         JsonArray jarray = jobject.getAsJsonArray("profiles");
+        ArrayList<Profile> profileList = new ArrayList<Profile>();
         for(int x = 0; x < jarray.size(); x++) {
+            Profile newProfile = new Profile();
             jobject = jarray.get(x).getAsJsonObject();
-            String result = jobject.get("id").toString();
-            System.out.println(result);
+            newProfile.setId(jobject.get("id").toString());
+            newProfile.setMaxDayImps(jobject.get("max_day_imps").toString());
+            newProfile.setMaxLifetimeImps(jobject.get("max_lifetime_imps").toString());
+            newProfile.setMaxPageImps(jobject.get("max_page_imps").toString());
+            newProfile.setMaxSessionImps(jobject.get("max_session_imps").toString());
+            newProfile.setMinMinutesPerImp(jobject.get("min_minutes_per_imp").toString());
+            newProfile.setMinSessionImps(jobject.get("min_session_imps").toString());
+            profileList.add(x, newProfile);
         }
 
+        return profileList;
+    }
+
+    private static final String CSV_SEPARATOR = ",";
+    private static void writeToCSV(ArrayList<Profile> profileList)
+    {
+        try
+        {
+            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("frequencyReport.csv"), "UTF-8"));
+            bw.write("ID, MaxLifeTime, MinSession, MaxSession, MaxDay, MinMinutesPer, MaxPage");
+            bw.newLine();
+            for (Profile profile : profileList)
+            {
+                StringBuffer oneLine = new StringBuffer();
+                oneLine.append(profile.getId());
+                oneLine.append(CSV_SEPARATOR);
+                oneLine.append(profile.getMaxLifetimeImps());
+                oneLine.append(CSV_SEPARATOR);
+                oneLine.append(profile.getMinSessionImps());
+                oneLine.append(CSV_SEPARATOR);
+                oneLine.append(profile.getMaxSessionImps());
+                oneLine.append(CSV_SEPARATOR);
+                oneLine.append(profile.getMaxDayImps());
+                oneLine.append(CSV_SEPARATOR);
+                oneLine.append(profile.getMinMinutesPerImp());
+                oneLine.append(CSV_SEPARATOR);
+                oneLine.append(profile.getMaxPageImps());
+                bw.write(oneLine.toString());
+                bw.newLine();
+            }
+            bw.flush();
+            bw.close();
+        }
+        catch (UnsupportedEncodingException e) {}
+        catch (FileNotFoundException e){}
+        catch (IOException e){}
     }
 }
