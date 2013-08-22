@@ -10,30 +10,16 @@ import java.util.ArrayList;
  */
 public class Profile {
     private String id;
-    private String maxLifetimeImps;
-    private String minSessionImps;
-    private String maxSessionImps;
-    private String maxDayImps;
-    private String minMinutesPerImp;
-    private String maxPageImps;
-    private String segementBool;
-    private ArrayList<Target> segmentGroupTargetList = new ArrayList<Target>();
+    private FrequencyTargets frequencyTargets = new FrequencyTargets();
+    private GeographyTargets geographyTargets = new GeographyTargets();
     private ArrayList<DaypartTarget> daypartTargetList = new ArrayList<DaypartTarget>();
 
-    public String getSegementBool() {
-        return segementBool;
+    public FrequencyTargets getFrequencyTargets() {
+        return frequencyTargets;
     }
 
-    public void setSegementBool(String segementBool) {
-        this.segementBool = segementBool;
-    }
-
-    public ArrayList<Target> getSegmentGroupTargetList() {
-        return segmentGroupTargetList;
-    }
-
-    public void setSegmentGroupTargetList(ArrayList<Target> segmentGroupTargetList) {
-        this.segmentGroupTargetList = segmentGroupTargetList;
+    public void setFrequencyTargets(FrequencyTargets frequencyTargets) {
+        this.frequencyTargets = frequencyTargets;
     }
 
     public String getId() {
@@ -44,59 +30,19 @@ public class Profile {
         this.id = id;
     }
 
-    public String getMaxLifetimeImps() {
-        return maxLifetimeImps;
-    }
-
-    public void setMaxLifetimeImps(String maxLifetimeImps) {
-        this.maxLifetimeImps = maxLifetimeImps;
-    }
-
-    public String getMinSessionImps() {
-        return minSessionImps;
-    }
-
-    public void setMinSessionImps(String minSessionImps) {
-        this.minSessionImps = minSessionImps;
-    }
-
-    public String getMaxSessionImps() {
-        return maxSessionImps;
-    }
-
-    public void setMaxSessionImps(String maxSessionImps) {
-        this.maxSessionImps = maxSessionImps;
-    }
-
-    public String getMaxDayImps() {
-        return maxDayImps;
-    }
-
-    public void setMaxDayImps(String maxDayImps) {
-        this.maxDayImps = maxDayImps;
-    }
-
-    public String getMinMinutesPerImp() {
-        return minMinutesPerImp;
-    }
-
-    public void setMinMinutesPerImp(String minMinutesPerImp) {
-        this.minMinutesPerImp = minMinutesPerImp;
-    }
-
-    public String getMaxPageImps() {
-        return maxPageImps;
-    }
-
-    public void setMaxPageImps(String maxPageImps) {
-        this.maxPageImps = maxPageImps;
-    }
-
     public ArrayList<DaypartTarget> getDaypartTargetList() {
         return daypartTargetList;
     }
 
     public void setDaypartTargetList(ArrayList<DaypartTarget> daypartTargetList) {
         this.daypartTargetList = daypartTargetList;
+    }
+
+    public GeographyTargets getGeographyTargets() {
+        return geographyTargets;
+    }
+
+    public void setGeographyTargets(GeographyTargets geographyTargets) {
+        this.geographyTargets = geographyTargets;
     }
 }

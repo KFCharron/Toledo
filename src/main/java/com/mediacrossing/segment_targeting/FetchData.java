@@ -121,38 +121,89 @@ public class FetchData {
         //Create a profile list
         ArrayList<Profile> profileList = new ArrayList<Profile>();
 
-        //Add each profile to the list
+        //Create a profile, populate it, add it to the profile list
         for(int x = 0; x < jarray.size(); x++) {
 
             //Create new profile
             Profile newProfile = new Profile();
+            //Set the json object
             jobject = jarray.get(x).getAsJsonObject();
-
-            //Add id, frequency metrics
+            //Set ID
             newProfile.setId(jobject.get("id").toString());
-            newProfile.setMaxDayImps(jobject.get("max_day_imps").toString());
-            newProfile.setMaxLifetimeImps(jobject.get("max_lifetime_imps").toString());
-            newProfile.setMaxPageImps(jobject.get("max_page_imps").toString());
-            newProfile.setMaxSessionImps(jobject.get("max_session_imps").toString());
-            newProfile.setMinMinutesPerImp(jobject.get("min_minutes_per_imp").toString());
-            newProfile.setMinSessionImps(jobject.get("min_session_imps").toString());
 
+            //Set Frequency Targets
+            FrequencyTargets frequencyTargets = new FrequencyTargets();
+            frequencyTargets.setMaxDayImps(jobject.get("max_day_imps").toString());
+            frequencyTargets.setMaxLifetimeImps(jobject.get("max_lifetime_imps").toString());
+            frequencyTargets.setMaxPageImps(jobject.get("max_page_imps").toString());
+            frequencyTargets.setMaxSessionImps(jobject.get("max_session_imps").toString());
+            frequencyTargets.setMinMinutesPerImp(jobject.get("min_minutes_per_imp").toString());
+            frequencyTargets.setMinSessionImps(jobject.get("min_session_imps").toString());
+            newProfile.setFrequencyTargets(frequencyTargets);
+
+            JsonArray karray;
             //Move to daypart Array
-            JsonArray karray = jobject.getAsJsonArray("daypart_targets");
-            ArrayList<DaypartTarget> daypartTargetList = new ArrayList<DaypartTarget>();
-            for(int y = 0; y < karray.size(); y++) {
-                JsonObject kobject = karray.get(y).getAsJsonObject();
-                DaypartTarget newDaypart = new DaypartTarget();
-
-                //add variables to DaypartTarget
-                newDaypart.setDay(kobject.get("day").toString());
-                newDaypart.setStartHour(kobject.get("start_hour").toString());
-                newDaypart.setEndHour(kobject.get("end_hour").toString());
-                //add DaypartTargat to daypartTargetList
-                daypartTargetList.add(y, newDaypart);
+            if(!jobject.get("daypart_targets").isJsonNull()) {
+                karray = jobject.getAsJsonArray("daypart_targets");
+                ArrayList<DaypartTarget> daypartTargetList = new ArrayList<DaypartTarget>();
+                for(int y = 0; y < karray.size(); y++) {
+                    JsonObject kobject = karray.get(y).getAsJsonObject();
+                    DaypartTarget newDaypart = new DaypartTarget();
+                    //add variables to DaypartTarget
+                    newDaypart.setDay(kobject.get("day").toString());
+                    newDaypart.setStartHour(kobject.get("start_hour").toString());
+                    newDaypart.setEndHour(kobject.get("end_hour").toString());
+                    //add DaypartTargat to daypartTargetList
+                    daypartTargetList.add(y, newDaypart);
+                }
+                //Add daypartTargetList to profile
+                newProfile.setDaypartTargetList(daypartTargetList);
             }
-            //Add daypartTargetList to profile
-            newProfile.setDaypartTargetList(daypartTargetList);
+
+
+            //Create new GeographyTargets
+            GeographyTargets geographyTargets = new GeographyTargets();
+            //Move to country target array
+            //check for null value
+            if (!jobject.get("country_targets").isJsonNull()) {
+                karray = jobject.getAsJsonArray("country_targets");
+                //Create new country list
+                ArrayList<CountryTarget> countryTargetList = new ArrayList<CountryTarget>();
+                for (int z = 0; z < karray.size(); z++) {
+                    JsonObject lobject = karray.get(z).getAsJsonObject();
+                    CountryTarget newCountry = new CountryTarget();
+                    newCountry.setCountry(lobject.get("country").toString());
+                    newCountry.setName(lobject.get("name").toString());
+                    countryTargetList.add(z, newCountry);
+                }
+                //Add countryTargetList to geography targets
+                geographyTargets.setCountryTargetList(countryTargetList);
+            }
+
+            //set country action
+            geographyTargets.setCountryAction(jobject.get("country_action").toString());
+
+            //Check for null value
+            if (!jobject.get("dma_targets").isJsonNull()) {
+                //Move to dma target array
+                karray = jobject.getAsJsonArray("dma_targets");
+                //Create new dma list
+                ArrayList<DMATarget> dmaTargetList = new ArrayList<DMATarget>();
+                for (int i = 0; i < karray.size(); i++) {
+                    JsonObject pobject = karray.get(i).getAsJsonObject();
+                    DMATarget newDMATarget = new DMATarget();
+                    newDMATarget.setDma(pobject.get("dma").toString());
+                    newDMATarget.setName(pobject.get("name").toString());
+                    dmaTargetList.add(i, newDMATarget);
+                }
+                //Add dmaTargetList to geography targets
+                geographyTargets.setDmaTargetList(dmaTargetList);
+            }
+
+            //set dma action
+            geographyTargets.setDmaAction(jobject.get("dma_action").toString());
+            //Add geography target to profile
+            newProfile.setGeographyTargets(geographyTargets);
 
             //Add completed profile to the list
             profileList.add(x, newProfile);
@@ -177,17 +228,17 @@ public class FetchData {
                 StringBuffer oneLine = new StringBuffer();
                 oneLine.append(profile.getId());
                 oneLine.append(CSV_SEPARATOR);
-                oneLine.append(profile.getMaxLifetimeImps());
+                oneLine.append(profile.getFrequencyTargets().getMaxLifetimeImps());
                 oneLine.append(CSV_SEPARATOR);
-                oneLine.append(profile.getMinSessionImps());
+                oneLine.append(profile.getFrequencyTargets().getMinSessionImps());
                 oneLine.append(CSV_SEPARATOR);
-                oneLine.append(profile.getMaxSessionImps());
+                oneLine.append(profile.getFrequencyTargets().getMaxSessionImps());
                 oneLine.append(CSV_SEPARATOR);
-                oneLine.append(profile.getMaxDayImps());
+                oneLine.append(profile.getFrequencyTargets().getMaxDayImps());
                 oneLine.append(CSV_SEPARATOR);
-                oneLine.append(profile.getMinMinutesPerImp());
+                oneLine.append(profile.getFrequencyTargets().getMinMinutesPerImp());
                 oneLine.append(CSV_SEPARATOR);
-                oneLine.append(profile.getMaxPageImps());
+                oneLine.append(profile.getFrequencyTargets().getMaxPageImps());
                 bw.write(oneLine.toString());
                 bw.newLine();
             }
@@ -198,26 +249,26 @@ public class FetchData {
         catch (FileNotFoundException e){}
         catch (IOException e){}
 
-        //Daypart CSV
-        try
-        {
-            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("daypartReport.csv"), "UTF-8"));
-            bw.write("Profile ID, Days, 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23");
-            bw.newLine();
-            for (Profile profile : profileList)
-            {
-                StringBuffer oneLine = new StringBuffer();
-                oneLine.append(profile.getId());
-                oneLine.append(CSV_SEPARATOR);
-
-                bw.write(oneLine.toString());
-                bw.newLine();
-            }
-            bw.flush();
-            bw.close();
-        }
-        catch (UnsupportedEncodingException e) {}
-        catch (FileNotFoundException e){}
-        catch (IOException e){}
+//        //Daypart CSV
+//        try
+//        {
+//            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("daypartReport.csv"), "UTF-8"));
+//            bw.write("Profile ID, Days, 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23");
+//            bw.newLine();
+//            for (Profile profile : profileList)
+//            {
+//                StringBuffer oneLine = new StringBuffer();
+//                oneLine.append(profile.getId());
+//                oneLine.append(CSV_SEPARATOR);
+//
+//                bw.write(oneLine.toString());
+//                bw.newLine();
+//            }
+//            bw.flush();
+//            bw.close();
+//        }
+//        catch (UnsupportedEncodingException e) {}
+//        catch (FileNotFoundException e){}
+//        catch (IOException e){}
     }
 }
