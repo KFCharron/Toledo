@@ -151,8 +151,8 @@ public class FetchData {
                     DaypartTarget newDaypart = new DaypartTarget();
                     //add variables to DaypartTarget
                     newDaypart.setDay(kobject.get("day").toString());
-                    newDaypart.setStartHour(kobject.get("start_hour").toString());
-                    newDaypart.setEndHour(kobject.get("end_hour").toString());
+                    newDaypart.setStartHour(kobject.get("start_hour").getAsInt());
+                    newDaypart.setEndHour(kobject.get("end_hour").getAsInt());
                     //add DaypartTargat to daypartTargetList
                     daypartTargetList.add(y, newDaypart);
                 }
@@ -249,26 +249,42 @@ public class FetchData {
         catch (FileNotFoundException e){}
         catch (IOException e){}
 
-//        //Daypart CSV
-//        try
-//        {
-//            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("daypartReport.csv"), "UTF-8"));
-//            bw.write("Profile ID, Days, 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23");
-//            bw.newLine();
-//            for (Profile profile : profileList)
-//            {
-//                StringBuffer oneLine = new StringBuffer();
-//                oneLine.append(profile.getId());
-//                oneLine.append(CSV_SEPARATOR);
-//
-//                bw.write(oneLine.toString());
-//                bw.newLine();
-//            }
-//            bw.flush();
-//            bw.close();
-//        }
-//        catch (UnsupportedEncodingException e) {}
-//        catch (FileNotFoundException e){}
-//        catch (IOException e){}
+        //Daypart CSV
+        try
+        {
+            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("daypartReport.csv"), "UTF-8"));
+            bw.write("Profile ID, Days, 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23");
+            bw.newLine();
+            for (Profile profile : profileList)
+            {
+                StringBuffer oneLine = new StringBuffer();
+                oneLine.append(profile.getId());
+                oneLine.append(CSV_SEPARATOR);
+
+                for (int b = 0; b < profile.getDaypartTargetList().size(); b++) {
+                    oneLine.append(profile.getDaypartTargetList().get(b).getDay());
+                    for(int c = 0; c < 23; c++) {
+                       if(c >= profile.getDaypartTargetList().get(b).getStartHour() &&
+                               c <= profile.getDaypartTargetList().get(b).getEndHour()) {
+                           oneLine.append("X");
+                           oneLine.append(CSV_SEPARATOR);
+                       }
+                       else {
+                           oneLine.append(" ");
+                           oneLine.append(CSV_SEPARATOR);
+                       }
+                    }
+                }
+
+
+                bw.write(oneLine.toString());
+                bw.newLine();
+            }
+            bw.flush();
+            bw.close();
+        }
+        catch (UnsupportedEncodingException e) {}
+        catch (FileNotFoundException e){}
+        catch (IOException e){}
     }
 }

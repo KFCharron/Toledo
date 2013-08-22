@@ -9,8 +9,8 @@ package com.mediacrossing.segment_targeting;
  */
 public class DaypartTarget {
     private String day;
-    private String startHour;
-    private String endHour;
+    private int startHour;
+    private int endHour;
 
     public String getDay() {
         return day;
@@ -20,19 +20,19 @@ public class DaypartTarget {
         this.day = day;
     }
 
-    public String getStartHour() {
+    public int getStartHour() {
         return startHour;
     }
 
-    public void setStartHour(String startHour) {
+    public void setStartHour(int startHour) {
         this.startHour = startHour;
     }
 
-    public String getEndHour() {
+    public int getEndHour() {
         return endHour;
     }
 
-    public void setEndHour(String endHour) {
+    public void setEndHour(int endHour) {
         this.endHour = endHour;
     }
 }
