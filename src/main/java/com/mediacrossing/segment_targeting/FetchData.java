@@ -78,7 +78,7 @@ public class FetchData {
     // HTTP GET request
     private String requestProfiles(String token) throws Exception {
 
-        String url = "http://api.appnexus.com/profile?advertiser_id=184587";
+        String url = "http://api.appnexus.com/profile?advertiser_id=165002";
 
         URL obj = new URL(url);
         HttpURLConnection con = (HttpURLConnection) obj.openConnection();
@@ -137,6 +137,23 @@ public class FetchData {
             newProfile.setMinMinutesPerImp(jobject.get("min_minutes_per_imp").toString());
             newProfile.setMinSessionImps(jobject.get("min_session_imps").toString());
 
+            //Move to daypart Array
+            JsonArray karray = jobject.getAsJsonArray("daypart_targets");
+            ArrayList<DaypartTarget> daypartTargetList = new ArrayList<DaypartTarget>();
+            for(int y = 0; y < karray.size(); y++) {
+                JsonObject kobject = karray.get(y).getAsJsonObject();
+                DaypartTarget newDaypart = new DaypartTarget();
+
+                //add variables to DaypartTarget
+                newDaypart.setDay(kobject.get("day").toString());
+                newDaypart.setStartHour(kobject.get("start_hour").toString());
+                newDaypart.setEndHour(kobject.get("end_hour").toString());
+                //add DaypartTargat to daypartTargetList
+                daypartTargetList.add(y, newDaypart);
+            }
+            //Add daypartTargetList to profile
+            newProfile.setDaypartTargetList(daypartTargetList);
+
             //Add completed profile to the list
             profileList.add(x, newProfile);
         }
@@ -148,10 +165,12 @@ public class FetchData {
     private static final String CSV_SEPARATOR = ",";
     private static void writeToCSV(ArrayList<Profile> profileList)
     {
+        //Frequency csv
         try
         {
             BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("frequencyReport.csv"), "UTF-8"));
-            bw.write("ID, MaxLifeTime, MinSession, MaxSession, MaxDay, MinMinutesPer, MaxPage");
+            bw.write("Profile ID, MaxImps/Person, MinImps/Person/Session, MaxImps/Person/Session," +
+                    " MaxImps/Person/Day, MinMinutesBetweenImps, MaxImpsPerPageLoad");
             bw.newLine();
             for (Profile profile : profileList)
             {
@@ -169,6 +188,28 @@ public class FetchData {
                 oneLine.append(profile.getMinMinutesPerImp());
                 oneLine.append(CSV_SEPARATOR);
                 oneLine.append(profile.getMaxPageImps());
+                bw.write(oneLine.toString());
+                bw.newLine();
+            }
+            bw.flush();
+            bw.close();
+        }
+        catch (UnsupportedEncodingException e) {}
+        catch (FileNotFoundException e){}
+        catch (IOException e){}
+
+        //Daypart CSV
+        try
+        {
+            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("daypartReport.csv"), "UTF-8"));
+            bw.write("Profile ID, Days, 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23");
+            bw.newLine();
+            for (Profile profile : profileList)
+            {
+                StringBuffer oneLine = new StringBuffer();
+                oneLine.append(profile.getId());
+                oneLine.append(CSV_SEPARATOR);
+
                 bw.write(oneLine.toString());
                 bw.newLine();
             }

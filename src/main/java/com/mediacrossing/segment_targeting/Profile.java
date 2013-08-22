@@ -16,6 +16,9 @@ public class Profile {
     private String maxDayImps;
     private String minMinutesPerImp;
     private String maxPageImps;
+    private String segementBool;
+    private ArrayList<Target> segmentGroupTargetList = new ArrayList<Target>();
+    private ArrayList<DaypartTarget> daypartTargetList = new ArrayList<DaypartTarget>();
 
     public String getSegementBool() {
         return segementBool;
@@ -32,9 +35,6 @@ public class Profile {
     public void setSegmentGroupTargetList(ArrayList<Target> segmentGroupTargetList) {
         this.segmentGroupTargetList = segmentGroupTargetList;
     }
-
-    private String segementBool;
-    private ArrayList<Target> segmentGroupTargetList = new ArrayList<Target>();
 
     public String getId() {
         return id;
@@ -90,5 +90,13 @@ public class Profile {
 
     public void setMaxPageImps(String maxPageImps) {
         this.maxPageImps = maxPageImps;
+    }
+
+    public ArrayList<DaypartTarget> getDaypartTargetList() {
+        return daypartTargetList;
+    }
+
+    public void setDaypartTargetList(ArrayList<DaypartTarget> daypartTargetList) {
+        this.daypartTargetList = daypartTargetList;
     }
 }
