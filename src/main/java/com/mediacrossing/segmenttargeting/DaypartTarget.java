@@ -1,4 +1,4 @@
-package com.mediacrossing.segment_targeting;
+package com.mediacrossing.segmenttargeting;
 
 /**
  * Created with IntelliJ IDEA.

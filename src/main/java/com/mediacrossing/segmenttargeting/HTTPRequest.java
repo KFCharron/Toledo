@@ -1,4 +1,4 @@
-package com.mediacrossing.segment_targeting;
+package com.mediacrossing.segmenttargeting;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;

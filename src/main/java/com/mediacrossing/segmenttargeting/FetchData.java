@@ -1,8 +1,6 @@
-package com.mediacrossing.segment_targeting;
+package com.mediacrossing.segmenttargeting;
 
-import java.io.*;
 import java.util.ArrayList;
-import com.google.gson.*;
 
 /**
  * Created with IntelliJ IDEA.
