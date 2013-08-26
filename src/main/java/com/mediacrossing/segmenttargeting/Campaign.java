@@ -2,13 +2,6 @@ package com.mediacrossing.segmenttargeting;
 
 import java.util.ArrayList;
 
-/**
- * Created with IntelliJ IDEA.
- * User: charronkyle
- * Date: 8/23/13
- * Time: 8:28 AM
- * To change this template use File | Settings | File Templates.
- */
 public class Campaign {
     private String id;
     private String name;

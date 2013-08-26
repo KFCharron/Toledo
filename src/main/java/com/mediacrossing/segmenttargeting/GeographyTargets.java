@@ -2,13 +2,6 @@ package com.mediacrossing.segmenttargeting;
 
 import java.util.ArrayList;
 
-/**
- * Created with IntelliJ IDEA.
- * User: charronkyle
- * Date: 8/22/13
- * Time: 11:53 AM
- * To change this template use File | Settings | File Templates.
- */
 public class GeographyTargets {
     private ArrayList<CountryTarget> countryTargetList = new ArrayList<CountryTarget>();
     private ArrayList<DMATarget> dmaTargetList = new ArrayList<DMATarget>();

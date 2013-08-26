@@ -1,18 +1,8 @@
 package com.mediacrossing.segmenttargeting;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-
+import com.google.gson.*;
 import java.util.ArrayList;
+import java.util.Map;
 
-/**
- * Created with IntelliJ IDEA.
- * User: charronkyle
- * Date: 8/23/13
- * Time: 8:21 AM
- * To change this template use File | Settings | File Templates.
- */
 public class JSONParse {
     public ArrayList<Campaign> campaignArrayList = new ArrayList<Campaign>();
 
@@ -37,12 +27,16 @@ public class JSONParse {
         jobject = jobject.getAsJsonObject("response");
         jobject = jobject.getAsJsonObject("profile");
         FrequencyTargets newFrequencyTarget = new FrequencyTargets();
+        try {
         newFrequencyTarget.setMaxDayImps(jobject.get("max_day_imps").toString());
         newFrequencyTarget.setMaxLifetimeImps(jobject.get("max_lifetime_imps").toString());
         newFrequencyTarget.setMaxPageImps(jobject.get("max_page_imps").toString());
         newFrequencyTarget.setMaxSessionImps(jobject.get("max_session_imps").toString());
         newFrequencyTarget.setMinMinutesPerImp(jobject.get("min_minutes_per_imp").toString());
         newFrequencyTarget.setMinSessionImps(jobject.get("min_session_imps").toString());
+        } catch (NullPointerException exception) {
+            System.out.println("Null Pointer Exception");
+        }
 
         return newFrequencyTarget;
     }
@@ -119,24 +113,28 @@ public class JSONParse {
         return newGeographyTarget;
     }
 
-    public void populateCampaignList(String rawData, String advertiserID) {
+    public ArrayList<Campaign> populateCampaignArrayList(String rawData) {
 
+        ArrayList<Campaign> campaignArrayList1 = new ArrayList<Campaign>();
+        Gson gson = new Gson();
         JsonElement jelement = new JsonParser().parse(rawData);
-        JsonObject jobject = jelement.getAsJsonObject();
-        jobject = jobject.getAsJsonObject("response");
-        JsonArray jarray = jobject.getAsJsonArray("campaigns");
-
-        for (int x = 0; x < jarray.size(); x++) {
-            jobject = jarray.get(x).getAsJsonObject();
+        for (Map.Entry<String, JsonElement> entry : jelement.getAsJsonObject().entrySet()) {
             Campaign newCampaign = new Campaign();
-            newCampaign.setId(jobject.get("id").toString());
-            newCampaign.setState(jobject.get("state").toString());
-            newCampaign.setAdvertiserID(advertiserID);
-            newCampaign.setProfileID(jobject.get("profile_id").toString());
-            newCampaign.setName(jobject.get("name").toString());
-            newCampaign.setLineItemID(jobject.get("line_item_id").toString());
-            campaignArrayList.add(newCampaign);
+            newCampaign.setAdvertiserID(entry.getKey().replace("\"",""));
+            for (JsonElement values : entry.getValue().getAsJsonArray()) {
+
+                JsonObject jsonObject = values.getAsJsonObject();
+                newCampaign.setId(jsonObject.get("id").toString().replace("\"",""));
+                newCampaign.setState(jsonObject.get("status").toString().replace("\"",""));
+                newCampaign.setName(jsonObject.get("name").toString().replace("\"",""));
+                newCampaign.setProfileID(jsonObject.get("profileId").toString().replace("\"",""));
+                newCampaign.setLineItemID(jsonObject.get("lineItemId").toString().replace("\"",""));
+                //campaignArrayList1.add(newCampaign);
+            }
+            //FIXME remove this to get all campaigns, instead of one per advertiser, uncomment one above
+            campaignArrayList1.add(newCampaign);
         }
+        return  campaignArrayList1;
 
     }
 

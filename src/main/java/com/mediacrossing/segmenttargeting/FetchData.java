@@ -2,13 +2,6 @@ package com.mediacrossing.segmenttargeting;
 
 import java.util.ArrayList;
 
-/**
- * Created with IntelliJ IDEA.
- * User: charronkyle
- * Date: 8/20/13
- * Time: 12:31 PM
- * To change this template use File | Settings | File Templates.
- */
 public class FetchData {
 
     public static void main(String[] args) throws Exception {
@@ -19,32 +12,21 @@ public class FetchData {
         ArrayList<String> advertiserIDList;
         HTTPRequest httpConnection = new HTTPRequest();
         CSVWriter csvWriter = new CSVWriter();
+        DataStore dataStore = new DataStore();
 
-        //Get Token, Advertisers
+        //Get Token
         httpConnection.authorizeAppNexusConnection("MC_report", "13MediaCrossing!");
-        httpConnection.requestAllAdvertisersFromAN();
-        advertiserIDList = parser.populateAdvertiserIDList(httpConnection.getJSONData());
 
-        //TODO setup mock api connection
+        //Get All Campaigns from MX, save them into list
         httpConnection.requestAllCampaignsFromMX();
-        campaignArrayList = parser.getMockCampaignList(httpConnection.getJSONData());
-/*
-        //Get Campaigns for each Advertiser
-        for(int x = 0; x < advertiserIDList.size(); x++) {
+        dataStore.setCampaignArrayList(parser.populateCampaignArrayList(httpConnection.getJSONData()));
 
-            String advertiserID = advertiserIDList.get(x);
-            httpConnection.requestCampaignsByAdvertiserID(advertiserID);
-            parser.populateCampaignList(httpConnection.getJSONData(), advertiserID);
+        //Get Profile data for each Campaign, save campaign
+        ArrayList<Campaign> newCampaignArrayList = dataStore.getCampaignArrayList();
+        for(int y = 0; y < newCampaignArrayList.size(); y++) {
 
-        }
-        campaignArrayList = parser.getCampaignArrayList();
-*/
-
-        //Get Profile data for each Campaign
-        for(int y = 0; y < campaignArrayList.size(); y++) {
-
-            String profileID = campaignArrayList.get(y).getProfileID();
-            String advertiserID = campaignArrayList.get(y).getAdvertiserID();
+            String profileID = newCampaignArrayList.get(y).getProfileID();
+            String advertiserID = newCampaignArrayList.get(y).getAdvertiserID();
             httpConnection.requestProfile(profileID, advertiserID);
 
             FrequencyTargets newFrequencyTarget = new FrequencyTargets();
@@ -56,20 +38,25 @@ public class FetchData {
             GeographyTargets newGeographyTarget = new GeographyTargets();
             newGeographyTarget = parser.populateGeographyTarget(httpConnection.getJSONData());
 
-            Campaign currentCampaign = campaignArrayList.get(y);
+            //TODO Add segment data to campaigns
+
+            Campaign currentCampaign = newCampaignArrayList.get(y);
             currentCampaign.setFrequencyTargets(newFrequencyTarget);
             currentCampaign.setDaypartTargetArrayList(newDaypartTargetList);
             currentCampaign.setGeographyTargets(newGeographyTarget);
 
-            campaignArrayList.set(y, currentCampaign);
+            newCampaignArrayList.set(y, currentCampaign);
 
 
         }
+        dataStore.setCampaignArrayList(newCampaignArrayList);
+
+
 
         //Convert Data to CSV files
-        csvWriter.writeFrequencyFile(campaignArrayList);
-        csvWriter.writeDaypartFile(campaignArrayList);
-        csvWriter.writeGeographyFile(campaignArrayList);
+        csvWriter.writeFrequencyFile(dataStore.getCampaignArrayList());
+        csvWriter.writeDaypartFile(dataStore.getCampaignArrayList());
+        csvWriter.writeGeographyFile(dataStore.getCampaignArrayList());
 
     }
 }

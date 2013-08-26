@@ -3,13 +3,6 @@ package com.mediacrossing.segmenttargeting;
 import java.io.*;
 import java.util.ArrayList;
 
-/**
- * Created with IntelliJ IDEA.
- * User: charronkyle
- * Date: 8/23/13
- * Time: 2:53 PM
- * To change this template use File | Settings | File Templates.
- */
 public class CSVWriter {
 
     private static final String CSV_SEPARATOR = ",";
@@ -19,7 +12,7 @@ public class CSVWriter {
         try
         {
             BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("frequencyReport.csv"), "UTF-8"));
-            bw.write("Profile ID, MaxImps/Person, MinImps/Person/Session, MaxImps/Person/Session," +
+            bw.write("Profile ID, Name, MaxImps/Person, MinImps/Person/Session, MaxImps/Person/Session," +
                     " MaxImps/Person/Day, MinMinutesBetweenImps, MaxImpsPerPageLoad");
             bw.newLine();
             for (Campaign campaign : campaignArrayList)
@@ -57,12 +50,15 @@ public class CSVWriter {
         try
         {
             BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("daypartReport.csv"), "UTF-8"));
-            bw.write("Campaign, Days, 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23");
+            bw.write("ID, Name, Days, 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23");
             bw.newLine();
             for (Campaign campaign : campaignArrayList)
             {
                 StringBuffer oneLine = new StringBuffer();
                 oneLine.append(campaign.getId());
+                oneLine.append(CSV_SEPARATOR);
+
+                oneLine.append(campaign.getName());
                 oneLine.append(CSV_SEPARATOR);
 
                 for (int b = 0; b < campaign.getDaypartTargetArrayList().size(); b++) {
@@ -93,6 +89,11 @@ public class CSVWriter {
     }
 
     public void writeGeographyFile(ArrayList<Campaign> campaignArrayList) {
+        //Geography CSV
+        //TODO
+    }
 
+    public void writeSegmentFIle(ArrayList<Campaign> campaignArrayList) {
+        //TODO
     }
 }

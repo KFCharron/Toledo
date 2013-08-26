@@ -11,18 +11,13 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-/**
- * Created with IntelliJ IDEA.
- * User: charronkyle
- * Date: 8/22/13
- * Time: 5:10 PM
- * To change this template use File | Settings | File Templates.
- */
+
 public class HTTPRequest {
     private String authorizationToken;
     private String JSONData;
     private String url;
     private int count = 0;
+
 
     public void requestData() throws Exception {
         URL obj = new URL(url);
@@ -66,7 +61,7 @@ public class HTTPRequest {
     }
 
     public void requestAllCampaignsFromMX() throws Exception {
-        //this.setUrl("https://ec2-50-17-18-117.compute-1.amazonaws.com:9000/api/catalog/campaigns");
+        //this.setUrl("http://ec2-50-17-18-117.compute-1.amazonaws.com:9000/api/catalog/campaigns");
         //this.requestData();
         MockMXData mockMXData = new MockMXData();
         this.setJSONData(mockMXData.getMockData());
