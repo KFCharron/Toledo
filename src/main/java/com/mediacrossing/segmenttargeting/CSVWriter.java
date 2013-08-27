@@ -63,15 +63,21 @@ public class CSVWriter {
 
                 for (int b = 0; b < campaign.getDaypartTargetArrayList().size(); b++) {
                     oneLine.append(campaign.getDaypartTargetArrayList().get(b).getDay());
-                    for(int c = 0; c < 23; c++) {
+                    oneLine.append(CSV_SEPARATOR);
+                    for(int c = 0; c <= 23; c++) {
                         if(c >= campaign.getDaypartTargetArrayList().get(b).getStartHour() &&
                                 c <= campaign.getDaypartTargetArrayList().get(b).getEndHour()) {
                             oneLine.append("X");
-                            oneLine.append(CSV_SEPARATOR);
+                            if((c+1) <= 23) {
+                                oneLine.append(CSV_SEPARATOR);
+                            }
+
                         }
                         else {
                             oneLine.append(" ");
-                            oneLine.append(CSV_SEPARATOR);
+                            if((c+1) <= 23) {
+                                oneLine.append(CSV_SEPARATOR);
+                            }
                         }
                     }
                 }
@@ -90,10 +96,106 @@ public class CSVWriter {
 
     public void writeGeographyFile(ArrayList<Campaign> campaignArrayList) {
         //Geography CSV
-        //TODO
+        try
+        {
+            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter
+                    (new FileOutputStream("geographyReport.csv"), "UTF-8"));
+            bw.write("ID, Campaign, Action, Countries, Action, Designated Market Areas");
+            bw.newLine();
+            for (Campaign campaign : campaignArrayList)
+            {
+                StringBuffer oneLine = new StringBuffer();
+                oneLine.append(campaign.getId());
+                oneLine.append(CSV_SEPARATOR);
+
+                oneLine.append(campaign.getName());
+                oneLine.append(CSV_SEPARATOR);
+
+                oneLine.append(campaign.getGeographyTargets().getCountryAction());
+                oneLine.append(CSV_SEPARATOR);
+
+                ArrayList<CountryTarget> countryTargetArrayList =
+                        campaign.getGeographyTargets().getCountryTargetList();
+
+                for (int b = 0; b < countryTargetArrayList.size(); b++) {
+                    oneLine.append(countryTargetArrayList.get(b).getName());
+                    if((b+1) > countryTargetArrayList.size()) {
+                        oneLine.append("\",\"");
+                    }
+                }
+                oneLine.append(CSV_SEPARATOR);
+
+                oneLine.append(campaign.getGeographyTargets().getDmaAction());
+                oneLine.append(CSV_SEPARATOR);
+
+                ArrayList<DMATarget> dmaTargetArrayList =
+                        campaign.getGeographyTargets().getDmaTargetList();
+
+                for (int x = 0; x < dmaTargetArrayList.size(); x++) {
+                    oneLine.append(dmaTargetArrayList.get(x).getName());
+                    if ((x+1) > countryTargetArrayList.size()) {
+                        oneLine.append("\",\"");
+                    }
+                }
+
+                bw.write(oneLine.toString());
+                bw.newLine();
+            }
+            bw.flush();
+            bw.close();
+        }
+        catch (UnsupportedEncodingException e) {}
+        catch (FileNotFoundException e){}
+        catch (IOException e){}
+
     }
 
     public void writeSegmentFIle(ArrayList<Campaign> campaignArrayList) {
-        //TODO
+        try
+        {
+            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter
+                    (new FileOutputStream("segmentReport.csv"), "UTF-8"));
+            bw.write("ID, Campaign, Segments");
+            bw.newLine();
+            for (Campaign campaign : campaignArrayList)
+            {
+                StringBuffer oneLine = new StringBuffer();
+
+                oneLine.append(campaign.getId());
+                oneLine.append(CSV_SEPARATOR);
+
+                oneLine.append(campaign.getName());
+                oneLine.append(CSV_SEPARATOR);
+
+
+                for(int x = 0; x < campaign.getSegmentGroupTargetList().size(); x++) {
+                    oneLine.append("{");
+                    ArrayList<Segment> currentSegmentArray =
+                            campaign.getSegmentGroupTargetList().get(x).getSegmentArrayList();
+                    for(int y = 0; y < currentSegmentArray.size(); y++) {
+                        oneLine.append("[");
+                        oneLine.append("("+currentSegmentArray.get(y).getAction()+")");
+                        oneLine.append(currentSegmentArray.get(y).getName());
+                        oneLine.append("]");
+                        if((y+1) < currentSegmentArray.size()) {
+                            oneLine.append(" " + currentSegmentArray.get(y).getBoolOp() + " ");
+                        }
+                    }
+                    oneLine.append("}");
+                    if ((x+1) < campaign.getSegmentGroupTargetList().size()) {
+                        oneLine.append(" -" + (campaign.getSegmentGroupTargetList().get(x).getBoolOp()) + "- ");
+                    }
+                }
+
+                bw.write(oneLine.toString());
+                bw.newLine();
+            }
+            bw.flush();
+            bw.close();
+        }
+        catch (UnsupportedEncodingException e) {}
+        catch (FileNotFoundException e){}
+        catch (IOException e){}
+
     }
 }

@@ -12,6 +12,15 @@ public class Campaign {
     private FrequencyTargets frequencyTargets = new FrequencyTargets();
     private GeographyTargets geographyTargets = new GeographyTargets();
     private ArrayList<DaypartTarget> daypartTargetArrayList = new ArrayList<DaypartTarget>();
+    private ArrayList<SegmentGroupTarget> segmentGroupTargetList = new ArrayList<SegmentGroupTarget>();
+
+    public ArrayList<SegmentGroupTarget> getSegmentGroupTargetList() {
+        return segmentGroupTargetList;
+    }
+
+    public void setSegmentGroupTargetList(ArrayList<SegmentGroupTarget> segmentGroupTargetList) {
+        this.segmentGroupTargetList = segmentGroupTargetList;
+    }
 
     public FrequencyTargets getFrequencyTargets() {
         return frequencyTargets;

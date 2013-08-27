@@ -11,6 +11,15 @@ public class Segment {
     private String id;
     private String name;
     private String action;
+    private String boolOp;
+
+    public String getBoolOp() {
+        return boolOp;
+    }
+
+    public void setBoolOp(String boolOp) {
+        this.boolOp = boolOp;
+    }
 
     public String getId() {
         return id;

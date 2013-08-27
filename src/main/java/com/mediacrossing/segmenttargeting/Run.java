@@ -2,7 +2,7 @@ package com.mediacrossing.segmenttargeting;
 
 import java.util.ArrayList;
 
-public class FetchData {
+public class Run {
 
     public static void main(String[] args) throws Exception {
 
@@ -38,12 +38,14 @@ public class FetchData {
             GeographyTargets newGeographyTarget = new GeographyTargets();
             newGeographyTarget = parser.populateGeographyTarget(httpConnection.getJSONData());
 
-            //TODO Add segment data to campaigns
+            ArrayList<SegmentGroupTarget> newSegmentGroupTargetList = new ArrayList<SegmentGroupTarget>();
+            newSegmentGroupTargetList = parser.populateSegmentGroupTargetList(httpConnection.getJSONData());
 
             Campaign currentCampaign = newCampaignArrayList.get(y);
             currentCampaign.setFrequencyTargets(newFrequencyTarget);
             currentCampaign.setDaypartTargetArrayList(newDaypartTargetList);
             currentCampaign.setGeographyTargets(newGeographyTarget);
+            currentCampaign.setSegmentGroupTargetList(newSegmentGroupTargetList);
 
             newCampaignArrayList.set(y, currentCampaign);
 
@@ -57,6 +59,7 @@ public class FetchData {
         csvWriter.writeFrequencyFile(dataStore.getCampaignArrayList());
         csvWriter.writeDaypartFile(dataStore.getCampaignArrayList());
         csvWriter.writeGeographyFile(dataStore.getCampaignArrayList());
+        csvWriter.writeSegmentFIle(dataStore.getCampaignArrayList());
 
     }
 }

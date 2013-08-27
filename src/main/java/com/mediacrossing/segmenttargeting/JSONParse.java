@@ -4,19 +4,10 @@ import java.util.ArrayList;
 import java.util.Map;
 
 public class JSONParse {
-    public ArrayList<Campaign> campaignArrayList = new ArrayList<Campaign>();
-
-    public ArrayList<Campaign> getCampaignArrayList() {
-        return campaignArrayList;
-    }
-
-    public void setCampaignArrayList(ArrayList<Campaign> campaignArrayList) {
-        this.campaignArrayList = campaignArrayList;
-    }
 
     public ArrayList<Campaign> getMockCampaignList(String rawData) {
         ArrayList<Campaign> newCampaignList = new ArrayList<Campaign>();
-        //TODO
+        System.out.println("Mock Campaign List not setup yet.");
         return newCampaignList;
     }
 
@@ -138,22 +129,42 @@ public class JSONParse {
 
     }
 
-    public ArrayList<String> populateAdvertiserIDList (String rawData) {
-
-        ArrayList<String> newAdvertiserList = new ArrayList<String>();
-
+    public ArrayList<SegmentGroupTarget> populateSegmentGroupTargetList(String rawData) {
         JsonElement jelement = new JsonParser().parse(rawData);
         JsonObject jobject = jelement.getAsJsonObject();
         jobject = jobject.getAsJsonObject("response");
-        JsonArray jarray = jobject.getAsJsonArray("advertisers");
-        String advertiserID;
-        for (int x = 0; x < jarray.size(); x++) {
-            jobject = jarray.get(x).getAsJsonObject();
-            advertiserID = jobject.get("id").toString();
-            newAdvertiserList.add(x, advertiserID);
+        jobject = jobject.getAsJsonObject("profile");
+        ArrayList<SegmentGroupTarget> newSegmentGroupTargetList = new ArrayList<SegmentGroupTarget>();
+        String segmentGroupBoolOp = jobject.get("segment_boolean_operator").toString().replace("\"","");
+        if (!jobject.get("segment_group_targets").isJsonNull()) {
+            //Move to segment target array
+            JsonArray jarray = jobject.getAsJsonArray("segment_group_targets");
+            for (int x = 0; x < jarray.size(); x++) {
+
+                SegmentGroupTarget newSegmentGroupTarget = new SegmentGroupTarget();
+                JsonObject jsonObject = jarray.get(x).getAsJsonObject();
+                newSegmentGroupTarget.setBoolOp(segmentGroupBoolOp);
+                String segmentBoolOp = jsonObject.get("boolean_operator").toString().replace("\"","");
+
+                if(!jsonObject.get("segments").isJsonNull()) {
+                    JsonArray karray = jsonObject.getAsJsonArray("segments");
+                    ArrayList<Segment> newSegmentArrayList = new ArrayList<Segment>();
+                    for (int y = 0; y < karray.size(); y++) {
+                        Segment newSegment = new Segment();
+                        JsonObject kobject = karray.get(y).getAsJsonObject();
+                        newSegment.setAction(kobject.get("action").toString().replace("\"",""));
+                        newSegment.setId(kobject.get("id").toString().replace("\"",""));
+                        newSegment.setName(kobject.get("name").toString().replace("\"","").replace(",","\",\""));
+                        newSegment.setBoolOp(segmentBoolOp);
+                        newSegmentArrayList.add(y, newSegment);
+                    }
+                    newSegmentGroupTarget.setSegmentArrayList(newSegmentArrayList);
+                }
+                newSegmentGroupTargetList.add(x, newSegmentGroupTarget);
+            }
+
         }
 
-        return newAdvertiserList;
+        return  newSegmentGroupTargetList;
     }
-
 }
