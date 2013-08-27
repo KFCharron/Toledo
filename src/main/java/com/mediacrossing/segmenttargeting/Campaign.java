@@ -1,6 +1,7 @@
 package com.mediacrossing.segmenttargeting;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Campaign {
     private String id;
@@ -9,41 +10,42 @@ public class Campaign {
     private String advertiserID;
     private String lineItemID;
     private String state;
-    private FrequencyTargets frequencyTargets = new FrequencyTargets();
-    private GeographyTargets geographyTargets = new GeographyTargets();
-    private ArrayList<DaypartTarget> daypartTargetArrayList = new ArrayList<DaypartTarget>();
-    private ArrayList<SegmentGroupTarget> segmentGroupTargetList = new ArrayList<SegmentGroupTarget>();
+    private Profile profile = new Profile();
 
-    public ArrayList<SegmentGroupTarget> getSegmentGroupTargetList() {
-        return segmentGroupTargetList;
+    public void setProfile(Profile p) {
+        profile = p;
+    }
+
+    public List<SegmentGroupTarget> getSegmentGroupTargetList() {
+        return profile.getSegmentGroupTargets();
     }
 
     public void setSegmentGroupTargetList(ArrayList<SegmentGroupTarget> segmentGroupTargetList) {
-        this.segmentGroupTargetList = segmentGroupTargetList;
+        profile.setSegmentGroupTargets(segmentGroupTargetList);
     }
 
     public FrequencyTargets getFrequencyTargets() {
-        return frequencyTargets;
+        return profile.getFrequencyTargets();
     }
 
     public void setFrequencyTargets(FrequencyTargets frequencyTargets) {
-        this.frequencyTargets = frequencyTargets;
+        profile.setFrequencyTargets(frequencyTargets);
     }
 
     public GeographyTargets getGeographyTargets() {
-        return geographyTargets;
+        return profile.getGeographyTargets();
     }
 
     public void setGeographyTargets(GeographyTargets geographyTargets) {
-        this.geographyTargets = geographyTargets;
+        profile.setGeographyTargets(geographyTargets);
     }
 
-    public ArrayList<DaypartTarget> getDaypartTargetArrayList() {
-        return daypartTargetArrayList;
+    public List<DaypartTarget> getDaypartTargetArrayList() {
+        return profile.getDaypartTargetList();
     }
 
     public void setDaypartTargetArrayList(ArrayList<DaypartTarget> daypartTargetArrayList) {
-        this.daypartTargetArrayList = daypartTargetArrayList;
+        profile.setDaypartTargetList(daypartTargetArrayList);
     }
 
     public String getState() {

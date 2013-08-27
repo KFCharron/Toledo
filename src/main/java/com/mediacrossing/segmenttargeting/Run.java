@@ -1,8 +1,31 @@
 package com.mediacrossing.segmenttargeting;
 
+import com.mediacrossing.segmenttargeting.profiles.PartitionedProfileRepository;
+import com.mediacrossing.segmenttargeting.profiles.ProfileRepository;
+import com.mediacrossing.segmenttargeting.profiles.TruncatedProfileRepository;
+import scala.Tuple2;
+import scala.concurrent.duration.Duration;
+
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class Run {
+
+    private static final int APPNEXUS_PARTITION_SIZE = 10;
+    private static final Duration APPNEXUS_REQUEST_DELAY = Duration.apply(1, TimeUnit.MINUTES);
+
+    private static ProfileRepository development(HTTPRequest r) {
+        return new TruncatedProfileRepository(r, 10);
+    }
+
+    private static ProfileRepository production(HTTPRequest r) {
+        return new PartitionedProfileRepository(
+                r,
+                APPNEXUS_PARTITION_SIZE,
+                APPNEXUS_REQUEST_DELAY);
+    }
 
     public static void main(String[] args) throws Exception {
 
@@ -22,38 +45,20 @@ public class Run {
         dataStore.setCampaignArrayList(parser.populateCampaignArrayList(httpConnection.getJSONData()));
 
         //Get Profile data for each Campaign, save campaign
-        ArrayList<Campaign> newCampaignArrayList = dataStore.getCampaignArrayList();
-        for(int y = 0; y < newCampaignArrayList.size(); y++) {
+        final ProfileRepository profileRepository = development(httpConnection);
 
-            String profileID = newCampaignArrayList.get(y).getProfileID();
-            String advertiserID = newCampaignArrayList.get(y).getAdvertiserID();
-            httpConnection.requestProfile(profileID, advertiserID);
-
-            FrequencyTargets newFrequencyTarget = new FrequencyTargets();
-            newFrequencyTarget = parser.populateFrequencyTarget(httpConnection.getJSONData());
-
-            ArrayList<DaypartTarget> newDaypartTargetList = new ArrayList<DaypartTarget>();
-            newDaypartTargetList = parser.populateDaypartTarget(httpConnection.getJSONData());
-
-            GeographyTargets newGeographyTarget = new GeographyTargets();
-            newGeographyTarget = parser.populateGeographyTarget(httpConnection.getJSONData());
-
-            ArrayList<SegmentGroupTarget> newSegmentGroupTargetList = new ArrayList<SegmentGroupTarget>();
-            newSegmentGroupTargetList = parser.populateSegmentGroupTargetList(httpConnection.getJSONData());
-
-            Campaign currentCampaign = newCampaignArrayList.get(y);
-            currentCampaign.setFrequencyTargets(newFrequencyTarget);
-            currentCampaign.setDaypartTargetArrayList(newDaypartTargetList);
-            currentCampaign.setGeographyTargets(newGeographyTarget);
-            currentCampaign.setSegmentGroupTargetList(newSegmentGroupTargetList);
-
-            newCampaignArrayList.set(y, currentCampaign);
-
-
+        final List<Tuple2<String, String>> advertiserIdAndProfileIds =
+                new ArrayList<Tuple2<String, String>>();
+        for (Campaign c : dataStore.getCampaignArrayList()) {
+            advertiserIdAndProfileIds.add(
+                    new Tuple2<String, String>(c.getAdvertiserID(), c.getProfileID()));
         }
-        dataStore.setCampaignArrayList(newCampaignArrayList);
 
-
+        final List<Profile> profiles = profileRepository.findBy(advertiserIdAndProfileIds);
+        for (int index = 0; index < dataStore.getCampaignArrayList().size(); index++) {
+            Campaign c = dataStore.getCampaignArrayList().get(index);
+            c.setProfile(profiles.get(index));
+        }
 
         //Convert Data to CSV files
         csvWriter.writeFrequencyFile(dataStore.getCampaignArrayList());
