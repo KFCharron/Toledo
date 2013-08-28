@@ -21,31 +21,16 @@ public class GeographyTarget {
         return countryTargetList;
     }
 
-    public void setCountryTargetList(ArrayList<CountryTarget> countryTargetList) {
-        this.countryTargetList = countryTargetList;
-    }
-
     public String getCountryAction() {
         return countryAction;
-    }
-
-    public void setCountryAction(String countryAction) {
-        this.countryAction = countryAction;
     }
 
     public ArrayList<DMATarget> getDmaTargetList() {
         return dmaTargetList;
     }
 
-    public void setDmaTargetList(ArrayList<DMATarget> dmaTargetList) {
-        this.dmaTargetList = dmaTargetList;
-    }
-
     public String getDmaAction() {
         return dmaAction;
     }
 
-    public void setDmaAction(String dmaAction) {
-        this.dmaAction = dmaAction;
-    }
 }

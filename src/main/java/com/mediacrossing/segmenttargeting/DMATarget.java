@@ -13,15 +13,8 @@ public class DMATarget {
         return dma;
     }
 
-    public void setDma(String dma) {
-        this.dma = dma;
-    }
-
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
 }

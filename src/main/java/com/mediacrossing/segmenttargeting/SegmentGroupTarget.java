@@ -16,15 +16,9 @@ public class SegmentGroupTarget {
         return boolOp;
     }
 
-    public void setBoolOp(String boolOp) {
-        this.boolOp = boolOp;
-    }
 
     public ArrayList<Segment> getSegmentArrayList() {
         return segmentArrayList;
     }
 
-    public void setSegmentArrayList(ArrayList<Segment> segmentArrayList) {
-        this.segmentArrayList = segmentArrayList;
-    }
 }
