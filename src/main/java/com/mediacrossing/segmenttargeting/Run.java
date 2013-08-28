@@ -5,9 +5,7 @@ import com.mediacrossing.segmenttargeting.profiles.ProfileRepository;
 import com.mediacrossing.segmenttargeting.profiles.TruncatedProfileRepository;
 import scala.Tuple2;
 import scala.concurrent.duration.Duration;
-
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 

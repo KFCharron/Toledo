@@ -21,9 +21,9 @@ class PartitionedProfileRepository(http: HTTPRequest,
 
           val parser = new JSONParse
           val p = new Profile
-          p.setFrequencyTargets(parser.populateFrequencyTarget(http.getJSONData))
+          p.setFrequencyTarget(parser.populateFrequencyTarget(http.getJSONData))
           p.setDaypartTargetList(parser.populateDaypartTarget(http.getJSONData))
-          p.setGeographyTargets(parser.populateGeographyTarget(http.getJSONData))
+          p.setGeographyTarget(parser.populateGeographyTarget(http.getJSONData))
           p.setSegmentGroupTargets(parser.populateSegmentGroupTargetList(http.getJSONData))
 
           Thread.sleep(requestDelay.toMillis)

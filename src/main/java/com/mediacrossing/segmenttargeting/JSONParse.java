@@ -11,13 +11,13 @@ public class JSONParse {
         return newCampaignList;
     }
 
-    public FrequencyTargets populateFrequencyTarget(String rawData) {
+    public FrequencyTarget populateFrequencyTarget(String rawData) {
 
         JsonElement jelement = new JsonParser().parse(rawData);
         JsonObject jobject = jelement.getAsJsonObject();
         jobject = jobject.getAsJsonObject("response");
         jobject = jobject.getAsJsonObject("profile");
-        FrequencyTargets newFrequencyTarget = new FrequencyTargets();
+        FrequencyTarget newFrequencyTarget = new FrequencyTarget();
         try {
         newFrequencyTarget.setMaxDayImps(jobject.get("max_day_imps").toString());
         newFrequencyTarget.setMaxLifetimeImps(jobject.get("max_lifetime_imps").toString());
@@ -55,13 +55,13 @@ public class JSONParse {
         return newDaypartTarget;
     }
 
-    public GeographyTargets populateGeographyTarget(String rawData) {
+    public GeographyTarget populateGeographyTarget(String rawData) {
 
         JsonElement jelement = new JsonParser().parse(rawData);
         JsonObject jobject = jelement.getAsJsonObject();
         jobject = jobject.getAsJsonObject("response");
         jobject = jobject.getAsJsonObject("profile");
-        GeographyTargets newGeographyTarget = new GeographyTargets();
+        GeographyTarget newGeographyTarget = new GeographyTarget();
 
         if (!jobject.get("country_targets").isJsonNull()) {
             JsonArray karray = jobject.getAsJsonArray("country_targets");
@@ -120,10 +120,9 @@ public class JSONParse {
                 newCampaign.setName(jsonObject.get("name").toString().replace("\"",""));
                 newCampaign.setProfileID(jsonObject.get("profileId").toString().replace("\"",""));
                 newCampaign.setLineItemID(jsonObject.get("lineItemId").toString().replace("\"",""));
-                //campaignArrayList1.add(newCampaign);
+                campaignArrayList1.add(newCampaign);
             }
-            //FIXME remove this to get all campaigns, instead of one per advertiser, uncomment one above
-            campaignArrayList1.add(newCampaign);
+
         }
         return  campaignArrayList1;
 

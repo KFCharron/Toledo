@@ -2,7 +2,7 @@ package com.mediacrossing.segmenttargeting;
 
 import java.util.ArrayList;
 
-public class GeographyTargets {
+public class GeographyTarget {
     private ArrayList<CountryTarget> countryTargetList = new ArrayList<CountryTarget>();
     private ArrayList<DMATarget> dmaTargetList = new ArrayList<DMATarget>();
     private String countryAction;

@@ -5,8 +5,8 @@ import java.util.List;
 
 public class Profile {
     private String id;
-    private FrequencyTargets frequencyTargets = new FrequencyTargets();
-    private GeographyTargets geographyTargets = new GeographyTargets();
+    private FrequencyTarget frequencyTarget = new FrequencyTarget();
+    private GeographyTarget geographyTarget = new GeographyTarget();
     private ArrayList<DaypartTarget> daypartTargetList = new ArrayList<DaypartTarget>();
     private List<SegmentGroupTarget> segmentGroupTargets = new ArrayList<SegmentGroupTarget>();
 
@@ -18,12 +18,12 @@ public class Profile {
         this.segmentGroupTargets = segmentGroupTargets;
     }
 
-    public FrequencyTargets getFrequencyTargets() {
-        return frequencyTargets;
+    public FrequencyTarget getFrequencyTarget() {
+        return frequencyTarget;
     }
 
-    public void setFrequencyTargets(FrequencyTargets frequencyTargets) {
-        this.frequencyTargets = frequencyTargets;
+    public void setFrequencyTarget(FrequencyTarget frequencyTarget) {
+        this.frequencyTarget = frequencyTarget;
     }
 
     public String getId() {
@@ -42,11 +42,11 @@ public class Profile {
         this.daypartTargetList = daypartTargetList;
     }
 
-    public GeographyTargets getGeographyTargets() {
-        return geographyTargets;
+    public GeographyTarget getGeographyTarget() {
+        return geographyTarget;
     }
 
-    public void setGeographyTargets(GeographyTargets geographyTargets) {
-        this.geographyTargets = geographyTargets;
+    public void setGeographyTarget(GeographyTarget geographyTarget) {
+        this.geographyTarget = geographyTarget;
     }
 }

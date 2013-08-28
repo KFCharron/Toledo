@@ -24,20 +24,20 @@ public class Campaign {
         profile.setSegmentGroupTargets(segmentGroupTargetList);
     }
 
-    public FrequencyTargets getFrequencyTargets() {
-        return profile.getFrequencyTargets();
+    public FrequencyTarget getFrequencyTargets() {
+        return profile.getFrequencyTarget();
     }
 
-    public void setFrequencyTargets(FrequencyTargets frequencyTargets) {
-        profile.setFrequencyTargets(frequencyTargets);
+    public void setFrequencyTargets(FrequencyTarget frequencyTarget) {
+        profile.setFrequencyTarget(frequencyTarget);
     }
 
-    public GeographyTargets getGeographyTargets() {
-        return profile.getGeographyTargets();
+    public GeographyTarget getGeographyTargets() {
+        return profile.getGeographyTarget();
     }
 
-    public void setGeographyTargets(GeographyTargets geographyTargets) {
-        profile.setGeographyTargets(geographyTargets);
+    public void setGeographyTargets(GeographyTarget geographyTarget) {
+        profile.setGeographyTarget(geographyTarget);
     }
 
     public List<DaypartTarget> getDaypartTargetArrayList() {

@@ -7,7 +7,7 @@ package com.mediacrossing.segmenttargeting;
  * Time: 11:40 AM
  * To change this template use File | Settings | File Templates.
  */
-public class FrequencyTargets {
+public class FrequencyTarget {
     private String maxLifetimeImps;
     private String minSessionImps;
     private String maxSessionImps;
