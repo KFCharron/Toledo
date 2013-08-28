@@ -15,10 +15,14 @@ public class XlsWriter {
             Sheet sheet = wb.createSheet("Sheet1");
             CreationHelper createHelper = wb.getCreationHelper();
 
-            Row row = sheet.createRow((short)0);
-            // Create a cell and put a value in it.
-            Cell cell = row.createCell(0);
-            cell.setCellValue(1);
+            //Header row
+            Row headerRow = sheet.createRow((short)0);
+            headerRow.createCell(0).setCellValue("ID");
+            headerRow.createCell(1).setCellValue("Campaign");
+            headerRow.createCell(2).setCellValue("Segments");
+
+
+
 
 
             //creates file
