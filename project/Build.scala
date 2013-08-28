@@ -30,6 +30,7 @@ object BuildSettings {
 
   object Dependencies {
     val gson = "com.google.code.gson" % "gson" % "2.2.4"
+    val poi = "org.apache.poi" % "poi" % "3.9"
   }
 
 }
@@ -42,7 +43,7 @@ object TargetSegmentingBuild extends Build {
   val root = Project(
     id = "target-segmenting",
     base = file("."),
-    settings = buildSettings210 ++ Seq(libraryDependencies ++= Seq(gson))
+    settings = buildSettings210 ++ Seq(libraryDependencies ++= Seq(gson, poi))
   )
 }
 
