@@ -1,12 +1,5 @@
 package com.mediacrossing.segmenttargeting;
 
-/**
- * Created with IntelliJ IDEA.
- * User: charronkyle
- * Date: 8/22/13
- * Time: 11:40 AM
- * To change this template use File | Settings | File Templates.
- */
 public class FrequencyTarget {
     private String maxLifetimeImps;
     private String minSessionImps;
@@ -14,6 +7,16 @@ public class FrequencyTarget {
     private String maxDayImps;
     private String minMinutesPerImp;
     private String maxPageImps;
+
+    public FrequencyTarget(String maxLifetimeImps, String minSessionImps, String maxSessionImps,
+                           String maxDayImps, String minMinutesPerImp, String maxPageImps) {
+        this.maxLifetimeImps = maxLifetimeImps;
+        this.minSessionImps = minSessionImps;
+        this.maxSessionImps = maxSessionImps;
+        this.maxDayImps = maxDayImps;
+        this.minMinutesPerImp = minMinutesPerImp;
+        this.maxPageImps = maxPageImps;
+    }
 
     public String getMaxPageImps() {
         return maxPageImps;

@@ -10,7 +10,7 @@ public class Campaign {
     private String advertiserID;
     private String lineItemID;
     private String state;
-    private Profile profile = new Profile();
+    private Profile profile;
 
     public void setProfile(Profile p) {
         profile = p;

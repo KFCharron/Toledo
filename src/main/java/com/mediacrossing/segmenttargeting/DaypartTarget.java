@@ -1,16 +1,15 @@
 package com.mediacrossing.segmenttargeting;
 
-/**
- * Created with IntelliJ IDEA.
- * User: charronkyle
- * Date: 8/22/13
- * Time: 10:33 AM
- * To change this template use File | Settings | File Templates.
- */
 public class DaypartTarget {
     private String day;
     private int startHour;
     private int endHour;
+
+    public DaypartTarget(String day, int start, int end) {
+        this.day = day;
+        this.startHour = start;
+        this.endHour = end;
+    }
 
     public String getDay() {
         return day;

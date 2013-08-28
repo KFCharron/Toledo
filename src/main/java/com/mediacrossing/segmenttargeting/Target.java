@@ -1,17 +1,15 @@
 package com.mediacrossing.segmenttargeting;
 
 import java.util.ArrayList;
-
-/**
- * Created with IntelliJ IDEA.
- * User: charronkyle
- * Date: 8/21/13
- * Time: 3:28 PM
- * To change this template use File | Settings | File Templates.
- */
+//FIXME might not be using this class anymore.
 public class Target {
     private String booleanOperator;
     ArrayList<Segment> segmentList = new ArrayList<Segment>();
+
+    public Target (String booleanOperator, ArrayList<Segment> segmentList) {
+        this.booleanOperator = booleanOperator;
+        this.segmentList = segmentList;
+    }
 
     public ArrayList<Segment> getSegmentList() {
         return segmentList;

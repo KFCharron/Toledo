@@ -8,6 +8,15 @@ public class GeographyTarget {
     private String countryAction;
     private String dmaAction;
 
+    public GeographyTarget (ArrayList<CountryTarget> countryTargetList,
+                            ArrayList<DMATarget> dmaTargetList, String countryAction, String dmaAction) {
+
+        this.countryTargetList = countryTargetList;
+        this.dmaTargetList = dmaTargetList;
+        this.countryAction = countryAction;
+        this.dmaAction = dmaAction;
+    }
+
     public ArrayList<CountryTarget> getCountryTargetList() {
         return countryTargetList;
     }

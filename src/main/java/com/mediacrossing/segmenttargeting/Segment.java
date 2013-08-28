@@ -1,17 +1,17 @@
 package com.mediacrossing.segmenttargeting;
 
-/**
- * Created with IntelliJ IDEA.
- * User: charronkyle
- * Date: 8/21/13
- * Time: 3:27 PM
- * To change this template use File | Settings | File Templates.
- */
 public class Segment {
     private String id;
     private String name;
     private String action;
     private String boolOp;
+
+    public Segment (String id, String name, String action, String boolOp) {
+        this.id = id;
+        this.name = name;
+        this.action = action;
+        this.boolOp = boolOp;
+    }
 
     public String getBoolOp() {
         return boolOp;
