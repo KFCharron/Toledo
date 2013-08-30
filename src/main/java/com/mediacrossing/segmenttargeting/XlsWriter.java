@@ -1,4 +1,5 @@
 package com.mediacrossing.segmenttargeting;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.hssf.util.HSSFColor;
@@ -104,6 +105,7 @@ public class XlsWriter {
             short rowCounter = 1;
             for (Campaign campaign : campaignArrayList) {
                 Row campaignRow = sheet.createRow(rowCounter);
+                short linebreakCount = 1;
                 campaignRow.createCell(0).setCellValue(campaign.getId());
                 campaignRow.createCell(1).setCellValue(campaign.getName());
 
@@ -124,11 +126,34 @@ public class XlsWriter {
                         }
                     }
                     oneLine.append("}");
+
                     if ((x+1) < campaign.getSegmentGroupTargetList().size()) {
-                        oneLine.append(" -" + (campaign.getSegmentGroupTargetList().get(x).getBoolOp()) + "- ");
+                        oneLine.append("\n -" + (campaign.getSegmentGroupTargetList().get(x).getBoolOp()) + "- \n");
+                        linebreakCount += 2;
                     }
                 }
                 campaignRow.createCell(2).setCellValue(oneLine.toString());
+
+                CellStyle altRow = wb.createCellStyle();
+                altRow.setFillForegroundColor(HSSFColor.GREY_25_PERCENT.index);
+                altRow.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+                altRow.setWrapText(true);
+
+                CellStyle whiteRow = wb.createCellStyle();
+                whiteRow.setWrapText(true);
+
+                campaignRow.setHeightInPoints(linebreakCount * sheet.getDefaultRowHeightInPoints());
+
+                if((rowCounter % 2) == 1) {
+                    campaignRow.getCell(0).setCellStyle(altRow);
+                    campaignRow.getCell(1).setCellStyle(altRow);
+                    campaignRow.getCell(2).setCellStyle(altRow);
+                }
+                else {
+                    campaignRow.getCell(0).setCellStyle(whiteRow);
+                    campaignRow.getCell(1).setCellStyle(whiteRow);
+                    campaignRow.getCell(2).setCellStyle(whiteRow);
+                }
 
                 rowCounter++;
             }

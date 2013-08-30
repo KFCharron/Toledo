@@ -11,7 +11,8 @@ public class CSVWriter {
         //Frequency csv
         try
         {
-            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("FrequencyReport.csv"), "UTF-8"));
+            BufferedWriter bw =
+                    new BufferedWriter(new OutputStreamWriter(new FileOutputStream("FrequencyReport.csv"), "UTF-8"));
             bw.write("Profile ID, Name, MaxImps/Person," +
                     " MaxImps/Person/Day, MinMinutesBetweenImps");
             bw.newLine();
@@ -49,19 +50,24 @@ public class CSVWriter {
         //Daypart CSV
         try
         {
-            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("DaypartReport.csv"), "UTF-8"));
+            BufferedWriter bw =
+                    new BufferedWriter(new OutputStreamWriter(new FileOutputStream("DaypartReport.csv"), "UTF-8"));
             bw.write("ID, Name, Days, 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23");
             bw.newLine();
             for (Campaign campaign : campaignArrayList)
             {
-                StringBuffer oneLine = new StringBuffer();
-                oneLine.append(campaign.getId());
-                oneLine.append(CSV_SEPARATOR);
 
-                oneLine.append(campaign.getName());
-                oneLine.append(CSV_SEPARATOR);
 
                 for (int b = 0; b < campaign.getDaypartTargetArrayList().size(); b++) {
+
+                    StringBuffer oneLine = new StringBuffer();
+                    oneLine.append(campaign.getId());
+                    oneLine.append(CSV_SEPARATOR);
+
+                    oneLine.append(campaign.getName());
+                    oneLine.append(CSV_SEPARATOR);
+
+
                     oneLine.append(campaign.getDaypartTargetArrayList().get(b).getDay());
                     oneLine.append(CSV_SEPARATOR);
                     for(int c = 0; c <= 23; c++) {
@@ -80,11 +86,12 @@ public class CSVWriter {
                             }
                         }
                     }
+                    bw.write(oneLine.toString());
+                    bw.newLine();
                 }
 
 
-                bw.write(oneLine.toString());
-                bw.newLine();
+
             }
             bw.flush();
             bw.close();
