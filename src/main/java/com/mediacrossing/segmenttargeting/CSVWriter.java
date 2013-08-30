@@ -12,8 +12,8 @@ public class CSVWriter {
         try
         {
             BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("FrequencyReport.csv"), "UTF-8"));
-            bw.write("Profile ID, Name, MaxImps/Person, MinImps/Person/Session, MaxImps/Person/Session," +
-                    " MaxImps/Person/Day, MinMinutesBetweenImps, MaxImpsPerPageLoad");
+            bw.write("Profile ID, Name, MaxImps/Person," +
+                    " MaxImps/Person/Day, MinMinutesBetweenImps");
             bw.newLine();
             for (Campaign campaign : campaignArrayList)
             {
@@ -24,15 +24,15 @@ public class CSVWriter {
                 oneLine.append(CSV_SEPARATOR);
                 oneLine.append(campaign.getFrequencyTargets().getMaxLifetimeImps());
                 oneLine.append(CSV_SEPARATOR);
-                oneLine.append(campaign.getFrequencyTargets().getMinSessionImps());
-                oneLine.append(CSV_SEPARATOR);
-                oneLine.append(campaign.getFrequencyTargets().getMaxSessionImps());
-                oneLine.append(CSV_SEPARATOR);
+//                oneLine.append(campaign.getFrequencyTargets().getMinSessionImps());
+//                oneLine.append(CSV_SEPARATOR);
+//                oneLine.append(campaign.getFrequencyTargets().getMaxSessionImps());
+//                oneLine.append(CSV_SEPARATOR);
                 oneLine.append(campaign.getFrequencyTargets().getMaxDayImps());
                 oneLine.append(CSV_SEPARATOR);
                 oneLine.append(campaign.getFrequencyTargets().getMinMinutesPerImp());
-                oneLine.append(CSV_SEPARATOR);
-                oneLine.append(campaign.getFrequencyTargets().getMaxPageImps());
+//                oneLine.append(CSV_SEPARATOR);
+//                oneLine.append(campaign.getFrequencyTargets().getMaxPageImps());
                 bw.write(oneLine.toString());
                 bw.newLine();
             }
