@@ -109,20 +109,20 @@ public class JSONParse {
         Gson gson = new Gson();
         JsonElement jelement = new JsonParser().parse(rawData);
         for (Map.Entry<String, JsonElement> entry : jelement.getAsJsonObject().entrySet()) {
-            Campaign newCampaign = new Campaign();
-            newCampaign.setAdvertiserID(entry.getKey().replace("\"",""));
+            String currentAdvertiserID = entry.getKey().replace("\"","");
             for (JsonElement values : entry.getValue().getAsJsonArray()) {
-
+                Campaign newCampaign = new Campaign();
                 JsonObject jsonObject = values.getAsJsonObject();
+                newCampaign.setAdvertiserID(currentAdvertiserID);
                 newCampaign.setId(jsonObject.get("id").toString().replace("\"",""));
                 newCampaign.setState(jsonObject.get("status").toString().replace("\"",""));
                 newCampaign.setName(jsonObject.get("name").toString().replace("\"",""));
                 newCampaign.setProfileID(jsonObject.get("profileId").toString().replace("\"",""));
                 newCampaign.setLineItemID(jsonObject.get("lineItemId").toString().replace("\"",""));
-                //campaignArrayList1.add(newCampaign);
+                campaignArrayList1.add(newCampaign);
             }
             //TODO delete this and uncomment one above to get full campaign list
-            campaignArrayList1.add(newCampaign);
+            //campaignArrayList1.add(newCampaign);
         }
         return  campaignArrayList1;
 

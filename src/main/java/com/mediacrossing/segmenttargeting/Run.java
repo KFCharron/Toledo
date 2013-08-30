@@ -65,7 +65,7 @@ public class Run {
         dataStore.setCampaignArrayList(parser.populateCampaignArrayList(httpConnection.getJSONData()));
 
         //Get Profile data for each Campaign, save campaign
-        final ProfileRepository profileRepository = development(httpConnection);
+        final ProfileRepository profileRepository = production(httpConnection);
 
         final List<Tuple2<String, String>> advertiserIdAndProfileIds =
                 new ArrayList<Tuple2<String, String>>();
