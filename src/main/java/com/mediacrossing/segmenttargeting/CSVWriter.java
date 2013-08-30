@@ -25,15 +25,10 @@ public class CSVWriter {
                 oneLine.append(CSV_SEPARATOR);
                 oneLine.append(campaign.getFrequencyTargets().getMaxLifetimeImps());
                 oneLine.append(CSV_SEPARATOR);
-//                oneLine.append(campaign.getFrequencyTargets().getMinSessionImps());
-//                oneLine.append(CSV_SEPARATOR);
-//                oneLine.append(campaign.getFrequencyTargets().getMaxSessionImps());
-//                oneLine.append(CSV_SEPARATOR);
                 oneLine.append(campaign.getFrequencyTargets().getMaxDayImps());
                 oneLine.append(CSV_SEPARATOR);
                 oneLine.append(campaign.getFrequencyTargets().getMinMinutesPerImp());
-//                oneLine.append(CSV_SEPARATOR);
-//                oneLine.append(campaign.getFrequencyTargets().getMaxPageImps());
+
                 bw.write(oneLine.toString());
                 bw.newLine();
             }
@@ -157,52 +152,4 @@ public class CSVWriter {
 
     }
 
-    public void writeSegmentFIle(ArrayList<Campaign> campaignArrayList) {
-        try
-        {
-            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter
-                    (new FileOutputStream("SegmentReport.csv"), "UTF-8"));
-            bw.write("ID, Campaign, Segments");
-            bw.newLine();
-            for (Campaign campaign : campaignArrayList)
-            {
-                StringBuffer oneLine = new StringBuffer();
-
-                oneLine.append(campaign.getId());
-                oneLine.append(CSV_SEPARATOR);
-
-                oneLine.append(campaign.getName());
-                oneLine.append(CSV_SEPARATOR);
-
-
-                for(int x = 0; x < campaign.getSegmentGroupTargetList().size(); x++) {
-                    oneLine.append("{");
-                    ArrayList<Segment> currentSegmentArray =
-                            campaign.getSegmentGroupTargetList().get(x).getSegmentArrayList();
-                    for(int y = 0; y < currentSegmentArray.size(); y++) {
-                        oneLine.append("[");
-                        oneLine.append("("+currentSegmentArray.get(y).getAction()+")");
-                        oneLine.append(currentSegmentArray.get(y).getName());
-                        oneLine.append("]");
-                        if((y+1) < currentSegmentArray.size()) {
-                            oneLine.append(" " + currentSegmentArray.get(y).getBoolOp() + " ");
-                        }
-                    }
-                    oneLine.append("}");
-                    if ((x+1) < campaign.getSegmentGroupTargetList().size()) {
-                        oneLine.append(" -" + (campaign.getSegmentGroupTargetList().get(x).getBoolOp()) + "- ");
-                    }
-                }
-
-                bw.write(oneLine.toString());
-                bw.newLine();
-            }
-            bw.flush();
-            bw.close();
-        }
-        catch (UnsupportedEncodingException e) {}
-        catch (FileNotFoundException e){}
-        catch (IOException e){}
-
-    }
 }

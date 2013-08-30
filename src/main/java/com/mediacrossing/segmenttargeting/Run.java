@@ -86,7 +86,6 @@ public class Run {
         csvWriter.writeFrequencyFile(dataStore.getCampaignArrayList());
         csvWriter.writeDaypartFile(dataStore.getCampaignArrayList());
         csvWriter.writeGeographyFile(dataStore.getCampaignArrayList());
-//        csvWriter.writeSegmentFIle(dataStore.getCampaignArrayList());
 
         XlsWriter xlsWriter = new XlsWriter();
         xlsWriter.writeSegmentFileInXls(dataStore.getCampaignArrayList());
