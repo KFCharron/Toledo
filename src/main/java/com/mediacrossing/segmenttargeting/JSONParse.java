@@ -150,11 +150,11 @@ public class JSONParse {
                         JsonObject kobject = karray.get(y).getAsJsonObject();
                         String action = kobject.get("action").toString().replace("\"","");
                         String id = kobject.get("id").toString().replace("\"","");
-                        String name = kobject.get("name").toString().replace("\"","").replace(",","\",\"");
+                        String name = kobject.get("name").toString().replace("\"","");
                         Segment newSegment = new Segment(id, name, action, segmentBoolOp);
                         newSegmentArrayList.add(y, newSegment);
                     }
-                }//FIXME made a mess here
+                }
                 SegmentGroupTarget newSegmentGroupTarget =
                         new SegmentGroupTarget(segmentGroupBoolOp, newSegmentArrayList);
                 newSegmentGroupTargetList.add(x, newSegmentGroupTarget);

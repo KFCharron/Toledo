@@ -14,6 +14,7 @@ class PartitionedProfileRepository(http: HTTPRequest,
       for {
         partition <- advertiserIdAndProfileIds.asScala.grouped(partitionSize)
       } yield {
+        Thread.sleep(requestDelay.toMillis)
         for {
           (advertiserId, profileId) <- partition
         } yield {
@@ -25,8 +26,6 @@ class PartitionedProfileRepository(http: HTTPRequest,
           p.setDaypartTargetList(parser.populateDaypartTarget(http.getJSONData))
           p.setGeographyTarget(parser.populateGeographyTarget(http.getJSONData))
           p.setSegmentGroupTargets(parser.populateSegmentGroupTargetList(http.getJSONData))
-
-          Thread.sleep(requestDelay.toMillis)
 
           p
         }

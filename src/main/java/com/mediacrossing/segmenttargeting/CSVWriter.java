@@ -11,7 +11,7 @@ public class CSVWriter {
         //Frequency csv
         try
         {
-            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("frequencyReport.csv"), "UTF-8"));
+            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("FrequencyReport.csv"), "UTF-8"));
             bw.write("Profile ID, Name, MaxImps/Person, MinImps/Person/Session, MaxImps/Person/Session," +
                     " MaxImps/Person/Day, MinMinutesBetweenImps, MaxImpsPerPageLoad");
             bw.newLine();
@@ -49,7 +49,7 @@ public class CSVWriter {
         //Daypart CSV
         try
         {
-            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("daypartReport.csv"), "UTF-8"));
+            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("DaypartReport.csv"), "UTF-8"));
             bw.write("ID, Name, Days, 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23");
             bw.newLine();
             for (Campaign campaign : campaignArrayList)
@@ -99,7 +99,7 @@ public class CSVWriter {
         try
         {
             BufferedWriter bw = new BufferedWriter(new OutputStreamWriter
-                    (new FileOutputStream("geographyReport.csv"), "UTF-8"));
+                    (new FileOutputStream("GeographyReport.csv"), "UTF-8"));
             bw.write("ID, Campaign, Action, Countries, Action, Designated Market Areas");
             bw.newLine();
             for (Campaign campaign : campaignArrayList)
@@ -154,7 +154,7 @@ public class CSVWriter {
         try
         {
             BufferedWriter bw = new BufferedWriter(new OutputStreamWriter
-                    (new FileOutputStream("segmentReport.csv"), "UTF-8"));
+                    (new FileOutputStream("SegmentReport.csv"), "UTF-8"));
             bw.write("ID, Campaign, Segments");
             bw.newLine();
             for (Campaign campaign : campaignArrayList)
