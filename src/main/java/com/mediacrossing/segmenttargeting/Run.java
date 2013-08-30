@@ -3,6 +3,7 @@ package com.mediacrossing.segmenttargeting;
 import com.mediacrossing.segmenttargeting.profiles.PartitionedProfileRepository;
 import com.mediacrossing.segmenttargeting.profiles.ProfileRepository;
 import com.mediacrossing.segmenttargeting.profiles.TruncatedProfileRepository;
+import scala.App;
 import scala.Tuple2;
 import scala.concurrent.duration.Duration;
 
@@ -44,7 +45,7 @@ public class Run {
         Properties prop = new Properties();
         try {
             //load a properties file
-            prop.load(new FileInputStream("config.properties"));
+            prop.load(App.class.getClassLoader().getResourceAsStream("config.properties"));
 
             //set the properties
             appNexusUsername = prop.getProperty("appNexusUsername");
