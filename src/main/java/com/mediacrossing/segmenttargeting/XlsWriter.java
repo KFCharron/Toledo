@@ -25,6 +25,12 @@ public class XlsWriter {
             headerRow.createCell(3).setCellValue("Campaign");
             headerRow.createCell(4).setCellValue("Segments");
 
+            //Setting ID columns to the width of 10 chars
+            sheet.setColumnWidth(0, 3072);
+            sheet.setColumnWidth(1, 2560);
+            sheet.setColumnWidth(2, 3840);
+
+
             //Style header
             Font font = wb.createFont();
             font.setFontHeightInPoints((short)14);
@@ -103,9 +109,9 @@ public class XlsWriter {
             }
 
             //auto-size columns
-            sheet.autoSizeColumn(0);
-            sheet.autoSizeColumn(1);
-            sheet.autoSizeColumn(2);
+            //sheet.autoSizeColumn(0);
+            //sheet.autoSizeColumn(1);
+            //sheet.autoSizeColumn(2);
             sheet.autoSizeColumn(3);
             sheet.autoSizeColumn(4);
 
