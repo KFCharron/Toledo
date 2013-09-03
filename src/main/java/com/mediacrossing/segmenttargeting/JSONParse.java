@@ -181,4 +181,36 @@ public class JSONParse {
 
         return  newSegmentGroupTargetList;
     }
+
+    public ArrayList<Campaign> populateBrokerFees(ArrayList<Campaign> campaignArrayList, String rawData) {
+
+        ArrayList<Campaign> newCampaignList = campaignArrayList;
+
+        JsonElement jelement = new JsonParser().parse(rawData);
+        JsonObject jobject = jelement.getAsJsonObject();
+        jobject = jobject.getAsJsonObject("response");
+        JsonArray jarray = jobject.getAsJsonArray("campaigns");
+
+        for (int b = 0; b < jarray.size(); b++) {
+
+            jobject = jarray.get(b).getAsJsonObject();
+
+            if (!jobject.get("broker_fees").isJsonNull()) {
+                jarray = jobject.getAsJsonArray("broker_fees");
+                ArrayList<ServingFee> newServingFeeList = new ArrayList<ServingFee>();
+                for (int x = 0; x < jarray.size(); x++) {
+                    JsonObject jsonObject = jarray.get(x).getAsJsonObject();
+                    String brokerName = jsonObject.get("broker_name").toString().replace("\"","");
+                    String paymentType = jsonObject.get("payment_type").toString().replace("\"","");
+                    String value = jsonObject.get("value").toString().replace("\"","");
+                    String description = jsonObject.get("description").toString().replace("\"","");
+                    ServingFee newServingFee = new ServingFee(brokerName, paymentType, value, description);
+                    newServingFeeList.add(x, newServingFee);
+                }
+                newCampaignList.get(b).setServingFeeList(newServingFeeList);
+            }
+        }
+
+        return newCampaignList;
+    }
 }

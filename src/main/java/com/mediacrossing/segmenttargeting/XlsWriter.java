@@ -24,6 +24,7 @@ public class XlsWriter {
             headerRow.createCell(2).setCellValue("Campaign ID");
             headerRow.createCell(3).setCellValue("Campaign");
             headerRow.createCell(4).setCellValue("Segments");
+            headerRow.createCell(5).setCellValue("Insertion Fees");
 
             //Setting ID columns to the width of 10 chars
             sheet.setColumnWidth(0, 3072);
@@ -38,11 +39,9 @@ public class XlsWriter {
             font.setBoldweight((short)700);
             CellStyle bold = wb.createCellStyle();
             bold.setFont(font);
-            headerRow.getCell(0).setCellStyle(bold);
-            headerRow.getCell(1).setCellStyle(bold);
-            headerRow.getCell(2).setCellStyle(bold);
-            headerRow.getCell(3).setCellStyle(bold);
-            headerRow.getCell(4).setCellStyle(bold);
+            for(int x = 0; x < 6; x++)
+                headerRow.getCell(x).setCellStyle(bold);
+
 
             //Repeat row for every campaign in list
             short rowCounter = 1;
@@ -79,6 +78,19 @@ public class XlsWriter {
                 }
                 campaignRow.createCell(4).setCellValue(oneLine.toString());
 
+                oneLine = new StringBuffer();
+                if(campaign.getServingFeeList() != null) {
+                    for(ServingFee fee : campaign.getServingFeeList()) {
+                        oneLine.append(fee.getBrokerName() + " ");
+                        oneLine.append(fee.getPaymentType() + " ");
+                        oneLine.append("$" + fee.getValue() + " ");
+                        oneLine.append("for " + fee.getDescription() + "\n");
+                    }
+                }
+                campaignRow.createCell(5).setCellValue(oneLine.toString());
+
+
+
                 //Styles for patterning rows
                 CellStyle altRow = wb.createCellStyle();
                 altRow.setFillForegroundColor(HSSFColor.LIGHT_GREEN.index);
@@ -91,29 +103,21 @@ public class XlsWriter {
 
                 //Pattern rows
                 if((rowCounter % 2) == 1) {
-                    campaignRow.getCell(0).setCellStyle(altRow);
-                    campaignRow.getCell(1).setCellStyle(altRow);
-                    campaignRow.getCell(2).setCellStyle(altRow);
-                    campaignRow.getCell(3).setCellStyle(altRow);
-                    campaignRow.getCell(4).setCellStyle(altRow);
+                    for (int x = 0; x < 6; x++)
+                        campaignRow.getCell(x).setCellStyle(altRow);
                 }
                 else {
-                    campaignRow.getCell(0).setCellStyle(whiteRow);
-                    campaignRow.getCell(1).setCellStyle(whiteRow);
-                    campaignRow.getCell(2).setCellStyle(whiteRow);
-                    campaignRow.getCell(3).setCellStyle(whiteRow);
-                    campaignRow.getCell(4).setCellStyle(whiteRow);
+                    for (int x = 0; x < 6; x++)
+                        campaignRow.getCell(x).setCellStyle(whiteRow);
                 }
 
                 rowCounter++;
             }
 
             //auto-size columns
-            //sheet.autoSizeColumn(0);
-            //sheet.autoSizeColumn(1);
-            //sheet.autoSizeColumn(2);
             sheet.autoSizeColumn(3);
             sheet.autoSizeColumn(4);
+            sheet.autoSizeColumn(5);
 
             //writes file
             FileOutputStream fileOut = new FileOutputStream("TargetSegment.xls");

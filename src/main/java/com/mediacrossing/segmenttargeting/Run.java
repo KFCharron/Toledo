@@ -82,6 +82,14 @@ public class Run {
             c.setProfile(profiles.get(index));
         }
 
+        //Get broker fees for each campaign, calls 1 URL
+        httpConnection.requestAllCampaignsFromAppNexus(dataStore.getCampaignArrayList());
+
+        //parse fees, set to campaign list
+        dataStore.setCampaignArrayList
+                (parser.populateBrokerFees(dataStore.getCampaignArrayList(), httpConnection.getJSONData()));
+
+
         //Convert Data to CSV files
         csvWriter.writeFrequencyFile(dataStore.getCampaignArrayList());
         csvWriter.writeDaypartFile(dataStore.getCampaignArrayList());
