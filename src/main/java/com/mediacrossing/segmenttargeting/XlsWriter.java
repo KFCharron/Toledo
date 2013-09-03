@@ -19,9 +19,11 @@ public class XlsWriter {
 
             //Header row
             Row headerRow = sheet.createRow((short) 0);
-            headerRow.createCell(0).setCellValue("ID");
-            headerRow.createCell(1).setCellValue("Campaign");
-            headerRow.createCell(2).setCellValue("Segments");
+            headerRow.createCell(0).setCellValue("Advertiser");
+            headerRow.createCell(1).setCellValue("Line Item");
+            headerRow.createCell(2).setCellValue("Campaign ID");
+            headerRow.createCell(3).setCellValue("Campaign");
+            headerRow.createCell(4).setCellValue("Segments");
 
             //Style header
             Font font = wb.createFont();
@@ -33,14 +35,18 @@ public class XlsWriter {
             headerRow.getCell(0).setCellStyle(bold);
             headerRow.getCell(1).setCellStyle(bold);
             headerRow.getCell(2).setCellStyle(bold);
+            headerRow.getCell(3).setCellStyle(bold);
+            headerRow.getCell(4).setCellStyle(bold);
 
             //Repeat row for every campaign in list
             short rowCounter = 1;
             for (Campaign campaign : campaignArrayList) {
                 Row campaignRow = sheet.createRow(rowCounter);
                 short linebreakCount = 1;
-                campaignRow.createCell(0).setCellValue(campaign.getId());
-                campaignRow.createCell(1).setCellValue(campaign.getName());
+                campaignRow.createCell(0).setCellValue(campaign.getAdvertiserID());
+                campaignRow.createCell(1).setCellValue(campaign.getLineItemID());
+                campaignRow.createCell(2).setCellValue(campaign.getId());
+                campaignRow.createCell(3).setCellValue(campaign.getName());
 
                 StringBuffer oneLine = new StringBuffer();
                 for(int x = 0; x < campaign.getSegmentGroupTargetList().size(); x++) {
@@ -65,7 +71,7 @@ public class XlsWriter {
                         linebreakCount += 2;
                     }
                 }
-                campaignRow.createCell(2).setCellValue(oneLine.toString());
+                campaignRow.createCell(4).setCellValue(oneLine.toString());
 
                 //Styles for patterning rows
                 CellStyle altRow = wb.createCellStyle();
@@ -82,11 +88,15 @@ public class XlsWriter {
                     campaignRow.getCell(0).setCellStyle(altRow);
                     campaignRow.getCell(1).setCellStyle(altRow);
                     campaignRow.getCell(2).setCellStyle(altRow);
+                    campaignRow.getCell(3).setCellStyle(altRow);
+                    campaignRow.getCell(4).setCellStyle(altRow);
                 }
                 else {
                     campaignRow.getCell(0).setCellStyle(whiteRow);
                     campaignRow.getCell(1).setCellStyle(whiteRow);
                     campaignRow.getCell(2).setCellStyle(whiteRow);
+                    campaignRow.getCell(3).setCellStyle(whiteRow);
+                    campaignRow.getCell(4).setCellStyle(whiteRow);
                 }
 
                 rowCounter++;
@@ -96,6 +106,8 @@ public class XlsWriter {
             sheet.autoSizeColumn(0);
             sheet.autoSizeColumn(1);
             sheet.autoSizeColumn(2);
+            sheet.autoSizeColumn(3);
+            sheet.autoSizeColumn(4);
 
             //writes file
             FileOutputStream fileOut = new FileOutputStream("TargetSegment.xls");
