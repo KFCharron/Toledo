@@ -102,7 +102,7 @@ public class CSVWriter {
         {
             BufferedWriter bw = new BufferedWriter(new OutputStreamWriter
                     (new FileOutputStream("GeographyReport.csv"), "UTF-8"));
-            bw.write("ID, Campaign, Action, Countries, Action, Designated Market Areas");
+            bw.write("ID, Campaign, Action, Countries, Zips, DMA Action, Designated Market Areas");
             bw.newLine();
             for (Campaign campaign : campaignArrayList)
             {
@@ -124,6 +124,16 @@ public class CSVWriter {
                     if((b+1) > countryTargetArrayList.size()) {
                         oneLine.append("\",\"");
                     }
+                }
+                oneLine.append(CSV_SEPARATOR);
+
+                ArrayList<ZipTarget> zipTargetArrayList =
+                        campaign.getGeographyTargets().getZipTargetList();
+
+                for (int c = 0; c < zipTargetArrayList.size(); c++) {
+                    oneLine.append(zipTargetArrayList.get(c).getFromZip());
+                    oneLine.append(" - ");
+                    oneLine.append(zipTargetArrayList.get(c).getToZip());
                 }
                 oneLine.append(CSV_SEPARATOR);
 

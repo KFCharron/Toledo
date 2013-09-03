@@ -98,8 +98,25 @@ public class JSONParse {
         //set dma action
         String dmaAction = jobject.get("dma_action").toString();
 
+        //Create new zip target list
+        ArrayList<ZipTarget> zipTargetList = new ArrayList<ZipTarget>();
+
+        if (!jobject.get("zip_targets").isJsonNull()) {
+            //Move to zip target array
+            JsonArray zarray = jobject.getAsJsonArray("zip_targets");
+
+            for (int a = 0; a < zarray.size(); a++) {
+                JsonObject zobject = zarray.get(a).getAsJsonObject();
+                String fromZip = zobject.get("from_zip").toString();
+                String toZip = zobject.get("to_zip").toString();
+                ZipTarget newZipTarget = new ZipTarget(fromZip, toZip);
+                zipTargetList.add(a, newZipTarget);
+
+            }
+        }
+
         GeographyTarget newGeographyTarget =
-                new GeographyTarget(countryTargetList, dmaTargetList, countryAction, dmaAction);
+                new GeographyTarget(countryTargetList, dmaTargetList, countryAction, dmaAction, zipTargetList);
         return newGeographyTarget;
     }
 
