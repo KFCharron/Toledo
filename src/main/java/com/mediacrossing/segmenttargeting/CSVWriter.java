@@ -25,7 +25,7 @@ public class CSVWriter {
                 oneLine.append(CSV_SEPARATOR);
                 oneLine.append(campaign.getId());
                 oneLine.append(CSV_SEPARATOR);
-                oneLine.append(campaign.getName());
+                oneLine.append(campaign.getName().replace(",","\",\""));
                 oneLine.append(CSV_SEPARATOR);
                 oneLine.append(campaign.getFrequencyTargets().getMaxLifetimeImps());
                 oneLine.append(CSV_SEPARATOR);
@@ -67,7 +67,7 @@ public class CSVWriter {
                     oneLine.append(campaign.getId());
                     oneLine.append(CSV_SEPARATOR);
 
-                    oneLine.append(campaign.getName());
+                    oneLine.append(campaign.getName().replace(",","\",\""));
                     oneLine.append(CSV_SEPARATOR);
 
 
@@ -123,7 +123,7 @@ public class CSVWriter {
                 oneLine.append(campaign.getId());
                 oneLine.append(CSV_SEPARATOR);
 
-                oneLine.append(campaign.getName());
+                oneLine.append(campaign.getName().replace(",","\",\""));
                 oneLine.append(CSV_SEPARATOR);
 
                 oneLine.append(campaign.getGeographyTargets().getCountryAction());

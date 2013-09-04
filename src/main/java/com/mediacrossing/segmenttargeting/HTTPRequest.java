@@ -50,11 +50,11 @@ public class HTTPRequest {
 
     public void requestProfile(String profileID, String advertiserID) throws Exception {
         //TODO change back to real data before deployment
-//        this.setUrl("http://api.appnexus.com/profile?id=" + profileID + "&advertiser_id=" + advertiserID);
-//        this.requestData();
-        System.out.println("Fetching Mock Data");
-        MockMXData mockMXData = new MockMXData();
-        this.setJSONData(mockMXData.getMockProfileData());
+        this.setUrl("http://api.appnexus.com/profile?id=" + profileID + "&advertiser_id=" + advertiserID);
+        this.requestData();
+//        System.out.println("Fetching Mock Data");
+//        MockMXData mockMXData = new MockMXData();
+//        this.setJSONData(mockMXData.getMockProfileData());
     }
 
     public void requestAllCampaignsFromAppNexus(ArrayList<Campaign> campaignArrayList) throws Exception {
