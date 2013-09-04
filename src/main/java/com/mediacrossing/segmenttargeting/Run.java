@@ -48,7 +48,7 @@ public class Run {
         Properties prop = new Properties();
         try {
             if(args[0] != null) {
-                File configFile = new File(args[0].substring("--properties=".length()));
+                File configFile = new File(args[0].substring("--properties-file=".length()));
                 InputStream is = new FileInputStream(configFile);
                 try {
                     prop.load(is);
