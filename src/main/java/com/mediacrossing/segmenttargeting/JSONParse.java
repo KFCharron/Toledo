@@ -5,12 +5,6 @@ import java.util.Map;
 
 public class JSONParse {
 
-    public ArrayList<Campaign> getMockCampaignList(String rawData) {
-        ArrayList<Campaign> newCampaignList = new ArrayList<Campaign>();
-        System.out.println("Mock Campaign List not setup yet.");
-        return newCampaignList;
-    }
-
     public FrequencyTarget populateFrequencyTarget(String rawData) {
 
         JsonElement jelement = new JsonParser().parse(rawData);
@@ -123,7 +117,6 @@ public class JSONParse {
     public ArrayList<Campaign> populateCampaignArrayList(String rawData) {
 
         ArrayList<Campaign> campaignArrayList1 = new ArrayList<Campaign>();
-        Gson gson = new Gson();
         JsonElement jelement = new JsonParser().parse(rawData);
         for (Map.Entry<String, JsonElement> entry : jelement.getAsJsonObject().entrySet()) {
             String currentAdvertiserID = entry.getKey().replace("\"","");
@@ -136,10 +129,10 @@ public class JSONParse {
                 newCampaign.setName(jsonObject.get("name").toString().replace("\"",""));
                 newCampaign.setProfileID(jsonObject.get("profileId").toString().replace("\"",""));
                 newCampaign.setLineItemID(jsonObject.get("lineItemId").toString().replace("\"",""));
+                //TODO parse for broker fees, if null, make http request for line item
                 campaignArrayList1.add(newCampaign);
             }
-            //TODO delete this and uncomment one above to get full campaign list
-            //campaignArrayList1.add(newCampaign);
+
         }
         return  campaignArrayList1;
 

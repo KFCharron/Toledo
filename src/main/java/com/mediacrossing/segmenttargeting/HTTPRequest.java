@@ -17,16 +17,11 @@ public class HTTPRequest {
     private String authorizationToken;
     private String JSONData;
     private String url;
-    private int count = 0;
-
-    public String getUrl() {
-        return url;
-    }
 
     public void requestData() throws Exception {
+
         URL obj = new URL(url);
         HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-        //default connection is GET
 
         //add token header
         con.setRequestProperty("Authorization", this.getAuthorizationToken());
@@ -36,6 +31,7 @@ public class HTTPRequest {
         System.out.println("\nSending 'GET' request to URL : " + url);
         System.out.println("Response Code : " + responseCode);
 
+        //Input Reader
         BufferedReader in = new BufferedReader(
                 new InputStreamReader(con.getInputStream()));
         String inputLine;
@@ -50,12 +46,10 @@ public class HTTPRequest {
         String rawJSON = response.toString();
         System.out.println(rawJSON);
         this.setJSONData(rawJSON);
-        count++;
-        System.out.println(count);
     }
 
     public void requestProfile(String profileID, String advertiserID) throws Exception {
-        //TODO
+        //TODO change back to real data before deployment
 //        this.setUrl("http://api.appnexus.com/profile?id=" + profileID + "&advertiser_id=" + advertiserID);
 //        this.requestData();
         System.out.println("Fetching Mock Data");
@@ -63,13 +57,8 @@ public class HTTPRequest {
         this.setJSONData(mockMXData.getMockProfileData());
     }
 
-    public void requestCampaignsByAdvertiserID(String advertiserID) throws Exception {
-        this.setUrl("http://api.appnexus.com/campaign?advertiser_id=" + advertiserID);
-        this.requestData();
-    }
-
     public void requestAllCampaignsFromAppNexus(ArrayList<Campaign> campaignArrayList) throws Exception {
-        StringBuffer oneLine = new StringBuffer();
+        StringBuilder oneLine = new StringBuilder();
         oneLine.append("http://api.appnexus.com/campaign?id=");
         for (Campaign c : campaignArrayList) {
             oneLine.append(c.getId());
@@ -79,22 +68,12 @@ public class HTTPRequest {
         this.requestData();
     }
 
-    public void continueAppNexusCampaignRequest(ArrayList<Campaign> campaignArrayList , int maxObjects) throws Exception {
-        this.setUrl(this.getUrl() + "?start_element=" + maxObjects + "&num_elements=100");
-        this.requestData();
-    }
-
     public void requestAllCampaignsFromMX(String mxUrl) throws Exception {
 
         this.setUrl(mxUrl);
         this.requestData();
 //        MockMXData mockMXData = new MockMXData();
 //        this.setJSONData(mockMXData.getMockCampaignData());
-    }
-
-    public void requestAllAdvertisersFromAN() throws Exception {
-        this.setUrl("http://api.appnexus.com/advertiser");
-        this.requestData();
     }
 
     public void authorizeAppNexusConnection(String username, String password) throws Exception {
@@ -144,40 +123,6 @@ public class HTTPRequest {
 
         this.setAuthorizationToken(token);
 
-    }
-
-    // HTTP GET request
-    private void requestProfiles(String token) throws Exception {
-
-        String url = "http://api.appnexus.com/profile?advertiser_id=165002";
-
-        URL obj = new URL(url);
-        HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-        //default connection is GET
-
-        //add token header
-        con.setRequestProperty("Authorization", token);
-
-        //Send GET request
-        int responseCode = con.getResponseCode();
-        System.out.println("\nSending 'GET' request to URL : " + url);
-        System.out.println("Response Code : " + responseCode);
-
-        BufferedReader in = new BufferedReader(
-                new InputStreamReader(con.getInputStream()));
-        String inputLine;
-        StringBuilder response = new StringBuilder();
-
-        while ((inputLine = in.readLine()) != null) {
-            response.append(inputLine);
-        }
-        in.close();
-
-        //print result
-        String rawJSON = response.toString();
-        System.out.println(rawJSON);
-
-        //return rawJSON;
     }
 
     public String getAuthorizationToken() {

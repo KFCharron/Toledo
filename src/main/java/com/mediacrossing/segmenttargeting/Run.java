@@ -44,10 +44,9 @@ public class Run {
         String fileOutputPath = "";
         String mxUrl = "";
 
+        //load a properties file
         Properties prop = new Properties();
         try {
-            //load a properties file
-            System.out.println(args[0]);
             if(args[0] != null) {
                 File configFile = new File(args[0]);
                 InputStream is = new FileInputStream(configFile);
@@ -110,6 +109,7 @@ public class Run {
         csvWriter.writeDaypartFile(dataStore.getCampaignArrayList(), fileOutputPath);
         csvWriter.writeGeographyFile(dataStore.getCampaignArrayList(), fileOutputPath);
 
+        //Write xls file for segment report
         XlsWriter xlsWriter = new XlsWriter();
         xlsWriter.writeSegmentFileInXls(dataStore.getCampaignArrayList(), fileOutputPath);
 
