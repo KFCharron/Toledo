@@ -7,7 +7,6 @@ import scala.App;
 import scala.Tuple2;
 import scala.concurrent.duration.Duration;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -82,6 +81,14 @@ public class Run {
             Campaign c = dataStore.getCampaignArrayList().get(index);
             c.setProfile(profiles.get(index));
         }
+
+        //Get broker fees for each campaign, calls 1 URL
+        httpConnection.requestAllCampaignsFromAppNexus(dataStore.getCampaignArrayList());
+
+        //parse fees, set to campaign list
+        dataStore.setCampaignArrayList
+                (parser.populateBrokerFees(dataStore.getCampaignArrayList(), httpConnection.getJSONData()));
+
 
         //Convert Data to CSV files
         csvWriter.writeFrequencyFile(dataStore.getCampaignArrayList());

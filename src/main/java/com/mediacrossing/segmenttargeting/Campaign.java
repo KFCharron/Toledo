@@ -11,6 +11,15 @@ public class Campaign {
     private String lineItemID;
     private String state;
     private Profile profile;
+    private ArrayList<ServingFee> servingFeeList;
+
+    public ArrayList<ServingFee> getServingFeeList() {
+        return servingFeeList;
+    }
+
+    public void setServingFeeList(ArrayList<ServingFee> servingFeeList) {
+        this.servingFeeList = servingFeeList;
+    }
 
     public void setProfile(Profile p) {
         profile = p;

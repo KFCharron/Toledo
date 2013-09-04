@@ -10,6 +10,7 @@ import java.io.DataOutputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 
 
 public class HTTPRequest {
@@ -57,6 +58,17 @@ public class HTTPRequest {
 
     public void requestCampaignsByAdvertiserID(String advertiserID) throws Exception {
         this.setUrl("http://api.appnexus.com/campaign?advertiser_id=" + advertiserID);
+        this.requestData();
+    }
+
+    public void requestAllCampaignsFromAppNexus(ArrayList<Campaign> campaignArrayList) throws Exception {
+        StringBuffer oneLine = new StringBuffer();
+        oneLine.append("http://api.appnexus.com/campaign?id=");
+        for (Campaign c : campaignArrayList) {
+            oneLine.append(c.getId());
+            oneLine.append(",");
+        }
+        this.setUrl(oneLine.toString());
         this.requestData();
     }
 
