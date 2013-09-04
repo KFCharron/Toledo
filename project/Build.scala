@@ -43,7 +43,10 @@ object TargetSegmentingBuild extends Build {
   val root = Project(
     id = "target-segmenting",
     base = file("."),
-    settings = buildSettings210 ++ Seq(libraryDependencies ++= Seq(gson, poi))
+    settings =
+      buildSettings210 ++
+        Seq(libraryDependencies ++= Seq(gson, poi)) ++
+        customAssemblySettings
   )
 }
 
