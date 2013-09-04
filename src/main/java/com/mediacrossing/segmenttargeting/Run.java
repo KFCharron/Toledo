@@ -7,7 +7,10 @@ import scala.App;
 import scala.Tuple2;
 import scala.concurrent.duration.Duration;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -33,22 +36,35 @@ public class Run {
 
         //Declare Variables
         JSONParse parser = new JSONParse();
-        ArrayList<Campaign> campaignArrayList;
-        ArrayList<String> advertiserIDList;
         HTTPRequest httpConnection = new HTTPRequest();
         CSVWriter csvWriter = new CSVWriter();
         DataStore dataStore = new DataStore();
         String appNexusUsername = "";
         String appNexusPassword = "";
+        String fileOutputPath = "";
+        String mxUrl = "";
 
         Properties prop = new Properties();
         try {
             //load a properties file
-            prop.load(App.class.getClassLoader().getResourceAsStream("config.properties"));
+            System.out.println(args[0]);
+            if(args[0] != null) {
+                File configFile = new File(args[0]);
+                InputStream is = new FileInputStream(configFile);
+                try {
+                    prop.load(is);
+                } finally {
+                    is.close();
+                }
+            }
+            else
+                prop.load(App.class.getClassLoader().getResourceAsStream("config.properties"));
 
             //set the properties
             appNexusUsername = prop.getProperty("appNexusUsername");
             appNexusPassword = prop.getProperty("appNexusPassword");
+            fileOutputPath = prop.getProperty("outputPath");
+            mxUrl = prop.getProperty("mxUrl");
             APPNEXUS_PARTITION_SIZE = Integer.parseInt(prop.getProperty("partitionSize"));
             APPNEXUS_REQUEST_DELAY =
                     Duration.apply((Integer.parseInt(prop.getProperty("requestDelayInSeconds"))), TimeUnit.SECONDS);
@@ -61,7 +77,7 @@ public class Run {
         httpConnection.authorizeAppNexusConnection(appNexusUsername, appNexusPassword);
 
         //Get All Campaigns from MX, save them into list
-        httpConnection.requestAllCampaignsFromMX();
+        httpConnection.requestAllCampaignsFromMX(mxUrl);
         dataStore.setCampaignArrayList(parser.populateCampaignArrayList(httpConnection.getJSONData()));
 
         //Get Profile data for each Campaign, save campaign
@@ -89,14 +105,13 @@ public class Run {
         dataStore.setCampaignArrayList
                 (parser.populateBrokerFees(dataStore.getCampaignArrayList(), httpConnection.getJSONData()));
 
-
         //Convert Data to CSV files
-        csvWriter.writeFrequencyFile(dataStore.getCampaignArrayList());
-        csvWriter.writeDaypartFile(dataStore.getCampaignArrayList());
-        csvWriter.writeGeographyFile(dataStore.getCampaignArrayList());
+        csvWriter.writeFrequencyFile(dataStore.getCampaignArrayList(), fileOutputPath);
+        csvWriter.writeDaypartFile(dataStore.getCampaignArrayList(), fileOutputPath);
+        csvWriter.writeGeographyFile(dataStore.getCampaignArrayList(), fileOutputPath);
 
         XlsWriter xlsWriter = new XlsWriter();
-        xlsWriter.writeSegmentFileInXls(dataStore.getCampaignArrayList());
+        xlsWriter.writeSegmentFileInXls(dataStore.getCampaignArrayList(), fileOutputPath);
 
     }
 }

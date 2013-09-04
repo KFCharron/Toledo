@@ -4,14 +4,11 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.*;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.util.ArrayList;
 
 public class XlsWriter {
-    public void writeSegmentFileInXls (ArrayList<Campaign> campaignArrayList) {
+    public void writeSegmentFileInXls (ArrayList<Campaign> campaignArrayList, String outputPath) {
         try {
             //Create Workbook
             Workbook wb = new HSSFWorkbook();
@@ -35,7 +32,6 @@ public class XlsWriter {
             //Style header
             Font font = wb.createFont();
             font.setFontHeightInPoints((short)14);
-            //font.setColor(HSSFColor.RED.index);
             font.setBoldweight((short)700);
             CellStyle bold = wb.createCellStyle();
             bold.setFont(font);
@@ -120,7 +116,7 @@ public class XlsWriter {
             sheet.autoSizeColumn(5);
 
             //writes file
-            FileOutputStream fileOut = new FileOutputStream("TargetSegment.xls");
+            FileOutputStream fileOut = new FileOutputStream(new File(outputPath, "TargetSegmentReport.xls"));
             wb.write(fileOut);
             fileOut.close();
         }

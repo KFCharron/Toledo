@@ -7,12 +7,12 @@ public class CSVWriter {
 
     private static final String CSV_SEPARATOR = ",";
 
-    public void writeFrequencyFile(ArrayList<Campaign> campaignArrayList) {
+    public void writeFrequencyFile(ArrayList<Campaign> campaignArrayList, String outputPath) {
         //Frequency csv
         try
         {
             BufferedWriter bw =
-                    new BufferedWriter(new OutputStreamWriter(new FileOutputStream("FrequencyReport.csv"), "UTF-8"));
+                    new BufferedWriter(new OutputStreamWriter(new FileOutputStream(new File(outputPath, "FrequencyReport.csv")), "UTF-8"));
             bw.write("Advertiser, Line Item, Campaign ID, Campaign Name, MaxImps/Person," +
                     " MaxImps/Person/Day, MinMinutesBetweenImps");
             bw.newLine();
@@ -45,12 +45,12 @@ public class CSVWriter {
 
     }
 
-    public void writeDaypartFile(ArrayList<Campaign> campaignArrayList) {
+    public void writeDaypartFile(ArrayList<Campaign> campaignArrayList, String outputPath) {
         //Daypart CSV
         try
         {
             BufferedWriter bw =
-                    new BufferedWriter(new OutputStreamWriter(new FileOutputStream("DaypartReport.csv"), "UTF-8"));
+                    new BufferedWriter(new OutputStreamWriter(new FileOutputStream(new File(outputPath, "DayPartReport.csv")), "UTF-8"));
             bw.write("Advertiser, Line Item, Campaign ID, Name, Days, 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23");
             bw.newLine();
             for (Campaign campaign : campaignArrayList)
@@ -104,12 +104,12 @@ public class CSVWriter {
         catch (IOException e){}
     }
 
-    public void writeGeographyFile(ArrayList<Campaign> campaignArrayList) {
+    public void writeGeographyFile(ArrayList<Campaign> campaignArrayList, String outputPath) {
         //Geography CSV
         try
         {
             BufferedWriter bw = new BufferedWriter(new OutputStreamWriter
-                    (new FileOutputStream("GeographyReport.csv"), "UTF-8"));
+                    (new FileOutputStream(new File(outputPath, "GeographyReport.csv")), "UTF-8"));
             bw.write("Advertiser, Line Item, Campaign ID, Campaign, Action, Countries, Zips, DMA Action, Designated Market Areas");
             bw.newLine();
             for (Campaign campaign : campaignArrayList)

@@ -19,6 +19,9 @@ public class HTTPRequest {
     private String url;
     private int count = 0;
 
+    public String getUrl() {
+        return url;
+    }
 
     public void requestData() throws Exception {
         URL obj = new URL(url);
@@ -52,8 +55,12 @@ public class HTTPRequest {
     }
 
     public void requestProfile(String profileID, String advertiserID) throws Exception {
-        this.setUrl("http://api.appnexus.com/profile?id=" + profileID + "&advertiser_id=" + advertiserID);
-        this.requestData();
+        //TODO
+//        this.setUrl("http://api.appnexus.com/profile?id=" + profileID + "&advertiser_id=" + advertiserID);
+//        this.requestData();
+        System.out.println("Fetching Mock Data");
+        MockMXData mockMXData = new MockMXData();
+        this.setJSONData(mockMXData.getMockProfileData());
     }
 
     public void requestCampaignsByAdvertiserID(String advertiserID) throws Exception {
@@ -72,11 +79,17 @@ public class HTTPRequest {
         this.requestData();
     }
 
-    public void requestAllCampaignsFromMX() throws Exception {
-        //this.setUrl("http://ec2-50-17-18-117.compute-1.amazonaws.com:9000/api/catalog/campaigns");
-        //this.requestData();
-        MockMXData mockMXData = new MockMXData();
-        this.setJSONData(mockMXData.getMockData());
+    public void continueAppNexusCampaignRequest(ArrayList<Campaign> campaignArrayList , int maxObjects) throws Exception {
+        this.setUrl(this.getUrl() + "?start_element=" + maxObjects + "&num_elements=100");
+        this.requestData();
+    }
+
+    public void requestAllCampaignsFromMX(String mxUrl) throws Exception {
+
+        this.setUrl(mxUrl);
+        this.requestData();
+//        MockMXData mockMXData = new MockMXData();
+//        this.setJSONData(mockMXData.getMockCampaignData());
     }
 
     public void requestAllAdvertisersFromAN() throws Exception {
@@ -181,10 +194,6 @@ public class HTTPRequest {
 
     public void setJSONData(String JSONData) {
         this.JSONData = JSONData;
-    }
-
-    public String getUrl() {
-        return url;
     }
 
     public void setUrl(String url) {
