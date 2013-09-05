@@ -50,7 +50,6 @@ public class Run {
         //load a properties file
         Properties prop = new Properties();
         try {
-            if(args[0] != null) {
                 File configFile = new File(args[0].substring("--properties-file=".length()));
                 InputStream is = new FileInputStream(configFile);
                 try {
@@ -58,9 +57,6 @@ public class Run {
                 } finally {
                     is.close();
                 }
-            }
-            else
-                prop.load(App.class.getClassLoader().getResourceAsStream("config.properties"));
 
             //set the properties
             appNexusUsername = prop.getProperty("appNexusUsername");
