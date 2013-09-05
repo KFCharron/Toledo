@@ -2,8 +2,13 @@ package com.mediacrossing.segmenttargeting;
 import com.google.gson.*;
 import java.util.ArrayList;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class JSONParse {
+
+    private static final Logger LOG = LoggerFactory.getLogger(HTTPRequest.class);
+
 
     public FrequencyTarget populateFrequencyTarget(String rawData) {
 
@@ -147,6 +152,12 @@ public class JSONParse {
                 campaignArrayList1.add(newCampaign);
             }
 
+        }
+        if (campaignArrayList1.isEmpty()) {
+           LOG.error("Campaign List is empty after parse.");
+        }
+        else {
+            LOG.info(campaignArrayList1.size() + "campaigns received.");
         }
         return  campaignArrayList1;
 

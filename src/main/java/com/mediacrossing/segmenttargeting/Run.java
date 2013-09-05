@@ -5,7 +5,6 @@ import com.mediacrossing.segmenttargeting.profiles.ProfileRepository;
 import com.mediacrossing.segmenttargeting.profiles.TruncatedProfileRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import scala.App;
 import scala.Tuple2;
 import scala.concurrent.duration.Duration;
 
@@ -59,6 +58,9 @@ public class Run {
                 }
 
             //set the properties
+            if (prop.isEmpty()) {
+                LOG.error("Properties File Failed To Load.");
+            }
             appNexusUsername = prop.getProperty("appNexusUsername");
             appNexusPassword = prop.getProperty("appNexusPassword");
             fileOutputPath = prop.getProperty("outputPath");

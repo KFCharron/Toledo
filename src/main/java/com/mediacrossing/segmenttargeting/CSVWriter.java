@@ -2,10 +2,13 @@ package com.mediacrossing.segmenttargeting;
 
 import java.io.*;
 import java.util.ArrayList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CSVWriter {
 
     private static final String CSV_SEPARATOR = ",";
+    private static final Logger LOG = LoggerFactory.getLogger(HTTPRequest.class);
 
     public void writeFrequencyFile(ArrayList<Campaign> campaignArrayList, String outputPath) {
         //Frequency csv
@@ -38,6 +41,7 @@ public class CSVWriter {
             }
             bw.flush();
             bw.close();
+            LOG.info("FrequencyReport.csv written to " + outputPath);
         }
         catch (UnsupportedEncodingException e) {}
         catch (FileNotFoundException e){}
@@ -98,6 +102,7 @@ public class CSVWriter {
             }
             bw.flush();
             bw.close();
+            LOG.info("DaypartReport.csv written to " + outputPath);
         }
         catch (UnsupportedEncodingException e) {}
         catch (FileNotFoundException e){}
@@ -168,6 +173,8 @@ public class CSVWriter {
             }
             bw.flush();
             bw.close();
+            LOG.info("GeographyReport.csv written to " + outputPath);
+
         }
         catch (UnsupportedEncodingException e) {}
         catch (FileNotFoundException e){}

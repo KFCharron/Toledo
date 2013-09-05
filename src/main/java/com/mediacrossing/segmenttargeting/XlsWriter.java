@@ -3,11 +3,16 @@ import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.util.ArrayList;
 
 public class XlsWriter {
+
+    private static final Logger LOG = LoggerFactory.getLogger(HTTPRequest.class);
+
     public void writeSegmentFileInXls (ArrayList<Campaign> campaignArrayList, String outputPath) {
         try {
             //Create Workbook
@@ -117,6 +122,7 @@ public class XlsWriter {
 
             //writes file
             FileOutputStream fileOut = new FileOutputStream(new File(outputPath, "TargetSegmentReport.xls"));
+            LOG.info("TargetSegmentReport.xls written to " + outputPath);
             wb.write(fileOut);
             fileOut.close();
         }

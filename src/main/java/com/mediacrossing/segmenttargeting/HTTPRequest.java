@@ -49,12 +49,13 @@ public class HTTPRequest {
 
         //print result
         String rawJSON = response.toString();
-        LOG.debug(rawJSON);
+        if (rawJSON.isEmpty()) {
+           LOG.error("No JSON received.");
+        }
         this.setJSONData(rawJSON);
     }
 
     public void requestProfile(String profileID, String advertiserID) throws Exception {
-        //TODO change back to real data before deployment
         this.setUrl("http://api.appnexus.com/profile?id=" + profileID + "&advertiser_id=" + advertiserID);
         this.requestData();
 //        LOG.debug("Fetching Mock Data");
@@ -62,18 +63,7 @@ public class HTTPRequest {
 //        this.setJSONData(mockMXData.getMockProfileData());
     }
 
-    public void requestAllCampaignsFromAppNexus(ArrayList<Campaign> campaignArrayList) throws Exception {
-        StringBuilder oneLine = new StringBuilder();
-        oneLine.append("http://api.appnexus.com/campaign?id=");
-        for (Campaign c : campaignArrayList) {
-            oneLine.append(c.getId());
-            oneLine.append(",");
-        }
-        this.setUrl(oneLine.toString());
-        this.requestData();
-    }
-
-    public void requestAllCampaignsFromMX(String mxUrl) throws Exception {
+   public void requestAllCampaignsFromMX(String mxUrl) throws Exception {
 
         this.setUrl(mxUrl);
         this.requestData();
@@ -124,7 +114,9 @@ public class HTTPRequest {
         jobject = jobject.getAsJsonObject("response");
         String token = jobject.get("token").toString();
         token = token.replace("\"","");
-        LOG.debug(token);
+        if (token.isEmpty()) {
+            LOG.error("Token not received.");
+        }
 
         this.setAuthorizationToken(token);
 
