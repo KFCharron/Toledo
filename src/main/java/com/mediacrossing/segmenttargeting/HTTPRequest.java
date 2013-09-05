@@ -12,11 +12,16 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 public class HTTPRequest {
     private String authorizationToken;
     private String JSONData;
     private String url;
+    
+    private static final Logger LOG = LoggerFactory.getLogger(HTTPRequest.class);
 
     public void requestData() throws Exception {
 
@@ -28,8 +33,8 @@ public class HTTPRequest {
 
         //Send GET request
         int responseCode = con.getResponseCode();
-        System.out.println("\nSending 'GET' request to URL : " + url);
-        System.out.println("Response Code : " + responseCode);
+        LOG.debug("\nSending 'GET' request to URL : " + url);
+        LOG.debug("Response Code : " + responseCode);
 
         //Input Reader
         BufferedReader in = new BufferedReader(
@@ -44,7 +49,7 @@ public class HTTPRequest {
 
         //print result
         String rawJSON = response.toString();
-        System.out.println(rawJSON);
+        LOG.debug(rawJSON);
         this.setJSONData(rawJSON);
     }
 
@@ -52,7 +57,7 @@ public class HTTPRequest {
         //TODO change back to real data before deployment
         this.setUrl("http://api.appnexus.com/profile?id=" + profileID + "&advertiser_id=" + advertiserID);
         this.requestData();
-//        System.out.println("Fetching Mock Data");
+//        LOG.debug("Fetching Mock Data");
 //        MockMXData mockMXData = new MockMXData();
 //        this.setJSONData(mockMXData.getMockProfileData());
     }
@@ -96,8 +101,8 @@ public class HTTPRequest {
         wr.close();
 
         int responseCode = con.getResponseCode();
-        System.out.println("\nSending 'POST' request to URL : " + url);
-        System.out.println("Response Code : " + responseCode);
+        LOG.debug("\nSending 'POST' request to URL : " + url);
+        LOG.debug("Response Code : " + responseCode);
 
         BufferedReader in = new BufferedReader(
                 new InputStreamReader(con.getInputStream()));
@@ -111,7 +116,7 @@ public class HTTPRequest {
 
         //Received JSON data
         String rawJSON = response.toString();
-        System.out.println(rawJSON);
+        LOG.debug(rawJSON);
 
         //Parse JSON, obtain token
         JsonElement jelement = new JsonParser().parse(rawJSON);
@@ -119,7 +124,7 @@ public class HTTPRequest {
         jobject = jobject.getAsJsonObject("response");
         String token = jobject.get("token").toString();
         token = token.replace("\"","");
-        System.out.println(token);
+        LOG.debug(token);
 
         this.setAuthorizationToken(token);
 

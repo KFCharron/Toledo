@@ -3,6 +3,8 @@ package com.mediacrossing.segmenttargeting;
 import com.mediacrossing.segmenttargeting.profiles.PartitionedProfileRepository;
 import com.mediacrossing.segmenttargeting.profiles.ProfileRepository;
 import com.mediacrossing.segmenttargeting.profiles.TruncatedProfileRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import scala.App;
 import scala.Tuple2;
 import scala.concurrent.duration.Duration;
@@ -20,6 +22,7 @@ public class Run {
 
     private static int APPNEXUS_PARTITION_SIZE = 10;
     private static Duration APPNEXUS_REQUEST_DELAY = Duration.apply(60, TimeUnit.SECONDS);
+    private static final Logger LOG = LoggerFactory.getLogger(Run.class);
 
     private static ProfileRepository development(HTTPRequest r) {
         return new TruncatedProfileRepository(r, 10);
@@ -90,7 +93,7 @@ public class Run {
         }
 
         final List<Profile> profiles = profileRepository.findBy(advertiserIdAndProfileIds);
-        System.out.println(profiles.size() + " " + advertiserIdAndProfileIds.size()
+        LOG.debug(profiles.size() + " " + advertiserIdAndProfileIds.size()
                 + " " + dataStore.getCampaignArrayList().size());
         for (int index = 0; index < profiles.size(); index++) {
             Campaign c = dataStore.getCampaignArrayList().get(index);
