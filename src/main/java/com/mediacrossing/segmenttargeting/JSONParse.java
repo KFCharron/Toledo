@@ -1,6 +1,10 @@
 package com.mediacrossing.segmenttargeting;
 import com.google.gson.*;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -119,7 +123,7 @@ public class JSONParse {
         return newGeographyTarget;
     }
 
-    public ArrayList<Campaign> populateCampaignArrayList(String rawData) {
+    public ArrayList<Campaign> populateCampaignArrayList(String rawData) throws ParseException {
 
         ArrayList<Campaign> campaignArrayList1 = new ArrayList<Campaign>();
         JsonElement jelement = new JsonParser().parse(rawData);
@@ -135,7 +139,6 @@ public class JSONParse {
                 newCampaign.setProfileID(jsonObject.get("profileId").toString().replace("\"",""));
                 newCampaign.setLineItemID(jsonObject.get("lineItemId").toString().replace("\"",""));
                 newCampaign.setEndDate(jsonObject.get("endDate").toString().replace("\"",""));
-                //TODO adjust a
                 if (!jsonObject.get("brokerFees").isJsonNull()) {
                     JsonArray jarray = jsonObject.getAsJsonArray("brokerFees");
                     ArrayList<ServingFee> newServingFeeList = new ArrayList<ServingFee>();
@@ -150,7 +153,16 @@ public class JSONParse {
                     }
                     newCampaign.setServingFeeList(newServingFeeList);
                 }
-                campaignArrayList1.add(newCampaign);
+                //only adds campaign to list if the current date falls before the campaign end date
+                if (!newCampaign.getEndDate().equals("null")) {
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
+                    Date campaignEndDate = sdf.parse(newCampaign.getEndDate());
+                    Date now = new Date();
+                    if(now.getTime() < campaignEndDate.getTime()) {
+                        campaignArrayList1.add(newCampaign);
+                    }
+                }
+
             }
 
         }
