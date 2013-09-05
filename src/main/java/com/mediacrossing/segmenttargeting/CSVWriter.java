@@ -50,7 +50,7 @@ public class CSVWriter {
         try
         {
             BufferedWriter bw =
-                    new BufferedWriter(new OutputStreamWriter(new FileOutputStream(new File(outputPath, "DayPartReport.csv")), "UTF-8"));
+                    new BufferedWriter(new OutputStreamWriter(new FileOutputStream(new File(outputPath, "DaypartReport.csv")), "UTF-8"));
             bw.write("Advertiser, Line Item, Campaign ID, Name, Days, 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23");
             bw.newLine();
             for (Campaign campaign : campaignArrayList)
