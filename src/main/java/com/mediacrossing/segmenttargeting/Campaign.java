@@ -12,6 +12,15 @@ public class Campaign {
     private String state;
     private Profile profile;
     private ArrayList<ServingFee> servingFeeList;
+    private String endDate;
+
+    public String getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(String endDate) {
+        this.endDate = endDate;
+    }
 
     public ArrayList<ServingFee> getServingFeeList() {
         return servingFeeList;

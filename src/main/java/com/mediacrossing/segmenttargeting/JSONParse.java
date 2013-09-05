@@ -134,6 +134,7 @@ public class JSONParse {
                 newCampaign.setName(jsonObject.get("name").toString().replace("\"",""));
                 newCampaign.setProfileID(jsonObject.get("profileId").toString().replace("\"",""));
                 newCampaign.setLineItemID(jsonObject.get("lineItemId").toString().replace("\"",""));
+                newCampaign.setEndDate(jsonObject.get("endDate").toString().replace("\"",""));
                 //TODO adjust a
                 if (!jsonObject.get("brokerFees").isJsonNull()) {
                     JsonArray jarray = jsonObject.getAsJsonArray("brokerFees");

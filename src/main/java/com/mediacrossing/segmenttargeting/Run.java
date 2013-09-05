@@ -60,7 +60,10 @@ public class Run {
             //set the properties
             if (prop.isEmpty()) {
                 LOG.error("Properties File Failed To Load.");
+            } else {
+                LOG.info("Properties File successfully loaded.");
             }
+
             appNexusUsername = prop.getProperty("appNexusUsername");
             appNexusPassword = prop.getProperty("appNexusPassword");
             fileOutputPath = prop.getProperty("outputPath");
