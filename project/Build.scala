@@ -31,6 +31,7 @@ object BuildSettings {
   object Dependencies {
     val gson = "com.google.code.gson" % "gson" % "2.2.4"
     val poi = "org.apache.poi" % "poi" % "3.9"
+    val logback = "ch.qos.logback" % "logback-classic" % "1.0.13"
   }
 
 }
@@ -45,7 +46,7 @@ object TargetSegmentingBuild extends Build {
     base = file("."),
     settings =
       buildSettings210 ++
-        Seq(libraryDependencies ++= Seq(gson, poi)) ++
+        Seq(libraryDependencies ++= Seq(gson, poi, logback)) ++
         customAssemblySettings
   )
 }
