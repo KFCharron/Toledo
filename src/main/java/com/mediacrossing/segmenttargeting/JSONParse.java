@@ -45,7 +45,7 @@ public class JSONParse {
             for(int y = 0; y < karray.size(); y++) {
                 JsonObject kobject = karray.get(y).getAsJsonObject();
                 //add variables to DaypartTarget
-                String day = kobject.get("day").toString();
+                String day = kobject.get("day").toString().replace("\"","");
                 int start = kobject.get("start_hour").getAsInt();
                 int end = kobject.get("end_hour").getAsInt();
                 DaypartTarget newDaypart = new DaypartTarget(day, start, end);

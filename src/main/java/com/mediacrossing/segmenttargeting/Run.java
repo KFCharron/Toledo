@@ -105,14 +105,9 @@ public class Run {
             c.setProfile(profiles.get(index));
         }
 
-        //Convert Data to CSV files
-        csvWriter.writeFrequencyFile(dataStore.getLiveCampaignArrayList(), fileOutputPath);
-        csvWriter.writeDaypartFile(dataStore.getLiveCampaignArrayList(), fileOutputPath);
-        csvWriter.writeGeographyFile(dataStore.getLiveCampaignArrayList(), fileOutputPath);
-
-        //Write xls file for segment report
+        //Write xls file for all reports
         XlsWriter xlsWriter = new XlsWriter();
-        xlsWriter.writeSegmentFileInXls(dataStore.getLiveCampaignArrayList(), fileOutputPath);
+        xlsWriter.writeAllReports(dataStore.getLiveCampaignArrayList(), fileOutputPath);
 
     }
 }
