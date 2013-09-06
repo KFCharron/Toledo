@@ -153,18 +153,8 @@ public class JSONParse {
                     }
                     newCampaign.setServingFeeList(newServingFeeList);
                 }
-                //only adds campaign to list if the current date falls before the campaign end date
-                if (!newCampaign.getEndDate().equals("null")) {
-                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
-                    Date campaignEndDate = sdf.parse(newCampaign.getEndDate());
-                    Date now = new Date();
-                    if(now.getTime() < campaignEndDate.getTime()) {
-                        campaignArrayList1.add(newCampaign);
-                    }
-                }
-
+                campaignArrayList1.add(newCampaign);
             }
-
         }
         if (campaignArrayList1.isEmpty()) {
            LOG.error("Campaign List is empty after parse.");

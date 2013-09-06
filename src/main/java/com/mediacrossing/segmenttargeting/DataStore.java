@@ -1,26 +1,39 @@
 package com.mediacrossing.segmenttargeting;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
-/**
- * Created with IntelliJ IDEA.
- * User: charronkyle
- * Date: 8/26/13
- * Time: 9:33 AM
- * To change this template use File | Settings | File Templates.
- */
 public class DataStore {
     private ArrayList<Campaign> campaignArrayList;
+    private ArrayList<Campaign> liveCampaignArrayList = new ArrayList<Campaign>();
 
     public ArrayList<Campaign> getCampaignArrayList() {
         return campaignArrayList;
     }
 
-    public void setCampaignArrayList(ArrayList<Campaign> campaignArrayList) {
+    public void setCampaignArrayList(ArrayList<Campaign> campaignArrayList) throws ParseException {
         this.campaignArrayList = campaignArrayList;
+
     }
 
-    public void saveAllCampaigns(String rawJSON) {
+    //returns a new list of live campaigns out of all campaigns
+    public ArrayList<Campaign> getLiveCampaignArrayList() {
+        return liveCampaignArrayList;
+    }
 
+    public void setLiveCampaignArrayList() throws ParseException {
+        //builds live campaign list
+        for (Campaign c : campaignArrayList) {
+            if (!c.getEndDate().equals("null")) {
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
+                Date campaignEndDate = sdf.parse(c.getEndDate());
+                Date now = new Date();
+                if(now.getTime() < campaignEndDate.getTime()) {
+                    liveCampaignArrayList.add(c);
+                }
+            }
+        }
     }
 }

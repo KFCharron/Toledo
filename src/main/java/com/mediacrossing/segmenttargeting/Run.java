@@ -81,34 +81,38 @@ public class Run {
 
         //Get All Campaigns from MX, save them into list
         httpConnection.requestAllCampaignsFromMX(mxUrl);
+        LOG.debug(httpConnection.getJSONData());
         dataStore.setCampaignArrayList(parser.populateCampaignArrayList(httpConnection.getJSONData()));
+        dataStore.setLiveCampaignArrayList();
+        LOG.info(dataStore.getLiveCampaignArrayList().size() + " campaigns are live.");
+
 
         //Get Profile data for each Campaign, save campaign
         final ProfileRepository profileRepository = production(httpConnection);
 
         final List<Tuple2<String, String>> advertiserIdAndProfileIds =
                 new ArrayList<Tuple2<String, String>>();
-        for (Campaign c : dataStore.getCampaignArrayList()) {
+        for (Campaign c : dataStore.getLiveCampaignArrayList()) {
             advertiserIdAndProfileIds.add(
                     new Tuple2<String, String>(c.getAdvertiserID(), c.getProfileID()));
         }
 
         final List<Profile> profiles = profileRepository.findBy(advertiserIdAndProfileIds);
         LOG.debug(profiles.size() + " " + advertiserIdAndProfileIds.size()
-                + " " + dataStore.getCampaignArrayList().size());
+                + " " + dataStore.getLiveCampaignArrayList().size());
         for (int index = 0; index < profiles.size(); index++) {
-            Campaign c = dataStore.getCampaignArrayList().get(index);
+            Campaign c = dataStore.getLiveCampaignArrayList().get(index);
             c.setProfile(profiles.get(index));
         }
 
         //Convert Data to CSV files
-        csvWriter.writeFrequencyFile(dataStore.getCampaignArrayList(), fileOutputPath);
-        csvWriter.writeDaypartFile(dataStore.getCampaignArrayList(), fileOutputPath);
-        csvWriter.writeGeographyFile(dataStore.getCampaignArrayList(), fileOutputPath);
+        csvWriter.writeFrequencyFile(dataStore.getLiveCampaignArrayList(), fileOutputPath);
+        csvWriter.writeDaypartFile(dataStore.getLiveCampaignArrayList(), fileOutputPath);
+        csvWriter.writeGeographyFile(dataStore.getLiveCampaignArrayList(), fileOutputPath);
 
         //Write xls file for segment report
         XlsWriter xlsWriter = new XlsWriter();
-        xlsWriter.writeSegmentFileInXls(dataStore.getCampaignArrayList(), fileOutputPath);
+        xlsWriter.writeSegmentFileInXls(dataStore.getLiveCampaignArrayList(), fileOutputPath);
 
     }
 }
