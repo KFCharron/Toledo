@@ -2,9 +2,7 @@ package com.mediacrossing.segmenttargeting;
 import com.google.gson.*;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,8 +67,8 @@ public class JSONParse {
 
             for (int z = 0; z < karray.size(); z++) {
                 JsonObject lobject = karray.get(z).getAsJsonObject();
-                String country = lobject.get("country").toString();
-                String name = lobject.get("name").toString();
+                String country = lobject.get("country").toString().replace("\"","");
+                String name = lobject.get("name").toString().replace("\"","");
                 CountryTarget newCountry = new CountryTarget(country, name);
                 countryTargetList.add(z, newCountry);
             }
@@ -78,7 +76,7 @@ public class JSONParse {
         }
 
         //set country action
-        String countryAction = jobject.get("country_action").toString();
+        String countryAction = jobject.get("country_action").toString().replace("\"","");
 
         //Create new dma list
         ArrayList<DMATarget> dmaTargetList = new ArrayList<DMATarget>();
@@ -90,8 +88,8 @@ public class JSONParse {
 
             for (int i = 0; i < karray.size(); i++) {
                 JsonObject pobject = karray.get(i).getAsJsonObject();
-                String dma = pobject.get("dma").toString();
-                String name = pobject.get("name").toString();
+                String dma = pobject.get("dma").toString().replace("\"","");
+                String name = pobject.get("name").toString().replace("\"","");
                 DMATarget newDMATarget = new DMATarget(dma, name);
                 dmaTargetList.add(i, newDMATarget);
             }
@@ -99,7 +97,7 @@ public class JSONParse {
         }
 
         //set dma action
-        String dmaAction = jobject.get("dma_action").toString();
+        String dmaAction = jobject.get("dma_action").toString().replace("\"","");
 
         //Create new zip target list
         ArrayList<ZipTarget> zipTargetList = new ArrayList<ZipTarget>();
@@ -110,8 +108,8 @@ public class JSONParse {
 
             for (int a = 0; a < zarray.size(); a++) {
                 JsonObject zobject = zarray.get(a).getAsJsonObject();
-                String fromZip = zobject.get("from_zip").toString();
-                String toZip = zobject.get("to_zip").toString();
+                String fromZip = zobject.get("from_zip").toString().replace("\"","");
+                String toZip = zobject.get("to_zip").toString().replace("\"","");
                 ZipTarget newZipTarget = new ZipTarget(fromZip, toZip);
                 zipTargetList.add(a, newZipTarget);
 
