@@ -39,7 +39,6 @@ public class Run {
         //Declare Variables
         JSONParse parser = new JSONParse();
         HTTPRequest httpConnection = new HTTPRequest();
-        CSVWriter csvWriter = new CSVWriter();
         DataStore dataStore = new DataStore();
         String appNexusUsername = "";
         String appNexusPassword = "";
