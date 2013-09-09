@@ -6,6 +6,7 @@ public class Advertiser {
 
     private String advertiserID;
     private List<LineItem> lineItemList;
+    private boolean live = true;
 
     public Advertiser(String advertiserID, List<LineItem> lineItemList) {
         this.advertiserID = advertiserID;
@@ -22,5 +23,13 @@ public class Advertiser {
 
     public List<LineItem> getLineItemList() {
         return lineItemList;
+    }
+
+    public boolean isLive() {
+        return live;
+    }
+
+    public void setLive(boolean live) {
+        this.live = live;
     }
 }

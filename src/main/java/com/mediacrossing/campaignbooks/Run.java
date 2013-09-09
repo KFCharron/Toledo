@@ -3,6 +3,7 @@ package com.mediacrossing.campaignbooks;
 import com.mediacrossing.segmenttargeting.HTTPRequest;
 import com.mediacrossing.segmenttargeting.JSONParse;
 
+import java.io.FileNotFoundException;
 import java.util.List;
 
 public class Run {
@@ -26,13 +27,22 @@ public class Run {
         int count = 0;
         for (Advertiser advertiser : advertiserList) {
             httpConnection.setUrl(mxUrl + "/advertisers/" + advertiser.getAdvertiserID() + "/line-items");
-            httpConnection.requestData();
-            rawJsonData = httpConnection.getJSONData();
-            List<LineItem> lineItemList = parser.populateLineItemList(rawJsonData);
-            advertiser = new Advertiser(advertiser.getAdvertiserID(), lineItemList);
-            advertiserList.set(count,advertiser);
+            try {
+                httpConnection.requestData();
+                rawJsonData = httpConnection.getJSONData();
+                List<LineItem> lineItemList = parser.populateLineItemList(rawJsonData);
+                advertiser = new Advertiser(advertiser.getAdvertiserID(), lineItemList);
+                advertiserList.set(count, advertiser);
+            } catch (FileNotFoundException e) {
+                advertiserList.get(count).setLive(false);
+                System.out.println(advertiser.getAdvertiserID() + ": No line items found, live set to false.");
+            }
+
+
             count++;
         }
+        System.out.println(advertiserList.toString());
+
 
         //Query AN for campaign quick stats interval=yesterday
 
