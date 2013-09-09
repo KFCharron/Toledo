@@ -6,8 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.mediacrossing.campaignbooks.Advertiser;
-import com.mediacrossing.campaignbooks.LineItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -203,24 +201,6 @@ public class JSONParse {
         }
 
         return  newSegmentGroupTargetList;
-    }
-
-    public List<Advertiser> populateAdvertiserList (String rawData) {
-        List<Advertiser> advertiserList = new ArrayList<Advertiser>();
-        JsonElement jsonElement = new JsonParser().parse(rawData);
-        JsonArray advertiserJsonArray = jsonElement.getAsJsonArray();
-        for (JsonElement advertiser : advertiserJsonArray) {
-            JsonObject jsonObject = advertiser.getAsJsonObject();
-            JsonArray lineItemJsonArray = jsonObject.get("lineItemIds").getAsJsonArray();
-            List<LineItem> lineItemList = new ArrayList<LineItem>();
-            for (JsonElement lineItem : lineItemJsonArray) {
-                LineItem newLineItem = new LineItem(lineItem.getAsString());
-                  lineItemList.add(newLineItem);
-            }
-            advertiserList.add(new Advertiser(jsonObject.get("id").toString(), lineItemList));
-        }
-        return advertiserList;
-
     }
 
 }

@@ -11,4 +11,16 @@ public class Advertiser {
         this.advertiserID = advertiserID;
         this.lineItemList = lineItemList;
     }
+
+    public Advertiser(String advertiserID) {
+        this.advertiserID = advertiserID;
+    }
+
+    public String getAdvertiserID() {
+        return advertiserID;
+    }
+
+    public List<LineItem> getLineItemList() {
+        return lineItemList;
+    }
 }

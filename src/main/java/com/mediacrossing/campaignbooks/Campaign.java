@@ -24,4 +24,8 @@ public class Campaign {
 
         //TODO calculate daysRemaining, actualDailyBudget, totalDelivery
     }
+
+    public Campaign(String campaignID) {
+        this.campaignID = campaignID;
+    }
 }
