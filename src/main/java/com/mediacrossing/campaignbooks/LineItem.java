@@ -20,4 +20,8 @@ public class LineItem {
         this.overallBudget = overallBudget;
         this.dailyBudget = dailyBudget;
     }
+
+    public LineItem(String lineItemID) {
+        this.lineItemID = lineItemID;
+    }
 }

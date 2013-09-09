@@ -1,6 +1,7 @@
 package com.mediacrossing.campaignbooks;
 
 import com.mediacrossing.segmenttargeting.HTTPRequest;
+import com.mediacrossing.segmenttargeting.JSONParse;
 
 public class Run {
 
@@ -9,6 +10,7 @@ public class Run {
         String mxAdvertiserUrl = "http://ec2-50-17-18-117.compute-1.amazonaws.com:9000/api/catalog/advertisers";
         String rawJsonData;
         HTTPRequest httpConnection = new HTTPRequest();
+        JSONParse parser = new JSONParse();
 
         //Query MX for all advertisers
         httpConnection.setUrl(mxAdvertiserUrl);
@@ -16,6 +18,7 @@ public class Run {
         rawJsonData = httpConnection.getJSONData();
 
         //Save to list of advertisers
+        parser.populateAdvertiserList(rawJsonData);
 
         //Query MX for line items of each advertiser
 

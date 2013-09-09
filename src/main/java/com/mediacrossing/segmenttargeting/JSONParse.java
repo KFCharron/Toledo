@@ -3,7 +3,11 @@ import com.google.gson.*;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+
+import com.mediacrossing.campaignbooks.Advertiser;
+import com.mediacrossing.campaignbooks.LineItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,8 +71,8 @@ public class JSONParse {
 
             for (int z = 0; z < karray.size(); z++) {
                 JsonObject lobject = karray.get(z).getAsJsonObject();
-                String country = lobject.get("country").toString().replace("\"","");
-                String name = lobject.get("name").toString().replace("\"","");
+                String country = lobject.get("country").toString().replace("\"", "");
+                String name = lobject.get("name").toString().replace("\"", "");
                 CountryTarget newCountry = new CountryTarget(country, name);
                 countryTargetList.add(z, newCountry);
             }
@@ -88,7 +92,7 @@ public class JSONParse {
 
             for (int i = 0; i < karray.size(); i++) {
                 JsonObject pobject = karray.get(i).getAsJsonObject();
-                String dma = pobject.get("dma").toString().replace("\"","");
+                String dma = pobject.get("dma").toString().replace("\"", "");
                 String name = pobject.get("name").toString().replace("\"","");
                 DMATarget newDMATarget = new DMATarget(dma, name);
                 dmaTargetList.add(i, newDMATarget);
@@ -108,7 +112,7 @@ public class JSONParse {
 
             for (int a = 0; a < zarray.size(); a++) {
                 JsonObject zobject = zarray.get(a).getAsJsonObject();
-                String fromZip = zobject.get("from_zip").toString().replace("\"","");
+                String fromZip = zobject.get("from_zip").toString().replace("\"", "");
                 String toZip = zobject.get("to_zip").toString().replace("\"","");
                 ZipTarget newZipTarget = new ZipTarget(fromZip, toZip);
                 zipTargetList.add(a, newZipTarget);
@@ -199,6 +203,24 @@ public class JSONParse {
         }
 
         return  newSegmentGroupTargetList;
+    }
+
+    public List<Advertiser> populateAdvertiserList (String rawData) {
+        List<Advertiser> advertiserList = new ArrayList<Advertiser>();
+        JsonElement jsonElement = new JsonParser().parse(rawData);
+        JsonArray advertiserJsonArray = jsonElement.getAsJsonArray();
+        for (JsonElement advertiser : advertiserJsonArray) {
+            JsonObject jsonObject = advertiser.getAsJsonObject();
+            JsonArray lineItemJsonArray = jsonObject.get("lineItemIds").getAsJsonArray();
+            List<LineItem> lineItemList = new ArrayList<LineItem>();
+            for (JsonElement lineItem : lineItemJsonArray) {
+                LineItem newLineItem = new LineItem(lineItem.getAsString());
+                  lineItemList.add(newLineItem);
+            }
+            advertiserList.add(new Advertiser(jsonObject.get("id").toString(), lineItemList));
+        }
+        return advertiserList;
+
     }
 
 }
