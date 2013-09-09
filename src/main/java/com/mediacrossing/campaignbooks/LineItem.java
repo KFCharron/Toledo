@@ -11,7 +11,8 @@ public class LineItem {
     private String dailyBudget;
     private List<Campaign> campaignList;
 
-    public LineItem(String lineItemID, String lineItemName, String startDate, String endDate, String overallBudget, String dailyBudget) {
+    public LineItem(String lineItemID, String lineItemName, String startDate,
+                    String endDate, String overallBudget, String dailyBudget) {
         this.lineItemID = lineItemID;
         this.lineItemName = lineItemName;
         this.startDate = startDate;
