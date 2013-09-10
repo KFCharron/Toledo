@@ -55,10 +55,29 @@ public class ExcelWriter {
         //add campaign header row
         Row campaignHeaderRow = lineItemSheet.createRow(3);
         campaignHeaderRow.createCell(0).setCellValue("Campaign ID");
+        campaignHeaderRow.createCell(1).setCellValue("Campaign Name");
+        campaignHeaderRow.createCell(2).setCellValue("Lifetime Budget");
+        campaignHeaderRow.createCell(3).setCellValue("Start Date");
+        campaignHeaderRow.createCell(4).setCellValue("End Date");
+        campaignHeaderRow.createCell(5).setCellValue("# of Days");
+        campaignHeaderRow.createCell(6).setCellValue("Daily Budget");
+        campaignHeaderRow.createCell(7).setCellValue("Actual Daily Budget");
+        campaignHeaderRow.createCell(8).setCellValue("Total Delivery");
 
         //style header
+        font.setFontHeightInPoints((short) 12);
+        bold.setFont(font);
+//        for(int x = 0; x < 7; x++)
+//            lineItemHeader.getCell(x).setCellStyle(bold);
+        //Try this, if fails, use commented method
+        for(Cell cell : campaignHeaderRow) {
+            cell.setCellStyle(bold);
+        }
 
         //repeat for each campaign
+        for (Campaign campaign : lineItem.getCampaignList()) {
+
+        }
 
         //pattern the rows
 
