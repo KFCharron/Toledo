@@ -10,6 +10,8 @@ public class LineItem {
     private String overallBudget;
     private String dailyBudget;
     private List<Campaign> campaignList;
+    private int daysActive;
+    private int daysRemaining;
 
     public LineItem(String lineItemID, String lineItemName, String startDate,
                     String endDate, String overallBudget, String dailyBudget, List<Campaign> campaignList) {
@@ -28,5 +30,41 @@ public class LineItem {
 
     public String getLineItemName() {
         return lineItemName;
+    }
+
+    public String getLineItemID() {
+        return lineItemID;
+    }
+
+    public String getStartDate() {
+        //TODO convert to human readable
+        return startDate;
+    }
+
+    public String getEndDate() {
+        //TODO convert to human readable
+        return endDate;
+    }
+
+    public String getOverallBudget() {
+        return overallBudget;
+    }
+
+    public String getDailyBudget() {
+        return dailyBudget;
+    }
+
+    public List<Campaign> getCampaignList() {
+        return campaignList;
+    }
+
+    public int getDaysActive() {
+        //TODO calculate days active
+        return daysActive;
+    }
+
+    public int getDaysRemaining() {
+        //TODO calculate days remaining
+        return daysRemaining;
     }
 }

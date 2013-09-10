@@ -13,7 +13,7 @@ public class ExcelWriter {
 
     public void writeLineItemSheetToWorkbook(LineItem lineItem) {
 
-        //Create new sheet TODO add name
+        //Create new sheet
         Sheet lineItemSheet = WORKBOOK.createSheet(lineItem.getLineItemName());
 
         //Add line item header row
@@ -40,14 +40,29 @@ public class ExcelWriter {
         }
 
         //add line item data
+        Row lineItemRow = lineItemSheet.createRow(1);
+        lineItemRow.createCell(0);
+        lineItemRow.createCell(1).setCellValue(lineItem.getLineItemName());
+        lineItemRow.createCell(2).setCellValue(lineItem.getOverallBudget());
+        lineItemRow.createCell(3).setCellValue(lineItem.getStartDate());
+        lineItemRow.createCell(4).setCellValue(lineItem.getEndDate());
+        lineItemRow.createCell(5).setCellValue(lineItem.getDaysActive());
+        lineItemRow.createCell(6).setCellValue(lineItem.getDailyBudget());
+        Row secondLineItemRow = lineItemSheet.createRow(2);
+        //If fails, add blank cells before it.
+        secondLineItemRow.createCell(5).setCellValue(lineItem.getDaysRemaining());
 
         //add campaign header row
+        Row campaignHeaderRow = lineItemSheet.createRow(3);
+        campaignHeaderRow.createCell(0).setCellValue("Campaign ID");
 
         //style header
 
         //repeat for each campaign
 
         //pattern the rows
+
+        //size the columns appropriately
 
     }
 
