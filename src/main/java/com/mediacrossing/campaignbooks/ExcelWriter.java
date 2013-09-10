@@ -75,11 +75,22 @@ public class ExcelWriter {
         }
 
         //repeat for each campaign
+        int rowCount = 4;
         for (Campaign campaign : lineItem.getCampaignList()) {
+            Row campaignRow = lineItemSheet.createRow(rowCount);
+            campaignRow.createCell(0).setCellValue(campaign.getCampaignID());
+            campaignRow.createCell(1).setCellValue(campaign.getCampaignName());
+            campaignRow.createCell(2).setCellValue(campaign.getLifetimeBudget());
+            campaignRow.createCell(3).setCellValue(campaign.getStartDate());
+            campaignRow.createCell(4).setCellValue(campaign.getEndDate());
+            campaignRow.createCell(5).setCellValue(campaign.getDaysActive());
+            campaignRow.createCell(6).setCellValue(campaign.getDailyBudget());
+            campaignRow.createCell(7).setCellValue(campaign.getActualDailyBudget());
+            campaignRow.createCell(8).setCellValue(campaign.getTotalDelivery());
+            //TODO add daily delivery
+            rowCount++;
 
         }
-
-        //pattern the rows
 
         //size the columns appropriately
 

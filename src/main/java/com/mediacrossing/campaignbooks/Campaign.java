@@ -10,6 +10,7 @@ public class Campaign {
     private int dailyBudget;
     private int actualDailyBudget;
     private int totalDelivery;
+    private int daysActive;
     private int[] dailyDelivery;
 
     public Campaign(String campaignID, String campaignName, int lifetimeBudget,
@@ -27,5 +28,51 @@ public class Campaign {
 
     public Campaign(String campaignID) {
         this.campaignID = campaignID;
+    }
+
+    public String getCampaignID() {
+        return campaignID;
+    }
+
+    public String getCampaignName() {
+        return campaignName;
+    }
+
+    public String getStartDate() {
+        //TODO convert to human readable
+        return startDate;
+    }
+
+    public String getEndDate() {
+        //TODO convert to human readable
+        return endDate;
+    }
+
+    public int getLifetimeBudget() {
+        return lifetimeBudget;
+    }
+
+    public int getDaysRemaining() {
+        return daysRemaining;
+    }
+
+    public int getDailyBudget() {
+        return dailyBudget;
+    }
+
+    public int getActualDailyBudget() {
+        return actualDailyBudget;
+    }
+
+    public int getTotalDelivery() {
+        return totalDelivery;
+    }
+
+    public int[] getDailyDelivery() {
+        return dailyDelivery;
+    }
+
+    public int getDaysActive() {
+        return daysActive;
     }
 }
