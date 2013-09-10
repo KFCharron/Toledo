@@ -11,6 +11,7 @@ public class Run {
         //Declare variables
         String mxUrl = "http://ec2-50-17-18-117.compute-1.amazonaws.com:9000/api/catalog";
         String rawJsonData;
+        String outputPath = "";
         HTTPRequest httpConnection = new HTTPRequest();
         DataParse parser = new DataParse();
 
@@ -56,7 +57,7 @@ public class Run {
                 }
             }
         }
-        excelWriter.writeWorkbookToFile();
+        excelWriter.writeWorkbookToFileWithOutputPath(outputPath);
 
     }
 }

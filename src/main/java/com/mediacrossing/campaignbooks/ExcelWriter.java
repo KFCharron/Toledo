@@ -5,6 +5,10 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.*;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class ExcelWriter {
@@ -96,8 +100,10 @@ public class ExcelWriter {
 
     }
 
-    public void writeWorkbookToFile() {
-
+    public void writeWorkbookToFileWithOutputPath(String outputPath) throws IOException {
+        FileOutputStream fileOut = new FileOutputStream(new File(outputPath, "CampaignBooks.xls"));
+        WORKBOOK.write(fileOut);
+        fileOut.close();
     }
 
 }
