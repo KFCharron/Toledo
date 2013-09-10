@@ -25,4 +25,8 @@ public class LineItem {
     public LineItem(String lineItemID) {
         this.lineItemID = lineItemID;
     }
+
+    public String getLineItemName() {
+        return lineItemName;
+    }
 }

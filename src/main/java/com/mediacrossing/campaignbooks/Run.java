@@ -1,7 +1,6 @@
 package com.mediacrossing.campaignbooks;
 
 import com.mediacrossing.segmenttargeting.HTTPRequest;
-import com.mediacrossing.segmenttargeting.JSONParse;
 
 import java.io.FileNotFoundException;
 import java.util.List;
@@ -49,6 +48,15 @@ public class Run {
         //Save each campaign to the line item
 
         //Build and save excel book, each sheet being its own line item
+        ExcelWriter excelWriter = new ExcelWriter();
+        for(Advertiser advertiser : advertiserList) {
+            if(advertiser.isLive()) {
+                for(LineItem lineItem : advertiser.getLineItemList()) {
+                    excelWriter.writeLineItemSheetToWorkbook(lineItem);
+                }
+            }
+        }
+        excelWriter.writeWorkbookToFile();
 
     }
 }
