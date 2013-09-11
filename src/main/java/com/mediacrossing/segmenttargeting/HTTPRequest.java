@@ -7,8 +7,10 @@ import com.google.gson.JsonParser;
 import javax.net.ssl.HttpsURLConnection;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -63,11 +65,7 @@ public class HTTPRequest {
 //        this.setJSONData(mockMXData.getMockProfileData());
     }
 
-    public void requestCampaign(String campaignID) throws Exception {
-        this.setUrl("http://api.appnexus.com/campaign?id=" + campaignID + "&stats=true&interval=yesterday");
-    }
-
-   public void requestAllCampaignsFromMX(String mxUrl) throws Exception {
+    public void requestAllCampaignsFromMX(String mxUrl) throws Exception {
 
         this.setUrl(mxUrl);
         this.requestData();
@@ -144,5 +142,88 @@ public class HTTPRequest {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public String requestAdvertiserReport(String advertiserId) throws IOException {
+
+        this.setUrl("http://api.appnexus.com/report?advertiser_id=" + advertiserId);
+        URL obj = new URL(url);
+        HttpsURLConnection con = (HttpsURLConnection) obj.openConnection();
+
+        //add request header
+        con.setRequestMethod("POST");
+        con.setRequestProperty("Content-Type", "application/json");
+        //Set Auth Token
+        con.setRequestProperty("Authorization", this.getAuthorizationToken());
+        //Authorization JSON data
+        //TODO add json here
+        String urlParameters = "{\n" +
+                "    \"report\":\n" +
+                "    {\n" +
+                "        \"report_type\":\"advertiser_analytics\",\n" +
+                "        \"columns\":[\n" +
+                "            \"day\",\n" +
+                "            \"campaign_id\",\n" +
+                "            \"spend\"\n" +
+                "        ],\n" +
+                "        \"row_per\":[\n" +
+                "            \"campaign_id\",\n" +
+                "            \"day\"\n" +
+                "        ],\n" +
+                "        \"report_interval\":\"lifetime\",\n" +
+                "        \"format\":\"csv\",\n" +
+                "        \"emails\":[\n" +
+                "            \"kyle.charron@mediacrossing.com\"\n" +
+                "        ],\n" +
+                "        \"orders\": [\n" +
+                "                    {\n" +
+                "                        \"order_by\":\"day\", \n" +
+                "                        \"direction\":\"DESC\"\n" +
+                "                    },\n" +
+                "                    {\n" +
+                "                        \"order_by\":\"campaign_id\",\n" +
+                "                        \"direction\":\"DESC\"\n" +
+                "                    }\n" +
+                "                    ]\n" +
+                "    }\n" +
+                "}";
+
+        // Send post request
+        con.setDoOutput(true);
+        DataOutputStream wr = new DataOutputStream(con.getOutputStream());
+        wr.writeBytes(urlParameters);
+        wr.flush();
+        wr.close();
+
+        int responseCode = con.getResponseCode();
+        LOG.debug("\nSending 'POST' request to URL : " + url);
+        LOG.debug("Response Code : " + responseCode);
+
+        BufferedReader in = new BufferedReader(
+                new InputStreamReader(con.getInputStream()));
+        String inputLine;
+        StringBuilder response = new StringBuilder();
+
+        while ((inputLine = in.readLine()) != null) {
+            response.append(inputLine);
+        }
+        in.close();
+
+        //Received JSON data
+        String rawJSON = response.toString();
+        LOG.debug(rawJSON);
+
+        //Parse JSON, obtain token
+        JsonElement jelement = new JsonParser().parse(rawJSON);
+        JsonObject jobject = jelement.getAsJsonObject();
+        jobject = jobject.getAsJsonObject("response");
+        String reportId = jobject.get("report_id").toString().replace("\"","");
+        if (reportId.isEmpty()) {
+            LOG.error("ReportID not received.");
+        }
+
+        return reportId;
+
+
     }
 }
