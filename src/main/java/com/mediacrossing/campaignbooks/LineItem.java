@@ -67,4 +67,8 @@ public class LineItem {
         //TODO calculate days remaining
         return daysRemaining;
     }
+
+    public void setCampaignList(List<Campaign> campaignList) {
+        this.campaignList = campaignList;
+    }
 }
