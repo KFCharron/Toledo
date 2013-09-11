@@ -1,5 +1,8 @@
 package com.mediacrossing.campaignbooks;
 
+import java.util.LinkedList;
+import java.util.List;
+
 public class Campaign {
     private String campaignID;
     private String campaignName;
@@ -11,19 +14,20 @@ public class Campaign {
     private int actualDailyBudget;
     private int totalDelivery;
     private int daysActive;
-    private int[] dailyDelivery;
+    private List<Float> dailyDeliveryList = new LinkedList<Float>();
+
 
     public Campaign(String campaignID, String campaignName, int lifetimeBudget,
-                    String startDate, String endDate, int dailyBudget, int[] dailyDelivery) {
+                    String startDate, String endDate, int dailyBudget, List<Float> dailyDeliveryList) {
         this.campaignID = campaignID;
         this.campaignName = campaignName;
         this.lifetimeBudget = lifetimeBudget;
         this.startDate = startDate;
         this.endDate = endDate;
         this.dailyBudget = dailyBudget;
-        this.dailyDelivery = dailyDelivery;
+        this.dailyDeliveryList = dailyDeliveryList;
 
-        //TODO calculate daysRemaining, actualDailyBudget, totalDelivery
+        //TODO calculate daysRemaining, actualDailyBudget, totalDelivery, covert startDate and endDate to Dates
     }
 
     public Campaign(String campaignID) {
@@ -68,11 +72,16 @@ public class Campaign {
         return totalDelivery;
     }
 
-    public int[] getDailyDelivery() {
-        return dailyDelivery;
-    }
 
     public int getDaysActive() {
         return daysActive;
+    }
+
+    public void addToDailyDeliveryList(float dailyDelivery) {
+        this.dailyDeliveryList.add(dailyDelivery);
+    }
+
+    public List<Float> getDailyDeliveryList() {
+        return dailyDeliveryList;
     }
 }

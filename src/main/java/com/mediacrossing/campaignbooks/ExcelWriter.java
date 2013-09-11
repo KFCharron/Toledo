@@ -1,19 +1,14 @@
 package com.mediacrossing.campaignbooks;
 
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.*;
-
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 
 public class ExcelWriter {
 
-    private static Workbook WORKBOOK;
+    private static Workbook WORKBOOK = new HSSFWorkbook();
 
     public void writeLineItemSheetToWorkbook(LineItem lineItem) {
 
@@ -91,12 +86,20 @@ public class ExcelWriter {
             campaignRow.createCell(6).setCellValue(campaign.getDailyBudget());
             campaignRow.createCell(7).setCellValue(campaign.getActualDailyBudget());
             campaignRow.createCell(8).setCellValue(campaign.getTotalDelivery());
-            //TODO add daily delivery
+            int cellCount = 8;
+            for(Float dailyDelivery : campaign.getDailyDeliveryList()) {
+                campaignRow.createCell(cellCount).setCellValue(dailyDelivery);
+                cellCount++;
+            }
             rowCount++;
 
         }
 
         //size the columns appropriately
+        //TODO set sizes for daily delivery
+        for(int x = 0; x < 15; x++) {
+            lineItemSheet.autoSizeColumn(x);
+        }
 
     }
 

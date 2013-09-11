@@ -63,6 +63,10 @@ public class HTTPRequest {
 //        this.setJSONData(mockMXData.getMockProfileData());
     }
 
+    public void requestCampaign(String campaignID) throws Exception {
+        this.setUrl("http://api.appnexus.com/campaign?id=" + campaignID + "&stats=true&interval=yesterday");
+    }
+
    public void requestAllCampaignsFromMX(String mxUrl) throws Exception {
 
         this.setUrl(mxUrl);

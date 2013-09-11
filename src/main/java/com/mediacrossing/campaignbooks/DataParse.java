@@ -46,4 +46,13 @@ public class DataParse {
         }
         return lineItemList;
     }
+
+    public float addToDailyDeliveryArray (String rawData) {
+
+        JsonElement jsonElement = new JsonParser().parse(rawData);
+        JsonObject jsonObject = jsonElement.getAsJsonObject();
+        jsonObject = jsonObject.get("stats").getAsJsonObject();
+        return jsonObject.get("media_cost").getAsFloat();
+
+    }
 }
