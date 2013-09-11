@@ -14,14 +14,13 @@ public class LineItem {
     private int daysRemaining;
 
     public LineItem(String lineItemID, String lineItemName, String startDate,
-                    String endDate, String overallBudget, String dailyBudget, List<Campaign> campaignList) {
+                    String endDate, String overallBudget, String dailyBudget) {
         this.lineItemID = lineItemID;
         this.lineItemName = lineItemName;
         this.startDate = startDate;
         this.endDate = endDate;
         this.overallBudget = overallBudget;
         this.dailyBudget = dailyBudget;
-        this.campaignList = campaignList;
     }
 
     public LineItem(String lineItemID) {

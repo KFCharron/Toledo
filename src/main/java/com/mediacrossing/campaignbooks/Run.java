@@ -3,6 +3,7 @@ package com.mediacrossing.campaignbooks;
 import com.mediacrossing.segmenttargeting.HTTPRequest;
 
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Run {
@@ -13,6 +14,8 @@ public class Run {
         String mxUrl = "http://ec2-50-17-18-117.compute-1.amazonaws.com:9000/api/catalog";
         String rawJsonData;
         String outputPath = "";
+        String appNexusUsername = "MC_report";
+        String appNexusPassword = "13MediaCrossing!";
         HTTPRequest httpConnection = new HTTPRequest();
         DataParse parser = new DataParse();
 
@@ -34,7 +37,7 @@ public class Run {
                 List<LineItem> lineItemList = parser.populateLineItemList(rawJsonData);
                 for(LineItem lineItem : lineItemList) {
                     httpConnection.setUrl(mxUrl + "/advertisers/" + advertiser.getAdvertiserID() +
-                            "/line-items" + lineItem.getLineItemID() + "/campaigns");
+                            "/line-items/" + lineItem.getLineItemID() + "/campaigns");
                     httpConnection.requestData();
                     rawJsonData = httpConnection.getJSONData();
                     List<Campaign> campaignList = parser.populateCampaignList(rawJsonData);
@@ -49,9 +52,13 @@ public class Run {
             count++;
         }
 
+        httpConnection.authorizeAppNexusConnection(appNexusUsername, appNexusPassword);
 
-        //Query AN for campaign quick stats interval=yesterday
+        ArrayList<String> reportIdList = new ArrayList<String>();
         //For every advertiser, request report
+        for(Advertiser advertiser : advertiserList)
+            reportIdList.add(httpConnection.requestAdvertiserReport(advertiser.getAdvertiserID()));
+
         //collect report ids
         //check report until status is ready
         //when ready, download report as input stream.
