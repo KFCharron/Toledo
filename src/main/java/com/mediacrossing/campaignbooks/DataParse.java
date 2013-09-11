@@ -5,6 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,12 +48,21 @@ public class DataParse {
         return lineItemList;
     }
 
-    public float addToDailyDeliveryArray (String rawData) {
-
+    public List<Campaign> populateCampaignList (String rawData) throws ParseException {
+        List<Campaign> campaignList = new ArrayList<Campaign>();
         JsonElement jsonElement = new JsonParser().parse(rawData);
-        JsonObject jsonObject = jsonElement.getAsJsonObject();
-        jsonObject = jsonObject.get("stats").getAsJsonObject();
-        return jsonObject.get("media_cost").getAsFloat();
-
+        JsonArray campaignJsonArray = jsonElement.getAsJsonArray();
+        for (JsonElement campaign : campaignJsonArray) {
+            JsonObject jsonObject = campaign.getAsJsonObject();
+            campaignList.add(new Campaign(
+                    jsonObject.get("id").toString().replace("\"",""),
+                    jsonObject.get("name").toString().replace("\"",""),
+                    jsonObject.get("overallBudget").getAsFloat(),
+                    jsonObject.get("startDate").toString().replace("\"",""),
+                    jsonObject.get("endDate").toString().replace("\"",""),
+                    jsonObject.get("dailyBudget").getAsFloat()
+            ));
+        }
+        return campaignList;
     }
 }
