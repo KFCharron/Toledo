@@ -1,33 +1,44 @@
 package com.mediacrossing.campaignbooks;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
 public class Campaign {
     private String campaignID;
     private String campaignName;
-    private String startDate;
-    private String endDate;
-    private int lifetimeBudget;
+    private Date startDate;
+    private Date endDate;
+    private float lifetimeBudget;
     private int daysRemaining;
-    private int dailyBudget;
-    private int actualDailyBudget;
-    private int totalDelivery;
+    private float dailyBudget;
+    private float actualDailyBudget;
+    private float totalDelivery;
     private int daysActive;
     private List<Float> dailyDeliveryList = new LinkedList<Float>();
 
 
-    public Campaign(String campaignID, String campaignName, int lifetimeBudget,
-                    String startDate, String endDate, int dailyBudget, List<Float> dailyDeliveryList) {
+    public Campaign(String campaignID, String campaignName, float lifetimeBudget,
+                    String startDate, String endDate, float dailyBudget) throws ParseException {
         this.campaignID = campaignID;
         this.campaignName = campaignName;
         this.lifetimeBudget = lifetimeBudget;
-        this.startDate = startDate;
-        this.endDate = endDate;
         this.dailyBudget = dailyBudget;
-        this.dailyDeliveryList = dailyDeliveryList;
+        //Converting parsed date strings to Date objects
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
+        if (!startDate.equals("null"))
+            this.startDate = sdf.parse(startDate);
+        if (!endDate.equals("null"))
+            this.endDate = sdf.parse(endDate);
+        //Calculating daysRemaining
+        if (!startDate.equals("null") && !endDate.equals("null"))
+            this.daysRemaining = (int)((this.endDate.getTime() - this.startDate.getTime())
+                    / (1000 * 60 * 60 * 24));
 
-        //TODO calculate daysRemaining, actualDailyBudget, totalDelivery, covert startDate and endDate to Dates
+
     }
 
     public Campaign(String campaignID) {
@@ -43,16 +54,16 @@ public class Campaign {
     }
 
     public String getStartDate() {
-        //TODO convert to human readable
-        return startDate;
+        DateFormat df = new SimpleDateFormat("dd-MMM");
+        return df.format(startDate);
     }
 
     public String getEndDate() {
-        //TODO convert to human readable
-        return endDate;
+        DateFormat df = new SimpleDateFormat("dd-MMM");
+        return df.format(endDate);
     }
 
-    public int getLifetimeBudget() {
+    public float getLifetimeBudget() {
         return lifetimeBudget;
     }
 
@@ -60,15 +71,20 @@ public class Campaign {
         return daysRemaining;
     }
 
-    public int getDailyBudget() {
+    public float getDailyBudget() {
         return dailyBudget;
     }
 
-    public int getActualDailyBudget() {
+    public float getActualDailyBudget() {
+        float deliveryTotal = getTotalDelivery();
+        actualDailyBudget = deliveryTotal / getDailyDeliveryList().size();
         return actualDailyBudget;
     }
 
-    public int getTotalDelivery() {
+    public float getTotalDelivery() {
+        for(Float delivery : this.getDailyDeliveryList()) {
+
+        }
         return totalDelivery;
     }
 
