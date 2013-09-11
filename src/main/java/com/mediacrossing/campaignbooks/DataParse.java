@@ -29,20 +29,13 @@ public class DataParse {
         JsonArray lineItemJsonArray = jsonElement.getAsJsonArray();
         for (JsonElement lineItem : lineItemJsonArray) {
             JsonObject jsonObject = lineItem.getAsJsonObject();
-            JsonArray campaignJsonArray = jsonObject.get("campaignIds").getAsJsonArray();
-            List<Campaign> campaignList = new ArrayList<Campaign>();
-            for (JsonElement campaign : campaignJsonArray) {
-                Campaign newCampaign = new Campaign(campaign.getAsString());
-                campaignList.add(newCampaign);
-            }
             lineItemList.add(new LineItem(
                     jsonObject.get("id").toString().replace("\"",""),
                     jsonObject.get("name").toString().replace("\"",""),
                     jsonObject.get("startDate").toString().replace("\"",""),
                     jsonObject.get("endDate").toString().replace("\"",""),
                     jsonObject.get("overallBudget").toString().replace("\"",""),
-                    jsonObject.get("dailyBudget").toString().replace("\"",""),
-                    campaignList
+                    jsonObject.get("dailyBudget").toString().replace("\"","")
             ));
         }
         return lineItemList;
