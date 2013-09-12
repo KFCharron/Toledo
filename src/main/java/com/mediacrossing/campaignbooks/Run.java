@@ -59,8 +59,24 @@ public class Run {
         for(Advertiser advertiser : advertiserList)
             reportIdList.add(httpConnection.requestAdvertiserReport(advertiser.getAdvertiserID()));
 
-        //collect report ids
-        //check report until status is ready
+        ArrayList<String> downloadUrlList = new ArrayList<String>();
+        for (String reportId : reportIdList) {
+            boolean ready = false;
+            while (!ready) {
+                //Check to see if report is ready
+                String jsonResponse = httpConnection.fetchDownloadUrl(reportId);
+                ready = parser.parseReportStatus(jsonResponse);
+                if (!ready)
+                    Thread.sleep(10000);
+            }
+            downloadUrlList.add(parser.getReportUrl());
+        }
+
+        for (String downloadUrl : downloadUrlList) {
+            //input stream to take in csv
+            //parse the string into object
+            //match data to advetisers??
+        }
         //when ready, download report as input stream.
         //parse csv input stream
         //save csv vars into campaigns
