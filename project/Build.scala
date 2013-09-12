@@ -18,10 +18,16 @@ object BuildSettings {
   lazy val customAssemblySettings = assemblySettings ++ Seq(
     mergeStrategy in assembly <<= (mergeStrategy in assembly) {
       (old) => {
-        //Fix to deal with some Twitter resource non-sense
-        case PathList(xs@_*) if (xs.last == "cmdline.arg.info.txt.1") => MergeStrategy.filterDistinctLines
-
-        case x => old(x)
+        case PathList(xs@_*) if xs.last == "cmdline.arg.info.txt.1" =>
+          // Fix to deal with some Twitter resource non-sense
+          MergeStrategy.filterDistinctLines
+        case "play/core/server/ServerWithStop.class" =>
+          MergeStrategy.first
+        case "logback.xml" =>
+          // Rename logback.xml from Play! dependency
+          MergeStrategy.rename
+        case x =>
+          old(x)
       }
     }, artifact in(Compile, assembly) ~= {
       art =>
@@ -32,7 +38,8 @@ object BuildSettings {
     val gson = "com.google.code.gson" % "gson" % "2.2.4"
     val poi = "org.apache.poi" % "poi" % "3.9"
     val logback = "ch.qos.logback" % "logback-classic" % "1.0.13"
-    val playFramework = "play" % "play_2.10" % "2.1.2"
+    val playFramework = "play" % "play_2.10" % "2.1.2" exclude(
+      "commons-logging", "commons-logging")
     val opencsv = "net.sf.opencsv" % "opencsv" % "2.3"
   }
 
@@ -50,7 +57,7 @@ object TargetSegmentingBuild extends Build {
       buildSettings210 ++
         Seq(libraryDependencies ++= Seq(gson, poi, logback, playFramework, opencsv)) ++
         customAssemblySettings ++
-  Seq(resolvers += "Typesafe repository" at "http://repo.typesafe.com/typesafe/releases/")
+        Seq(resolvers += "Typesafe repository" at "http://repo.typesafe.com/typesafe/releases/")
   )
 }
 
