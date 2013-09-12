@@ -33,6 +33,7 @@ object BuildSettings {
     val poi = "org.apache.poi" % "poi" % "3.9"
     val logback = "ch.qos.logback" % "logback-classic" % "1.0.13"
     val playFramework = "play" % "play_2.10" % "2.1.2"
+    val opencsv = "net.sf.opencsv" % "opencsv" % "2.3"
   }
 
 }
@@ -47,7 +48,7 @@ object TargetSegmentingBuild extends Build {
     base = file("."),
     settings =
       buildSettings210 ++
-        Seq(libraryDependencies ++= Seq(gson, poi, logback, playFramework)) ++
+        Seq(libraryDependencies ++= Seq(gson, poi, logback, playFramework, opencsv)) ++
         customAssemblySettings ++
   Seq(resolvers += "Typesafe repository" at "http://repo.typesafe.com/typesafe/releases/")
   )

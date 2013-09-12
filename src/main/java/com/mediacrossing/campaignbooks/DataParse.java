@@ -11,6 +11,16 @@ import java.util.List;
 
 public class DataParse {
 
+    private String reportUrl;
+
+    public String getReportUrl() {
+        return reportUrl;
+    }
+
+    public void setReportUrl(String reportUrl) {
+        this.reportUrl = reportUrl;
+    }
+
     public List<Advertiser> populateAdvertiserList (String rawData) {
         List<Advertiser> advertiserList = new ArrayList<Advertiser>();
         JsonElement jsonElement = new JsonParser().parse(rawData);
@@ -26,8 +36,7 @@ public class DataParse {
     public List<LineItem> populateLineItemList (String rawData) {
         List<LineItem> lineItemList = new ArrayList<LineItem>();
         JsonElement jsonElement = new JsonParser().parse(rawData);
-        JsonArray lineItemJsonArray = jsonElement.getAsJsonArray();
-        for (JsonElement lineItem : lineItemJsonArray) {
+        for (JsonElement lineItem : jsonElement.getAsJsonArray()) {
             JsonObject jsonObject = lineItem.getAsJsonObject();
             lineItemList.add(new LineItem(
                     jsonObject.get("id").toString().replace("\"",""),
@@ -57,5 +66,17 @@ public class DataParse {
             ));
         }
         return campaignList;
+    }
+
+    public boolean parseReportStatus(String rawData) {
+        JsonElement jsonElement = new JsonParser().parse(rawData);
+        JsonObject jsonObject = jsonElement.getAsJsonObject().getAsJsonObject("response");
+        if(jsonObject.get("execution_status").toString() == "ready") {
+            jsonObject = jsonObject.getAsJsonObject("report");
+            reportUrl = jsonObject.get("url").toString();
+            return true;
+        }
+        else
+            return false;
     }
 }
