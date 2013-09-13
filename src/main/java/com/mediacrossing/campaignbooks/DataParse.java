@@ -56,14 +56,19 @@ public class DataParse {
         JsonArray campaignJsonArray = jsonElement.getAsJsonArray();
         for (JsonElement campaign : campaignJsonArray) {
             JsonObject jsonObject = campaign.getAsJsonObject();
-            campaignList.add(new Campaign(
-                    jsonObject.get("id").toString().replace("\"",""),
-                    jsonObject.get("name").toString().replace("\"",""),
-                    jsonObject.get("overallBudget").getAsFloat(),
-                    jsonObject.get("startDate").toString().replace("\"",""),
-                    jsonObject.get("endDate").toString().replace("\"",""),
-                    jsonObject.get("dailyBudget").getAsFloat()
-            ));
+            String id = jsonObject.get("id").toString().replace("\"", "");
+            String name = jsonObject.get("name").toString().replace("\"", "");
+            float overallBudget = 0;
+            if(!jsonObject.get("overallBudget").isJsonNull()) {
+                overallBudget = jsonObject.get("overallBudget").getAsFloat();
+            }
+            String startDate = jsonObject.get("startDate").toString().replace("\"","");
+            String endDate = jsonObject.get("endDate").toString().replace("\"","");
+            float dailyBudget = 0;
+            if(!jsonObject.get("dailyBudget").isJsonNull()) {
+                dailyBudget = jsonObject.get("dailyBudget").getAsFloat();
+            }
+            campaignList.add(new Campaign(id, name, overallBudget, startDate, endDate, dailyBudget));
         }
         return campaignList;
     }
