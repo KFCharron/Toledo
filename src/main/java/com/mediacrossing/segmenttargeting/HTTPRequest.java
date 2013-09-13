@@ -205,8 +205,9 @@ public class HTTPRequest {
     public String requestAdvertiserReport(String advertiserId) throws IOException {
 
         this.setUrl("http://api.appnexus.com/report?advertiser_id=" + advertiserId);
-        URL obj = new URL(url);
-        HttpsURLConnection con = (HttpsURLConnection) obj.openConnection();
+
+        java.net.URL wsURL = new URL(null, url,new sun.net.www.protocol.https.Handler());
+        HttpsURLConnection con = (HttpsURLConnection) wsURL.openConnection();
 
         //add request header
         con.setRequestMethod("POST");
