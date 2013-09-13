@@ -1,10 +1,14 @@
 package com.mediacrossing.campaignbooks;
 
+import au.com.bytecode.opencsv.CSVReader;
 import com.mediacrossing.connections.ConnectionRequestProperties;
 import com.mediacrossing.segmenttargeting.HTTPRequest;
 import scala.Tuple2;
 
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -71,11 +75,8 @@ public class Run {
 
         ArrayList<String> reportIdList = new ArrayList<String>();
         //For every advertiser, request report
-        for (Advertiser advertiser : advertiserList)
-            reportIdList.add(httpConnection.requestAdvertiserReport(advertiser.getAdvertiserID()));
-
-        ArrayList<String> downloadUrlList = new ArrayList<String>();
-        for (String reportId : reportIdList) {
+        for (Advertiser advertiser : advertiserList) {
+            String reportId = httpConnection.requestAdvertiserReport(advertiser.getAdvertiserID());
             boolean ready = false;
             while (!ready) {
                 //Check to see if report is ready
@@ -84,14 +85,18 @@ public class Run {
                 if (!ready)
                     Thread.sleep(10000);
             }
-            downloadUrlList.add(parser.getReportUrl());
+            String downloadUrl = parser.getReportUrl();
+            FileInputStream inputStream = new FileInputStream("http://api.appnexus.com/" + downloadUrl);
+            CSVReader reader = new CSVReader(new InputStreamReader(inputStream));
+            String [] nextLine;
+            while ((nextLine = reader.readNext()) != null) {
+                // nextLine[] is an array of values from the line
+                System.out.println(nextLine[0] + nextLine[1] + "etc...");
+            }
+            //parse the string into object
+            //match data to advertisers??
         }
 
-        for (String downloadUrl : downloadUrlList) {
-            //input stream to take in csv
-            //parse the string into object
-            //match data to advetisers??
-        }
         //when ready, download report as input stream.
         //parse csv input stream
         //save csv vars into campaigns
