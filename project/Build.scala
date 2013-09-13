@@ -41,7 +41,7 @@ object BuildSettings {
     val playFramework = "play" % "play_2.10" % "2.1.2" exclude(
       "commons-logging", "commons-logging")
     val opencsv = "net.sf.opencsv" % "opencsv" % "2.3"
-    val commonsIo = "commons-io" % "commons-io" % "1.3.2"
+    val commonsCodec = "commons-codec" % "commons-codec" % "1.8"
   }
 
 }
@@ -64,7 +64,7 @@ object TargetSegmentingBuild extends Build {
               logback,
               playFramework,
               opencsv,
-              commonsIo)) ++
+              commonsCodec)) ++
         customAssemblySettings ++
         Seq(resolvers += "Typesafe repository" at "http://repo.typesafe.com/typesafe/releases/")
   )
