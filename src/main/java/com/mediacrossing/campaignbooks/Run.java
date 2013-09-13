@@ -1,27 +1,42 @@
 package com.mediacrossing.campaignbooks;
 
+import com.mediacrossing.connections.ConnectionRequestProperties;
 import com.mediacrossing.segmenttargeting.HTTPRequest;
+import scala.Tuple2;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Arrays;
 
 public class Run {
 
     public static void main(String[] args) throws Exception {
 
         //Declare variables
-        String mxUrl = "http://ec2-50-17-18-117.compute-1.amazonaws.com:9000/api/catalog";
+        // FIXME Externalize configuration
+        String mxUrl = "https://rtui.mediacrossing.com/api/catalog";
         String rawJsonData;
         String outputPath = "";
         String appNexusUsername = "MC_report";
         String appNexusPassword = "13MediaCrossing!";
-        HTTPRequest httpConnection = new HTTPRequest();
+        String mxUsername = "rtui";
+        String mxPassword = "stats4all";
+        HTTPRequest httpConnection = new HTTPRequest(mxUsername, mxPassword);
         DataParse parser = new DataParse();
+
+
+        final List<Tuple2<String, String>> mxRequestProperties =
+                Collections.unmodifiableList(
+                        Arrays.asList(
+                                ConnectionRequestProperties.authorization(
+                                        mxUsername,
+                                        mxPassword)));
 
         //Query MX for all advertisers
         httpConnection.setUrl(mxUrl + "/advertisers");
-        httpConnection.requestData();
+        httpConnection.requestData(mxRequestProperties);
         rawJsonData = httpConnection.getJSONData();
 
         //Parse and save to list of advertisers
@@ -32,13 +47,13 @@ public class Run {
         for (Advertiser advertiser : advertiserList) {
             httpConnection.setUrl(mxUrl + "/advertisers/" + advertiser.getAdvertiserID() + "/line-items");
             try {
-                httpConnection.requestData();
+                httpConnection.requestData(mxRequestProperties);
                 rawJsonData = httpConnection.getJSONData();
                 List<LineItem> lineItemList = parser.populateLineItemList(rawJsonData);
-                for(LineItem lineItem : lineItemList) {
+                for (LineItem lineItem : lineItemList) {
                     httpConnection.setUrl(mxUrl + "/advertisers/" + advertiser.getAdvertiserID() +
                             "/line-items/" + lineItem.getLineItemID() + "/campaigns");
-                    httpConnection.requestData();
+                    httpConnection.requestData(mxRequestProperties);
                     rawJsonData = httpConnection.getJSONData();
                     List<Campaign> campaignList = parser.populateCampaignList(rawJsonData);
                     lineItem.setCampaignList(campaignList);
@@ -56,7 +71,7 @@ public class Run {
 
         ArrayList<String> reportIdList = new ArrayList<String>();
         //For every advertiser, request report
-        for(Advertiser advertiser : advertiserList)
+        for (Advertiser advertiser : advertiserList)
             reportIdList.add(httpConnection.requestAdvertiserReport(advertiser.getAdvertiserID()));
 
         ArrayList<String> downloadUrlList = new ArrayList<String>();
@@ -83,9 +98,9 @@ public class Run {
 
         //Build and save excel book, each sheet being its own line item
         ExcelWriter excelWriter = new ExcelWriter();
-        for(Advertiser advertiser : advertiserList) {
-            if(advertiser.isLive()) {
-                for(LineItem lineItem : advertiser.getLineItemList()) {
+        for (Advertiser advertiser : advertiserList) {
+            if (advertiser.isLive()) {
+                for (LineItem lineItem : advertiser.getLineItemList()) {
                     excelWriter.writeLineItemSheetToWorkbook(lineItem);
                 }
             }

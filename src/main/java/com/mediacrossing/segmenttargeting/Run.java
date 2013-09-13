@@ -38,7 +38,10 @@ public class Run {
 
         //Declare Variables
         JSONParse parser = new JSONParse();
-        HTTPRequest httpConnection = new HTTPRequest();
+        // FIXME Externalize to configuration
+        String mxUsername = "rtui";
+        String mxPassword = "stats4all";
+        HTTPRequest httpConnection = new HTTPRequest(mxUsername, mxPassword);
         DataStore dataStore = new DataStore();
         String appNexusUsername = "";
         String appNexusPassword = "";
