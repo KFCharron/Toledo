@@ -76,9 +76,9 @@ public class DataParse {
     public boolean parseReportStatus(String rawData) {
         JsonElement jsonElement = new JsonParser().parse(rawData);
         JsonObject jsonObject = jsonElement.getAsJsonObject().getAsJsonObject("response");
-        if(jsonObject.get("execution_status").toString() == "ready") {
+        if(jsonObject.get("execution_status").toString().equals("\"ready\"")) {
             jsonObject = jsonObject.getAsJsonObject("report");
-            reportUrl = jsonObject.get("url").toString();
+            reportUrl = jsonObject.get("url").toString().replace("\"","");
             return true;
         }
         else

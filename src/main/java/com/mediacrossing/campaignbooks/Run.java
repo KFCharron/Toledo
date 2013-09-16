@@ -5,10 +5,8 @@ import com.mediacrossing.connections.ConnectionRequestProperties;
 import com.mediacrossing.segmenttargeting.HTTPRequest;
 import scala.Tuple2;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -81,18 +79,23 @@ public class Run {
             while (!ready) {
                 //Check to see if report is ready
                 String jsonResponse = httpConnection.fetchDownloadUrl(reportId);
+                System.out.println(jsonResponse);
                 ready = parser.parseReportStatus(jsonResponse);
                 if (!ready)
-                    Thread.sleep(10000);
+                    Thread.sleep(20000);
             }
             String downloadUrl = parser.getReportUrl();
-            FileInputStream inputStream = new FileInputStream("http://api.appnexus.com/" + downloadUrl);
-            CSVReader reader = new CSVReader(new InputStreamReader(inputStream));
-            String [] nextLine;
-            while ((nextLine = reader.readNext()) != null) {
-                // nextLine[] is an array of values from the line
-                System.out.println(nextLine[0] + nextLine[1] + "etc...");
-            }
+            httpConnection.setUrl("http://api.appnexus.com/"+downloadUrl);
+            httpConnection.requestData(mxRequestProperties);
+            System.out.println(httpConnection.getJSONData());
+
+//            InputStream inputStream = new URL("http://api.appnexus.com/" + downloadUrl).openStream();
+//            CSVReader reader = new CSVReader(new InputStreamReader(inputStream));
+//            String [] nextLine;
+//            while ((nextLine = reader.readNext()) != null) {
+//                // nextLine[] is an array of values from the line
+//                System.out.println(nextLine[0] + nextLine[1] + " etc...");
+//            }
             //parse the string into object
             //match data to advertisers??
         }
@@ -113,4 +116,6 @@ public class Run {
         excelWriter.writeWorkbookToFileWithOutputPath(outputPath);
 
     }
+
+
 }
