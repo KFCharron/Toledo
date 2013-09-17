@@ -1,7 +1,7 @@
 package com.mediacrossing.campaignbooks;
 
-import au.com.bytecode.opencsv.CSVReader;
 import com.mediacrossing.connections.ConnectionRequestProperties;
+import com.mediacrossing.properties.ConfigurationProperties;
 import com.mediacrossing.segmenttargeting.HTTPConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,15 +34,15 @@ public class Run {
         registerLoggerWithUncaughtExceptions();
 
         //Declare variables
-        //TODO Externalize configuration
-        String mxUrl = "https://rtui.mediacrossing.com";
-        String appNexusUrl = "http://api.appnexus.com";
+        ConfigurationProperties properties = new ConfigurationProperties(args);
+        String mxUrl = properties.getMxUrl();
+        String appNexusUrl = properties.getAppNexusUrl();
         String rawJsonData;
-        String outputPath = "/Users/charronkyle/Desktop/CampaignBook.xls";
-        String appNexusUsername = "MC_report";
-        String appNexusPassword = "13MediaCrossing!";
-        String mxUsername = "rtui";
-        String mxPassword = "stats4all";
+        String outputPath = properties.getOutputPath();
+        String appNexusUsername = properties.getAppNexusUsername();
+        String appNexusPassword = properties.getAppNexusPassword();
+        String mxUsername = properties.getMxUsername();
+        String mxPassword = properties.getMxPassword();
         HTTPConnection httpConnection = new HTTPConnection(mxUsername, mxPassword);
         DataParse parser = new DataParse();
 

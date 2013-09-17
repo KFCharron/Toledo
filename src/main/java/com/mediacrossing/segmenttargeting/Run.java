@@ -1,5 +1,6 @@
 package com.mediacrossing.segmenttargeting;
 
+import com.mediacrossing.properties.ConfigurationProperties;
 import com.mediacrossing.segmenttargeting.profiles.PartitionedProfileRepository;
 import com.mediacrossing.segmenttargeting.profiles.ProfileRepository;
 import com.mediacrossing.segmenttargeting.profiles.TruncatedProfileRepository;
@@ -19,8 +20,8 @@ import java.util.concurrent.TimeUnit;
 
 public class Run {
 
-    private static int APPNEXUS_PARTITION_SIZE = 10;
-    private static Duration APPNEXUS_REQUEST_DELAY = Duration.apply(60, TimeUnit.SECONDS);
+    private static int APPNEXUS_PARTITION_SIZE;
+    private static Duration APPNEXUS_REQUEST_DELAY;
     private static final Logger LOG = LoggerFactory.getLogger(Run.class);
 
     private static ProfileRepository development(HTTPConnection r) {
@@ -50,45 +51,18 @@ public class Run {
 
         //Declare Variables
         JSONParse parser = new JSONParse();
-        // FIXME Externalize to configuration
-        String mxUsername = "rtui";
-        String mxPassword = "stats4all";
+        ConfigurationProperties properties = new ConfigurationProperties(args);
+        String mxUsername = properties.getMxUsername();
+        String mxPassword = properties.getMxPassword();
         HTTPConnection httpConnection = new HTTPConnection(mxUsername, mxPassword);
         DataStore dataStore = new DataStore();
-        String appNexusUsername = "";
-        String appNexusPassword = "";
-        String fileOutputPath = "";
-        String mxUrl = "";
+        String appNexusUsername = properties.getAppNexusUsername();
+        String appNexusPassword = properties.getAppNexusPassword();
+        String fileOutputPath = properties.getOutputPath();
+        String mxUrl = properties.getMxUrl();
+        APPNEXUS_PARTITION_SIZE = properties.getPartitionSize();
+        APPNEXUS_REQUEST_DELAY = properties.getRequestDelayInSeconds();
 
-        //load a properties file
-        Properties prop = new Properties();
-        try {
-            File configFile = new File(args[0].substring("--properties-file=".length()));
-            InputStream is = new FileInputStream(configFile);
-            try {
-                prop.load(is);
-            } finally {
-                is.close();
-            }
-
-            //set the properties
-            if (prop.isEmpty()) {
-                LOG.error("Properties File Failed To Load.");
-            } else {
-                LOG.info("Properties File successfully loaded.");
-            }
-
-            appNexusUsername = prop.getProperty("appNexusUsername");
-            appNexusPassword = prop.getProperty("appNexusPassword");
-            fileOutputPath = prop.getProperty("outputPath");
-            mxUrl = prop.getProperty("mxUrl");
-            APPNEXUS_PARTITION_SIZE = Integer.parseInt(prop.getProperty("partitionSize"));
-            APPNEXUS_REQUEST_DELAY =
-                    Duration.apply((Integer.parseInt(prop.getProperty("requestDelayInSeconds"))), TimeUnit.SECONDS);
-
-        } catch (IOException ex) {
-            LOG.error("Unable to extract properties", ex);
-        }
 
         //Get Token
         httpConnection.authorizeAppNexusConnection(appNexusUsername, appNexusPassword);
