@@ -3,6 +3,8 @@ package com.mediacrossing.campaignbooks;
 import au.com.bytecode.opencsv.CSVReader;
 import com.mediacrossing.connections.ConnectionRequestProperties;
 import com.mediacrossing.segmenttargeting.HTTPRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import scala.Tuple2;
 
 import java.io.*;
@@ -14,7 +16,23 @@ import java.util.Arrays;
 
 public class Run {
 
+    private static final Logger LOG = LoggerFactory.getLogger(Run.class);
+
+    public static void registerLoggerWithUncaughtExceptions() {
+        Thread.setDefaultUncaughtExceptionHandler(
+                new Thread.UncaughtExceptionHandler() {
+                    @Override
+                    public void uncaughtException(Thread t, Throwable e) {
+                        LOG.error(e.getMessage(), e);
+                    }
+                }
+        );
+    }
+
+
     public static void main(String[] args) throws Exception {
+
+        registerLoggerWithUncaughtExceptions();
 
         //Declare variables
         // FIXME Externalize configuration
