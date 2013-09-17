@@ -27,7 +27,7 @@ public class DataStore {
         //builds live campaign list
         for (Campaign c : campaignArrayList) {
             if (!c.getEndDate().equals("null")) {
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
                 Date campaignEndDate = sdf.parse(c.getEndDate());
                 Date now = new Date();
                 if(now.getTime() < campaignEndDate.getTime()) {
