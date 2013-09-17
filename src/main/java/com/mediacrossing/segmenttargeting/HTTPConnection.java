@@ -80,6 +80,7 @@ public class HTTPConnection {
             sc.init(null, trustAllCerts, new java.security.SecureRandom());
             HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
         } catch (GeneralSecurityException e) {
+            LOG.warn(e.getMessage(), e);
         }
     }
 
@@ -147,7 +148,7 @@ public class HTTPConnection {
 
     public void requestProfile(String profileID, String advertiserID) throws Exception {
         this.setUrl("http://api.appnexus.com/profile?id=" + profileID + "&advertiser_id=" + advertiserID);
-        this.requestData(mxRequestProperties);
+        this.requestData(appNexusRequestProperties());
 //        LOG.debug("Fetching Mock Data");
 //        MockMXData mockMXData = new MockMXData();
 //        this.setJSONData(mockMXData.getMockProfileData());

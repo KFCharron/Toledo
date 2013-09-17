@@ -34,7 +34,19 @@ public class Run {
                 APPNEXUS_REQUEST_DELAY);
     }
 
+    public static void registerLoggerWithUncaughtExceptions() {
+        Thread.setDefaultUncaughtExceptionHandler(
+                new Thread.UncaughtExceptionHandler() {
+                    @Override
+                    public void uncaughtException(Thread t, Throwable e) {
+                        LOG.error(e.getMessage(), e);
+                    }
+                }
+        );
+    }
+
     public static void main(String[] args) throws Exception {
+        registerLoggerWithUncaughtExceptions();
 
         //Declare Variables
         JSONParse parser = new JSONParse();
@@ -51,13 +63,13 @@ public class Run {
         //load a properties file
         Properties prop = new Properties();
         try {
-                File configFile = new File(args[0].substring("--properties-file=".length()));
-                InputStream is = new FileInputStream(configFile);
-                try {
-                    prop.load(is);
-                } finally {
-                    is.close();
-                }
+            File configFile = new File(args[0].substring("--properties-file=".length()));
+            InputStream is = new FileInputStream(configFile);
+            try {
+                prop.load(is);
+            } finally {
+                is.close();
+            }
 
             //set the properties
             if (prop.isEmpty()) {
@@ -75,7 +87,7 @@ public class Run {
                     Duration.apply((Integer.parseInt(prop.getProperty("requestDelayInSeconds"))), TimeUnit.SECONDS);
 
         } catch (IOException ex) {
-            ex.printStackTrace();
+            LOG.error("Unable to extract properties", ex);
         }
 
         //Get Token
