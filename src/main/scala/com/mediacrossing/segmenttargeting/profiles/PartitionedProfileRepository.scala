@@ -38,7 +38,7 @@ class PartitionedProfileRepository(http: HTTPRequest,
                 // Rate limit exceeded
                 log.warn("Rate limit exceeded for profile [profileId = " + profileId +
                   ", advertiserId = " + advertiserId + "], request attempts = " +
-                  requestCount)
+                  requestCount, e)
                 requestCount = requestCount + 1
 
                 Thread.sleep(65 * 1000)
