@@ -77,6 +77,7 @@ public class HTTPRequest {
             sc.init(null, trustAllCerts, new java.security.SecureRandom());
             HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
         } catch (GeneralSecurityException e) {
+            LOG.warn(e.getMessage(), e);
         }
     }
 
