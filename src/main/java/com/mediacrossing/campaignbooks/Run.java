@@ -90,13 +90,8 @@ public class Run {
             httpConnection.requestDownload(downloadUrl);
             System.out.println(httpConnection.getJSONData());
 
-            InputStream is = new ByteArrayInputStream(httpConnection.getJSONData().getBytes());
-
-            CSVReader reader = new CSVReader(new BufferedReader(new InputStreamReader(is)));
-            String [] nextLine;
-            while ((nextLine = reader.readNext()) != null) {
-                // nextLine[] is an array of values from the line
-                System.out.println(nextLine[0] + nextLine[1] + " etc...");
+            for(String line : httpConnection.getCsvData()) {
+                System.out.println(line);
             }
             //parse the string into object
             //match data to advertisers??

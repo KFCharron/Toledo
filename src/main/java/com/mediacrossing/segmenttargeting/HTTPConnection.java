@@ -1,5 +1,6 @@
 package com.mediacrossing.segmenttargeting;
 
+import au.com.bytecode.opencsv.CSVReader;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -12,10 +13,7 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.GeneralSecurityException;
@@ -28,6 +26,11 @@ public class HTTPConnection {
     private String authorizationToken;
     private String JSONData;
     private String url;
+    private String[] csvData;
+
+    public String[] getCsvData() {
+        return csvData;
+    }
 
     private static final Logger LOG = LoggerFactory.getLogger(HTTPConnection.class);
 
@@ -82,6 +85,33 @@ public class HTTPConnection {
 
     static {
         acceptAllCertificates();
+    }
+
+    public void requestReport(Iterable<Tuple2<String, String>> requestProperties) throws Exception {
+        URL obj = new URL(url);
+        HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+
+        for (Tuple2<String, String> kv : requestProperties) {
+            con.setRequestProperty(kv._1(), kv._2());
+        }
+
+        //Send GET request
+        int responseCode = con.getResponseCode();
+        LOG.debug("\nSending 'GET' request to URL : " + url);
+        LOG.debug("Response Code : " + responseCode);
+
+        //Input Reader
+        InputStream is = con.getInputStream();
+
+        CSVReader reader = new CSVReader(new BufferedReader(new InputStreamReader(is)));
+        String [] nextLine;
+        while ((nextLine = reader.readNext()) != null) {
+            // nextLine[] is an array of values from the line
+            System.out.println(nextLine[0] + nextLine[1] + " etc...");
+        }
+        csvData = nextLine;
+        is.close();
+
     }
 
     public void requestData(Iterable<Tuple2<String, String>> requestProperties) throws Exception {
@@ -299,6 +329,6 @@ public class HTTPConnection {
 
     public void requestDownload(String downloadUrl) throws Exception {
         setUrl(downloadUrl);
-        requestData(appNexusRequestProperties());
+        requestReport(appNexusRequestProperties());
     }
 }
