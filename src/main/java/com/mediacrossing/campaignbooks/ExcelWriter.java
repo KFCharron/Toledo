@@ -42,7 +42,7 @@ public class ExcelWriter {
         Row lineItemRow = lineItemSheet.createRow(1);
         lineItemRow.createCell(0);
         lineItemRow.createCell(1).setCellValue(lineItem.getLineItemName());
-        lineItemRow.createCell(2).setCellValue(lineItem.getOverallBudget());
+        lineItemRow.createCell(2).setCellValue(lineItem.getLifetimeBudget());
         lineItemRow.createCell(3).setCellValue(lineItem.getStartDate());
         lineItemRow.createCell(4).setCellValue(lineItem.getEndDate());
         lineItemRow.createCell(5).setCellValue(lineItem.getDaysActive());

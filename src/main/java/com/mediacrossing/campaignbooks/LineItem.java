@@ -7,19 +7,19 @@ public class LineItem {
     private String lineItemName;
     private String startDate;
     private String endDate;
-    private String overallBudget;
+    private String lifetimeBudget;
     private String dailyBudget;
     private List<Campaign> campaignList;
     private int daysActive;
     private int daysRemaining;
 
     public LineItem(String lineItemID, String lineItemName, String startDate,
-                    String endDate, String overallBudget, String dailyBudget) {
+                    String endDate, String lifetimeBudget, String dailyBudget) {
         this.lineItemID = lineItemID;
         this.lineItemName = lineItemName;
         this.startDate = startDate;
         this.endDate = endDate;
-        this.overallBudget = overallBudget;
+        this.lifetimeBudget = lifetimeBudget;
         this.dailyBudget = dailyBudget;
     }
 
@@ -45,8 +45,8 @@ public class LineItem {
         return endDate;
     }
 
-    public String getOverallBudget() {
-        return overallBudget;
+    public String getLifetimeBudget() {
+        return lifetimeBudget;
     }
 
     public String getDailyBudget() {
