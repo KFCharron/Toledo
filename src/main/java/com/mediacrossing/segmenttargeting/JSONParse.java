@@ -158,7 +158,7 @@ public class JSONParse {
         if (campaignArrayList1.isEmpty()) {
             LOG.error("Campaign List is empty after parse.");
         } else {
-            LOG.info(campaignArrayList1.size() + "campaigns received.");
+            LOG.info(campaignArrayList1.size() + " campaigns received.");
         }
         return campaignArrayList1;
 
