@@ -7,11 +7,11 @@ import scala.concurrent.duration.Duration
 import java.io.IOException
 import org.slf4j.LoggerFactory
 
-class PartitionedProfileRepository(http: HTTPRequest,
+class PartitionedProfileRepository(http: HTTPConnection,
                                    partitionSize: Int,
                                    requestDelay: Duration) extends ProfileRepository {
 
-  private val log = LoggerFactory.getLogger(classOf[HTTPRequest])
+  private val log = LoggerFactory.getLogger(classOf[HTTPConnection])
 
   def findBy(advertiserIdAndProfileIds: util.List[(String, String)]): util.List[Profile] =
     (

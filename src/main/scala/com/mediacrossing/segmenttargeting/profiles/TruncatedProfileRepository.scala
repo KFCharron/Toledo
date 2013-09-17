@@ -1,10 +1,10 @@
 package com.mediacrossing.segmenttargeting.profiles
 
 import java.util
-import com.mediacrossing.segmenttargeting.{HTTPRequest, JSONParse, Profile}
+import com.mediacrossing.segmenttargeting.{HTTPConnection, JSONParse, Profile}
 import scala.collection.JavaConverters._
 
-class TruncatedProfileRepository(http: HTTPRequest,
+class TruncatedProfileRepository(http: HTTPConnection,
                                  profileCount: Int) extends ProfileRepository {
 
   def findBy(advertiserIdAndProfileIds: util.List[(String, String)]): util.List[Profile] =

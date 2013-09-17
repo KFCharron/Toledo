@@ -23,11 +23,11 @@ public class Run {
     private static Duration APPNEXUS_REQUEST_DELAY = Duration.apply(60, TimeUnit.SECONDS);
     private static final Logger LOG = LoggerFactory.getLogger(Run.class);
 
-    private static ProfileRepository development(HTTPRequest r) {
+    private static ProfileRepository development(HTTPConnection r) {
         return new TruncatedProfileRepository(r, 10);
     }
 
-    private static ProfileRepository production(HTTPRequest r) {
+    private static ProfileRepository production(HTTPConnection r) {
         return new PartitionedProfileRepository(
                 r,
                 APPNEXUS_PARTITION_SIZE,
@@ -41,7 +41,7 @@ public class Run {
         // FIXME Externalize to configuration
         String mxUsername = "rtui";
         String mxPassword = "stats4all";
-        HTTPRequest httpConnection = new HTTPRequest(mxUsername, mxPassword);
+        HTTPConnection httpConnection = new HTTPConnection(mxUsername, mxPassword);
         DataStore dataStore = new DataStore();
         String appNexusUsername = "";
         String appNexusPassword = "";

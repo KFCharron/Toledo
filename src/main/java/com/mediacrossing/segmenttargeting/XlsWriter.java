@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 public class XlsWriter {
 
-    private static final Logger LOG = LoggerFactory.getLogger(HTTPRequest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(HTTPConnection.class);
 
     private static Workbook WORKBOOK;
     private static ArrayList<Campaign> CAMPAIGNARRAYLIST;

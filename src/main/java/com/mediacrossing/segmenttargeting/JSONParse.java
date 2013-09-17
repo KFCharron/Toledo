@@ -3,7 +3,6 @@ import com.google.gson.*;
 
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -11,7 +10,7 @@ import org.slf4j.LoggerFactory;
 
 public class JSONParse {
 
-    private static final Logger LOG = LoggerFactory.getLogger(HTTPRequest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(HTTPConnection.class);
 
 
     public FrequencyTarget populateFrequencyTarget(String rawData) {

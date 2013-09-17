@@ -24,18 +24,18 @@ import java.util.Collections;
 import java.util.List;
 
 
-public class HTTPRequest {
+public class HTTPConnection {
     private String authorizationToken;
     private String JSONData;
     private String url;
 
-    private static final Logger LOG = LoggerFactory.getLogger(HTTPRequest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(HTTPConnection.class);
 
-    // FIXME MX-specific data should not live in a generic HTTPRequest
+    // FIXME MX-specific data should not live in a generic HTTPConnection
     // This is a major code smell
     final List<Tuple2<String, String>> mxRequestProperties;
 
-    public HTTPRequest(String mxUsername, String mxPassword) {
+    public HTTPConnection(String mxUsername, String mxPassword) {
         mxRequestProperties =
                 Collections.unmodifiableList(
                         Arrays.asList(
@@ -295,5 +295,10 @@ public class HTTPRequest {
     private Iterable<Tuple2<String, String>> appNexusRequestProperties() {
         return Collections.unmodifiableList(
                 Arrays.asList(ConnectionRequestProperties.authorization(this.authorizationToken)));
+    }
+
+    public void requestDownload(String downloadUrl) throws Exception {
+        setUrl(downloadUrl);
+        requestData(appNexusRequestProperties());
     }
 }
