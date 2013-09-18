@@ -28,7 +28,7 @@ public class Campaign {
         this.lifetimeBudget = lifetimeBudget;
         this.dailyBudget = dailyBudget;
         //Converting parsed date strings to Date objects
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
         if (!startDate.equals("null"))
             this.startDate = sdf.parse(startDate);
         if (!endDate.equals("null"))
