@@ -104,12 +104,11 @@ public class Run {
                 if (!ready)
                     Thread.sleep(20000);
             }
-            String downloadUrl = appNexusUrl + parser.getReportUrl();
+            //Report is ready, download it
+            String downloadUrl = appNexusUrl + "/" + parser.getReportUrl();
             httpConnection.requestDownload(downloadUrl);
-            System.out.println(httpConnection.getJSONData());
-
-            for(String line : httpConnection.getCsvData()) {
-                System.out.println(line);
+            for (String[] line : httpConnection.getCsvData()) {
+                System.out.println(line[0] + " " + line[1] + " " + line[2]);
             }
             //parse the string into object
             //match data to advertisers??

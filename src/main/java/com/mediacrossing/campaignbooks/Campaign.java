@@ -54,13 +54,23 @@ public class Campaign {
     }
 
     public String getStartDate() {
-        DateFormat df = new SimpleDateFormat("dd-MMM");
-        return df.format(startDate);
+        if (startDate != null) {
+            DateFormat df = new SimpleDateFormat("dd-MMM");
+            return df.format(startDate);
+        }
+        else
+            return "";
+
     }
 
     public String getEndDate() {
-        DateFormat df = new SimpleDateFormat("dd-MMM");
-        return df.format(endDate);
+        if (endDate != null) {
+            DateFormat df = new SimpleDateFormat("dd-MMM");
+            return df.format(endDate);
+        }
+        else
+            return "";
+
     }
 
     public float getLifetimeBudget() {

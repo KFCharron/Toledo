@@ -26,9 +26,9 @@ public class HTTPConnection {
     private String authorizationToken;
     private String JSONData;
     private String url;
-    private String[] csvData;
+    private List<String[]> csvData;
 
-    public String[] getCsvData() {
+    public List<String[]> getCsvData() {
         return csvData;
     }
 
@@ -105,12 +105,7 @@ public class HTTPConnection {
         InputStream is = con.getInputStream();
 
         CSVReader reader = new CSVReader(new BufferedReader(new InputStreamReader(is)));
-        String [] nextLine;
-        while ((nextLine = reader.readNext()) != null) {
-            // nextLine[] is an array of values from the line
-            System.out.println(nextLine[0] + nextLine[1] + " etc...");
-        }
-        csvData = nextLine;
+        csvData = reader.readAll();
         is.close();
 
     }
@@ -246,7 +241,6 @@ public class HTTPConnection {
         //Set Auth Token
         con.setRequestProperty("Authorization", this.getAuthorizationToken());
         //Authorization JSON data
-        //TODO add json here
         String urlParameters = "{\n" +
                 "    \"report\":\n" +
                 "    {\n" +
