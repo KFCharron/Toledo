@@ -91,7 +91,6 @@ public class Run {
 
         httpConnection.authorizeAppNexusConnection(appNexusUsername, appNexusPassword);
 
-        ArrayList<String> reportIdList = new ArrayList<String>();
         //For every advertiser, request report
         for (Advertiser advertiser : advertiserList) {
             String reportId = httpConnection.requestAdvertiserReport(advertiser.getAdvertiserID());
@@ -107,8 +106,19 @@ public class Run {
             //Report is ready, download it
             String downloadUrl = appNexusUrl + "/" + parser.getReportUrl();
             httpConnection.requestDownload(downloadUrl);
+            //Removes header data
+            httpConnection.getCsvData().remove(0);
+            //Creates new delivery, adds it to campaign if ids match
             for (String[] line : httpConnection.getCsvData()) {
-                System.out.println(line[0] + " " + line[1] + " " + line[2]);
+                Delivery delivery = new Delivery(line[0],line[1],line[2]);
+                for(LineItem lineItem : advertiser.getLineItemList()) {
+                    for(Campaign campaign : lineItem.getCampaignList()) {
+                        if (campaign.getCampaignID().equals(delivery.getCampaignID())) {
+                            System.out.println("Adding delivery!!");
+                            campaign.addToDeliveries(delivery);
+                        }
+                    }
+                }
             }
             //parse the string into object
             //match data to advertisers??

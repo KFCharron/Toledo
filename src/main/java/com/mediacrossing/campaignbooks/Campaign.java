@@ -19,6 +19,11 @@ public class Campaign {
     private float totalDelivery;
     private int daysActive;
     private List<Float> dailyDeliveryList = new LinkedList<Float>();
+    private List<Delivery> deliveries = new LinkedList<Delivery>();
+
+    public void addToDeliveries(Delivery delivery) {
+        deliveries.add(delivery);
+    }
 
 
     public Campaign(String campaignID, String campaignName, float lifetimeBudget,
