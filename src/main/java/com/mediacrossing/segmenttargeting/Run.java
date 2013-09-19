@@ -99,39 +99,6 @@ public class Run {
         Segment Load Report
         */
 
-        //Collect all segments into one list
-        ArrayList<Segment> allSegments = new ArrayList<Segment>();
-        for(Campaign campaign : dataStore.getCampaignArrayList()) {
-            for(SegmentGroupTarget segmentGroupTarget : campaign.getProfile().getSegmentGroupTargets()) {
-                if(segmentGroupTarget.getBoolOp().equals("include")) {
-                    for(Segment segment : segmentGroupTarget.getSegmentArrayList()) {
-                        if(segment.getBoolOp().equals("include")) {
-                            allSegments.add(segment);
-                        }
-
-                    }
-                }
-
-
-            }
-        }
-        //Create set of unique segmentIds
-        HashSet segmentIdSet = new HashSet();
-        for(Segment segment : allSegments) {
-            segmentIdSet.add(segment.getId());
-        }
-        System.out.println(segmentIdSet.size());
-
-        List<String[]> csvData = AppNexusReportRequests.getSegmentLoadReport(segmentIdSet,
-                appNexusUrl, httpConnection);
-
-        //remove header data
-        csvData.remove(0);
-
-        //for every line, parse the data into correct variables
-        for (String[] line : csvData) {
-            //TODO add data to new list
-        }
 
         //Request advertiser analytic reports to obtain daily campaign impressions
         HashSet<String> advertiserIdSet = new HashSet<String>();
@@ -140,6 +107,7 @@ public class Run {
         }
         //Request reports for each ad id
         ArrayList<Campaign> campaignList = dataStore.getLiveCampaignArrayList();
+        List<String[]> csvData;
         for(String advertiserId : advertiserIdSet) {
             csvData = AppNexusReportRequests.getCampaignImpsReport(advertiserId,
                     appNexusUrl, httpConnection);
@@ -169,6 +137,42 @@ public class Run {
         }
         //update the live campaign list in the data store
         dataStore.setLiveCampaignArrayList(campaignList);
+
+        //Collect all segments into one list
+        ArrayList<Segment> allSegments = new ArrayList<Segment>();
+        for(Campaign campaign : dataStore.getCampaignArrayList()) {
+            for(SegmentGroupTarget segmentGroupTarget : campaign.getProfile().getSegmentGroupTargets()) {
+                if(segmentGroupTarget.getBoolOp().equals("include")) {
+                    for(Segment segment : segmentGroupTarget.getSegmentArrayList()) {
+                        if(segment.getBoolOp().equals("include")) {
+                            allSegments.add(segment);
+                        }
+
+                    }
+                }
+
+
+            }
+        }
+        //Create set of unique segmentIds
+        HashSet segmentIdSet = new HashSet();
+        for(Segment segment : allSegments) {
+            segmentIdSet.add(segment.getId());
+        }
+        System.out.println(segmentIdSet.size());
+
+        csvData = AppNexusReportRequests.getSegmentLoadReport(segmentIdSet,
+                appNexusUrl, httpConnection);
+
+        //remove header data
+        csvData.remove(0);
+
+        //for every line, parse the data into correct variables
+        ArrayList<SegmentRow> segmentRowArrayList = new ArrayList<SegmentRow>();
+        for (String[] line : csvData) {
+
+        }
+
 
 
 
