@@ -16,6 +16,11 @@ public class XlsWriter {
     private static Workbook WORKBOOK;
     private static ArrayList<Campaign> CAMPAIGNARRAYLIST;
     private static String OUTPUTPATH;
+    private static ArrayList<SegmentRow> SEGMENTROWLIST;
+
+    public static void setSEGMENTROWLIST(ArrayList<SegmentRow> SEGMENTROWLIST) {
+        XlsWriter.SEGMENTROWLIST = SEGMENTROWLIST;
+    }
 
     public static void setCAMPAIGNARRAYLIST(ArrayList<Campaign> CAMPAIGNARRAYLIST) {
         XlsWriter.CAMPAIGNARRAYLIST = CAMPAIGNARRAYLIST;
@@ -412,6 +417,45 @@ public class XlsWriter {
 
     }
 
+    public void buildSegmentLoadSheet() {
+
+        //Create new sheet
+        Sheet segmentSheet = WORKBOOK.createSheet("SegmentLoadReport");
+
+        //Header row
+        Row headerRow = segmentSheet.createRow((short) 0);
+        headerRow.createCell(0).setCellValue("Segment ID");
+        headerRow.createCell(1).setCellValue("Segment Name");
+        headerRow.createCell(2).setCellValue("Total Loads");
+        headerRow.createCell(3).setCellValue("Daily Uniques(Yesterday)");
+        headerRow.createCell(4).setCellValue("Campaigns - Impressions(Yesterday)");
+
+        //Style header
+        Font font = WORKBOOK.createFont();
+        font.setFontHeightInPoints((short) 14);
+        font.setBoldweight((short) 700);
+        CellStyle bold = WORKBOOK.createCellStyle();
+        bold.setFont(font);
+        for(int x = 0; x < 5; x++)
+            headerRow.getCell(x).setCellStyle(bold);
+
+        //Repeat row for every segment row
+        short rowCounter = 1;
+        for (SegmentRow segmentData : SEGMENTROWLIST) {
+            Row segmentSheetRow = segmentSheet.createRow(rowCounter);
+            segmentSheetRow.createCell(0).setCellValue(segmentData.getSegmentId());
+
+
+            rowCounter++;
+
+        }
+
+        //auto-size columns
+        for(int x = 0; x < 5; x++) {
+            segmentSheet.autoSizeColumn(x);
+        }
+    }
+
     public void writeSegmentFile(ArrayList<Campaign> campaignArrayList, String outputPath) throws IOException {
         setCAMPAIGNARRAYLIST(campaignArrayList);
         setOUTPUTPATH(outputPath);
@@ -442,6 +486,14 @@ public class XlsWriter {
         WORKBOOK = new HSSFWorkbook();
         buildFrequencySheet();
         writeWorkbookToFileWithName("FrequencyReport.xls");
+    }
+
+    public void writeSegmentLoadFile(ArrayList<SegmentRow> segmentRowArrayList, String outputPath) throws IOException {
+        setSEGMENTROWLIST(segmentRowArrayList);
+        setOUTPUTPATH(outputPath);
+        WORKBOOK = new HSSFWorkbook();
+        buildSegmentLoadSheet();
+        writeWorkbookToFileWithName("SegmentLoadReport.xls");
     }
 
 }
