@@ -1,9 +1,8 @@
 package com.mediacrossing.report_requests;
 
 import com.mediacrossing.campaignbooks.DataParse;
+import com.mediacrossing.connections.ConnectionRequestProperties;
 import com.mediacrossing.segmenttargeting.HTTPConnection;
-
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 
@@ -47,8 +46,8 @@ public class AppNexusReportRequests {
     }
 
     public static List<String[]> getAdvertiserAnalyticReport(String advertiserId,
-                                                             HTTPConnection httpConnection,
-                                                             String appNexusUrl) throws Exception {
+                                                             String appNexusUrl,
+                                                             HTTPConnection httpConnection) throws Exception {
         String reportId = httpConnection.requestAdvertiserReport(advertiserId);
         boolean ready = false;
         while (!ready) {
@@ -64,6 +63,27 @@ public class AppNexusReportRequests {
         httpConnection.requestDownload(downloadUrl);
 
         return httpConnection.getCsvData();
+    }
+
+    public static List<String[]> getCampaignImpsReport(String advertiserId,
+                                                 String appNexusUrl,
+                                                 HTTPConnection httpConnection) throws Exception {
+        String reportId = httpConnection.requestCampaignImpsReport(advertiserId);
+        boolean ready = false;
+        while (!ready) {
+            //Check to see if report is ready
+            String jsonResponse = httpConnection.fetchDownloadUrl(reportId);
+            System.out.println(jsonResponse);
+            ready = dataParse.parseReportStatus(jsonResponse);
+            if (!ready)
+                Thread.sleep(20000);
+        }
+        //Report is ready, download it
+        String downloadUrl = appNexusUrl + "/" + dataParse.getReportUrl();
+        httpConnection.requestDownload(downloadUrl);
+
+        return httpConnection.getCsvData();
+
     }
 }
 

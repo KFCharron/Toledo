@@ -393,6 +393,87 @@ public class HTTPConnection {
 
     }
 
+    public String requestCampaignImpsReport(String advertiserId) throws IOException {
+
+        this.setUrl("http://api.appnexus.com/report?advertiser_id=" + advertiserId);
+
+        java.net.URL wsURL = new URL(null, url,new sun.net.www.protocol.https.Handler());
+        HttpsURLConnection con = (HttpsURLConnection) wsURL.openConnection();
+
+        //add request header
+        con.setRequestMethod("POST");
+        con.setRequestProperty("Content-Type", "application/json");
+        //Set Auth Token
+        con.setRequestProperty("Authorization", this.getAuthorizationToken());
+        //Authorization JSON data
+        String urlParameters = "{\n" +
+                "    \"report\":\n" +
+                "    {\n" +
+                "        \"report_type\":\"advertiser_analytics\",\n" +
+                "        \"columns\":[\n" +
+                "            \"campaign_id\",\n" +
+                "            \"imps\"\n" +
+                "        ],\n" +
+                "        \"row_per\":[\n" +
+                "            \"campaign_id\",\n" +
+                "        ],\n" +
+                "        \"report_interval\":\"yesterday\",\n" +
+                "        \"format\":\"csv\",\n" +
+                "        \"emails\":[\n" +
+                "            \"kyle.charron@mediacrossing.com\"\n" +
+                "        ],\n" +
+                "        \"orders\": [\n" +
+                "                    {\n" +
+                "                        \"order_by\":\"day\", \n" +
+                "                        \"direction\":\"DESC\"\n" +
+                "                    },\n" +
+                "                    {\n" +
+                "                        \"order_by\":\"campaign_id\",\n" +
+                "                        \"direction\":\"DESC\"\n" +
+                "                    }\n" +
+                "                    ]\n" +
+                "    }\n" +
+                "}";
+
+        // Send post request
+        con.setDoOutput(true);
+        DataOutputStream wr = new DataOutputStream(con.getOutputStream());
+        wr.writeBytes(urlParameters);
+        wr.flush();
+        wr.close();
+
+        int responseCode = con.getResponseCode();
+        LOG.debug("\nSending 'POST' request to URL : " + url);
+        LOG.debug("Response Code : " + responseCode);
+
+        BufferedReader in = new BufferedReader(
+                new InputStreamReader(con.getInputStream()));
+        String inputLine;
+        StringBuilder response = new StringBuilder();
+
+        while ((inputLine = in.readLine()) != null) {
+            response.append(inputLine);
+        }
+        in.close();
+
+        //Received JSON data
+        String rawJSON = response.toString();
+        LOG.debug(rawJSON);
+
+        //Parse JSON, obtain token
+        JsonElement jelement = new JsonParser().parse(rawJSON);
+        JsonObject jobject = jelement.getAsJsonObject();
+        jobject = jobject.getAsJsonObject("response");
+        String reportId = jobject.get("report_id").toString().replace("\"", "");
+        if (reportId.isEmpty()) {
+            LOG.error("ReportID not received.");
+        }
+
+        return reportId;
+
+
+    }
+
     public String fetchDownloadUrl(String reportID) throws Exception {
         setUrl("http://api.appnexus.com/report?id=" + reportID);
         requestData(appNexusRequestProperties());
