@@ -10,9 +10,21 @@ public class Campaign {
     private String advertiserID;
     private String lineItemID;
     private String state;
-    private Profile profile;
+    private Profile profile = new Profile();
     private ArrayList<ServingFee> servingFeeList;
     private String endDate;
+    private ArrayList<String> segmentIds = new ArrayList<String>();
+
+    public ArrayList<String> getSegmentIds() {
+
+        for(SegmentGroupTarget groupTarget : profile.getSegmentGroupTargets()) {
+            for(Segment segment : groupTarget.getSegmentArrayList()) {
+                System.out.println(segment.getId());
+                segmentIds.add(segment.getId());
+            }
+        }
+        return segmentIds;
+    }
 
     public String getEndDate() {
         return endDate;
