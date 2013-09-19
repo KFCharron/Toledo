@@ -28,6 +28,7 @@ public class HTTPConnection {
     private String url;
     private List<String[]> csvData;
 
+
     public List<String[]> getCsvData() {
         return csvData;
     }
@@ -151,7 +152,7 @@ public class HTTPConnection {
 
     public void requestAllCampaignsFromMX(String mxUrl) throws Exception {
 
-        this.setUrl(mxUrl);
+        this.setUrl(mxUrl + "/api/catalog/campaigns");
         this.requestData(mxRequestProperties);
 //        MockMXData mockMXData = new MockMXData();
 //        this.setJSONData(mockMXData.getMockCampaignData());
@@ -226,6 +227,87 @@ public class HTTPConnection {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public String requestSegmentLoadReport(String segmentJson) throws IOException {
+
+        this.setUrl("http://api.appnexus.com/report");
+
+        java.net.URL wsURL = new URL(null, url,new sun.net.www.protocol.https.Handler());
+        HttpsURLConnection con = (HttpsURLConnection) wsURL.openConnection();
+
+        //add request header
+        con.setRequestMethod("POST");
+        con.setRequestProperty("Content-Type", "application/json");
+        //Set Auth Token
+        con.setRequestProperty("Authorization", this.getAuthorizationToken());
+        //Authorization JSON data
+        String urlParameters =
+                "{\n" +
+                        "    \"report\":\n" +
+                        "    {\n" +
+                        "        \"report_type\": \"segment_load\",\n" +
+                        "        \"columns\": [\n" +
+                        "            \"segment_id\",\n" +
+                        "            \"segment_name\",\n" +
+                        "            \"day\",\n" +
+                        "            \"total_loads\",\n" +
+                        "            \"daily_uniques\"\n" +
+                        "        ],\n" +
+                        "        \"filters\": [\n" +
+                        "            {\n" +
+                        "               \"segment_id\": [" + segmentJson + "]\n" +
+                        "            }\n" +
+                        "        ],\n" +
+                        "        \"groups\": [\n" +
+                        "            \"segment_id\",\n" +
+                        "            \"day\"\n" +
+                        "        ],\n" +
+                        "        \"orders\": [\n" +
+                        "            \"day\"\n" +
+                        "        ],\n" +
+                        "        \"emails\": [\"kyle.charron@mediacrossing.com\"],\n" +
+                        "        \"format\": \"csv\"\n" +
+                        "    }\n" +
+                        "}";
+
+        // Send post request
+        con.setDoOutput(true);
+        DataOutputStream wr = new DataOutputStream(con.getOutputStream());
+        wr.writeBytes(urlParameters);
+        wr.flush();
+        wr.close();
+
+        int responseCode = con.getResponseCode();
+        LOG.debug("\nSending 'POST' request to URL : " + url);
+        LOG.debug("Response Code : " + responseCode);
+
+        BufferedReader in = new BufferedReader(
+                new InputStreamReader(con.getInputStream()));
+        String inputLine;
+        StringBuilder response = new StringBuilder();
+
+        while ((inputLine = in.readLine()) != null) {
+            response.append(inputLine);
+        }
+        in.close();
+
+        //Received JSON data
+        String rawJSON = response.toString();
+        LOG.debug(rawJSON);
+
+        //Parse JSON, obtain token
+        JsonElement jelement = new JsonParser().parse(rawJSON);
+        JsonObject jobject = jelement.getAsJsonObject();
+        jobject = jobject.getAsJsonObject("response");
+        String reportId = jobject.get("report_id").toString().replace("\"", "");
+        if (reportId.isEmpty()) {
+            LOG.error("ReportID not received.");
+        }
+
+        return reportId;
+
+
     }
 
     public String requestAdvertiserReport(String advertiserId) throws IOException {
