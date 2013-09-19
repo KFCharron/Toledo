@@ -2,6 +2,7 @@ package com.mediacrossing.campaignbooks;
 
 import com.mediacrossing.connections.ConnectionRequestProperties;
 import com.mediacrossing.properties.ConfigurationProperties;
+import com.mediacrossing.report_requests.AppNexusReportRequests;
 import com.mediacrossing.segmenttargeting.HTTPConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -93,23 +94,15 @@ public class Run {
 
         //For every advertiser, request report
         for (Advertiser advertiser : advertiserList) {
-            String reportId = httpConnection.requestAdvertiserReport(advertiser.getAdvertiserID());
-            boolean ready = false;
-            while (!ready) {
-                //Check to see if report is ready
-                String jsonResponse = httpConnection.fetchDownloadUrl(reportId);
-                System.out.println(jsonResponse);
-                ready = parser.parseReportStatus(jsonResponse);
-                if (!ready)
-                    Thread.sleep(20000);
-            }
-            //Report is ready, download it
-            String downloadUrl = appNexusUrl + "/" + parser.getReportUrl();
-            httpConnection.requestDownload(downloadUrl);
-            //Removes header data
-            httpConnection.getCsvData().remove(0);
+
+            List<String[]> csvData = AppNexusReportRequests.getAdvertiserAnalyticReport(advertiser.getAdvertiserID(),
+                    httpConnection, appNexusUrl);
+
+            //remove header string
+            csvData.remove(0);
+
             //Creates new delivery, adds it to campaign if ids match
-            for (String[] line : httpConnection.getCsvData()) {
+            for (String[] line : csvData) {
                 Delivery delivery = new Delivery(line[0],line[1],line[2]);
                 for(LineItem lineItem : advertiser.getLineItemList()) {
                     for(Campaign campaign : lineItem.getCampaignList()) {

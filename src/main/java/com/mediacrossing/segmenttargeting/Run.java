@@ -1,6 +1,7 @@
 package com.mediacrossing.segmenttargeting;
 
 import com.mediacrossing.properties.ConfigurationProperties;
+import com.mediacrossing.report_requests.AppNexusReportRequests;
 import com.mediacrossing.segmenttargeting.profiles.PartitionedProfileRepository;
 import com.mediacrossing.segmenttargeting.profiles.ProfileRepository;
 import com.mediacrossing.segmenttargeting.profiles.TruncatedProfileRepository;
@@ -9,15 +10,9 @@ import org.slf4j.LoggerFactory;
 import scala.Tuple2;
 import scala.concurrent.duration.Duration;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Properties;
-import java.util.concurrent.TimeUnit;
 
 public class Run {
 
@@ -62,6 +57,7 @@ public class Run {
         String appNexusPassword = properties.getAppNexusPassword();
         String fileOutputPath = properties.getOutputPath();
         String mxUrl = properties.getMxUrl();
+        String appNexusUrl = properties.getAppNexusUrl();
         APPNEXUS_PARTITION_SIZE = properties.getPartitionSize();
         APPNEXUS_REQUEST_DELAY = properties.getRequestDelayInSeconds();
 
@@ -95,31 +91,42 @@ public class Run {
             c.setProfile(profiles.get(index));
         }
 
-        //Write xls file for all reports
+        //Write xls file for all target segment reports
         XlsWriter xlsWriter = new XlsWriter();
         xlsWriter.writeAllReports(dataStore.getLiveCampaignArrayList(), fileOutputPath);
 
-        //Collect all segmentIds into one list
-        ArrayList<String> allSegmentIds = new ArrayList<String>();
+        /*Segment Load Report*/
+
+        //Collect all segments into one list
+        ArrayList<Segment> allSegments = new ArrayList<Segment>();
         for(Campaign campaign : dataStore.getCampaignArrayList()) {
-            for(String campaignId : campaign.getSegmentIds()) {
-                allSegmentIds.add(campaignId);
+            for(SegmentGroupTarget segmentGroupTarget : campaign.getProfile().getSegmentGroupTargets()) {
+                for(Segment segment : segmentGroupTarget.getSegmentArrayList()) {
+                    allSegments.add(segment);
+                }
+
             }
         }
-        HashSet campaignIdSet = new HashSet(allSegmentIds);
-
-
-        StringBuilder stringBuilder = new StringBuilder();
-        int count = 0;
-
-        for(Object segmentId : campaignIdSet) {
-           stringBuilder.append("\""+ segmentId.toString() + "\"");
-           count++;
-           if(count < allSegmentIds.size())
-               stringBuilder.append(",");
+        //Create set of unique segmentIds
+        HashSet segmentIdSet = new HashSet();
+        for(Segment segment : allSegments) {
+            segmentIdSet.add(segment.getId());
         }
-        System.out.println(stringBuilder.toString());
-        httpConnection.requestSegmentLoadReport(stringBuilder.toString());
+        System.out.println(segmentIdSet.size());
+
+        List<String[]> csvData = AppNexusReportRequests.getSegmentLoadReport(segmentIdSet, appNexusUrl, httpConnection);
+
+        //remove header data
+        csvData.remove(0);
+
+        //for every line, parse the data into correct variables
+        for (String[] line : csvData) {
+            //add data to new list
+        }
+
+        //Request advertiser analytic reports to obtain daily campaign impressions
+
+
 
     }
 }

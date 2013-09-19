@@ -15,6 +15,10 @@ public class Campaign {
     private String endDate;
     private ArrayList<String> segmentIds = new ArrayList<String>();
 
+    public Profile getProfile() {
+        return profile;
+    }
+
     public ArrayList<String> getSegmentIds() {
 
         for(SegmentGroupTarget groupTarget : profile.getSegmentGroupTargets()) {
