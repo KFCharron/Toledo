@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class SegmentGroupTarget {
 
     private String boolOp;
-    private ArrayList<Segment> segmentArrayList;
+    private ArrayList<Segment> segmentArrayList = new ArrayList<Segment>();
 
     public SegmentGroupTarget (String boolOp, ArrayList<Segment> segmentArrayList) {
         this.boolOp = boolOp;
