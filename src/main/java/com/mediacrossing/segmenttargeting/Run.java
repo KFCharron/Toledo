@@ -167,14 +167,27 @@ public class Run {
         //remove header data
         csvData.remove(0);
 
-        //for every line, parse the data into correct variables
+        //for every line, parse the data into segment rows
         ArrayList<SegmentRow> segmentRowArrayList = new ArrayList<SegmentRow>();
         for (String[] line : csvData) {
-
+            ArrayList<Campaign> segmentCampaigns = new ArrayList<Campaign>();
+            for(Campaign campaign : dataStore.getLiveCampaignArrayList()) {
+                for(SegmentGroupTarget segmentGroupTarget : campaign.getProfile().getSegmentGroupTargets()) {
+                    if(segmentGroupTarget.getBoolOp().equals("include")) {
+                        for(Segment segment : segmentGroupTarget.getSegmentArrayList()) {
+                            if(segment.getBoolOp().equals("include")) {
+                                if(segment.getId().equals(line[0])) {
+                                    segmentCampaigns.add(campaign);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            SegmentRow segmentRow = new SegmentRow(line[0],line[1], segmentCampaigns);
+            segmentRowArrayList.add(segmentRow);
         }
-
-
-
+        xlsWriter.writeSegmentLoadFile(segmentRowArrayList, fileOutputPath);
 
     }
 }
