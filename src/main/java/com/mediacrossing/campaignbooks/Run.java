@@ -113,20 +113,12 @@ public class Run {
                 Delivery delivery = new Delivery(line[0],line[1],line[2]);
                 for(LineItem lineItem : advertiser.getLineItemList()) {
                     for(Campaign campaign : lineItem.getCampaignList()) {
-                        if (campaign.getCampaignID().equals(delivery.getCampaignID())) {
-                            System.out.println("Adding delivery!!");
+                        if (campaign.getCampaignID().equals(delivery.getCampaignID()))
                             campaign.addToDeliveries(delivery);
-                        }
                     }
                 }
             }
-            //parse the string into object
-            //match data to advertisers??
         }
-
-        //when ready, download report as input stream.
-        //parse csv input stream
-        //save csv vars into campaigns
 
         //Build and save excel book, each sheet being its own line item
         ExcelWriter excelWriter = new ExcelWriter();
