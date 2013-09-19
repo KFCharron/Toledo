@@ -14,6 +14,15 @@ public class Campaign {
     private ArrayList<ServingFee> servingFeeList;
     private String endDate;
     private ArrayList<String> segmentIds = new ArrayList<String>();
+    private int dailyImps;
+
+    public int getDailyImps() {
+        return dailyImps;
+    }
+
+    public void setDailyImps(int dailyImps) {
+        this.dailyImps = dailyImps;
+    }
 
     public Profile getProfile() {
         return profile;

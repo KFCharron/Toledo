@@ -96,7 +96,7 @@ public class Run {
         for (Advertiser advertiser : advertiserList) {
 
             List<String[]> csvData = AppNexusReportRequests.getAdvertiserAnalyticReport(advertiser.getAdvertiserID(),
-                    httpConnection, appNexusUrl);
+                    appNexusUrl, httpConnection);
 
             //remove header string
             csvData.remove(0);
