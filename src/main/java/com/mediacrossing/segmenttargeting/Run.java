@@ -184,7 +184,7 @@ public class Run {
                     }
                 }
             }
-            SegmentRow segmentRow = new SegmentRow(line[0],line[1], segmentCampaigns);
+            SegmentRow segmentRow = new SegmentRow(line[0], line[1], segmentCampaigns, line[3], line[4]);
             segmentRowArrayList.add(segmentRow);
         }
         xlsWriter.writeSegmentLoadFile(segmentRowArrayList, fileOutputPath);
