@@ -14,6 +14,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
@@ -47,6 +48,7 @@ public class Run {
     }
 
     public static void main(String[] args) throws Exception {
+
         registerLoggerWithUncaughtExceptions();
 
         //Declare Variables
@@ -96,6 +98,28 @@ public class Run {
         //Write xls file for all reports
         XlsWriter xlsWriter = new XlsWriter();
         xlsWriter.writeAllReports(dataStore.getLiveCampaignArrayList(), fileOutputPath);
+
+        //Collect all segmentIds into one list
+        ArrayList<String> allSegmentIds = new ArrayList<String>();
+        for(Campaign campaign : dataStore.getCampaignArrayList()) {
+            for(String campaignId : campaign.getSegmentIds()) {
+                allSegmentIds.add(campaignId);
+            }
+        }
+        HashSet campaignIdSet = new HashSet(allSegmentIds);
+
+
+        StringBuilder stringBuilder = new StringBuilder();
+        int count = 0;
+
+        for(Object segmentId : campaignIdSet) {
+           stringBuilder.append("\""+ segmentId.toString() + "\"");
+           count++;
+           if(count < allSegmentIds.size())
+               stringBuilder.append(",");
+        }
+        System.out.println(stringBuilder.toString());
+        httpConnection.requestSegmentLoadReport(stringBuilder.toString());
 
     }
 }
