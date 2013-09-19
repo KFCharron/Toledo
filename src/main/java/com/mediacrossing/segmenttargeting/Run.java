@@ -95,15 +95,23 @@ public class Run {
         XlsWriter xlsWriter = new XlsWriter();
         xlsWriter.writeAllReports(dataStore.getLiveCampaignArrayList(), fileOutputPath);
 
-        /*Segment Load Report*/
+        /*
+        Segment Load Report
+        */
 
         //Collect all segments into one list
         ArrayList<Segment> allSegments = new ArrayList<Segment>();
         for(Campaign campaign : dataStore.getCampaignArrayList()) {
             for(SegmentGroupTarget segmentGroupTarget : campaign.getProfile().getSegmentGroupTargets()) {
-                for(Segment segment : segmentGroupTarget.getSegmentArrayList()) {
-                    allSegments.add(segment);
+                if(segmentGroupTarget.getBoolOp().equals("include")) {
+                    for(Segment segment : segmentGroupTarget.getSegmentArrayList()) {
+                        if(segment.getBoolOp().equals("include")) {
+                            allSegments.add(segment);
+                        }
+
+                    }
                 }
+
 
             }
         }
@@ -114,17 +122,53 @@ public class Run {
         }
         System.out.println(segmentIdSet.size());
 
-        List<String[]> csvData = AppNexusReportRequests.getSegmentLoadReport(segmentIdSet, appNexusUrl, httpConnection);
+        List<String[]> csvData = AppNexusReportRequests.getSegmentLoadReport(segmentIdSet,
+                appNexusUrl, httpConnection);
 
         //remove header data
         csvData.remove(0);
 
         //for every line, parse the data into correct variables
         for (String[] line : csvData) {
-            //add data to new list
+            //TODO add data to new list
         }
 
         //Request advertiser analytic reports to obtain daily campaign impressions
+        HashSet<String> advertiserIdSet = new HashSet<String>();
+        for (Campaign campaign : dataStore.getLiveCampaignArrayList()) {
+            advertiserIdSet.add(campaign.getAdvertiserID());
+        }
+        //Request reports for each ad id
+        ArrayList<Campaign> campaignList = dataStore.getLiveCampaignArrayList();
+        for(String advertiserId : advertiserIdSet) {
+            csvData = AppNexusReportRequests.getCampaignImpsReport(advertiserId,
+                    appNexusUrl, httpConnection);
+
+            //remove header
+            csvData.remove(0);
+
+            //for every row in the file
+            for (String[] line : csvData) {
+
+                //find the same campaign in the datastore
+                int count = 0;
+                while(!campaignList
+                        .get(count)
+                        .getId()
+                        .equals(line[0])) {
+                   count++;
+                }
+                if(campaignList.get(count).getId().equals(line[0])) {
+                    //set that campaigns daily imps
+                    campaignList.get(count).setDailyImps(Integer.parseInt(line[1]));
+                }
+                else {
+                    LOG.info("Campaign " + campaignList.get(count).getId() + "is not live or not found.");
+                }
+            }
+        }
+        //update the live campaign list in the data store
+        dataStore.setLiveCampaignArrayList(campaignList);
 
 
 
