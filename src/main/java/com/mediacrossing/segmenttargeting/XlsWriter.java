@@ -450,7 +450,8 @@ public class XlsWriter {
             segmentSheetRow.createCell(3).setCellValue(segmentData.getDailyUniques());
             StringBuilder stringBuilder = new StringBuilder();
             for(Campaign campaign : segmentData.getCampaigns()) {
-                stringBuilder.append(campaign.getId());
+                stringBuilder.append("(" + campaign.getId() + ")");
+                stringBuilder.append(campaign.getName());
                 stringBuilder.append(" : ");
                 stringBuilder.append(campaign.getDailyImps());
                 stringBuilder.append("\n");

@@ -117,21 +117,10 @@ public class Run {
 
             //for every row in the file
             for (String[] line : csvData) {
-
-                //find the same campaign in the datastore
-                int count = 0;
-                while(!campaignList
-                        .get(count)
-                        .getId()
-                        .equals(line[0]) && count < campaignList.size()) {
-                   count++;
-                }
-                if(campaignList.get(count).getId().equals(line[0])) {
-                    //set that campaigns daily imps
-                    campaignList.get(count).setDailyImps(Integer.parseInt(line[1]));
-                }
-                else {
-                    LOG.info("Campaign " + line[0] + " " + line[1] + "is not live or not found.");
+                for(Campaign campaign : campaignList) {
+                    if(campaign.getId().equals(line[0])) {
+                        campaign.setDailyImps(Integer.parseInt(line[1]));
+                    }
                 }
             }
         }
@@ -142,24 +131,20 @@ public class Run {
         ArrayList<Segment> allSegments = new ArrayList<Segment>();
         for(Campaign campaign : dataStore.getCampaignArrayList()) {
             for(SegmentGroupTarget segmentGroupTarget : campaign.getProfile().getSegmentGroupTargets()) {
-                if(segmentGroupTarget.getBoolOp().equals("include")) {
-                    for(Segment segment : segmentGroupTarget.getSegmentArrayList()) {
-                        if(segment.getBoolOp().equals("include")) {
-                            allSegments.add(segment);
-                        }
-
+                for(Segment segment : segmentGroupTarget.getSegmentArrayList()) {
+                    if(segment.getAction().equals("include")) {
+                        allSegments.add(segment);
                     }
                 }
-
-
             }
         }
+        System.out.println("All segments used: " + allSegments.size());
         //Create set of unique segmentIds
         HashSet segmentIdSet = new HashSet();
         for(Segment segment : allSegments) {
             segmentIdSet.add(segment.getId());
         }
-        System.out.println(segmentIdSet.size());
+        System.out.println("Unique Segments used: " + segmentIdSet.size());
 
         csvData = AppNexusReportRequests.getSegmentLoadReport(segmentIdSet,
                 appNexusUrl, httpConnection);
@@ -173,12 +158,10 @@ public class Run {
             ArrayList<Campaign> segmentCampaigns = new ArrayList<Campaign>();
             for(Campaign campaign : dataStore.getLiveCampaignArrayList()) {
                 for(SegmentGroupTarget segmentGroupTarget : campaign.getProfile().getSegmentGroupTargets()) {
-                    if(segmentGroupTarget.getBoolOp().equals("include")) {
-                        for(Segment segment : segmentGroupTarget.getSegmentArrayList()) {
-                            if(segment.getBoolOp().equals("include")) {
-                                if(segment.getId().equals(line[0])) {
-                                    segmentCampaigns.add(campaign);
-                                }
+                    for(Segment segment : segmentGroupTarget.getSegmentArrayList()) {
+                        if(segment.getAction().equals("include")) {
+                            if(segment.getId().equals(line[0])) {
+                                segmentCampaigns.add(campaign);
                             }
                         }
                     }
