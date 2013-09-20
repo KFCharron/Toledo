@@ -10,6 +10,7 @@ import scala.Tuple2;
 
 import java.io.*;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Arrays;
 
@@ -117,6 +118,8 @@ public class Run {
         for (Advertiser advertiser : advertiserList) {
             if (advertiser.isLive()) {
                 for (LineItem lineItem : advertiser.getLineItemList()) {
+                    Date currentDate = new Date();
+                    //TODO only write line item sheet if before end date
                     excelWriter.writeLineItemSheetToWorkbook(lineItem);
                 }
             }

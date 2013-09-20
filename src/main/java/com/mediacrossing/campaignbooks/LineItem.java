@@ -1,55 +1,63 @@
 package com.mediacrossing.campaignbooks;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class LineItem {
+
     private String lineItemID;
     private String lineItemName;
-    private String startDate;
-    private String endDate;
-    private String overallBudget;
-    private String dailyBudget;
+    private Date startDate;
+    private Date endDate;
+    private float lifetimeBudget;
+    private float dailyBudget;
+    private long daysActive;
+    private long daysRemaining;
     private List<Campaign> campaignList;
-    private int daysActive;
-    private int daysRemaining;
 
     public LineItem(String lineItemID, String lineItemName, String startDate,
-                    String endDate, String overallBudget, String dailyBudget) {
+                    String endDate, String lifetimeBudget, String dailyBudget) throws ParseException {
         this.lineItemID = lineItemID;
         this.lineItemName = lineItemName;
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.overallBudget = overallBudget;
-        this.dailyBudget = dailyBudget;
-    }
-
-    public LineItem(String lineItemID) {
-        this.lineItemID = lineItemID;
-    }
-
-    public String getLineItemName() {
-        return lineItemName;
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        if(!startDate.equals("null") || !endDate.equals("null")) {
+            this.startDate = sdf.parse(startDate);
+            this.endDate = sdf.parse(endDate);
+            this.daysActive = TimeUnit.DAYS.convert(this.endDate.getTime() - this.startDate.getTime(),
+                    TimeUnit.MILLISECONDS);
+            Date now = new Date();
+            this.daysRemaining = TimeUnit.DAYS.convert(this.endDate.getTime() - now.getTime(), TimeUnit.MILLISECONDS);
+        }
+        if(!lifetimeBudget.equals("null"))
+        this.lifetimeBudget = Float.parseFloat(lifetimeBudget);
+        if(!dailyBudget.equals("null"))
+        this.dailyBudget = Float.parseFloat(dailyBudget);
     }
 
     public String getLineItemID() {
         return lineItemID;
     }
 
-    public String getStartDate() {
-        //TODO convert to human readable
+    public String getLineItemName() {
+        return lineItemName;
+    }
+
+    public Date getStartDate() {
         return startDate;
     }
 
-    public String getEndDate() {
-        //TODO convert to human readable
+    public Date getEndDate() {
         return endDate;
     }
 
-    public String getOverallBudget() {
-        return overallBudget;
+    public Float getLifetimeBudget() {
+        return lifetimeBudget;
     }
 
-    public String getDailyBudget() {
+    public Float getDailyBudget() {
         return dailyBudget;
     }
 
@@ -57,13 +65,11 @@ public class LineItem {
         return campaignList;
     }
 
-    public int getDaysActive() {
-        //TODO calculate days active
+    public long getDaysActive() {
         return daysActive;
     }
 
-    public int getDaysRemaining() {
-        //TODO calculate days remaining
+    public long getDaysRemaining() {
         return daysRemaining;
     }
 

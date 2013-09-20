@@ -33,7 +33,7 @@ public class DataParse {
 
     }
 
-    public List<LineItem> populateLineItemList (String rawData) {
+    public List<LineItem> populateLineItemList (String rawData) throws ParseException {
         List<LineItem> lineItemList = new ArrayList<LineItem>();
         JsonElement jsonElement = new JsonParser().parse(rawData);
         for (JsonElement lineItem : jsonElement.getAsJsonArray()) {

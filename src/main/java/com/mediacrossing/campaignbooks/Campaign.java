@@ -13,12 +13,10 @@ public class Campaign {
     private Date startDate;
     private Date endDate;
     private float lifetimeBudget;
-    private int daysRemaining;
     private float dailyBudget;
     private float actualDailyBudget;
     private float totalDelivery;
     private int daysActive;
-    private List<Float> dailyDeliveryList = new LinkedList<Float>();
     private List<Delivery> deliveries = new LinkedList<Delivery>();
 
     public void addToDeliveries(Delivery delivery) {
@@ -38,16 +36,9 @@ public class Campaign {
             this.startDate = sdf.parse(startDate);
         if (!endDate.equals("null"))
             this.endDate = sdf.parse(endDate);
-        //Calculating daysRemaining
-        if (!startDate.equals("null") && !endDate.equals("null"))
-            this.daysRemaining = (int)((this.endDate.getTime() - this.startDate.getTime())
-                    / (1000 * 60 * 60 * 24));
+        //Set actual daily budget, total delivery, days active
 
 
-    }
-
-    public Campaign(String campaignID) {
-        this.campaignID = campaignID;
     }
 
     public String getCampaignID() {
@@ -58,32 +49,16 @@ public class Campaign {
         return campaignName;
     }
 
-    public String getStartDate() {
-        if (startDate != null) {
-            DateFormat df = new SimpleDateFormat("dd-MMM");
-            return df.format(startDate);
-        }
-        else
-            return "";
-
+    public Date getStartDate() {
+        return startDate;
     }
 
-    public String getEndDate() {
-        if (endDate != null) {
-            DateFormat df = new SimpleDateFormat("dd-MMM");
-            return df.format(endDate);
-        }
-        else
-            return "";
-
+    public Date getEndDate() {
+        return endDate;
     }
 
     public float getLifetimeBudget() {
         return lifetimeBudget;
-    }
-
-    public int getDaysRemaining() {
-        return daysRemaining;
     }
 
     public float getDailyBudget() {
@@ -91,28 +66,18 @@ public class Campaign {
     }
 
     public float getActualDailyBudget() {
-        float deliveryTotal = getTotalDelivery();
-        actualDailyBudget = deliveryTotal / getDailyDeliveryList().size();
         return actualDailyBudget;
     }
 
     public float getTotalDelivery() {
-        for(Float delivery : this.getDailyDeliveryList()) {
-
-        }
         return totalDelivery;
     }
-
 
     public int getDaysActive() {
         return daysActive;
     }
 
-    public void addToDailyDeliveryList(float dailyDelivery) {
-        this.dailyDeliveryList.add(dailyDelivery);
-    }
-
-    public List<Float> getDailyDeliveryList() {
-        return dailyDeliveryList;
+    public List<Delivery> getDeliveries() {
+        return deliveries;
     }
 }

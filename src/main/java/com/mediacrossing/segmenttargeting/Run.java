@@ -153,24 +153,25 @@ public class Run {
         csvData.remove(0);
 
         //for every line, parse the data into segment rows
-        ArrayList<SegmentRow> segmentRowArrayList = new ArrayList<SegmentRow>();
+        //save segment data to each segment
+        //update live campaign list
+        ArrayList<Campaign> newCampaignArrayList = dataStore.getLiveCampaignArrayList();
         for (String[] line : csvData) {
-            ArrayList<Campaign> segmentCampaigns = new ArrayList<Campaign>();
-            for(Campaign campaign : dataStore.getLiveCampaignArrayList()) {
+            for(Campaign campaign : newCampaignArrayList) {
                 for(SegmentGroupTarget segmentGroupTarget : campaign.getProfile().getSegmentGroupTargets()) {
                     for(Segment segment : segmentGroupTarget.getSegmentArrayList()) {
-                        if(segment.getAction().equals("include")) {
                             if(segment.getId().equals(line[0])) {
-                                segmentCampaigns.add(campaign);
+                                segment.setTotalSegmentLoads(line[3]);
+                                segment.setDailySegmentLoads(line[4]);
                             }
                         }
                     }
                 }
             }
-            SegmentRow segmentRow = new SegmentRow(line[0], line[1], segmentCampaigns, line[3], line[4]);
-            segmentRowArrayList.add(segmentRow);
-        }
-        xlsWriter.writeSegmentLoadFile(segmentRowArrayList, fileOutputPath);
+        dataStore.setLiveCampaignArrayList(newCampaignArrayList);
+
+
+        xlsWriter.writeSegmentLoadFile(dataStore.getLiveCampaignArrayList(), fileOutputPath);
 
     }
 }

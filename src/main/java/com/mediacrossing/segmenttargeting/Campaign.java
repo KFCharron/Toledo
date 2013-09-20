@@ -15,6 +15,24 @@ public class Campaign {
     private String endDate;
     private ArrayList<String> segmentIds = new ArrayList<String>();
     private int dailyImps;
+    private String advertiserName;
+    private String lineItemName;
+
+    public String getAdvertiserName() {
+        return advertiserName;
+    }
+
+    public void setAdvertiserName(String advertiserName) {
+        this.advertiserName = advertiserName;
+    }
+
+    public String getLineItemName() {
+        return lineItemName;
+    }
+
+    public void setLineItemName(String lineItemName) {
+        this.lineItemName = lineItemName;
+    }
 
     public int getDailyImps() {
         return dailyImps;
