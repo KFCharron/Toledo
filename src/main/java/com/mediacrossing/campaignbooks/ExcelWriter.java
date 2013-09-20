@@ -42,11 +42,12 @@ public class ExcelWriter {
         Row lineItemRow = lineItemSheet.createRow(1);
         lineItemRow.createCell(0);
         lineItemRow.createCell(1).setCellValue(lineItem.getLineItemName());
-        lineItemRow.createCell(2).setCellValue(lineItem.getOverallBudget());
+        lineItemRow.createCell(2).setCellValue(lineItem.getLifetimeBudget());
         lineItemRow.createCell(3).setCellValue(lineItem.getStartDate());
         lineItemRow.createCell(4).setCellValue(lineItem.getEndDate());
         lineItemRow.createCell(5).setCellValue(lineItem.getDaysActive());
         lineItemRow.createCell(6).setCellValue(lineItem.getDailyBudget());
+
         Row secondLineItemRow = lineItemSheet.createRow(2);
         //If fails, add blank cells before it.
         secondLineItemRow.createCell(5).setCellValue(lineItem.getDaysRemaining());
@@ -86,21 +87,18 @@ public class ExcelWriter {
             campaignRow.createCell(6).setCellValue(campaign.getDailyBudget());
             campaignRow.createCell(7).setCellValue(campaign.getActualDailyBudget());
             campaignRow.createCell(8).setCellValue(campaign.getTotalDelivery());
-            int cellCount = 8;
-            for(Float dailyDelivery : campaign.getDailyDeliveryList()) {
-                campaignRow.createCell(cellCount).setCellValue(dailyDelivery);
+            int cellCount = 9;
+            //list daily deliveries
+            for(Delivery dailyDelivery : campaign.getDeliveries()) {
+                campaignRow.createCell(cellCount).setCellValue(dailyDelivery.getDelivery());
                 cellCount++;
             }
             rowCount++;
 
+            for (Cell cell : campaignRow) {
+                lineItemSheet.autoSizeColumn(cell.getColumnIndex());
+            }
         }
-
-        //size the columns appropriately
-        //TODO set sizes for daily delivery
-        for(int x = 0; x < 15; x++) {
-            lineItemSheet.autoSizeColumn(x);
-        }
-
     }
 
     public void writeWorkbookToFileWithOutputPath(String outputPath) throws IOException {

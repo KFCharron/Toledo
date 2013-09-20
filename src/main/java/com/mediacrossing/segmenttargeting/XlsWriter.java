@@ -424,11 +424,15 @@ public class XlsWriter {
 
         //Header row
         Row headerRow = segmentSheet.createRow((short) 0);
-        headerRow.createCell(0).setCellValue("Segment ID");
-        headerRow.createCell(1).setCellValue("Segment Name");
-        headerRow.createCell(2).setCellValue("Total Loads");
-        headerRow.createCell(3).setCellValue("Daily Uniques(Yesterday)");
-        headerRow.createCell(4).setCellValue("Campaigns - Impressions(Yesterday)");
+        headerRow.createCell(0).setCellValue("Advertiser ID");
+        headerRow.createCell(1).setCellValue("Line Item ID");
+        headerRow.createCell(2).setCellValue("Campaign ID");
+        headerRow.createCell(3).setCellValue("Segment ID");
+        headerRow.createCell(4).setCellValue("Campaign Name");
+        headerRow.createCell(5).setCellValue("Segment Name");
+        headerRow.createCell(6).setCellValue("Total Segment Loads");
+        headerRow.createCell(7).setCellValue("Daily Segment Loads");
+        headerRow.createCell(8).setCellValue("Daily Campaign Impressions");
 
 
         //Style header
@@ -437,34 +441,36 @@ public class XlsWriter {
         font.setBoldweight((short) 700);
         CellStyle bold = WORKBOOK.createCellStyle();
         bold.setFont(font);
-        for(int x = 0; x < 5; x++)
+        for(int x = 0; x < 9; x++)
             headerRow.getCell(x).setCellStyle(bold);
 
         //Repeat row for every segment row
         short rowCounter = 1;
-        for (SegmentRow segmentData : SEGMENTROWLIST) {
-            Row segmentSheetRow = segmentSheet.createRow(rowCounter);
-            segmentSheetRow.createCell(0).setCellValue(segmentData.getSegmentId());
-            segmentSheetRow.createCell(1).setCellValue(segmentData.getName());
-            segmentSheetRow.createCell(2).setCellValue(segmentData.getTotalLoads());
-            segmentSheetRow.createCell(3).setCellValue(segmentData.getDailyUniques());
-            StringBuilder stringBuilder = new StringBuilder();
-            for(Campaign campaign : segmentData.getCampaigns()) {
-                stringBuilder.append("(" + campaign.getId() + ")");
-                stringBuilder.append(campaign.getName());
-                stringBuilder.append(" : ");
-                stringBuilder.append(campaign.getDailyImps());
-                stringBuilder.append("\n");
+        for (Campaign campaign : CAMPAIGNARRAYLIST) {
+            for(SegmentGroupTarget segmentGroupTarget : campaign.getSegmentGroupTargetList())
+            {
+                for (Segment segment : segmentGroupTarget.getSegmentArrayList()) {
+                    Row segmentRow = segmentSheet.createRow(rowCounter);
+                    segmentRow.createCell(0).setCellValue("(" + campaign.getAdvertiserID() + ")"
+                            + campaign.getAdvertiserName());
+                    segmentRow.createCell(1).setCellValue("(" + campaign.getLineItemID() + ")"
+                            + campaign.getLineItemName());
+                    segmentRow.createCell(2).setCellValue(campaign.getId());
+                    segmentRow.createCell(3).setCellValue(segment.getId());
+                    segmentRow.createCell(4).setCellValue(campaign.getName());
+                    segmentRow.createCell(5).setCellValue(segment.getName());
+                    segmentRow.createCell(6).setCellValue(segment.getTotalSegmentLoads());
+                    segmentRow.createCell(7).setCellValue(segment.getDailySegmentLoads());
+                    segmentRow.createCell(8).setCellValue(campaign.getDailyImps());
+
+                    rowCounter++;
+                }
             }
-            segmentSheetRow.createCell(4).setCellValue(stringBuilder.toString());
-
-
-            rowCounter++;
 
         }
 
         //auto-size columns
-        for(int x = 0; x < 5; x++) {
+        for(int x = 0; x < 9; x++) {
             segmentSheet.autoSizeColumn(x);
         }
     }
@@ -501,8 +507,8 @@ public class XlsWriter {
         writeWorkbookToFileWithName("FrequencyReport.xls");
     }
 
-    public void writeSegmentLoadFile(ArrayList<SegmentRow> segmentRowArrayList, String outputPath) throws IOException {
-        setSEGMENTROWLIST(segmentRowArrayList);
+    public void writeSegmentLoadFile(ArrayList<Campaign> campaignArrayList, String outputPath) throws IOException {
+        setCAMPAIGNARRAYLIST(campaignArrayList);
         setOUTPUTPATH(outputPath);
         WORKBOOK = new HSSFWorkbook();
         buildSegmentLoadSheet();
