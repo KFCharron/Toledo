@@ -430,6 +430,7 @@ public class XlsWriter {
         headerRow.createCell(3).setCellValue("Daily Uniques(Yesterday)");
         headerRow.createCell(4).setCellValue("Campaigns - Impressions(Yesterday)");
 
+
         //Style header
         Font font = WORKBOOK.createFont();
         font.setFontHeightInPoints((short) 14);
@@ -444,6 +445,17 @@ public class XlsWriter {
         for (SegmentRow segmentData : SEGMENTROWLIST) {
             Row segmentSheetRow = segmentSheet.createRow(rowCounter);
             segmentSheetRow.createCell(0).setCellValue(segmentData.getSegmentId());
+            segmentSheetRow.createCell(1).setCellValue(segmentData.getName());
+            segmentSheetRow.createCell(2).setCellValue(segmentData.getTotalLoads());
+            segmentSheetRow.createCell(3).setCellValue(segmentData.getDailyUniques());
+            StringBuilder stringBuilder = new StringBuilder();
+            for(Campaign campaign : segmentData.getCampaigns()) {
+                stringBuilder.append(campaign.getId());
+                stringBuilder.append(" : ");
+                stringBuilder.append(campaign.getDailyImps());
+                stringBuilder.append("\n");
+            }
+            segmentSheetRow.createCell(4).setCellValue(stringBuilder.toString());
 
 
             rowCounter++;
