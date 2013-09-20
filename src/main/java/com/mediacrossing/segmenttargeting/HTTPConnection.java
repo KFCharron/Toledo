@@ -415,7 +415,7 @@ public class HTTPConnection {
                 "            \"imps\"\n" +
                 "        ],\n" +
                 "        \"row_per\":[\n" +
-                "            \"campaign_id\",\n" +
+                "            \"campaign_id\"\n" +
                 "        ],\n" +
                 "        \"report_interval\":\"yesterday\",\n" +
                 "        \"format\":\"csv\",\n" +
@@ -423,10 +423,6 @@ public class HTTPConnection {
                 "            \"kyle.charron@mediacrossing.com\"\n" +
                 "        ],\n" +
                 "        \"orders\": [\n" +
-                "                    {\n" +
-                "                        \"order_by\":\"day\", \n" +
-                "                        \"direction\":\"DESC\"\n" +
-                "                    },\n" +
                 "                    {\n" +
                 "                        \"order_by\":\"campaign_id\",\n" +
                 "                        \"direction\":\"DESC\"\n" +

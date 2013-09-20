@@ -123,7 +123,7 @@ public class Run {
                 while(!campaignList
                         .get(count)
                         .getId()
-                        .equals(line[0])) {
+                        .equals(line[0]) && count < campaignList.size()) {
                    count++;
                 }
                 if(campaignList.get(count).getId().equals(line[0])) {
@@ -131,7 +131,7 @@ public class Run {
                     campaignList.get(count).setDailyImps(Integer.parseInt(line[1]));
                 }
                 else {
-                    LOG.info("Campaign " + campaignList.get(count).getId() + "is not live or not found.");
+                    LOG.info("Campaign " + line[0] + " " + line[1] + "is not live or not found.");
                 }
             }
         }

@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import scala.Tuple2;
 
 import java.io.*;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Arrays;
