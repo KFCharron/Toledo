@@ -106,8 +106,10 @@ public class Run {
                 Delivery delivery = new Delivery(line[0],line[1],line[2]);
                 for(LineItem lineItem : advertiser.getLineItemList()) {
                     for(Campaign campaign : lineItem.getCampaignList()) {
-                        if (campaign.getCampaignID().equals(delivery.getCampaignID()))
+                        if (campaign.getCampaignID().equals(delivery.getCampaignID())) {
                             campaign.addToDeliveries(delivery);
+                            campaign.setTotalDelivery(campaign.getTotalDelivery() + delivery.getDelivery());
+                        }
                     }
                 }
             }
@@ -118,9 +120,9 @@ public class Run {
         for (Advertiser advertiser : advertiserList) {
             if (advertiser.isLive()) {
                 for (LineItem lineItem : advertiser.getLineItemList()) {
-                    Date currentDate = new Date();
-                    //TODO only write line item sheet if before end date
-                    excelWriter.writeLineItemSheetToWorkbook(lineItem);
+                    if(lineItem.getDaysRemaining() >= 0) {
+                        excelWriter.writeLineItemSheetToWorkbook(lineItem);
+                    }
                 }
             }
         }

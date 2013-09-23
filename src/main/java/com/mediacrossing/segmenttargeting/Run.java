@@ -101,14 +101,19 @@ public class Run {
 
 
         //Request advertiser analytic reports to obtain daily campaign impressions
+        //collect set of unique advertiser ids
         HashSet<String> advertiserIdSet = new HashSet<String>();
         for (Campaign campaign : dataStore.getLiveCampaignArrayList()) {
             advertiserIdSet.add(campaign.getAdvertiserID());
         }
+
+        //For every ad id, query MX
+        //step through each campaign, add advertiser to it
         //Request reports for each ad id
         ArrayList<Campaign> campaignList = dataStore.getLiveCampaignArrayList();
         List<String[]> csvData;
         for(String advertiserId : advertiserIdSet) {
+
             csvData = AppNexusReportRequests.getCampaignImpsReport(advertiserId,
                     appNexusUrl, httpConnection);
 
@@ -138,13 +143,11 @@ public class Run {
                 }
             }
         }
-        System.out.println("All segments used: " + allSegments.size());
         //Create set of unique segmentIds
         HashSet segmentIdSet = new HashSet();
         for(Segment segment : allSegments) {
             segmentIdSet.add(segment.getId());
         }
-        System.out.println("Unique Segments used: " + segmentIdSet.size());
 
         csvData = AppNexusReportRequests.getSegmentLoadReport(segmentIdSet,
                 appNexusUrl, httpConnection);
@@ -152,22 +155,22 @@ public class Run {
         //remove header data
         csvData.remove(0);
 
-        //for every line, parse the data into segment rows
         //save segment data to each segment
-        //update live campaign list
+
         ArrayList<Campaign> newCampaignArrayList = dataStore.getLiveCampaignArrayList();
         for (String[] line : csvData) {
             for(Campaign campaign : newCampaignArrayList) {
                 for(SegmentGroupTarget segmentGroupTarget : campaign.getProfile().getSegmentGroupTargets()) {
                     for(Segment segment : segmentGroupTarget.getSegmentArrayList()) {
-                            if(segment.getId().equals(line[0])) {
-                                segment.setTotalSegmentLoads(line[3]);
-                                segment.setDailySegmentLoads(line[4]);
-                            }
+                        if(segment.getId().equals(line[0])) {
+                            segment.setTotalSegmentLoads(line[3]);
+                            segment.setDailySegmentLoads(line[4]);
                         }
                     }
                 }
             }
+        }
+        //update live campaign list
         dataStore.setLiveCampaignArrayList(newCampaignArrayList);
 
 
