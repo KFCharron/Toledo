@@ -2,6 +2,8 @@ package com.mediacrossing.campaignbooks;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.WorkbookUtil;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -13,7 +15,8 @@ public class ExcelWriter {
     public void writeLineItemSheetToWorkbook(LineItem lineItem) {
 
         //Create new sheet
-        Sheet lineItemSheet = WORKBOOK.createSheet(lineItem.getLineItemName());
+        String sheetName = WorkbookUtil.createSafeSheetName(lineItem.getLineItemName());
+        Sheet lineItemSheet = WORKBOOK.createSheet(sheetName);
 
         //Add line item header row
         Row lineItemHeader = lineItemSheet.createRow(0);
@@ -91,6 +94,9 @@ public class ExcelWriter {
             //list daily deliveries
             for(Delivery dailyDelivery : campaign.getDeliveries()) {
                 campaignRow.createCell(cellCount).setCellValue(dailyDelivery.getDelivery());
+                if(dailyDelivery.getDate() != null) {
+                    campaignHeaderRow.createCell(cellCount).setCellValue(dailyDelivery.getDate());
+                }
                 cellCount++;
             }
             rowCount++;
@@ -99,6 +105,14 @@ public class ExcelWriter {
                 lineItemSheet.autoSizeColumn(cell.getColumnIndex());
             }
         }
+        rowCount++;
+        Row totalRow = lineItemSheet.createRow(rowCount);
+        totalRow.createCell(2).setCellFormula("=SUM(C4:C" + (rowCount-1) + ")");
+        totalRow.createCell(6).setCellFormula("=SUM(G4:G" + (rowCount-1) + ")");
+        totalRow.createCell(7).setCellFormula("=SUM(H4:H" + (rowCount-1) + ")");
+        totalRow.createCell(8).setCellFormula("=SUM(I4:I" + (rowCount-1) + ")");
+        totalRow.createCell(9).setCellFormula("=SUM(J4:J" + (rowCount-1) + ")");
+
     }
 
     public void writeWorkbookToFileWithOutputPath(String outputPath) throws IOException {
