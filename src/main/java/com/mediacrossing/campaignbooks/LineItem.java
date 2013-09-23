@@ -23,13 +23,16 @@ public class LineItem {
         this.lineItemID = lineItemID;
         this.lineItemName = lineItemName;
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-        if(!startDate.equals("null") || !endDate.equals("null")) {
+        if(!startDate.equals("null") && !endDate.equals("null")) {
             this.startDate = sdf.parse(startDate);
             this.endDate = sdf.parse(endDate);
             this.daysActive = TimeUnit.DAYS.convert(this.endDate.getTime() - this.startDate.getTime(),
                     TimeUnit.MILLISECONDS);
             Date now = new Date();
             this.daysRemaining = TimeUnit.DAYS.convert(this.endDate.getTime() - now.getTime(), TimeUnit.MILLISECONDS);
+        } else {
+            this.startDate = null;
+            this.endDate = null;
         }
         if(!lifetimeBudget.equals("null"))
         this.lifetimeBudget = Float.parseFloat(lifetimeBudget);
@@ -45,12 +48,20 @@ public class LineItem {
         return lineItemName;
     }
 
-    public Date getStartDate() {
-        return startDate;
+    public String getStartDate() {
+        if(startDate != null) {
+           return new SimpleDateFormat("dd-MMM").format(startDate);
+        } else {
+            return "";
+        }
     }
 
-    public Date getEndDate() {
-        return endDate;
+    public String getEndDate() {
+        if(startDate != null) {
+            return new SimpleDateFormat("dd-MMM").format(endDate);
+        } else {
+            return "";
+        }
     }
 
     public Float getLifetimeBudget() {
