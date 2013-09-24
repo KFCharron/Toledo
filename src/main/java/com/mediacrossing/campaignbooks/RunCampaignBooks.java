@@ -10,13 +10,12 @@ import scala.Tuple2;
 
 import java.io.*;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Arrays;
 
-public class Run {
+public class RunCampaignBooks {
 
-    private static final Logger LOG = LoggerFactory.getLogger(Run.class);
+    private static final Logger LOG = LoggerFactory.getLogger(RunCampaignBooks.class);
 
     public static void registerLoggerWithUncaughtExceptions() {
         Thread.setDefaultUncaughtExceptionHandler(
@@ -120,7 +119,7 @@ public class Run {
         for (Advertiser advertiser : advertiserList) {
             if (advertiser.isLive()) {
                 for (LineItem lineItem : advertiser.getLineItemList()) {
-                    if(lineItem.getDaysRemaining() >= 0) {
+                    if(lineItem.getDaysRemaining() > 0) {
                         excelWriter.writeLineItemSheetToWorkbook(lineItem);
                     }
                 }
@@ -129,6 +128,4 @@ public class Run {
         excelWriter.writeWorkbookToFileWithOutputPath(outputPath);
 
     }
-
-
 }
