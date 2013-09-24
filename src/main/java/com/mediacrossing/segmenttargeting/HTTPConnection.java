@@ -266,7 +266,7 @@ public class HTTPConnection {
                         "        \"orders\": [\n" +
                         "            \"day\"\n" +
                         "        ],\n" +
-                        "        \"emails\": [\"kyle.charron@mediacrossing.com\"],\n" +
+                        "        \"emails\": [],\n" +
                         "        \"format\": \"csv\"\n" +
                         "    }\n" +
                         "}";
@@ -339,7 +339,6 @@ public class HTTPConnection {
                 "        \"report_interval\":\"lifetime\",\n" +
                 "        \"format\":\"csv\",\n" +
                 "        \"emails\":[\n" +
-                "            \"kyle.charron@mediacrossing.com\"\n" +
                 "        ],\n" +
                 "        \"orders\": [\n" +
                 "                    {\n" +
@@ -420,7 +419,6 @@ public class HTTPConnection {
                 "        \"report_interval\":\"yesterday\",\n" +
                 "        \"format\":\"csv\",\n" +
                 "        \"emails\":[\n" +
-                "            \"kyle.charron@mediacrossing.com\"\n" +
                 "        ],\n" +
                 "        \"orders\": [\n" +
                 "                    {\n" +
@@ -484,5 +482,93 @@ public class HTTPConnection {
     public void requestDownload(String downloadUrl) throws Exception {
         setUrl(downloadUrl);
         requestReport(appNexusRequestProperties());
+    }
+
+    public void requestPublishersFromAN(String mxUrl) throws Exception {
+        this.setUrl(mxUrl + "/publisher");
+        this.requestData(appNexusRequestProperties());
+    }
+
+    public String requestPublisherReport(String publisherId) throws IOException {
+
+        this.setUrl("http://api.appnexus.com/report?publisher_id=" + publisherId);
+
+        java.net.URL wsURL = new URL(null, url,new sun.net.www.protocol.https.Handler());
+        HttpsURLConnection con = (HttpsURLConnection) wsURL.openConnection();
+
+        //add request header
+        con.setRequestMethod("POST");
+        con.setRequestProperty("Content-Type", "application/json");
+        //Set Auth Token
+        con.setRequestProperty("Authorization", this.getAuthorizationToken());
+        //Authorization JSON data
+        String urlParameters = "{\n" +
+                "    \"report\":\n" +
+                "    {\n" +
+                "        \"report_type\":\"network_publisher_analytics\",\n" +
+                "        \"columns\":[\n" +
+                "            \"publisher_id\",\n" +
+                "            \"imps_total\",\n" +
+                "            \"imps_sold\",\n" +
+                "            \"clicks\",\n" +
+                "            \"imps_rtb\",\n" +
+                "            \"imps_kept\",\n" +
+                "            \"imps_default\",\n" +
+                "            \"imps_psa\"\n" +
+                "        ],\n" +
+                "        \"row_per\":[\n" +
+                "            \"publisher_id\"\n" +
+                "        ],\n" +
+                "        \"report_interval\":\"yesterday\",\n" +
+                "        \"format\":\"csv\",\n" +
+                "        \"emails\":[\n" +
+                "            \"kyle.charron@mediacrossing.com\"\n" +
+                "        ],\n" +
+                "        \"orders\": [\n" +
+                "                    {\n" +
+                "                        \"order_by\":\"publisher_id\", \n" +
+                "                        \"direction\":\"DESC\"\n" +
+                "                    }\n" +
+                "                    ]\n" +
+                "    }\n" +
+                "}";
+
+        // Send post request
+        con.setDoOutput(true);
+        DataOutputStream wr = new DataOutputStream(con.getOutputStream());
+        wr.writeBytes(urlParameters);
+        wr.flush();
+        wr.close();
+
+        int responseCode = con.getResponseCode();
+        LOG.debug("\nSending 'POST' request to URL : " + url);
+        LOG.debug("Response Code : " + responseCode);
+
+        BufferedReader in = new BufferedReader(
+                new InputStreamReader(con.getInputStream()));
+        String inputLine;
+        StringBuilder response = new StringBuilder();
+
+        while ((inputLine = in.readLine()) != null) {
+            response.append(inputLine);
+        }
+        in.close();
+
+        //Received JSON data
+        String rawJSON = response.toString();
+        LOG.debug(rawJSON);
+
+        //Parse JSON, obtain token
+        JsonElement jelement = new JsonParser().parse(rawJSON);
+        JsonObject jobject = jelement.getAsJsonObject();
+        jobject = jobject.getAsJsonObject("response");
+        String reportId = jobject.get("report_id").toString().replace("\"", "");
+        if (reportId.isEmpty()) {
+            LOG.error("ReportID not received.");
+        }
+
+        return reportId;
+
+
     }
 }

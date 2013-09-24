@@ -85,5 +85,28 @@ public class AppNexusReportRequests {
         return httpConnection.getCsvData();
 
     }
+
+    public static List<String[]> getPublisherReport(String publisherId,
+                                                       String appNexusUrl,
+                                                       HTTPConnection httpConnection) throws Exception {
+        String reportId = httpConnection.requestPublisherReport(publisherId);
+        boolean ready = false;
+        while (!ready) {
+            //Check to see if report is ready
+            String jsonResponse = httpConnection.fetchDownloadUrl(reportId);
+            System.out.println(jsonResponse);
+            ready = dataParse.parseReportStatus(jsonResponse);
+            if (!ready)
+                Thread.sleep(20000);
+        }
+        //Report is ready, download it
+        String downloadUrl = appNexusUrl + "/" + dataParse.getReportUrl();
+        httpConnection.requestDownload(downloadUrl);
+
+        return httpConnection.getCsvData();
+
+    }
+
+
 }
 
