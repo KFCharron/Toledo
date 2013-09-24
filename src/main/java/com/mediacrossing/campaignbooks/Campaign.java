@@ -89,11 +89,11 @@ public class Campaign {
     }
 
     public float getDailyBudget() {
-        dailyBudget = getTotalDelivery()/deliveries.size();
         return dailyBudget;
     }
 
     public float getActualDailyBudget() {
+        actualDailyBudget = getTotalDelivery()/deliveries.size();
         return actualDailyBudget;
     }
 
