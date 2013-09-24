@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.mediacrossing.publisher_reporting.Publisher;
 
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -83,5 +84,18 @@ public class DataParse {
         }
         else
             return false;
+    }
+
+    public ArrayList<Publisher> parsePublisherIds(String rawData) {
+        ArrayList<Publisher> pl = new ArrayList<Publisher>();
+        JsonElement je = new JsonParser().parse(rawData);
+        JsonObject jo = je.getAsJsonObject().getAsJsonObject("response");
+        JsonArray ja = jo.getAsJsonArray("publishers");
+        for(JsonElement jsonElement : ja) {
+            jo = jsonElement.getAsJsonObject();
+            pl.add(new Publisher(jo.get("id").toString().replace("\"", ""),
+                    jo.get("name").toString().replace("\"", "")));
+        }
+        return pl;
     }
 }
