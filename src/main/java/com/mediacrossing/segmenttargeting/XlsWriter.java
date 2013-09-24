@@ -1,5 +1,7 @@
 package com.mediacrossing.segmenttargeting;
+import com.mediacrossing.publisher_reporting.Publisher;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.*;
@@ -30,7 +32,7 @@ public class XlsWriter {
         XlsWriter.OUTPUTPATH = OUTPUTPATH;
     }
 
-    public void writeWorkbookToFileWithName(String workbookName) throws IOException {
+    public static void writeWorkbookToFileWithName(String workbookName) throws IOException {
         //writes file
         FileOutputStream fileOut = new FileOutputStream(new File(OUTPUTPATH, workbookName));
         WORKBOOK.write(fileOut);
@@ -513,6 +515,59 @@ public class XlsWriter {
         WORKBOOK = new HSSFWorkbook();
         buildSegmentLoadSheet();
         writeWorkbookToFileWithName("SegmentLoadReport.xls");
+    }
+
+    public static void writePublisherReport(ArrayList<Publisher> pubList, String outputPath) throws IOException {
+
+        WORKBOOK = new HSSFWorkbook();
+        //Create new sheet
+        Sheet publisherSheet = WORKBOOK.createSheet("PublisherReport");
+
+        //Header row
+        Row headerRow = publisherSheet.createRow((short) 0);
+        headerRow.createCell(0).setCellValue("Publisher ID");
+        headerRow.createCell(1).setCellValue("Publisher Name");
+        headerRow.createCell(2).setCellValue("Total Imps");
+        headerRow.createCell(3).setCellValue("Imps Sold");
+        headerRow.createCell(4).setCellValue("Clicks");
+        headerRow.createCell(5).setCellValue("RTB Imps");
+        headerRow.createCell(6).setCellValue("Imps Kept");
+        headerRow.createCell(7).setCellValue("Default Imps");
+        headerRow.createCell(8).setCellValue("PSA Imps");
+
+
+        //Style header
+        Font font = WORKBOOK.createFont();
+        font.setFontHeightInPoints((short) 14);
+        font.setBoldweight((short) 700);
+        CellStyle bold = WORKBOOK.createCellStyle();
+        bold.setFont(font);
+        for(Cell c : headerRow)
+            c.setCellStyle(bold);
+
+        short rowCounter = 1;
+        for(Publisher pub : pubList) {
+            Row dataRow = publisherSheet.createRow(rowCounter);
+            dataRow.createCell(0).setCellValue(pub.getId());
+            dataRow.createCell(1).setCellValue(pub.getPublisherName());
+            dataRow.createCell(2).setCellValue(pub.getImpsTotal());
+            dataRow.createCell(3).setCellValue(pub.getImpsSold());
+            dataRow.createCell(4).setCellValue(pub.getClicks());
+            dataRow.createCell(5).setCellValue(pub.getRtbPercentage() + "% (" + pub.getImpsRtb() + ")");
+            dataRow.createCell(6).setCellValue(pub.getKeptPercentage() + "% (" + pub.getImpsKept() + ")");
+            dataRow.createCell(7).setCellValue(pub.getDefaultPercentage() + "% (" + pub.getImpsDefault() + ")");
+            dataRow.createCell(8).setCellValue(pub.getPsaPercentage() + "% (" + pub.getImpsPsa() + ")");
+            rowCounter++;
+        }
+
+        for(int x = 0; x<= 8; x++) {
+            publisherSheet.autoSizeColumn(x);
+        }
+
+        OUTPUTPATH = outputPath;
+        writeWorkbookToFileWithName("PublisherReport.xls");
+
+
     }
 
 }
