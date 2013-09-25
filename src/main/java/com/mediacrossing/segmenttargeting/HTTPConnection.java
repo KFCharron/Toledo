@@ -89,7 +89,7 @@ public class HTTPConnection {
         acceptAllCertificates();
     }
 
-    public void requestReport(Iterable<Tuple2<String, String>> requestProperties) throws Exception {
+    public void requestReportStatus(Iterable<Tuple2<String, String>> requestProperties) throws Exception {
         URL obj = new URL(url);
         HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 
@@ -145,17 +145,12 @@ public class HTTPConnection {
     public void requestProfile(String profileID, String advertiserID) throws Exception {
         this.setUrl("http://api.appnexus.com/profile?id=" + profileID + "&advertiser_id=" + advertiserID);
         this.requestData(appNexusRequestProperties());
-//        LOG.debug("Fetching Mock Data");
-//        MockMXData mockMXData = new MockMXData();
-//        this.setJSONData(mockMXData.getMockProfileData());
     }
 
     public void requestAllCampaignsFromMX(String mxUrl) throws Exception {
 
         this.setUrl(mxUrl + "/api/catalog/campaigns");
         this.requestData(mxRequestProperties);
-//        MockMXData mockMXData = new MockMXData();
-//        this.setJSONData(mockMXData.getMockCampaignData());
     }
 
     public void authorizeAppNexusConnection(String username, String password) throws Exception {
@@ -481,7 +476,7 @@ public class HTTPConnection {
 
     public void requestDownload(String downloadUrl) throws Exception {
         setUrl(downloadUrl);
-        requestReport(appNexusRequestProperties());
+        requestReportStatus(appNexusRequestProperties());
     }
 
     public void requestPublishersFromAN(String mxUrl) throws Exception {
@@ -532,6 +527,60 @@ public class HTTPConnection {
                 "                    ]\n" +
                 "    }\n" +
                 "}";
+
+        // Send post request
+        con.setDoOutput(true);
+        DataOutputStream wr = new DataOutputStream(con.getOutputStream());
+        wr.writeBytes(urlParameters);
+        wr.flush();
+        wr.close();
+
+        int responseCode = con.getResponseCode();
+        LOG.debug("\nSending 'POST' request to URL : " + url);
+        LOG.debug("Response Code : " + responseCode);
+
+        BufferedReader in = new BufferedReader(
+                new InputStreamReader(con.getInputStream()));
+        String inputLine;
+        StringBuilder response = new StringBuilder();
+
+        while ((inputLine = in.readLine()) != null) {
+            response.append(inputLine);
+        }
+        in.close();
+
+        //Received JSON data
+        String rawJSON = response.toString();
+        LOG.debug(rawJSON);
+
+        //Parse JSON, obtain token
+        JsonElement jelement = new JsonParser().parse(rawJSON);
+        JsonObject jobject = jelement.getAsJsonObject();
+        jobject = jobject.getAsJsonObject("response");
+        String reportId = jobject.get("report_id").toString().replace("\"", "");
+        if (reportId.isEmpty()) {
+            LOG.error("ReportID not received.");
+        }
+
+        return reportId;
+
+
+    }
+
+    public String requestReport(String advertiserId, String jsonPostData) throws IOException {
+
+        this.setUrl("http://api.appnexus.com/report?advertiser_id=" + advertiserId);
+
+        java.net.URL wsURL = new URL(null, url,new sun.net.www.protocol.https.Handler());
+        HttpsURLConnection con = (HttpsURLConnection) wsURL.openConnection();
+
+        //add request header
+        con.setRequestMethod("POST");
+        con.setRequestProperty("Content-Type", "application/json");
+        //Set Auth Token
+        con.setRequestProperty("Authorization", this.getAuthorizationToken());
+        //Authorization JSON data
+        String urlParameters = jsonPostData;
 
         // Send post request
         con.setDoOutput(true);
