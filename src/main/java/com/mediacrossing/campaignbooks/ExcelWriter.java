@@ -78,6 +78,10 @@ public class ExcelWriter {
         }
 
         //repeat for each campaign
+        Float totalLifetimeBudget = 0.0f;
+        Float totalDailyBudget = 0.0f;
+        Float totalActualDailyBudget = 0.0f;
+        Float totalCumulativeDelivery = 0.0f;
         int rowCount = 4;
         for (Campaign campaign : lineItem.getCampaignList()) {
             Row campaignRow = lineItemSheet.createRow(rowCount);
@@ -104,14 +108,19 @@ public class ExcelWriter {
             for (Cell cell : campaignRow) {
                 lineItemSheet.autoSizeColumn(cell.getColumnIndex());
             }
+            totalLifetimeBudget += campaign.getLifetimeBudget();
+            totalDailyBudget += campaign.getDailyBudget();
+            totalActualDailyBudget += campaign.getActualDailyBudget();
+            totalCumulativeDelivery += campaign.getTotalDelivery();
         }
         rowCount++;
+
+
         Row totalRow = lineItemSheet.createRow(rowCount);
-        totalRow.createCell(2).setCellFormula("=SUM(C4:C" + (rowCount-1) + ")");
-        totalRow.createCell(6).setCellFormula("=SUM(G4:G" + (rowCount-1) + ")");
-        totalRow.createCell(7).setCellFormula("=SUM(H4:H" + (rowCount-1) + ")");
-        totalRow.createCell(8).setCellFormula("=SUM(I4:I" + (rowCount-1) + ")");
-        totalRow.createCell(9).setCellFormula("=SUM(J4:J" + (rowCount-1) + ")");
+        totalRow.createCell(2).setCellValue(totalLifetimeBudget);
+        totalRow.createCell(6).setCellValue(totalDailyBudget);
+        totalRow.createCell(7).setCellValue(totalActualDailyBudget);
+        totalRow.createCell(8).setCellValue(totalCumulativeDelivery);
 
     }
 
