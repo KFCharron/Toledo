@@ -17,6 +17,24 @@ public class LineItem {
     private long daysActive;
     private long daysRemaining;
     private List<Campaign> campaignList;
+    private ReportData dayReportData;
+    private ReportData lifetimeReportData;
+
+    public ReportData getDayReportData() {
+        return dayReportData;
+    }
+
+    public void setDayReportData(ReportData dayReportData) {
+        this.dayReportData = dayReportData;
+    }
+
+    public ReportData getLifetimeReportData() {
+        return lifetimeReportData;
+    }
+
+    public void setLifetimeReportData(ReportData lifetimeReportData) {
+        this.lifetimeReportData = lifetimeReportData;
+    }
 
     public LineItem(String lineItemID, String lineItemName, String startDate,
                     String endDate, String lifetimeBudget, String dailyBudget) throws ParseException {
@@ -52,7 +70,7 @@ public class LineItem {
         if(startDate != null) {
            return new SimpleDateFormat("dd-MMM").format(startDate);
         } else {
-            return "";
+           return "";
         }
     }
 
@@ -86,5 +104,11 @@ public class LineItem {
 
     public void setCampaignList(List<Campaign> campaignList) {
         this.campaignList = campaignList;
+    }
+
+    public long getFlightPercentage() {
+        long duration = this.endDate.getTime() - this.startDate.getTime();
+        long timeSinceStart = new Date().getTime() - this.startDate.getTime();
+        return(timeSinceStart / duration * 100);
     }
 }

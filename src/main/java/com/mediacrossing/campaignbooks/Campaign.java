@@ -19,11 +19,29 @@ public class Campaign {
     private float totalDelivery;
     private long daysActive;
     private List<Delivery> deliveries = new LinkedList<Delivery>();
+    private ReportData dayReportData;
+    private ReportData lifetimeReportData;
+    private long daysRemaining;
+
+    public ReportData getDayReportData() {
+        return dayReportData;
+    }
+
+    public void setDayReportData(ReportData dayReportData) {
+        this.dayReportData = dayReportData;
+    }
+
+    public ReportData getLifetimeReportData() {
+        return lifetimeReportData;
+    }
+
+    public void setLifetimeReportData(ReportData lifetimeReportData) {
+        this.lifetimeReportData = lifetimeReportData;
+    }
 
     public void addToDeliveries(Delivery delivery) {
         deliveries.add(delivery);
     }
-
 
     public Campaign(String campaignID, String campaignName, float lifetimeBudget,
                     String startDate, String endDate, float dailyBudget) throws ParseException {
@@ -44,16 +62,14 @@ public class Campaign {
             this.endDate = null;
         }
         if(!startDate.equals("null") && !endDate.equals("null")) {
+            Date now = new Date();
             this.daysActive = TimeUnit.DAYS.convert(this.endDate.getTime() - this.startDate.getTime(),
                     TimeUnit.MILLISECONDS);
+            this.daysRemaining = TimeUnit.DAYS.convert(this.endDate.getTime() - now.getTime(), TimeUnit.MILLISECONDS);
+
         } else {
             this.daysActive = 0;
         }
-
-
-
-
-
     }
 
     public void setTotalDelivery(float totalDelivery) {
@@ -107,5 +123,15 @@ public class Campaign {
 
     public List<Delivery> getDeliveries() {
         return deliveries;
+    }
+
+    public long getFlightPercentage() {
+        long duration = this.endDate.getTime() - this.startDate.getTime();
+        long timeSinceStart = new Date().getTime() - this.startDate.getTime();
+        return(timeSinceStart / duration * 100);
+    }
+
+    public long getDaysRemaining() {
+        return daysRemaining;
     }
 }
