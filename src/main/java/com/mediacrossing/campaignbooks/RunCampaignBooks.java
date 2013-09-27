@@ -91,27 +91,71 @@ public class RunCampaignBooks {
 
         httpConnection.authorizeAppNexusConnection(appNexusUsername, appNexusPassword);
 
+        //restrict requested reports to only advertisers w/ live campaigns
+        for (Advertiser ad : advertiserList) {
+            ad.setLive(false);
+            for(LineItem li : ad.getLineItemList()) {
+                if(li.getDaysRemaining() > 0)
+                    ad.setLive(true);
+            }
+        }
+
         //For every advertiser, request report
         for (Advertiser advertiser : advertiserList) {
+            if(advertiser.isLive()) {
+                List<String[]> csvData = AppNexusReportRequests.getAdvertiserAnalyticReport(advertiser.getAdvertiserID(),
+                        appNexusUrl, httpConnection);
 
-            List<String[]> csvData = AppNexusReportRequests.getAdvertiserAnalyticReport(advertiser.getAdvertiserID(),
-                    appNexusUrl, httpConnection);
+                //remove header string
+                csvData.remove(0);
 
-            //remove header string
-            csvData.remove(0);
+                //Creates new delivery, adds it to campaign if ids match
+                for (String[] line : csvData) {
+                    Delivery delivery = new Delivery(line[0], line[1], line[2], line[3], line[4]);
+                    System.out.println(line[2]);
+                    System.out.println(delivery.getDelivery());
+                    for(LineItem lineItem : advertiser.getLineItemList()) {
+                        for(Campaign campaign : lineItem.getCampaignList()) {
+                            if (campaign.getCampaignID().equals(delivery.getCampaignID())) {
+                                campaign.addToDeliveries(delivery);
+                                campaign.setTotalDelivery(campaign.getTotalDelivery() + delivery.getDelivery());
+                            }
+                        }
+                    }
+                }
 
-            //Creates new delivery, adds it to campaign if ids match
-            for (String[] line : csvData) {
-                Delivery delivery = new Delivery(line[0],line[1],line[2]);
-                for(LineItem lineItem : advertiser.getLineItemList()) {
-                    for(Campaign campaign : lineItem.getCampaignList()) {
-                        if (campaign.getCampaignID().equals(delivery.getCampaignID())) {
-                            campaign.addToDeliveries(delivery);
-                            campaign.setTotalDelivery(campaign.getTotalDelivery() + delivery.getDelivery());
+                //Remove the first delivery from each campaign, incomplete data
+                for (Advertiser ad : advertiserList) {
+                    if(ad.isLive()) {
+                        for(LineItem li : ad.getLineItemList()) {
+                            for(Campaign camp : li.getCampaignList()) {
+                                if(camp.getDeliveries().size() > 0)
+                                    camp.getDeliveries().remove(0);
+                            }
+                        }
+                    }
+                }
+
+                csvData = AppNexusReportRequests.getLifetimeAdvertiserReport(advertiser.getAdvertiserID(),
+                        appNexusUrl, httpConnection);
+
+                //remove header string
+                csvData.remove(0);
+
+                //Creates new delivery, adds it to campaign if ids match
+                for (String[] line : csvData) {
+                    for(LineItem li : advertiser.getLineItemList()) {
+                        for(Campaign camp : li.getCampaignList()) {
+                           if(camp.getCampaignID().equals(line[0])) {
+                               camp.setLifetimeImps(Integer.parseInt(line[1]));
+                               camp.setLifetimeClicks(Integer.parseInt(line[2]));
+                               camp.setLifetimeCtr(Float.parseFloat(line[3]));
+                           }
                         }
                     }
                 }
             }
+
         }
 
         //Build and save excel book, each sheet being its own line item
