@@ -47,7 +47,8 @@ public class LineItem {
             this.daysActive = TimeUnit.DAYS.convert(this.endDate.getTime() - this.startDate.getTime(),
                     TimeUnit.MILLISECONDS);
             Date now = new Date();
-            this.daysRemaining = TimeUnit.DAYS.convert(this.endDate.getTime() - now.getTime(), TimeUnit.MILLISECONDS);
+            this.daysRemaining =
+                    (TimeUnit.DAYS.convert(this.endDate.getTime() - now.getTime(), TimeUnit.MILLISECONDS)) + 1L;
         } else {
             this.startDate = null;
             this.endDate = null;
