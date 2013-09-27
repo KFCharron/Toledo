@@ -22,6 +22,9 @@ public class Campaign {
     private ReportData dayReportData;
     private ReportData lifetimeReportData;
     private long daysRemaining;
+    private int lifetimeImps;
+    private int lifetimeClicks;
+    private float lifetimeCtr;
 
     public ReportData getDayReportData() {
         return dayReportData;
@@ -65,7 +68,8 @@ public class Campaign {
             Date now = new Date();
             this.daysActive = TimeUnit.DAYS.convert(this.endDate.getTime() - this.startDate.getTime(),
                     TimeUnit.MILLISECONDS);
-            this.daysRemaining = TimeUnit.DAYS.convert(this.endDate.getTime() - now.getTime(), TimeUnit.MILLISECONDS);
+            this.daysRemaining =
+                    (TimeUnit.DAYS.convert(this.endDate.getTime() - now.getTime(), TimeUnit.MILLISECONDS))+1L;
 
         } else {
             this.daysActive = 0;
@@ -109,7 +113,7 @@ public class Campaign {
     }
 
     public float getActualDailyBudget() {
-        actualDailyBudget = getTotalDelivery()/deliveries.size();
+        actualDailyBudget = (lifetimeBudget-totalDelivery)/daysRemaining;
         return actualDailyBudget;
     }
 
@@ -133,5 +137,29 @@ public class Campaign {
 
     public long getDaysRemaining() {
         return daysRemaining;
+    }
+
+    public int getLifetimeImps() {
+        return lifetimeImps;
+    }
+
+    public void setLifetimeImps(int lifetimeImps) {
+        this.lifetimeImps = lifetimeImps;
+    }
+
+    public int getLifetimeClicks() {
+        return lifetimeClicks;
+    }
+
+    public void setLifetimeClicks(int lifetimeClicks) {
+        this.lifetimeClicks = lifetimeClicks;
+    }
+
+    public float getLifetimeCtr() {
+        return lifetimeCtr;
+    }
+
+    public void setLifetimeCtr(float lifetimeCtr) {
+        this.lifetimeCtr = lifetimeCtr;
     }
 }
