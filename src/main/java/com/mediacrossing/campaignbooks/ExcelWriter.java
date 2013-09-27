@@ -16,6 +16,8 @@ public class ExcelWriter {
 
     public void writeLineItemSheetToWorkbook(LineItem lineItem) {
 
+        DecimalFormat df = new DecimalFormat("#.00");
+
         //Create new sheet
         String sheetName = WorkbookUtil.createSafeSheetName(lineItem.getLineItemName());
         Sheet lineItemSheet = WORKBOOK.createSheet(sheetName);
@@ -52,7 +54,11 @@ public class ExcelWriter {
         lineItemRow.createCell(6).setCellValue(lineItem.getDailyBudget());
 
         Row secondLineItemRow = lineItemSheet.createRow(2);
+        CellStyle style = WORKBOOK.createCellStyle();
+        style.setFillBackgroundColor(IndexedColors.YELLOW.getIndex());
+        secondLineItemRow.createCell(4).setCellValue("Days Remaining:");
         secondLineItemRow.createCell(5).setCellValue(lineItem.getDaysRemaining());
+        secondLineItemRow.getCell(5).setCellStyle(style);
 
         //add campaign header row
         Row campaignHeaderRow = lineItemSheet.createRow(3);
@@ -89,12 +95,12 @@ public class ExcelWriter {
             campaignRow.createCell(4).setCellValue(campaign.getEndDate());
             campaignRow.createCell(5).setCellValue(campaign.getDaysActive());
             campaignRow.createCell(6).setCellValue(campaign.getDailyBudget());
-            campaignRow.createCell(7).setCellValue(campaign.getActualDailyBudget());
-            campaignRow.createCell(8).setCellValue(campaign.getTotalDelivery());
+            campaignRow.createCell(7).setCellValue(df.format(campaign.getActualDailyBudget()));
+            campaignRow.createCell(8).setCellValue(df.format(campaign.getTotalDelivery()));
             int cellCount = 9;
             //list daily deliveries
             for(Delivery dailyDelivery : campaign.getDeliveries()) {
-                campaignRow.createCell(cellCount).setCellValue(dailyDelivery.getDelivery());
+                campaignRow.createCell(cellCount).setCellValue(df.format(dailyDelivery.getDelivery()));
                 if(dailyDelivery.getDate() != null) {
                     campaignHeaderRow.createCell(cellCount).setCellValue(dailyDelivery.getDate());
                 }
@@ -111,14 +117,44 @@ public class ExcelWriter {
             totalCumulativeDelivery += campaign.getTotalDelivery();
         }
         rowCount++;
-
-
         Row totalRow = lineItemSheet.createRow(rowCount);
-        totalRow.createCell(2).setCellValue(totalLifetimeBudget);
-        totalRow.createCell(6).setCellValue(totalDailyBudget);
-        totalRow.createCell(7).setCellValue(totalActualDailyBudget);
-        totalRow.createCell(8).setCellValue(totalCumulativeDelivery);
+        totalRow.createCell(2).setCellValue(df.format(totalLifetimeBudget));
+        totalRow.createCell(6).setCellValue(df.format(totalDailyBudget));
+        totalRow.createCell(7).setCellValue(df.format(totalActualDailyBudget));
+        totalRow.createCell(8).setCellValue(df.format(totalCumulativeDelivery));
+        rowCount+=3;
 
+        Row campHeaderRow = lineItemSheet.createRow(rowCount);
+        campHeaderRow.createCell(0).setCellValue("Campaign ID");
+        campHeaderRow.createCell(1).setCellValue("Campaign Name");
+        campHeaderRow.createCell(2).setCellValue("Lifetime Imps");
+        campHeaderRow.createCell(3).setCellValue("Lifetime Clicks");
+        campHeaderRow.createCell(4).setCellValue("Lifetime CTR");
+
+        for(Cell cell : campHeaderRow) {
+            cell.setCellStyle(bold);
+        }
+
+        rowCount++;
+
+        for(Campaign camp : lineItem.getCampaignList()) {
+            Row campRow = lineItemSheet.createRow(rowCount);
+            campRow.createCell(0).setCellValue(camp.getCampaignID());
+            campRow.createCell(1).setCellValue(camp.getCampaignName());
+            campRow.createCell(2).setCellValue(camp.getLifetimeImps());
+            campRow.createCell(3).setCellValue(camp.getLifetimeClicks());
+            campRow.createCell(4).setCellValue(camp.getLifetimeCtr());
+            int cellCount = 5;
+            for(Delivery del : camp.getDeliveries()) {
+                campRow.createCell(cellCount).setCellValue(del.getImps());
+                campRow.createCell(++cellCount).setCellValue(del.getClicks());
+                if (del.getDate() != null) {
+                    campHeaderRow.createCell(cellCount-1).setCellValue(del.getDate());
+                }
+                cellCount++;
+            }
+            rowCount++;
+        }
     }
 
     public void writeWorkbookToFileWithOutputPath(String outputPath) throws IOException {
@@ -127,7 +163,7 @@ public class ExcelWriter {
         fileOut.close();
     }
 
-    public static void writeDailyAdvertiserReport(List<Advertiser> advertiserList, String outputPath) {
+    public static void writeDailyAdvertiserReport(List<Advertiser> advertiserList, String outputPath) throws IOException {
         WORKBOOK = new HSSFWorkbook();
         Sheet reportSheet = WORKBOOK.createSheet("Daily Advertiser Report");
         DecimalFormat df = new DecimalFormat("#.00");
@@ -240,13 +276,117 @@ public class ExcelWriter {
             }
         }
 
-        //lifetime header row
-        //line item header
-        //line item data
+        rowCount++;
 
-        //campaign header
-        //campaign data
+        Row lifetimeSubtitle = reportSheet.createRow(rowCount);
+        lifetimeSubtitle.createCell(0).setCellValue("Lifetime Total:");
 
+        rowCount++;
+
+        Row hRow = reportSheet.createRow(rowCount);
+        hRow.createCell(0).setCellValue("Line Item ID");
+        hRow.createCell(1).setCellValue("Line Item Name");
+        hRow.createCell(2).setCellValue("Imps");
+        hRow.createCell(3).setCellValue("Clicks");
+        hRow.createCell(4).setCellValue("Total Convs");
+        hRow.createCell(5).setCellValue("Media Cost");
+        hRow.createCell(6).setCellValue("% Daily Spent");
+        hRow.createCell(7).setCellValue("CTR");
+        hRow.createCell(8).setCellValue("Conv Rate");
+        hRow.createCell(9).setCellValue("CPM");
+        hRow.createCell(10).setCellValue("CPC");
+        hRow.createCell(11).setCellValue("Start Day");
+        hRow.createCell(12).setCellValue("End Day");
+        hRow.createCell(13).setCellValue("% Through Flight");
+        hRow.createCell(14).setCellValue("% Through Total Budget");
+        hRow.createCell(15).setCellValue("Req'd Daily Del. To Fill");
+        
+        rowCount++;
+
+        for(Advertiser ad : advertiserList) {
+            if (ad.isLive()) {
+                for(LineItem li : ad.getLineItemList()) {
+                    Row dataRow = reportSheet.createRow(rowCount);
+                    dataRow.createCell(0).setCellValue(li.getLineItemID());
+                    dataRow.createCell(1).setCellValue(li.getLineItemName());
+                    dataRow.createCell(2).setCellValue(li.getLifetimeReportData().getImps());
+                    dataRow.createCell(3).setCellValue(li.getLifetimeReportData().getClicks());
+                    dataRow.createCell(4).setCellValue(li.getLifetimeReportData().getTotalConversions());
+                    dataRow.createCell(5).setCellValue(li.getLifetimeReportData().getMediaCost());
+                    dataRow.createCell(6).setCellValue(
+                            df.format(li.getLifetimeReportData().getMediaCost() / li.getDailyBudget() * 100) + "%");
+                    dataRow.createCell(7).setCellValue(li.getLifetimeReportData().getCtr());
+                    dataRow.createCell(8).setCellValue(li.getLifetimeReportData().getConversionRate());
+                    dataRow.createCell(9).setCellValue(li.getLifetimeReportData().getCpm());
+                    dataRow.createCell(10).setCellValue(li.getLifetimeReportData().getCpc());
+                    dataRow.createCell(11).setCellValue(li.getStartDate());
+                    dataRow.createCell(12).setCellValue(li.getEndDate());
+                    dataRow.createCell(13).setCellValue(li.getFlightPercentage() + "%");
+                    dataRow.createCell(14).setCellValue(
+                            df.format(li.getLifetimeReportData().getMediaCost() / li.getLifetimeBudget() * 100) + "%");
+                    dataRow.createCell(15).setCellValue(
+                            (li.getLifetimeBudget() - li.getLifetimeReportData().getMediaCost())
+                                    / li.getDaysRemaining());
+
+                    rowCount++;
+                }
+
+            }
+        }
+
+        Row campHeadRow = reportSheet.createRow(rowCount);
+        campHeadRow.createCell(0).setCellValue("Campaign ID");
+        campHeadRow.createCell(1).setCellValue("Campaign Name");
+        campHeadRow.createCell(2).setCellValue("Imps");
+        campHeadRow.createCell(3).setCellValue("Clicks");
+        campHeadRow.createCell(4).setCellValue("Total Convs");
+        campHeadRow.createCell(5).setCellValue("Media Cost");
+        campHeadRow.createCell(6).setCellValue("% Daily Spent");
+        campHeadRow.createCell(7).setCellValue("CTR");
+        campHeadRow.createCell(8).setCellValue("Conv Rate");
+        campHeadRow.createCell(9).setCellValue("CPM");
+        campHeadRow.createCell(10).setCellValue("CPC");
+        campHeadRow.createCell(11).setCellValue("Start Day");
+        campHeadRow.createCell(12).setCellValue("End Day");
+        campHeadRow.createCell(13).setCellValue("% Through Flight");
+        campHeadRow.createCell(14).setCellValue("% Through Total Budget");
+        campHeadRow.createCell(15).setCellValue("Req'd Daily Del. To Fill");
+
+        rowCount++;
+
+        for(Advertiser ad : advertiserList) {
+            if (ad.isLive()) {
+                for(LineItem li : ad.getLineItemList()) {
+                    for(Campaign camp : li.getCampaignList()) {
+                        Row dataRow = reportSheet.createRow(rowCount);
+                        dataRow.createCell(0).setCellValue(camp.getCampaignID());
+                        dataRow.createCell(1).setCellValue(camp.getCampaignName());
+                        dataRow.createCell(2).setCellValue(camp.getLifetimeReportData().getImps());
+                        dataRow.createCell(3).setCellValue(camp.getLifetimeReportData().getClicks());
+                        dataRow.createCell(4).setCellValue(camp.getLifetimeReportData().getTotalConversions());
+                        dataRow.createCell(5).setCellValue(camp.getLifetimeReportData().getMediaCost());
+                        dataRow.createCell(6).setCellValue(
+                                df.format(camp.getLifetimeReportData().getMediaCost() / camp.getDailyBudget() * 100) + "%");
+                        dataRow.createCell(7).setCellValue(camp.getLifetimeReportData().getCtr());
+                        dataRow.createCell(8).setCellValue(camp.getLifetimeReportData().getConversionRate());
+                        dataRow.createCell(9).setCellValue(camp.getLifetimeReportData().getCpm());
+                        dataRow.createCell(10).setCellValue(camp.getLifetimeReportData().getCpc());
+                        dataRow.createCell(11).setCellValue(camp.getStartDate());
+                        dataRow.createCell(12).setCellValue(camp.getEndDate());
+                        dataRow.createCell(13).setCellValue(camp.getFlightPercentage() + "%");
+                        dataRow.createCell(14).setCellValue(
+                                df.format(camp.getLifetimeReportData().getMediaCost() / camp.getLifetimeBudget() * 100) + "%");
+                        dataRow.createCell(15).setCellValue(
+                                (camp.getLifetimeBudget() - camp.getLifetimeReportData().getMediaCost())
+                                        / camp.getDaysRemaining());
+
+                        rowCount++;
+                    }
+                }
+            }
+        }
+        FileOutputStream fileOut = new FileOutputStream(new File(outputPath, "DailyCampaignReport.xls"));
+        WORKBOOK.write(fileOut);
+        fileOut.close();
     }
-
 }
