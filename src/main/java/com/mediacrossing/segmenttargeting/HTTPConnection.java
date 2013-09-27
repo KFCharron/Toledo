@@ -224,169 +224,6 @@ public class HTTPConnection {
         this.url = url;
     }
 
-    public String requestSegmentLoadReport(String segmentJson) throws IOException {
-
-        this.setUrl("http://api.appnexus.com/report");
-
-        java.net.URL wsURL = new URL(null, url,new sun.net.www.protocol.https.Handler());
-        HttpsURLConnection con = (HttpsURLConnection) wsURL.openConnection();
-
-        //add request header
-        con.setRequestMethod("POST");
-        con.setRequestProperty("Content-Type", "application/json");
-        //Set Auth Token
-        con.setRequestProperty("Authorization", this.getAuthorizationToken());
-        //Authorization JSON data
-        String urlParameters =
-                "{\n" +
-                        "    \"report\":\n" +
-                        "    {\n" +
-                        "        \"report_type\": \"segment_load\",\n" +
-                        "        \"columns\": [\n" +
-                        "            \"segment_id\",\n" +
-                        "            \"segment_name\",\n" +
-                        "            \"day\",\n" +
-                        "            \"total_loads\",\n" +
-                        "            \"daily_uniques\"\n" +
-                        "        ],\n" +
-                        "        \"filters\": [\n" +
-                        "            {\n" +
-                        "               \"segment_id\": [" + segmentJson + "]\n" +
-                        "            }\n" +
-                        "        ],\n" +
-                        "        \"groups\": [\n" +
-                        "            \"segment_id\",\n" +
-                        "            \"day\"\n" +
-                        "        ],\n" +
-                        "        \"orders\": [\n" +
-                        "            \"day\"\n" +
-                        "        ],\n" +
-                        "        \"emails\": [],\n" +
-                        "        \"format\": \"csv\"\n" +
-                        "    }\n" +
-                        "}";
-
-        // Send post request
-        con.setDoOutput(true);
-        DataOutputStream wr = new DataOutputStream(con.getOutputStream());
-        wr.writeBytes(urlParameters);
-        wr.flush();
-        wr.close();
-
-        int responseCode = con.getResponseCode();
-        LOG.debug("\nSending 'POST' request to URL : " + url);
-        LOG.debug("Response Code : " + responseCode);
-
-        BufferedReader in = new BufferedReader(
-                new InputStreamReader(con.getInputStream()));
-        String inputLine;
-        StringBuilder response = new StringBuilder();
-
-        while ((inputLine = in.readLine()) != null) {
-            response.append(inputLine);
-        }
-        in.close();
-
-        //Received JSON data
-        String rawJSON = response.toString();
-        LOG.debug(rawJSON);
-
-        //Parse JSON, obtain token
-        JsonElement jelement = new JsonParser().parse(rawJSON);
-        JsonObject jobject = jelement.getAsJsonObject();
-        jobject = jobject.getAsJsonObject("response");
-        String reportId = jobject.get("report_id").toString().replace("\"", "");
-        if (reportId.isEmpty()) {
-            LOG.error("ReportID not received.");
-        }
-
-        return reportId;
-
-
-    }
-
-    public String requestAdvertiserReport(String advertiserId) throws IOException {
-
-        this.setUrl("http://api.appnexus.com/report?advertiser_id=" + advertiserId);
-
-        java.net.URL wsURL = new URL(null, url,new sun.net.www.protocol.https.Handler());
-        HttpsURLConnection con = (HttpsURLConnection) wsURL.openConnection();
-
-        //add request header
-        con.setRequestMethod("POST");
-        con.setRequestProperty("Content-Type", "application/json");
-        //Set Auth Token
-        con.setRequestProperty("Authorization", this.getAuthorizationToken());
-        //Authorization JSON data
-        String urlParameters = "{\n" +
-                "    \"report\":\n" +
-                "    {\n" +
-                "        \"report_type\":\"advertiser_analytics\",\n" +
-                "        \"columns\":[\n" +
-                "            \"day\",\n" +
-                "            \"campaign_id\",\n" +
-                "            \"spend\"\n" +
-                "        ],\n" +
-                "        \"row_per\":[\n" +
-                "            \"campaign_id\",\n" +
-                "            \"day\"\n" +
-                "        ],\n" +
-                "        \"report_interval\":\"lifetime\",\n" +
-                "        \"format\":\"csv\",\n" +
-                "        \"emails\":[\n" +
-                "        ],\n" +
-                "        \"orders\": [\n" +
-                "                    {\n" +
-                "                        \"order_by\":\"day\", \n" +
-                "                        \"direction\":\"DESC\"\n" +
-                "                    },\n" +
-                "                    {\n" +
-                "                        \"order_by\":\"campaign_id\",\n" +
-                "                        \"direction\":\"DESC\"\n" +
-                "                    }\n" +
-                "                    ]\n" +
-                "    }\n" +
-                "}";
-
-        // Send post request
-        con.setDoOutput(true);
-        DataOutputStream wr = new DataOutputStream(con.getOutputStream());
-        wr.writeBytes(urlParameters);
-        wr.flush();
-        wr.close();
-
-        int responseCode = con.getResponseCode();
-        LOG.debug("\nSending 'POST' request to URL : " + url);
-        LOG.debug("Response Code : " + responseCode);
-
-        BufferedReader in = new BufferedReader(
-                new InputStreamReader(con.getInputStream()));
-        String inputLine;
-        StringBuilder response = new StringBuilder();
-
-        while ((inputLine = in.readLine()) != null) {
-            response.append(inputLine);
-        }
-        in.close();
-
-        //Received JSON data
-        String rawJSON = response.toString();
-        LOG.debug(rawJSON);
-
-        //Parse JSON, obtain token
-        JsonElement jelement = new JsonParser().parse(rawJSON);
-        JsonObject jobject = jelement.getAsJsonObject();
-        jobject = jobject.getAsJsonObject("response");
-        String reportId = jobject.get("report_id").toString().replace("\"", "");
-        if (reportId.isEmpty()) {
-            LOG.error("ReportID not received.");
-        }
-
-        return reportId;
-
-
-    }
-
     public String requestCampaignImpsReport(String advertiserId) throws IOException {
 
         this.setUrl("http://api.appnexus.com/report?advertiser_id=" + advertiserId);
@@ -567,9 +404,63 @@ public class HTTPConnection {
 
     }
 
-    public String requestReport(String advertiserId, String jsonPostData) throws IOException {
+    public String requestAdvertiserAnalyticReport(String advertiserId, String jsonPostData) throws IOException {
 
         this.setUrl("http://api.appnexus.com/report?advertiser_id=" + advertiserId);
+
+        java.net.URL wsURL = new URL(null, url,new sun.net.www.protocol.https.Handler());
+        HttpsURLConnection con = (HttpsURLConnection) wsURL.openConnection();
+
+        //add request header
+        con.setRequestMethod("POST");
+        con.setRequestProperty("Content-Type", "application/json");
+        //Set Auth Token
+        con.setRequestProperty("Authorization", this.getAuthorizationToken());
+        //Authorization JSON data
+        String urlParameters = jsonPostData;
+
+        // Send post request
+        con.setDoOutput(true);
+        DataOutputStream wr = new DataOutputStream(con.getOutputStream());
+        wr.writeBytes(urlParameters);
+        wr.flush();
+        wr.close();
+
+        int responseCode = con.getResponseCode();
+        LOG.debug("\nSending 'POST' request to URL : " + url);
+        LOG.debug("Response Code : " + responseCode);
+
+        BufferedReader in = new BufferedReader(
+                new InputStreamReader(con.getInputStream()));
+        String inputLine;
+        StringBuilder response = new StringBuilder();
+
+        while ((inputLine = in.readLine()) != null) {
+            response.append(inputLine);
+        }
+        in.close();
+
+        //Received JSON data
+        String rawJSON = response.toString();
+        LOG.debug(rawJSON);
+
+        //Parse JSON, obtain token
+        JsonElement jelement = new JsonParser().parse(rawJSON);
+        JsonObject jobject = jelement.getAsJsonObject();
+        jobject = jobject.getAsJsonObject("response");
+        String reportId = jobject.get("report_id").toString().replace("\"", "");
+        if (reportId.isEmpty()) {
+            LOG.error("ReportID not received.");
+        }
+
+        return reportId;
+
+
+    }
+
+    public String requestSegmentLoadsReport(String jsonPostData) throws IOException {
+
+        this.setUrl("http://api.appnexus.com/report");
 
         java.net.URL wsURL = new URL(null, url,new sun.net.www.protocol.https.Handler());
         HttpsURLConnection con = (HttpsURLConnection) wsURL.openConnection();

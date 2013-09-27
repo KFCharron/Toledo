@@ -1,7 +1,6 @@
 package com.mediacrossing.report_requests;
 
 import com.mediacrossing.campaignbooks.DataParse;
-import com.mediacrossing.connections.ConnectionRequestProperties;
 import com.mediacrossing.segmenttargeting.HTTPConnection;
 import java.util.HashSet;
 import java.util.List;
@@ -9,61 +8,6 @@ import java.util.List;
 public class AppNexusReportRequests {
 
     static DataParse dataParse = new DataParse();
-
-    public static List<String[]> getSegmentLoadReport(HashSet segmentIdSet,
-                                                      String appNexusUrl,
-                                                      HTTPConnection httpConnection) throws Exception {
-
-        //Build the report filter argument string
-        StringBuilder stringBuilder = new StringBuilder();
-        int count = 0;
-        for(Object segmentId : segmentIdSet) {
-            stringBuilder.append("\""+ segmentId.toString() + "\"");
-            count++;
-            if(count < segmentIdSet.size())
-                stringBuilder.append(",");
-        }
-
-        //request report
-        String reportId = httpConnection.requestSegmentLoadReport(stringBuilder.toString());
-
-        //Keep checking if report is ready
-        boolean ready = false;
-        while (!ready) {
-            String jsonResponse = httpConnection.fetchDownloadUrl(reportId);
-
-            ready = dataParse.parseReportStatus(jsonResponse);
-            if (!ready)
-                Thread.sleep(20000);
-        }
-
-        //Report is ready, download it
-        String downloadUrl = appNexusUrl + "/" + dataParse.getReportUrl();
-        httpConnection.requestDownload(downloadUrl);
-
-        //return the report
-        return httpConnection.getCsvData();
-    }
-
-    public static List<String[]> getAdvertiserAnalyticReport(String advertiserId,
-                                                             String appNexusUrl,
-                                                             HTTPConnection httpConnection) throws Exception {
-        String reportId = httpConnection.requestAdvertiserReport(advertiserId);
-        boolean ready = false;
-        while (!ready) {
-            //Check to see if report is ready
-            String jsonResponse = httpConnection.fetchDownloadUrl(reportId);
-            System.out.println(jsonResponse);
-            ready = dataParse.parseReportStatus(jsonResponse);
-            if (!ready)
-                Thread.sleep(20000);
-        }
-        //Report is ready, download it
-        String downloadUrl = appNexusUrl + "/" + dataParse.getReportUrl();
-        httpConnection.requestDownload(downloadUrl);
-
-        return httpConnection.getCsvData();
-    }
 
     public static List<String[]> getCampaignImpsReport(String advertiserId,
                                                  String appNexusUrl,
@@ -115,15 +59,15 @@ public class AppNexusReportRequests {
                 "    {\n" +
                 "        \"report_type\": \"advertiser_analytics\",\n" +
                 "        \"columns\": [\n" +
-                "            \"line_item_id\"\n" +
+                "            \"line_item_id\",\n" +
                 "            \"imps\",\n" +
                 "            \"clicks\",\n" +
-                "            \"total-convs\",\n" +
+                "            \"total_convs\",\n" +
                 "            \"media_cost\",\n" +
                 "            \"ctr\",\n" +
                 "            \"conv_rate\",\n" +
                 "            \"cpm\",\n" +
-                "            \"cpc\",\n" +
+                "            \"cpc\"\n" +
                 "        ],\n" +
                 "        \"row_per\" :[\n" +
                 "            \"line_item_id\"\n" +
@@ -132,7 +76,7 @@ public class AppNexusReportRequests {
                 "        \"format\": \"csv\"\n" +
                 "    }\n" +
                 "}";
-        String reportId = httpConnection.requestReport(advertiserId, jsonPostData);
+        String reportId = httpConnection.requestAdvertiserAnalyticReport(advertiserId, jsonPostData);
         boolean ready = false;
         while (!ready) {
             //Check to see if report is ready
@@ -157,15 +101,15 @@ public class AppNexusReportRequests {
                 "    {\n" +
                 "        \"report_type\": \"advertiser_analytics\",\n" +
                 "        \"columns\": [\n" +
-                "            \"campaign_id\"\n" +
+                "            \"campaign_id\",\n" +
                 "            \"imps\",\n" +
                 "            \"clicks\",\n" +
-                "            \"total-convs\",\n" +
+                "            \"total_convs\",\n" +
                 "            \"media_cost\",\n" +
                 "            \"ctr\",\n" +
                 "            \"conv_rate\",\n" +
                 "            \"cpm\",\n" +
-                "            \"cpc\",\n" +
+                "            \"cpc\"\n" +
                 "        ],\n" +
                 "        \"row_per\" :[\n" +
                 "            \"campaign_id\"\n" +
@@ -174,7 +118,7 @@ public class AppNexusReportRequests {
                 "        \"format\": \"csv\"\n" +
                 "    }\n" +
                 "}";
-        String reportId = httpConnection.requestReport(advertiserId, jsonPostData);
+        String reportId = httpConnection.requestAdvertiserAnalyticReport(advertiserId, jsonPostData);
         boolean ready = false;
         while (!ready) {
             //Check to see if report is ready
@@ -190,5 +134,156 @@ public class AppNexusReportRequests {
 
         return httpConnection.getCsvData();
     }
+
+    public static List<String[]> getAdvertiserAnalyticReport(String advertiserId,
+                                                   String appNexusUrl,
+                                                   HTTPConnection httpConnection) throws Exception {
+        String jsonPostData = "{\n" +
+                "    \"report\":\n" +
+                "    {\n" +
+                "        \"report_type\":\"network_advertiser_analytics\",\n" +
+                "        \"columns\":[\n" +
+                "            \"day\",\n" +
+                "            \"campaign_id\",\n" +
+                "            \"total_revenue\",\n" +
+                "            \"imps\",\n" +
+                "            \"clicks\"\n" +
+                "        ],\n" +
+                "        \"row_per\":[\n" +
+                "            \"campaign_id\",\n" +
+                "            \"day\"\n" +
+                "        ],\n" +
+                "        \"report_interval\":\"lifetime\",\n" +
+                "        \"format\":\"csv\",\n" +
+                "        \"emails\":[\n" +
+                "        ],\n" +
+                "        \"orders\": [\n" +
+                "                    {\n" +
+                "                        \"order_by\":\"day\", \n" +
+                "                        \"direction\":\"DESC\"\n" +
+                "                    },\n" +
+                "                    {\n" +
+                "                        \"order_by\":\"campaign_id\",\n" +
+                "                        \"direction\":\"DESC\"\n" +
+                "                    }\n" +
+                "                    ]\n" +
+                "    }\n" +
+                "}";
+        String reportId = httpConnection.requestAdvertiserAnalyticReport(advertiserId, jsonPostData);
+        boolean ready = false;
+        while (!ready) {
+            //Check to see if report is ready
+            String jsonResponse = httpConnection.fetchDownloadUrl(reportId);
+            System.out.println(jsonResponse);
+            ready = dataParse.parseReportStatus(jsonResponse);
+            if (!ready)
+                Thread.sleep(20000);
+        }
+        //Report is ready, download it
+        String downloadUrl = appNexusUrl + "/" + dataParse.getReportUrl();
+        httpConnection.requestDownload(downloadUrl);
+
+        return httpConnection.getCsvData();
+    }
+
+    public static List<String[]> getSegmentLoadReport(HashSet segmentIdSet,
+                                                      String appNexusUrl,
+                                                      HTTPConnection httpConnection) throws Exception {
+
+        //Build the report filter argument string
+        StringBuilder stringBuilder = new StringBuilder();
+        int count = 0;
+        for(Object segmentId : segmentIdSet) {
+            stringBuilder.append("\""+ segmentId.toString() + "\"");
+            count++;
+            if(count < segmentIdSet.size())
+                stringBuilder.append(",");
+        }
+        String segmentJson = stringBuilder.toString();
+
+        String jsonPostData = "{\n" +
+                "    \"report\":\n" +
+                "    {\n" +
+                "        \"report_type\": \"segment_load\",\n" +
+                "        \"columns\": [\n" +
+                "            \"segment_id\",\n" +
+                "            \"segment_name\",\n" +
+                "            \"day\",\n" +
+                "            \"total_loads\",\n" +
+                "            \"daily_uniques\"\n" +
+                "        ],\n" +
+                "        \"filters\": [\n" +
+                "            {\n" +
+                "               \"segment_id\": [" + segmentJson + "]\n" +
+                "            }\n" +
+                "        ],\n" +
+                "        \"groups\": [\n" +
+                "            \"segment_id\",\n" +
+                "            \"day\"\n" +
+                "        ],\n" +
+                "        \"orders\": [\n" +
+                "            \"day\"\n" +
+                "        ],\n" +
+                "        \"emails\": [],\n" +
+                "        \"format\": \"csv\"\n" +
+                "    }\n" +
+                "}";
+        String reportId = httpConnection.requestSegmentLoadsReport(jsonPostData);
+        boolean ready = false;
+        while (!ready) {
+            //Check to see if report is ready
+            String jsonResponse = httpConnection.fetchDownloadUrl(reportId);
+            System.out.println(jsonResponse);
+            ready = dataParse.parseReportStatus(jsonResponse);
+            if (!ready)
+                Thread.sleep(20000);
+        }
+        //Report is ready, download it
+        String downloadUrl = appNexusUrl + "/" + dataParse.getReportUrl();
+        httpConnection.requestDownload(downloadUrl);
+
+        return httpConnection.getCsvData();
+    }
+
+    public static List<String[]> getLifetimeAdvertiserReport(String advertiserId,
+                                                             String appNexusUrl,
+                                                             HTTPConnection httpConnection) throws Exception {
+        String jsonPostData = "{\n" +
+                "    \"report\":\n" +
+                "    {\n" +
+                "        \"report_type\":\"advertiser_analytics\",\n" +
+                "        \"columns\":[\n" +
+                "            \"campaign_id\",\n" +
+                "            \"imps\",\n" +
+                "            \"clicks\",\n" +
+                "            \"ctr\"\n" +
+                "        ],\n" +
+                "        \"row_per\":[\n" +
+                "            \"campaign_id\",\n" +
+                "            \"day\"\n" +
+                "        ],\n" +
+                "        \"report_interval\":\"lifetime\",\n" +
+                "        \"format\":\"csv\",\n" +
+                "        \"emails\":[\n" +
+                "        ]\n" +
+                "    }\n" +
+                "}";
+        String reportId = httpConnection.requestAdvertiserAnalyticReport(advertiserId, jsonPostData);
+        boolean ready = false;
+        while (!ready) {
+            //Check to see if report is ready
+            String jsonResponse = httpConnection.fetchDownloadUrl(reportId);
+            System.out.println(jsonResponse);
+            ready = dataParse.parseReportStatus(jsonResponse);
+            if (!ready)
+                Thread.sleep(20000);
+        }
+        //Report is ready, download it
+        String downloadUrl = appNexusUrl + "/" + dataParse.getReportUrl();
+        httpConnection.requestDownload(downloadUrl);
+
+        return httpConnection.getCsvData();
+    }
+
 }
 
