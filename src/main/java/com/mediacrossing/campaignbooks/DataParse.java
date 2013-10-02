@@ -55,6 +55,7 @@ public class DataParse {
             JsonObject jsonObject = campaign.getAsJsonObject();
             String id = jsonObject.get("id").toString().replace("\"", "");
             String name = jsonObject.get("name").toString().replace("\"", "");
+            String status = jsonObject.get("status").toString().replace("\"", "");
             float lifetimeBudget = 0;
             if(!jsonObject.get("lifetimeBudget").isJsonNull()) {
                 lifetimeBudget = jsonObject.get("lifetimeBudget").getAsFloat();
@@ -65,7 +66,7 @@ public class DataParse {
             if(!jsonObject.get("dailyBudget").isJsonNull()) {
                 dailyBudget = jsonObject.get("dailyBudget").getAsFloat();
             }
-            campaignList.add(new Campaign(id, name, lifetimeBudget, startDate, endDate, dailyBudget));
+            campaignList.add(new Campaign(id, name, status, lifetimeBudget, startDate, endDate, dailyBudget));
         }
         return campaignList;
     }

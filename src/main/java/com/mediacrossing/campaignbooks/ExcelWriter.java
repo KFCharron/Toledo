@@ -122,6 +122,13 @@ public class ExcelWriter {
             Row campaignRow = lineItemSheet.createRow(rowCount);
             campaignRow.createCell(0).setCellValue(campaign.getCampaignID());
             campaignRow.createCell(1).setCellValue(campaign.getCampaignName());
+            if (campaign.getStatus().equals("inactive")) {
+                Font italics = WORKBOOK.createFont();
+                italics.setItalic(true);
+                CellStyle style = WORKBOOK.createCellStyle();
+                style.setFont(italics);
+                campaignRow.getCell(1).setCellStyle(style);
+            }
             campaignRow.createCell(2).setCellValue(campaign.getLifetimeBudget());
             if (campaign.getStartDate() != null && campaign.getEndDate() != null) {
                 campaignRow.createCell(3).setCellValue(campaign.getStartDate().getMonthOfYear() +

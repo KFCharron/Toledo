@@ -12,6 +12,7 @@ import java.util.List;
 public class Campaign {
     private String campaignID;
     private String campaignName;
+    private String status;
     private float lifetimeBudget;
     private float dailyBudget;
     private float totalDelivery;
@@ -27,12 +28,13 @@ public class Campaign {
     private DateTime endDate;
 
 
-    public Campaign(String campaignID, String campaignName, float lifetimeBudget,
+    public Campaign(String campaignID, String campaignName, String status, float lifetimeBudget,
                     String startDate, String endDate, float dailyBudget) throws ParseException {
         this.campaignID = campaignID;
         this.campaignName = campaignName;
         this.lifetimeBudget = lifetimeBudget;
         this.dailyBudget = dailyBudget;
+        this.status = status;
 
         //Converting parsed date strings to Date objects
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
@@ -57,6 +59,10 @@ public class Campaign {
 
         this.daysActive = startToEndDuration.getStandardDays();
         this.daysRemaining = nowToEndPeriod.getStandardDays() + 1;
+    }
+
+    public String getStatus() {
+        return status;
     }
 
     public DateTime getStartDate() {

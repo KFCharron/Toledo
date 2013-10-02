@@ -41,7 +41,7 @@ public class AppNexusReportRequests {
                 Thread.sleep(20000);
         }
         //Report is ready, download it
-        String downloadUrl = appNexusUrl + "/" + dataParse.getReportUrl();
+        String downloadUrl = appNexusUrl + dataParse.getReportUrl();
         httpConnection.requestDownload(downloadUrl);
 
         return httpConnection.getCsvData();
@@ -64,7 +64,7 @@ public class AppNexusReportRequests {
                 Thread.sleep(20000);
         }
         //Report is ready, download it
-        String downloadUrl = appNexusUrl + "/" + dataParse.getReportUrl();
+        String downloadUrl = appNexusUrl + dataParse.getReportUrl();
         httpConnection.requestDownload(downloadUrl);
 
         return httpConnection.getCsvData();
@@ -109,7 +109,7 @@ public class AppNexusReportRequests {
                 Thread.sleep(20000);
         }
         //Report is ready, download it
-        String downloadUrl = appNexusUrl + "/" + dataParse.getReportUrl();
+        String downloadUrl = appNexusUrl + dataParse.getReportUrl();
         httpConnection.requestDownload(downloadUrl);
 
         return httpConnection.getCsvData();
@@ -153,7 +153,7 @@ public class AppNexusReportRequests {
                 Thread.sleep(20000);
         }
         //Report is ready, download it
-        String downloadUrl = appNexusUrl + "/" + dataParse.getReportUrl();
+        String downloadUrl = appNexusUrl + dataParse.getReportUrl();
         httpConnection.requestDownload(downloadUrl);
 
         return httpConnection.getCsvData();
@@ -267,7 +267,7 @@ public class AppNexusReportRequests {
                 Thread.sleep(20000);
         }
         //Report is ready, download it
-        String downloadUrl = appNexusUrl + "/" + dataParse.getReportUrl();
+        String downloadUrl = appNexusUrl + dataParse.getReportUrl();
         httpConnection.requestDownload(downloadUrl);
 
         return httpConnection.getCsvData();
@@ -309,7 +309,7 @@ public class AppNexusReportRequests {
                 Thread.sleep(20000);
         }
         //Report is ready, download it
-        String downloadUrl = appNexusUrl + "/" + dataParse.getReportUrl();
+        String downloadUrl = appNexusUrl + dataParse.getReportUrl();
         httpConnection.requestDownload(downloadUrl);
 
         return httpConnection.getCsvData();
