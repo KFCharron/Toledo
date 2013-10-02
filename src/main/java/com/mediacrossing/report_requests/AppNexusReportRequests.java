@@ -180,7 +180,7 @@ public class AppNexusReportRequests {
                 Thread.sleep(20000);
         }
         //Report is ready, download it
-        String downloadUrl = appNexusUrl + "/" + dataParse.getReportUrl();
+        String downloadUrl = appNexusUrl + dataParse.getReportUrl();
         httpConnection.requestDownload(downloadUrl);
 
         return httpConnection.getCsvData();
@@ -194,7 +194,7 @@ public class AppNexusReportRequests {
         StringBuilder stringBuilder = new StringBuilder();
         int count = 0;
         for(Object segmentId : segmentIdSet) {
-            stringBuilder.append("\""+ segmentId.toString() + "\"");
+            stringBuilder.append("\"").append(segmentId.toString()).append("\"");
             count++;
             if(count < segmentIdSet.size())
                 stringBuilder.append(",");

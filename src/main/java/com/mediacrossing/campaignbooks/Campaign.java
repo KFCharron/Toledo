@@ -1,21 +1,19 @@
 package com.mediacrossing.campaignbooks;
 
-import java.text.DateFormat;
+import org.joda.time.DateTime;
+import org.joda.time.Duration;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 public class Campaign {
     private String campaignID;
     private String campaignName;
-    private Date startDate;
-    private Date endDate;
     private float lifetimeBudget;
     private float dailyBudget;
-    private float actualDailyBudget;
     private float totalDelivery;
     private long daysActive;
     private List<Delivery> deliveries = new LinkedList<Delivery>();
@@ -25,6 +23,49 @@ public class Campaign {
     private int lifetimeImps;
     private int lifetimeClicks;
     private float lifetimeCtr;
+    private DateTime startDate;
+    private DateTime endDate;
+
+
+    public Campaign(String campaignID, String campaignName, float lifetimeBudget,
+                    String startDate, String endDate, float dailyBudget) throws ParseException {
+        this.campaignID = campaignID;
+        this.campaignName = campaignName;
+        this.lifetimeBudget = lifetimeBudget;
+        this.dailyBudget = dailyBudget;
+
+        //Converting parsed date strings to Date objects
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        if (!startDate.equals("null")) {
+            Date start = sdf.parse(startDate);
+            this.startDate = new DateTime(start);
+        }
+        else {
+            this.startDate = null;
+        }
+        if (!endDate.equals("null")) {
+            Date end = sdf.parse(endDate);
+            this.endDate = new DateTime(end);
+        }
+        else {
+            this.endDate = null;
+        }
+
+        Duration startToEndDuration = new Duration(this.startDate, this.endDate);
+        DateTime now = new DateTime();
+        Duration nowToEndPeriod = new Duration(now, this.endDate);
+
+        this.daysActive = startToEndDuration.getStandardDays();
+        this.daysRemaining = nowToEndPeriod.getStandardDays() + 1;
+    }
+
+    public DateTime getStartDate() {
+        return startDate;
+    }
+
+    public DateTime getEndDate() {
+        return endDate;
+    }
 
     public ReportData getDayReportData() {
         return dayReportData;
@@ -46,35 +87,6 @@ public class Campaign {
         deliveries.add(delivery);
     }
 
-    public Campaign(String campaignID, String campaignName, float lifetimeBudget,
-                    String startDate, String endDate, float dailyBudget) throws ParseException {
-        this.campaignID = campaignID;
-        this.campaignName = campaignName;
-        this.lifetimeBudget = lifetimeBudget;
-        this.dailyBudget = dailyBudget;
-        //Converting parsed date strings to Date objects
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-        if (!startDate.equals("null"))
-            this.startDate = sdf.parse(startDate);
-        else {
-            this.startDate = null;
-        }
-        if (!endDate.equals("null"))
-            this.endDate = sdf.parse(endDate);
-        else {
-            this.endDate = null;
-        }
-        if(!startDate.equals("null") && !endDate.equals("null")) {
-            Date now = new Date();
-            this.daysActive = TimeUnit.DAYS.convert(this.endDate.getTime() - this.startDate.getTime(),
-                    TimeUnit.MILLISECONDS);
-            this.daysRemaining =
-                    (TimeUnit.DAYS.convert(this.endDate.getTime() - now.getTime(), TimeUnit.MILLISECONDS))+1L;
-
-        } else {
-            this.daysActive = 0;
-        }
-    }
 
     public void setTotalDelivery(float totalDelivery) {
         this.totalDelivery = totalDelivery;
@@ -88,22 +100,6 @@ public class Campaign {
         return campaignName;
     }
 
-    public String getStartDate() {
-        if(startDate != null) {
-            return new SimpleDateFormat("dd-MMM").format(startDate);
-        } else {
-            return "";
-        }
-    }
-
-    public String getEndDate() {
-        if(endDate != null) {
-            return new SimpleDateFormat("dd-MMM").format(endDate);
-        } else {
-            return "";
-        }
-    }
-
     public float getLifetimeBudget() {
         return lifetimeBudget;
     }
@@ -113,8 +109,7 @@ public class Campaign {
     }
 
     public float getActualDailyBudget() {
-        actualDailyBudget = (lifetimeBudget-totalDelivery)/daysRemaining;
-        return actualDailyBudget;
+        return (lifetimeBudget - totalDelivery) / daysRemaining;
     }
 
     public float getTotalDelivery() {
@@ -130,9 +125,8 @@ public class Campaign {
     }
 
     public long getFlightPercentage() {
-        long duration = this.endDate.getTime() - this.startDate.getTime();
-        long timeSinceStart = new Date().getTime() - this.startDate.getTime();
-        return(timeSinceStart / duration * 100);
+        //TODO
+        return 1L;
     }
 
     public long getDaysRemaining() {

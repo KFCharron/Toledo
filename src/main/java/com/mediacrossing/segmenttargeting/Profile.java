@@ -10,14 +10,6 @@ public class Profile {
     private ArrayList<DaypartTarget> daypartTargetList = new ArrayList<DaypartTarget>();
     private List<SegmentGroupTarget> segmentGroupTargets = new ArrayList<SegmentGroupTarget>();
 
-//    public Profile (String id, FrequencyTarget frequencyTarget, GeographyTarget geographyTarget,
-//                    ArrayList<DaypartTarget> daypartTargetList, List<SegmentGroupTarget> segmentGroupTargets) {
-//        this.id = id;
-//        this.frequencyTarget = frequencyTarget;
-//        this.geographyTarget = geographyTarget;
-//        this.daypartTargetList = daypartTargetList;
-//        this.segmentGroupTargets = segmentGroupTargets;
-//    }
 
     public List<SegmentGroupTarget> getSegmentGroupTargets() {
         return segmentGroupTargets;

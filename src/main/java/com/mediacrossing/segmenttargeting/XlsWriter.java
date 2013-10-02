@@ -1,7 +1,6 @@
 package com.mediacrossing.segmenttargeting;
 import com.mediacrossing.publisher_reporting.Publisher;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.*;
@@ -427,8 +426,8 @@ public class XlsWriter {
         //Header row
         Row headerRow = segmentSheet.createRow((short) 0);
         headerRow.createCell(0).setCellValue("Advertiser ID");
-        headerRow.createCell(1).setCellValue("Line Item ID");
-        headerRow.createCell(2).setCellValue("Campaign ID");
+        headerRow.createCell(1).setCellValue("Line Item");
+        headerRow.createCell(2).setCellValue("Campaign");
         headerRow.createCell(3).setCellValue("Segment ID");
         headerRow.createCell(4).setCellValue("Campaign Name");
         headerRow.createCell(5).setCellValue("Segment Name");

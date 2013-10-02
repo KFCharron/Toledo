@@ -18,10 +18,6 @@ public class DataParse {
         return reportUrl;
     }
 
-    public void setReportUrl(String reportUrl) {
-        this.reportUrl = reportUrl;
-    }
-
     public List<Advertiser> populateAdvertiserList (String rawData) {
         List<Advertiser> advertiserList = new ArrayList<Advertiser>();
         JsonElement jsonElement = new JsonParser().parse(rawData);
