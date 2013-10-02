@@ -156,8 +156,34 @@ public class RunSegmentTargeting {
         csvData.remove(0);
 
         //save segment data to each segment
-
         ArrayList<Campaign> newCampaignArrayList = dataStore.getLiveCampaignArrayList();
+
+        //collect ad ids
+        HashSet<String> uniqueAdIds = new HashSet<String>();
+        HashSet<String> uniqueLines = new HashSet<String>();
+        for (Campaign camp : newCampaignArrayList) {
+            uniqueAdIds.add(camp.getAdvertiserID());
+            uniqueLines.add(camp.getLineItemID());
+        }
+
+        //step through all campaigns, compare both line IDs and ad ids
+        for (String adId : uniqueAdIds) {
+            for (Campaign camp : newCampaignArrayList) {
+                httpConnection.requestAdvertiserFromMX(mxUrl, adId);
+                if (camp.getAdvertiserID().equals(adId)) {
+                    camp.setAdvertiserName(parser.obtainAdvertiserName(httpConnection.getJSONData()));
+                    ArrayList<String> liArray = parser.obtainLineItemArray(httpConnection.getJSONData());
+                    for(String li : liArray) {
+                        System.out.println(li);
+                        if(camp.getLineItemID().equals(li)) {
+                            httpConnection.requestLineItemsFromMX(mxUrl, adId);
+                            camp.setLineItemName(parser.obtainLineItemName(httpConnection.getJSONData(),li));
+                        }
+                    }
+                }
+            }
+        }
+
         for (String[] line : csvData) {
             for(Campaign campaign : newCampaignArrayList) {
                 for(SegmentGroupTarget segmentGroupTarget : campaign.getProfile().getSegmentGroupTargets()) {
