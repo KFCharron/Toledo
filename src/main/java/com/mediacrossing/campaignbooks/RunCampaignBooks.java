@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import scala.Tuple2;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Arrays;
@@ -29,6 +30,7 @@ public class RunCampaignBooks {
     }
 
 
+    @SuppressWarnings("unchecked")
     public static void main(String[] args) throws Exception {
 
         registerLoggerWithUncaughtExceptions();
@@ -64,7 +66,7 @@ public class RunCampaignBooks {
         //Parse and save to list of advertisers
         final List<Advertiser> advertiserList = parser.populateAdvertiserList(rawJsonData);
 
-        //Query MX for line items of each advertiser, save them to advertiser list
+        //Query MX for line items and campaigns of each advertiser, save them to advertiser list
         int count = 0;
         for (Advertiser advertiser : advertiserList) {
             httpConnection.setUrl(mxUrl + "/api/catalog/advertisers/" + advertiser.getAdvertiserID() + "/line-items");
@@ -89,87 +91,88 @@ public class RunCampaignBooks {
             count++;
         }
 
+        //Authorize AN Connection
         httpConnection.authorizeAppNexusConnection(appNexusUsername, appNexusPassword);
 
         //restrict requested reports to only advertisers w/ live campaigns
         for (Advertiser ad : advertiserList) {
             ad.setLive(false);
             for(LineItem li : ad.getLineItemList()) {
-                if(li.getDaysRemaining() > 0)
+                if(li.getDaysRemaining() > 0 && li.getEndDate()!= null) {
                     ad.setLive(true);
+                }
+            }
+        }
+
+        //Create new list with only live advertisers
+        ArrayList<Advertiser> liveAdvertiserList = new ArrayList<Advertiser>();
+        for (Advertiser ad : advertiserList) {
+            if (ad.isLive()) {
+                liveAdvertiserList.add(ad);
             }
         }
 
         //For every advertiser, request report
-        for (Advertiser advertiser : advertiserList) {
-            if(advertiser.isLive()) {
-                List<String[]> csvData = AppNexusReportRequests.getAdvertiserAnalyticReport(advertiser.getAdvertiserID(),
+        for (Advertiser advertiser : liveAdvertiserList) {
+
+            //request daily deliveries
+            List<String[]> csvData = AppNexusReportRequests.getAdvertiserAnalyticReport(advertiser.getAdvertiserID(),
                         appNexusUrl, httpConnection);
 
-                //remove header string
-                csvData.remove(0);
+            //remove header string
+            csvData.remove(0);
 
-                //Creates new delivery, adds it to campaign if ids match
-                for (String[] line : csvData) {
-                    Delivery delivery = new Delivery(line[0], line[1], line[2], line[3], line[4]);
-                    System.out.println(line[2]);
-                    System.out.println(delivery.getDelivery());
-                    for(LineItem lineItem : advertiser.getLineItemList()) {
-                        for(Campaign campaign : lineItem.getCampaignList()) {
-                            if (campaign.getCampaignID().equals(delivery.getCampaignID())) {
-                                campaign.addToDeliveries(delivery);
-                                campaign.setTotalDelivery(campaign.getTotalDelivery() + delivery.getDelivery());
-                            }
-                        }
-                    }
-                }
-
-                //Remove the first delivery from each campaign, incomplete data
-                for (Advertiser ad : advertiserList) {
-                    if(ad.isLive()) {
-                        for(LineItem li : ad.getLineItemList()) {
-                            for(Campaign camp : li.getCampaignList()) {
-                                if(camp.getDeliveries().size() > 0)
-                                    camp.getDeliveries().remove(0);
-                            }
-                        }
-                    }
-                }
-
-                csvData = AppNexusReportRequests.getLifetimeAdvertiserReport(advertiser.getAdvertiserID(),
-                        appNexusUrl, httpConnection);
-
-                //remove header string
-                csvData.remove(0);
-
-                //Creates new delivery, adds it to campaign if ids match
-                for (String[] line : csvData) {
-                    for(LineItem li : advertiser.getLineItemList()) {
-                        for(Campaign camp : li.getCampaignList()) {
-                           if(camp.getCampaignID().equals(line[0])) {
-                               camp.setLifetimeImps(Integer.parseInt(line[1]));
-                               camp.setLifetimeClicks(Integer.parseInt(line[2]));
-                               camp.setLifetimeCtr(Float.parseFloat(line[3]));
-                           }
+            //Creates new delivery, adds it to campaign if ids match
+            for (String[] line : csvData) {
+                Delivery delivery = new Delivery(line[0], line[1], line[2], line[3], line[4]);
+                for(LineItem lineItem : advertiser.getLineItemList()) {
+                    for(Campaign campaign : lineItem.getCampaignList()) {
+                        if (campaign.getCampaignID().equals(delivery.getCampaignID())) {
+                            campaign.addToDeliveries(delivery);
+                            campaign.setTotalDelivery(campaign.getTotalDelivery() + delivery.getDelivery());
                         }
                     }
                 }
             }
 
+            //request lifetime stats
+            csvData = AppNexusReportRequests.getLifetimeAdvertiserReport(advertiser.getAdvertiserID(),
+                    appNexusUrl, httpConnection);
+
+            //remove header string
+            csvData.remove(0);
+
+            //Creates new delivery, adds it to campaign if ids match
+            for (String[] line : csvData) {
+                for(LineItem li : advertiser.getLineItemList()) {
+                    for(Campaign camp : li.getCampaignList()) {
+                       if(camp.getCampaignID().equals(line[0])) {
+                           camp.setLifetimeImps(Integer.parseInt(line[1]));
+                           camp.setLifetimeClicks(Integer.parseInt(line[2]));
+                           camp.setLifetimeCtr(Float.parseFloat(line[3]));
+                       }
+                    }
+                }
+            }
+        }
+
+        //Remove the first delivery from each campaign, incomplete data
+        for (Advertiser ad : liveAdvertiserList) {
+            for(LineItem li : ad.getLineItemList()) {
+                for(Campaign camp : li.getCampaignList()) {
+                    if(camp.getDeliveries().size() > 0)
+                        camp.getDeliveries().remove(0);
+                }
+            }
         }
 
         //Build and save excel book, each sheet being its own line item
         ExcelWriter excelWriter = new ExcelWriter();
-        for (Advertiser advertiser : advertiserList) {
-            if (advertiser.isLive()) {
-                for (LineItem lineItem : advertiser.getLineItemList()) {
-                    if(lineItem.getDaysRemaining() > 0) {
-                        excelWriter.writeLineItemSheetToWorkbook(lineItem);
-                    }
-                }
+        for (Advertiser advertiser : liveAdvertiserList) {
+            for (LineItem lineItem : advertiser.getLineItemList()) {
+                    excelWriter.writeLineItemSheetToWorkbook(lineItem);
             }
         }
         excelWriter.writeWorkbookToFileWithOutputPath(outputPath);
-
     }
 }
