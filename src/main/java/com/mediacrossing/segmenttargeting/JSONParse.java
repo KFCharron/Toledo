@@ -27,10 +27,9 @@ public class JSONParse {
         String maxSessionImps = jobject.get("max_session_imps").toString();
         String minMinPerImp = jobject.get("min_minutes_per_imp").toString();
         String minSessionImps = jobject.get("min_session_imps").toString();
-        FrequencyTarget newFrequencyTarget = new FrequencyTarget(maxLifetimeImps, minSessionImps, maxSessionImps,
-                maxDayImps, minMinPerImp, maxPageImps);
 
-        return newFrequencyTarget;
+        return new FrequencyTarget(maxLifetimeImps, minSessionImps, maxSessionImps,
+                maxDayImps, minMinPerImp, maxPageImps);
     }
 
     public ArrayList<DaypartTarget> populateDaypartTarget(String rawData) {
@@ -118,9 +117,7 @@ public class JSONParse {
             }
         }
 
-        GeographyTarget newGeographyTarget =
-                new GeographyTarget(countryTargetList, dmaTargetList, countryAction, dmaAction, zipTargetList);
-        return newGeographyTarget;
+        return new GeographyTarget(countryTargetList, dmaTargetList, countryAction, dmaAction, zipTargetList);
     }
 
     public ArrayList<Campaign> populateCampaignArrayList(String rawData) throws ParseException {
@@ -134,7 +131,6 @@ public class JSONParse {
                 JsonObject jsonObject = values.getAsJsonObject();
                 newCampaign.setAdvertiserID(currentAdvertiserID);
                 newCampaign.setId(jsonObject.get("id").toString().replace("\"", ""));
-                newCampaign.setState(jsonObject.get("status").toString().replace("\"", ""));
                 newCampaign.setName(jsonObject.get("name").toString().replace("\"", ""));
                 newCampaign.setProfileID(jsonObject.get("profileId").toString().replace("\"", ""));
                 newCampaign.setLineItemID(jsonObject.get("lineItemId").toString().replace("\"", ""));
@@ -198,6 +194,38 @@ public class JSONParse {
         }
 
         return newSegmentGroupTargetList;
+    }
+
+    public String obtainLineItemName (String rawData, String lineItemId) {
+       JsonElement je = new JsonParser().parse(rawData);
+       JsonArray ja = je.getAsJsonArray();
+       for (JsonElement jEl : ja) {
+           JsonObject jo = jEl.getAsJsonObject();
+           System.out.println(jo.get("id").toString().replace("\"", "") + " " + lineItemId);
+           if(jo.get("id").toString().replace("\"", "").equals(lineItemId)) {
+               System.out.println("IDs were matched.");
+               return jo.get("name").toString().replace("\"", "");
+           }
+       }
+       System.out.println("Not found about to be returned.");
+       return "Not found";
+    }
+
+    public String obtainAdvertiserName (String rawData) {
+        JsonElement je = new JsonParser().parse(rawData);
+        JsonObject jo = je.getAsJsonObject();
+        return jo.get("name").toString().replace("\"", "");
+    }
+
+    public ArrayList<String> obtainLineItemArray (String rawData) {
+        ArrayList<String> liArray = new ArrayList<String>();
+        JsonElement je = new JsonParser().parse(rawData);
+        JsonObject jo = je.getAsJsonObject();
+        JsonArray ja = jo.get("lineItemIds").getAsJsonArray();
+        for(JsonElement jEl : ja) {
+            liArray.add(jEl.getAsString().replace("\"", ""));
+        }
+        return liArray;
     }
 
 }
