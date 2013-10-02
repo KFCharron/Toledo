@@ -35,11 +35,11 @@ public class HTTPConnection {
 
     private static final Logger LOG = LoggerFactory.getLogger(HTTPConnection.class);
 
-    // FIXME MX-specific data should not live in a generic HTTPConnection
     // This is a major code smell
     final List<Tuple2<String, String>> mxRequestProperties;
 
     public HTTPConnection(String mxUsername, String mxPassword) {
+        //noinspection unchecked
         mxRequestProperties =
                 Collections.unmodifiableList(
                         Arrays.asList(
@@ -152,6 +152,19 @@ public class HTTPConnection {
         this.setUrl(mxUrl + "/api/catalog/campaigns");
         this.requestData(mxRequestProperties);
     }
+
+    public void requestLineItemsFromMX(String mxUrl, String advertiserId) throws Exception {
+
+        this.setUrl(mxUrl + "/api/catalog/advertisers/" + advertiserId + "/line-items");
+        this.requestData(mxRequestProperties);
+    }
+
+    public void requestAdvertiserFromMX(String mxUrl, String advertiserId) throws Exception {
+
+        this.setUrl(mxUrl + "/api/catalog/advertisers/" + advertiserId);
+        this.requestData(mxRequestProperties);
+    }
+
 
     public void authorizeAppNexusConnection(String username, String password) throws Exception {
         this.setUrl("https://api.appnexus.com/auth");
@@ -307,6 +320,7 @@ public class HTTPConnection {
     }
 
     private Iterable<Tuple2<String, String>> appNexusRequestProperties() {
+        //noinspection unchecked
         return Collections.unmodifiableList(
                 Arrays.asList(ConnectionRequestProperties.authorization(this.authorizationToken)));
     }
@@ -417,12 +431,11 @@ public class HTTPConnection {
         //Set Auth Token
         con.setRequestProperty("Authorization", this.getAuthorizationToken());
         //Authorization JSON data
-        String urlParameters = jsonPostData;
 
         // Send post request
         con.setDoOutput(true);
         DataOutputStream wr = new DataOutputStream(con.getOutputStream());
-        wr.writeBytes(urlParameters);
+        wr.writeBytes(jsonPostData);
         wr.flush();
         wr.close();
 
@@ -471,12 +484,11 @@ public class HTTPConnection {
         //Set Auth Token
         con.setRequestProperty("Authorization", this.getAuthorizationToken());
         //Authorization JSON data
-        String urlParameters = jsonPostData;
 
         // Send post request
         con.setDoOutput(true);
         DataOutputStream wr = new DataOutputStream(con.getOutputStream());
-        wr.writeBytes(urlParameters);
+        wr.writeBytes(jsonPostData);
         wr.flush();
         wr.close();
 
