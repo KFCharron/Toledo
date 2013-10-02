@@ -1,6 +1,8 @@
 package com.mediacrossing.campaignbooks;
 
-import java.text.DateFormat;
+import org.joda.time.DateTime;
+import org.joda.time.Duration;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -10,15 +12,19 @@ import java.util.List;
 public class Campaign {
     private String campaignID;
     private String campaignName;
-    private Date startDate;
-    private Date endDate;
     private float lifetimeBudget;
-    private int daysRemaining;
     private float dailyBudget;
-    private float actualDailyBudget;
     private float totalDelivery;
-    private int daysActive;
-    private List<Float> dailyDeliveryList = new LinkedList<Float>();
+    private long daysActive;
+    private List<Delivery> deliveries = new LinkedList<Delivery>();
+    private ReportData dayReportData;
+    private ReportData lifetimeReportData;
+    private long daysRemaining;
+    private int lifetimeImps;
+    private int lifetimeClicks;
+    private float lifetimeCtr;
+    private DateTime startDate;
+    private DateTime endDate;
 
 
     public Campaign(String campaignID, String campaignName, float lifetimeBudget,
@@ -27,22 +33,63 @@ public class Campaign {
         this.campaignName = campaignName;
         this.lifetimeBudget = lifetimeBudget;
         this.dailyBudget = dailyBudget;
+
         //Converting parsed date strings to Date objects
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
-        if (!startDate.equals("null"))
-            this.startDate = sdf.parse(startDate);
-        if (!endDate.equals("null"))
-            this.endDate = sdf.parse(endDate);
-        //Calculating daysRemaining
-        if (!startDate.equals("null") && !endDate.equals("null"))
-            this.daysRemaining = (int)((this.endDate.getTime() - this.startDate.getTime())
-                    / (1000 * 60 * 60 * 24));
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        if (!startDate.equals("null")) {
+            Date start = sdf.parse(startDate);
+            this.startDate = new DateTime(start);
+        }
+        else {
+            this.startDate = null;
+        }
+        if (!endDate.equals("null")) {
+            Date end = sdf.parse(endDate);
+            this.endDate = new DateTime(end);
+        }
+        else {
+            this.endDate = null;
+        }
 
+        Duration startToEndDuration = new Duration(this.startDate, this.endDate);
+        DateTime now = new DateTime();
+        Duration nowToEndPeriod = new Duration(now, this.endDate);
 
+        this.daysActive = startToEndDuration.getStandardDays();
+        this.daysRemaining = nowToEndPeriod.getStandardDays() + 1;
     }
 
-    public Campaign(String campaignID) {
-        this.campaignID = campaignID;
+    public DateTime getStartDate() {
+        return startDate;
+    }
+
+    public DateTime getEndDate() {
+        return endDate;
+    }
+
+    public ReportData getDayReportData() {
+        return dayReportData;
+    }
+
+    public void setDayReportData(ReportData dayReportData) {
+        this.dayReportData = dayReportData;
+    }
+
+    public ReportData getLifetimeReportData() {
+        return lifetimeReportData;
+    }
+
+    public void setLifetimeReportData(ReportData lifetimeReportData) {
+        this.lifetimeReportData = lifetimeReportData;
+    }
+
+    public void addToDeliveries(Delivery delivery) {
+        deliveries.add(delivery);
+    }
+
+
+    public void setTotalDelivery(float totalDelivery) {
+        this.totalDelivery = totalDelivery;
     }
 
     public String getCampaignID() {
@@ -53,22 +100,8 @@ public class Campaign {
         return campaignName;
     }
 
-    public String getStartDate() {
-        DateFormat df = new SimpleDateFormat("dd-MMM");
-        return df.format(startDate);
-    }
-
-    public String getEndDate() {
-        DateFormat df = new SimpleDateFormat("dd-MMM");
-        return df.format(endDate);
-    }
-
     public float getLifetimeBudget() {
         return lifetimeBudget;
-    }
-
-    public int getDaysRemaining() {
-        return daysRemaining;
     }
 
     public float getDailyBudget() {
@@ -76,28 +109,51 @@ public class Campaign {
     }
 
     public float getActualDailyBudget() {
-        float deliveryTotal = getTotalDelivery();
-        actualDailyBudget = deliveryTotal / getDailyDeliveryList().size();
-        return actualDailyBudget;
+        return (lifetimeBudget - totalDelivery) / daysRemaining;
     }
 
     public float getTotalDelivery() {
-        for(Float delivery : this.getDailyDeliveryList()) {
-
-        }
         return totalDelivery;
     }
 
-
-    public int getDaysActive() {
+    public long getDaysActive() {
         return daysActive;
     }
 
-    public void addToDailyDeliveryList(float dailyDelivery) {
-        this.dailyDeliveryList.add(dailyDelivery);
+    public List<Delivery> getDeliveries() {
+        return deliveries;
     }
 
-    public List<Float> getDailyDeliveryList() {
-        return dailyDeliveryList;
+    public long getFlightPercentage() {
+        //TODO
+        return 1L;
+    }
+
+    public long getDaysRemaining() {
+        return daysRemaining;
+    }
+
+    public int getLifetimeImps() {
+        return lifetimeImps;
+    }
+
+    public void setLifetimeImps(int lifetimeImps) {
+        this.lifetimeImps = lifetimeImps;
+    }
+
+    public int getLifetimeClicks() {
+        return lifetimeClicks;
+    }
+
+    public void setLifetimeClicks(int lifetimeClicks) {
+        this.lifetimeClicks = lifetimeClicks;
+    }
+
+    public float getLifetimeCtr() {
+        return lifetimeCtr;
+    }
+
+    public void setLifetimeCtr(float lifetimeCtr) {
+        this.lifetimeCtr = lifetimeCtr;
     }
 }

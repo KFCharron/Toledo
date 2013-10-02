@@ -36,4 +36,8 @@ public class DataStore {
             }
         }
     }
+
+    public void setLiveCampaignArrayList(ArrayList<Campaign> campaignArrayList) {
+        this.liveCampaignArrayList = campaignArrayList;
+    }
 }
