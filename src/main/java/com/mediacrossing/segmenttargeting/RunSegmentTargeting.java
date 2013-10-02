@@ -174,7 +174,7 @@ public class RunSegmentTargeting {
                     camp.setAdvertiserName(parser.obtainAdvertiserName(httpConnection.getJSONData()));
                     ArrayList<String> liArray = parser.obtainLineItemArray(httpConnection.getJSONData());
                     for(String li : liArray) {
-                        System.out.println(li);
+                        LOG.debug(li);
                         if(camp.getLineItemID().equals(li)) {
                             httpConnection.requestLineItemsFromMX(mxUrl, adId);
                             camp.setLineItemName(parser.obtainLineItemName(httpConnection.getJSONData(),li));

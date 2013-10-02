@@ -29,6 +29,7 @@ public class RunAdvertiserDaily {
         );
     }
 
+    @SuppressWarnings("unchecked")
     public static void main(String[] args) throws Exception {
 
         registerLoggerWithUncaughtExceptions();
@@ -84,7 +85,7 @@ public class RunAdvertiserDaily {
                 advertiserList.set(count, advertiser);
             } catch (FileNotFoundException e) {
                 advertiserList.get(count).setLive(false);
-                System.out.println(advertiser.getAdvertiserID() + ": No line items found, live set to false.");
+                LOG.debug(advertiser.getAdvertiserID() + ": No line items found, live set to false.");
             }
             count++;
         }
@@ -155,9 +156,17 @@ public class RunAdvertiserDaily {
 
                 //add lifetime stats to campaign
                 for (String[] line : csvData) {
+
                     ReportData reportData = new ReportData(Integer.parseInt(line[1]), Integer.parseInt(line[2]),
                             Integer.parseInt(line[3]), Float.parseFloat(line[4]), Float.parseFloat(line[5]),
                             Float.parseFloat(line[6]), Float.parseFloat(line[7]), Float.parseFloat(line[8]), line[0]);
+
+                    for (String str : line) {
+                        LOG.debug(str);
+                    }
+                    LOG.debug(reportData.getImps() + " " + reportData.getClicks() +
+                            " " + reportData.getTotalConversions() + " " + reportData.getMediaCost());
+
                     for (LineItem li : advertiser.getLineItemList()) {
                         for (Campaign camp : li.getCampaignList()) {
                             if (camp.getCampaignID().equals(reportData.getId()))

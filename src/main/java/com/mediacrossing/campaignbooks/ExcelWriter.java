@@ -5,6 +5,8 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.WorkbookUtil;
 import org.joda.time.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -16,7 +18,23 @@ public class ExcelWriter {
 
     private static Workbook WORKBOOK = new HSSFWorkbook();
 
+    private static final Logger LOG = LoggerFactory.getLogger(ExcelWriter.class);
+
+    public static void registerLoggerWithUncaughtExceptions() {
+        Thread.setDefaultUncaughtExceptionHandler(
+                new Thread.UncaughtExceptionHandler() {
+                    @Override
+                    public void uncaughtException(Thread t, Throwable e) {
+                        LOG.error(e.getMessage(), e);
+                    }
+                }
+        );
+    }
+
     public void writeLineItemSheetToWorkbook(LineItem lineItem) {
+
+        registerLoggerWithUncaughtExceptions();
+
 
         DecimalFormat df = new DecimalFormat("#.00");
 
@@ -222,6 +240,9 @@ public class ExcelWriter {
 
     public static void writeDailyAdvertiserReport(List<Advertiser> advertiserList, String outputPath)
             throws IOException {
+
+        registerLoggerWithUncaughtExceptions();
+
         WORKBOOK = new HSSFWorkbook();
         Sheet reportSheet = WORKBOOK.createSheet("Daily Advertiser Report");
         DecimalFormat df = new DecimalFormat("#.00");
@@ -418,7 +439,7 @@ public class ExcelWriter {
             if (ad.isLive()) {
                 for(LineItem li : ad.getLineItemList()) {
                     for(Campaign camp : li.getCampaignList()) {
-                        System.out.println(li.toString());
+                        LOG.debug(li.toString());
                         Row dataRow = reportSheet.createRow(rowCount);
                         dataRow.createCell(0).setCellValue(camp.getCampaignID());
                         dataRow.createCell(1).setCellValue(camp.getCampaignName());

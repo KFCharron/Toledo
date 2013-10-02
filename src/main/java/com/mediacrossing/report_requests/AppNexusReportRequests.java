@@ -2,6 +2,9 @@ package com.mediacrossing.report_requests;
 
 import com.mediacrossing.campaignbooks.DataParse;
 import com.mediacrossing.segmenttargeting.HTTPConnection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.HashSet;
 import java.util.List;
 
@@ -9,15 +12,30 @@ public class AppNexusReportRequests {
 
     static DataParse dataParse = new DataParse();
 
+    private static final Logger LOG = LoggerFactory.getLogger(AppNexusReportRequests.class);
+
+    public static void registerLoggerWithUncaughtExceptions() {
+        Thread.setDefaultUncaughtExceptionHandler(
+                new Thread.UncaughtExceptionHandler() {
+                    @Override
+                    public void uncaughtException(Thread t, Throwable e) {
+                        LOG.error(e.getMessage(), e);
+                    }
+                }
+        );
+    }
+
     public static List<String[]> getCampaignImpsReport(String advertiserId,
                                                  String appNexusUrl,
                                                  HTTPConnection httpConnection) throws Exception {
+        registerLoggerWithUncaughtExceptions();
+
         String reportId = httpConnection.requestCampaignImpsReport(advertiserId);
         boolean ready = false;
         while (!ready) {
             //Check to see if report is ready
             String jsonResponse = httpConnection.fetchDownloadUrl(reportId);
-            System.out.println(jsonResponse);
+            LOG.debug(jsonResponse);
             ready = dataParse.parseReportStatus(jsonResponse);
             if (!ready)
                 Thread.sleep(20000);
@@ -33,12 +51,14 @@ public class AppNexusReportRequests {
     public static List<String[]> getPublisherReport(String publisherId,
                                                        String appNexusUrl,
                                                        HTTPConnection httpConnection) throws Exception {
+        registerLoggerWithUncaughtExceptions();
+
         String reportId = httpConnection.requestPublisherReport(publisherId);
         boolean ready = false;
         while (!ready) {
             //Check to see if report is ready
             String jsonResponse = httpConnection.fetchDownloadUrl(reportId);
-            System.out.println(jsonResponse);
+            LOG.debug(jsonResponse);
             ready = dataParse.parseReportStatus(jsonResponse);
             if (!ready)
                 Thread.sleep(20000);
@@ -54,6 +74,8 @@ public class AppNexusReportRequests {
     public static List<String[]> getLineItemReport(String interval, String advertiserId,
                                                              String appNexusUrl,
                                                              HTTPConnection httpConnection) throws Exception {
+        registerLoggerWithUncaughtExceptions();
+
         String jsonPostData = "{\n" +
                 "    \"report\":\n" +
                 "    {\n" +
@@ -81,7 +103,7 @@ public class AppNexusReportRequests {
         while (!ready) {
             //Check to see if report is ready
             String jsonResponse = httpConnection.fetchDownloadUrl(reportId);
-            System.out.println(jsonResponse);
+            LOG.debug(jsonResponse);
             ready = dataParse.parseReportStatus(jsonResponse);
             if (!ready)
                 Thread.sleep(20000);
@@ -96,6 +118,8 @@ public class AppNexusReportRequests {
     public static List<String[]> getCampaignReport(String interval, String advertiserId,
                                                             String appNexusUrl,
                                                             HTTPConnection httpConnection) throws Exception {
+        registerLoggerWithUncaughtExceptions();
+
         String jsonPostData = "{\n" +
                 "    \"report\":\n" +
                 "    {\n" +
@@ -123,7 +147,7 @@ public class AppNexusReportRequests {
         while (!ready) {
             //Check to see if report is ready
             String jsonResponse = httpConnection.fetchDownloadUrl(reportId);
-            System.out.println(jsonResponse);
+            LOG.debug(jsonResponse);
             ready = dataParse.parseReportStatus(jsonResponse);
             if (!ready)
                 Thread.sleep(20000);
@@ -138,6 +162,8 @@ public class AppNexusReportRequests {
     public static List<String[]> getAdvertiserAnalyticReport(String advertiserId,
                                                    String appNexusUrl,
                                                    HTTPConnection httpConnection) throws Exception {
+        registerLoggerWithUncaughtExceptions();
+
         String jsonPostData = "{\n" +
                 "    \"report\":\n" +
                 "    {\n" +
@@ -174,7 +200,7 @@ public class AppNexusReportRequests {
         while (!ready) {
             //Check to see if report is ready
             String jsonResponse = httpConnection.fetchDownloadUrl(reportId);
-            System.out.println(jsonResponse);
+            LOG.debug(jsonResponse);
             ready = dataParse.parseReportStatus(jsonResponse);
             if (!ready)
                 Thread.sleep(20000);
@@ -189,6 +215,8 @@ public class AppNexusReportRequests {
     public static List<String[]> getSegmentLoadReport(HashSet segmentIdSet,
                                                       String appNexusUrl,
                                                       HTTPConnection httpConnection) throws Exception {
+        registerLoggerWithUncaughtExceptions();
+
 
         //Build the report filter argument string
         StringBuilder stringBuilder = new StringBuilder();
@@ -233,7 +261,7 @@ public class AppNexusReportRequests {
         while (!ready) {
             //Check to see if report is ready
             String jsonResponse = httpConnection.fetchDownloadUrl(reportId);
-            System.out.println(jsonResponse);
+            LOG.debug(jsonResponse);
             ready = dataParse.parseReportStatus(jsonResponse);
             if (!ready)
                 Thread.sleep(20000);
@@ -248,6 +276,8 @@ public class AppNexusReportRequests {
     public static List<String[]> getLifetimeAdvertiserReport(String advertiserId,
                                                              String appNexusUrl,
                                                              HTTPConnection httpConnection) throws Exception {
+        registerLoggerWithUncaughtExceptions();
+
         String jsonPostData = "{\n" +
                 "    \"report\":\n" +
                 "    {\n" +
@@ -273,7 +303,7 @@ public class AppNexusReportRequests {
         while (!ready) {
             //Check to see if report is ready
             String jsonResponse = httpConnection.fetchDownloadUrl(reportId);
-            System.out.println(jsonResponse);
+            LOG.debug(jsonResponse);
             ready = dataParse.parseReportStatus(jsonResponse);
             if (!ready)
                 Thread.sleep(20000);

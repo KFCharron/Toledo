@@ -201,13 +201,13 @@ public class JSONParse {
        JsonArray ja = je.getAsJsonArray();
        for (JsonElement jEl : ja) {
            JsonObject jo = jEl.getAsJsonObject();
-           System.out.println(jo.get("id").toString().replace("\"", "") + " " + lineItemId);
+           LOG.debug(jo.get("id").toString().replace("\"", "") + " " + lineItemId);
            if(jo.get("id").toString().replace("\"", "").equals(lineItemId)) {
-               System.out.println("IDs were matched.");
+               LOG.debug("IDs were matched.");
                return jo.get("name").toString().replace("\"", "");
            }
        }
-       System.out.println("Not found about to be returned.");
+       LOG.debug("Not found about to be returned.");
        return "Not found";
     }
 

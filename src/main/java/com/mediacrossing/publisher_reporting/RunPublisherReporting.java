@@ -61,7 +61,7 @@ public class RunPublisherReporting {
                         Float.parseFloat(line[6]), Float.parseFloat(line[7])));
             }
         }
-        System.out.println(newPl.toString());
+        LOG.debug(newPl.toString());
         pl = newPl;
         XlsWriter.writePublisherReport(pl, outputPath);
 

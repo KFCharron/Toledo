@@ -86,7 +86,7 @@ public class RunCampaignBooks {
                 advertiserList.set(count, advertiser);
             } catch (FileNotFoundException e) {
                 advertiserList.get(count).setLive(false);
-                System.out.println(advertiser.getAdvertiserID() + ": No line items found, live set to false.");
+                LOG.debug(advertiser.getAdvertiserID() + ": No line items found, live set to false.");
             }
             count++;
         }
