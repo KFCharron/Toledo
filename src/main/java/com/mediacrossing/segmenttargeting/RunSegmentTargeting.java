@@ -160,21 +160,19 @@ public class RunSegmentTargeting {
 
         //collect ad ids
         HashSet<String> uniqueAdIds = new HashSet<String>();
-        HashSet<String> uniqueLines = new HashSet<String>();
         for (Campaign camp : newCampaignArrayList) {
             uniqueAdIds.add(camp.getAdvertiserID());
-            uniqueLines.add(camp.getLineItemID());
         }
 
         //step through all campaigns, compare both line IDs and ad ids
         for (String adId : uniqueAdIds) {
+            httpConnection.requestAdvertiserFromMX(mxUrl, adId);
+            String jsonData = httpConnection.getJSONData();
             for (Campaign camp : newCampaignArrayList) {
-                httpConnection.requestAdvertiserFromMX(mxUrl, adId);
                 if (camp.getAdvertiserID().equals(adId)) {
-                    camp.setAdvertiserName(parser.obtainAdvertiserName(httpConnection.getJSONData()));
-                    ArrayList<String> liArray = parser.obtainLineItemArray(httpConnection.getJSONData());
+                    camp.setAdvertiserName(parser.obtainAdvertiserName(jsonData));
+                    ArrayList<String> liArray = parser.obtainLineItemArray(jsonData);
                     for(String li : liArray) {
-                        LOG.debug(li);
                         if(camp.getLineItemID().equals(li)) {
                             httpConnection.requestLineItemsFromMX(mxUrl, adId);
                             camp.setLineItemName(parser.obtainLineItemName(httpConnection.getJSONData(),li));
