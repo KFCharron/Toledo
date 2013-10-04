@@ -9,13 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scala.Tuple2;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class RunAdvertiserDaily {
 
@@ -178,17 +172,51 @@ public class RunAdvertiserDaily {
             }
             advertiser.setLifetimeCampaigns(lifetimeCampaigns);
 
+            for (Advertiser ad : liveAdvertiserList) {
+                httpConnection.requestLineItemsFromMX(mxUrl, ad.getAdvertiserID());
+                List<LineItem> lineItems = DataParse.populateLineItemList(httpConnection.getJSONData());
+                for(LineItem li : lineItems) {
+                    for(DailyData data : lifetimeLineItems) {
+                        if(li.getLineItemID().equals(data.getId())) {
+                            data.setDailyBudget(li.getDailyBudget());
+                            data.setStartDay(li.getStartDateTime());
+                            data.setEndDay(li.getEndDateTime());
+                            data.setLifetimeBudget(li.getLifetimeBudget());
+                        }
+                    }
+                    for(DailyData data : dailyLineItems) {
+                        if(li.getLineItemID().equals(data.getId())) {
+                            data.setDailyBudget(li.getDailyBudget());
+                            data.setStartDay(li.getStartDateTime());
+                            data.setEndDay(li.getEndDateTime());
+                            data.setLifetimeBudget(li.getLifetimeBudget());
+                        }
+                    }
+                    httpConnection.setUrl(mxUrl + "/api/catalog/advertisers/" + advertiser.getAdvertiserID() +
+                            "/line-items/" + li.getLineItemID() + "/campaigns");
+                    httpConnection.requestData(mxRequestProperties);
+                    List<Campaign> campaigns = DataParse.populateCampaignList(httpConnection.getJSONData());
+                    for(Campaign camp : campaigns) {
+                        for(DailyData data : lifetimeCampaigns) {
+                            if(camp.getCampaignID().equals(data.getId())) {
+                                data.setDailyBudget(camp.getDailyBudget());
+                                data.setStartDay(camp.getStartDate());
+                                data.setEndDay(camp.getEndDate());
+                                data.setLifetimeBudget(camp.getLifetimeBudget());
+                            }
+                        }
+                        for(DailyData data : dailyCampaigns) {
+                            if(camp.getCampaignID().equals(data.getId())) {
+                                data.setDailyBudget(camp.getDailyBudget());
+                                data.setStartDay(camp.getStartDate());
+                                data.setEndDay(camp.getEndDate());
+                                data.setLifetimeBudget(camp.getLifetimeBudget());
+                            }
+                        }
+                    }
+                }
+            }
         }
-
-        /*final ObjectOutputStream fos = new ObjectOutputStream(new FileOutputStream(outputPath+"/test.dat", true));
-        try {
-            fos.writeObject(advertiserList);
-            fos.close();
-        } catch (IOException e) {
-            LOG.debug("Saving object failed.");
-            e.printStackTrace();
-        }*/
-
         ReportWriter.writeAdvertiserDailyReport(liveAdvertiserList, outputPath);
     }
 }

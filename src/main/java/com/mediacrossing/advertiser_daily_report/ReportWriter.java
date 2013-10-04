@@ -37,7 +37,12 @@ public class ReportWriter {
         lineItemHeader.createCell(7).setCellValue("Conv Rate");
         lineItemHeader.createCell(8).setCellValue("CPM");
         lineItemHeader.createCell(9).setCellValue("CPC");
-        
+        lineItemHeader.createCell(10).setCellValue("Start Date");
+        lineItemHeader.createCell(11).setCellValue("End Date");
+        lineItemHeader.createCell(12).setCellValue("Daily Budget");
+        lineItemHeader.createCell(13).setCellValue("Total Budget");
+
+
         int rowCount = 5;
         for(Advertiser ad : advertiserList) {
             for(DailyData data : ad.getDailyLineItems()) {
@@ -52,6 +57,14 @@ public class ReportWriter {
                 dataRow.createCell(7).setCellValue(data.getConvRate());
                 dataRow.createCell(8).setCellValue(data.getCpm());
                 dataRow.createCell(9).setCellValue(data.getCpc());
+                if(data.getStartDay() != null && data.getEndDay() != null) {
+                    dataRow.createCell(10).setCellValue(data.getStartDay().getMonthOfYear() + "/" +
+                        data.getStartDay().getDayOfMonth());
+                    dataRow.createCell(11).setCellValue(data.getEndDay().getMonthOfYear() + "/" +
+                        data.getEndDay().getMonthOfYear());
+                    dataRow.createCell(12).setCellValue(data.getDailyBudget());
+                    dataRow.createCell(13).setCellValue(data.getLifetimeBudget());
+                }
                 rowCount++;
             }
         }
@@ -68,6 +81,11 @@ public class ReportWriter {
         campaignHeader.createCell(7).setCellValue("Conv Rate");
         campaignHeader.createCell(8).setCellValue("CPM");
         campaignHeader.createCell(9).setCellValue("CPC");
+        campaignHeader.createCell(10).setCellValue("Start Date");
+        campaignHeader.createCell(11).setCellValue("End Date");
+        campaignHeader.createCell(12).setCellValue("Daily Budget");
+        campaignHeader.createCell(13).setCellValue("Lifetime Budget");
+
 
         rowCount++;
 
@@ -84,6 +102,14 @@ public class ReportWriter {
                 dataRow.createCell(7).setCellValue(data.getConvRate());
                 dataRow.createCell(8).setCellValue(data.getCpm());
                 dataRow.createCell(9).setCellValue(data.getCpc());
+                if(data.getStartDay() != null && data.getEndDay() != null) {
+                    dataRow.createCell(10).setCellValue(data.getStartDay().getMonthOfYear() + "/" +
+                        data.getStartDay().getDayOfMonth());
+                    dataRow.createCell(11).setCellValue(data.getEndDay().getMonthOfYear() + "/" +
+                        data.getEndDay().getMonthOfYear());
+                    dataRow.createCell(12).setCellValue(data.getDailyBudget());
+                    dataRow.createCell(13).setCellValue(data.getLifetimeBudget());
+                }
                 rowCount++;
             }
         }
@@ -107,6 +133,10 @@ public class ReportWriter {
         nextLineItemHeader.createCell(7).setCellValue("Conv Rate");
         nextLineItemHeader.createCell(8).setCellValue("CPM");
         nextLineItemHeader.createCell(9).setCellValue("CPC");
+        nextLineItemHeader.createCell(10).setCellValue("Start Date");
+        nextLineItemHeader.createCell(11).setCellValue("End Date");
+        nextLineItemHeader.createCell(12).setCellValue("Daily Budget");
+        nextLineItemHeader.createCell(13).setCellValue("Lifetime Budget");
 
         rowCount++;
         for(Advertiser ad : advertiserList) {
@@ -122,6 +152,14 @@ public class ReportWriter {
                 dataRow.createCell(7).setCellValue(data.getConvRate());
                 dataRow.createCell(8).setCellValue(data.getCpm());
                 dataRow.createCell(9).setCellValue(data.getCpc());
+                if(data.getStartDay() != null && data.getEndDay() != null) {
+                    dataRow.createCell(10).setCellValue(data.getStartDay().getMonthOfYear() + "/" +
+                            data.getStartDay().getDayOfMonth());
+                    dataRow.createCell(11).setCellValue(data.getEndDay().getMonthOfYear() + "/" +
+                            data.getEndDay().getMonthOfYear());
+                    dataRow.createCell(12).setCellValue(data.getDailyBudget());
+                    dataRow.createCell(13).setCellValue(data.getLifetimeBudget());
+                }
                 rowCount++;
             }
         }
@@ -138,6 +176,10 @@ public class ReportWriter {
         nextCampaignHeader.createCell(7).setCellValue("Conv Rate");
         nextCampaignHeader.createCell(8).setCellValue("CPM");
         nextCampaignHeader.createCell(9).setCellValue("CPC");
+        nextCampaignHeader.createCell(10).setCellValue("Start Date");
+        nextCampaignHeader.createCell(11).setCellValue("End Date");
+        nextCampaignHeader.createCell(12).setCellValue("Daily Budget");
+        nextCampaignHeader.createCell(13).setCellValue("Lifetime Budget");
 
         rowCount++;
 
@@ -154,8 +196,20 @@ public class ReportWriter {
                 dataRow.createCell(7).setCellValue(data.getConvRate());
                 dataRow.createCell(8).setCellValue(data.getCpm());
                 dataRow.createCell(9).setCellValue(data.getCpc());
+                if(data.getStartDay() != null && data.getEndDay() != null) {
+                    dataRow.createCell(10).setCellValue(data.getStartDay().getMonthOfYear() + "/" +
+                        data.getStartDay().getDayOfMonth());
+                    dataRow.createCell(11).setCellValue(data.getEndDay().getMonthOfYear() + "/" +
+                        data.getEndDay().getMonthOfYear());
+                    dataRow.createCell(12).setCellValue(data.getDailyBudget());
+                    dataRow.createCell(13).setCellValue(data.getLifetimeBudget());
+                }
                 rowCount++;
             }
+        }
+
+        for (int x = 0; x < 14; x++) {
+            sheet.autoSizeColumn(x);
         }
 
         FileOutputStream fileOut = new FileOutputStream(new File(outputPath, "DailyReport.xls"));
