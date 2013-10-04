@@ -24,6 +24,13 @@ public class Advertiser {
         this.advertiserID = advertiserID;
     }
 
+    public Advertiser(String advertiserID, String status) {
+        this.advertiserID = advertiserID;
+        if(status.equals("inactive")) {
+            this.live = false;
+        }
+    }
+
     public String getAdvertiserID() {
         return advertiserID;
     }
