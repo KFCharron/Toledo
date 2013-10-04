@@ -159,7 +159,9 @@ public class AppNexusReportRequests {
                 "            \"campaign_id\",\n" +
                 "            \"total_revenue\",\n" +
                 "            \"imps\",\n" +
-                "            \"clicks\"\n" +
+                "            \"clicks\",\n" +
+                "            \"total_convs\"\n" +
+
                 "        ],\n" +
                 "        \"row_per\":[\n" +
                 "            \"campaign_id\",\n" +
@@ -270,7 +272,8 @@ public class AppNexusReportRequests {
                 "            \"campaign_id\",\n" +
                 "            \"imps\",\n" +
                 "            \"clicks\",\n" +
-                "            \"ctr\"\n" +
+                "            \"ctr\",\n" +
+                "            \"total_convs\"\n" +
                 "        ],\n" +
                 "        \"row_per\":[\n" +
                 "            \"campaign_id\",\n" +

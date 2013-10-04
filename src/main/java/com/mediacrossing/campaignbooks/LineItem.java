@@ -23,13 +23,15 @@ public class LineItem {
     private ReportData lifetimeReportData;
     private DateTime startDateTime;
     private DateTime endDateTime;
+    private String status;
 
 
 
     public LineItem(String lineItemID, String lineItemName, String startDate,
-                    String endDate, String lifetimeBudget, String dailyBudget) throws ParseException {
+                    String endDate, String lifetimeBudget, String dailyBudget, String status) throws ParseException {
         this.lineItemID = lineItemID;
         this.lineItemName = lineItemName;
+        this.status = status;
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
         if(!startDate.equals("null") && !endDate.equals("null")) {
@@ -52,6 +54,14 @@ public class LineItem {
             this.dailyBudget = Float.parseFloat(dailyBudget);
         }
         this.daysRemaining = nowToEnd.getStandardDays() + 1L;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public DateTime getStartDateTime() {
@@ -130,5 +140,9 @@ public class LineItem {
         long duration = this.endDate.getTime() - this.startDate.getTime();
         long timeSinceStart = new Date().getTime() - this.startDate.getTime();
         return(timeSinceStart / duration * 100);
+    }
+
+    public DateTime getEndDateTime() {
+        return endDateTime;
     }
 }

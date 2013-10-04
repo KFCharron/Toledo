@@ -124,7 +124,7 @@ public class RunCampaignBooks {
 
             //Creates new delivery, adds it to campaign if ids match
             for (String[] line : csvData) {
-                Delivery delivery = new Delivery(line[0], line[1], line[2], line[3], line[4]);
+                Delivery delivery = new Delivery(line[0], line[1], line[2], line[3], line[4], line[5]);
                 for(LineItem lineItem : advertiser.getLineItemList()) {
                     for(Campaign campaign : lineItem.getCampaignList()) {
                         if (campaign.getCampaignID().equals(delivery.getCampaignID())) {
@@ -150,6 +150,7 @@ public class RunCampaignBooks {
                            camp.setLifetimeImps(Integer.parseInt(line[1]));
                            camp.setLifetimeClicks(Integer.parseInt(line[2]));
                            camp.setLifetimeCtr(Float.parseFloat(line[3]));
+                           camp.setLifetimeConvs(Integer.parseInt(line[4]));
                        }
                     }
                 }

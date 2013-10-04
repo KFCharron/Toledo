@@ -23,6 +23,7 @@ public class Campaign {
     private long daysRemaining;
     private int lifetimeImps;
     private int lifetimeClicks;
+    private int lifetimeConvs;
     private float lifetimeCtr;
     private DateTime startDate;
     private DateTime endDate;
@@ -59,6 +60,14 @@ public class Campaign {
 
         this.daysActive = startToEndDuration.getStandardDays();
         this.daysRemaining = nowToEndPeriod.getStandardDays() + 1;
+    }
+
+    public int getLifetimeConvs() {
+        return lifetimeConvs;
+    }
+
+    public void setLifetimeConvs(int lifetimeConvs) {
+        this.lifetimeConvs = lifetimeConvs;
     }
 
     public String getStatus() {

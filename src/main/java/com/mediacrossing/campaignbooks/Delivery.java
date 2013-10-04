@@ -11,14 +11,20 @@ public class Delivery {
     private float delivery;
     private int imps;
     private int clicks;
+    private int convs;
 
-    public Delivery(String date, String campaignID, String delivery, String imps, String clicks) throws ParseException {
+    public Delivery(String date, String campaignID, String delivery, String imps, String clicks, String convs) throws ParseException {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         this.date = new DateTime(sdf.parse(date));
         this.campaignID = campaignID;
         this.delivery = Float.parseFloat(delivery);
         this.imps = Integer.parseInt(imps);
         this.clicks = Integer.parseInt(clicks);
+        this.convs = Integer.parseInt(convs);
+    }
+
+    public int getConvs() {
+        return convs;
     }
 
     public DateTime getDate() {

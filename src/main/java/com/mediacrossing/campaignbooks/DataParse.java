@@ -31,7 +31,7 @@ public class DataParse {
 
     }
 
-    public List<LineItem> populateLineItemList (String rawData) throws ParseException {
+    public static List<LineItem> populateLineItemList (String rawData) throws ParseException {
         List<LineItem> lineItemList = new ArrayList<LineItem>();
         JsonElement jsonElement = new JsonParser().parse(rawData);
         for (JsonElement lineItem : jsonElement.getAsJsonArray()) {
@@ -42,13 +42,14 @@ public class DataParse {
                     jsonObject.get("startDate").toString().replace("\"",""),
                     jsonObject.get("endDate").toString().replace("\"",""),
                     jsonObject.get("lifetimeBudget").toString().replace("\"",""),
-                    jsonObject.get("dailyBudget").toString().replace("\"","")
+                    jsonObject.get("dailyBudget").toString().replace("\"",""),
+                    jsonObject.get("status").toString().replace("\"", "")
             ));
         }
         return lineItemList;
     }
 
-    public List<Campaign> populateCampaignList (String rawData) throws ParseException {
+    public static List<Campaign> populateCampaignList (String rawData) throws ParseException {
         List<Campaign> campaignList = new ArrayList<Campaign>();
         JsonElement jsonElement = new JsonParser().parse(rawData);
         JsonArray campaignJsonArray = jsonElement.getAsJsonArray();
@@ -71,6 +72,8 @@ public class DataParse {
         }
         return campaignList;
     }
+
+
 
     public boolean parseReportStatus(String rawData) {
         JsonElement jsonElement = new JsonParser().parse(rawData);
