@@ -1,5 +1,7 @@
 package com.mediacrossing.advertiser_daily_report;
 
+import org.joda.time.DateTime;
+
 public class DailyData {
 
     private String id;
@@ -12,8 +14,18 @@ public class DailyData {
     private String convRate;
     private String cpm;
     private String cpc;
-    private String startDay;
-    private String dailyBudget;
+    private DateTime startDay;
+    private DateTime endDay;
+    private float dailyBudget;
+    private float lifetimeBudget;
+
+    public float getLifetimeBudget() {
+        return lifetimeBudget;
+    }
+
+    public void setLifetimeBudget(float lifetimeBudget) {
+        this.lifetimeBudget = lifetimeBudget;
+    }
 
     public void setId(String id) {
         this.id = id;
@@ -55,11 +67,11 @@ public class DailyData {
         this.cpc = cpc;
     }
 
-    public void setStartDay(String startDay) {
+    public void setStartDay(DateTime startDay) {
         this.startDay = startDay;
     }
 
-    public void setDailyBudget(String dailyBudget) {
+    public void setDailyBudget(float dailyBudget) {
         this.dailyBudget = dailyBudget;
     }
 
@@ -103,11 +115,19 @@ public class DailyData {
         return cpc;
     }
 
-    public String getStartDay() {
+    public DateTime getStartDay() {
         return startDay;
     }
 
-    public String getDailyBudget() {
+    public float getDailyBudget() {
         return dailyBudget;
+    }
+
+    public DateTime getEndDay() {
+        return endDay;
+    }
+
+    public void setEndDay(DateTime endDay) {
+        this.endDay = endDay;
     }
 }
