@@ -20,21 +20,7 @@ public class ExcelWriter {
 
     private static final Logger LOG = LoggerFactory.getLogger(ExcelWriter.class);
 
-    public static void registerLoggerWithUncaughtExceptions() {
-        Thread.setDefaultUncaughtExceptionHandler(
-                new Thread.UncaughtExceptionHandler() {
-                    @Override
-                    public void uncaughtException(Thread t, Throwable e) {
-                        LOG.error(e.getMessage(), e);
-                    }
-                }
-        );
-    }
-
     public void writeLineItemSheetToWorkbook(LineItem lineItem) {
-
-        registerLoggerWithUncaughtExceptions();
-
 
         DecimalFormat df = new DecimalFormat("#.00");
 
@@ -246,9 +232,7 @@ public class ExcelWriter {
     }
 
     public static void writeDailyAdvertiserReport(List<Advertiser> advertiserList, String outputPath)
-            throws IOException {
-
-        registerLoggerWithUncaughtExceptions();
+            throws NullPointerException, IOException {
 
         WORKBOOK = new HSSFWorkbook();
         Sheet reportSheet = WORKBOOK.createSheet("Daily Advertiser Report");

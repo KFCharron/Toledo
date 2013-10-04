@@ -14,21 +14,9 @@ public class AppNexusReportRequests {
 
     private static final Logger LOG = LoggerFactory.getLogger(AppNexusReportRequests.class);
 
-    public static void registerLoggerWithUncaughtExceptions() {
-        Thread.setDefaultUncaughtExceptionHandler(
-                new Thread.UncaughtExceptionHandler() {
-                    @Override
-                    public void uncaughtException(Thread t, Throwable e) {
-                        LOG.error(e.getMessage(), e);
-                    }
-                }
-        );
-    }
-
     public static List<String[]> getCampaignImpsReport(String advertiserId,
                                                  String appNexusUrl,
                                                  HTTPConnection httpConnection) throws Exception {
-        registerLoggerWithUncaughtExceptions();
 
         String reportId = httpConnection.requestCampaignImpsReport(advertiserId);
         boolean ready = false;
@@ -51,7 +39,6 @@ public class AppNexusReportRequests {
     public static List<String[]> getPublisherReport(String publisherId,
                                                        String appNexusUrl,
                                                        HTTPConnection httpConnection) throws Exception {
-        registerLoggerWithUncaughtExceptions();
 
         String reportId = httpConnection.requestPublisherReport(publisherId);
         boolean ready = false;
@@ -74,7 +61,6 @@ public class AppNexusReportRequests {
     public static List<String[]> getLineItemReport(String interval, String advertiserId,
                                                              String appNexusUrl,
                                                              HTTPConnection httpConnection) throws Exception {
-        registerLoggerWithUncaughtExceptions();
 
         String jsonPostData = "{\n" +
                 "    \"report\":\n" +
@@ -82,6 +68,7 @@ public class AppNexusReportRequests {
                 "        \"report_type\": \"advertiser_analytics\",\n" +
                 "        \"columns\": [\n" +
                 "            \"line_item_id\",\n" +
+                "            \"line_item_name\",\n" +
                 "            \"imps\",\n" +
                 "            \"clicks\",\n" +
                 "            \"total_convs\",\n" +
@@ -118,7 +105,6 @@ public class AppNexusReportRequests {
     public static List<String[]> getCampaignReport(String interval, String advertiserId,
                                                             String appNexusUrl,
                                                             HTTPConnection httpConnection) throws Exception {
-        registerLoggerWithUncaughtExceptions();
 
         String jsonPostData = "{\n" +
                 "    \"report\":\n" +
@@ -126,6 +112,7 @@ public class AppNexusReportRequests {
                 "        \"report_type\": \"advertiser_analytics\",\n" +
                 "        \"columns\": [\n" +
                 "            \"campaign_id\",\n" +
+                "            \"campaign_name\",\n" +
                 "            \"imps\",\n" +
                 "            \"clicks\",\n" +
                 "            \"total_convs\",\n" +
@@ -162,7 +149,6 @@ public class AppNexusReportRequests {
     public static List<String[]> getAdvertiserAnalyticReport(String advertiserId,
                                                    String appNexusUrl,
                                                    HTTPConnection httpConnection) throws Exception {
-        registerLoggerWithUncaughtExceptions();
 
         String jsonPostData = "{\n" +
                 "    \"report\":\n" +
@@ -215,7 +201,6 @@ public class AppNexusReportRequests {
     public static List<String[]> getSegmentLoadReport(HashSet segmentIdSet,
                                                       String appNexusUrl,
                                                       HTTPConnection httpConnection) throws Exception {
-        registerLoggerWithUncaughtExceptions();
 
 
         //Build the report filter argument string
@@ -276,7 +261,6 @@ public class AppNexusReportRequests {
     public static List<String[]> getLifetimeAdvertiserReport(String advertiserId,
                                                              String appNexusUrl,
                                                              HTTPConnection httpConnection) throws Exception {
-        registerLoggerWithUncaughtExceptions();
 
         String jsonPostData = "{\n" +
                 "    \"report\":\n" +
