@@ -167,12 +167,9 @@ public class RunCampaignBooks {
         }
 
         //Build and save excel book, each sheet being its own line item
-        ExcelWriter excelWriter = new ExcelWriter();
         for (Advertiser advertiser : liveAdvertiserList) {
-            for (LineItem lineItem : advertiser.getLineItemList()) {
-                    excelWriter.writeLineItemSheetToWorkbook(lineItem);
-            }
+            ExcelWriter.writeAdvertiserSheetToWorkbook(advertiser);
         }
-        excelWriter.writeWorkbookToFileWithOutputPath(outputPath);
+        ExcelWriter.writeWorkbookToFileWithOutputPath(outputPath);
     }
 }
