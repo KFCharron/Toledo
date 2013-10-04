@@ -9,7 +9,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scala.Tuple2;
 
-import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -64,118 +67,128 @@ public class RunAdvertiserDaily {
 
         //Parse and save to list of advertisers
         final List<Advertiser> advertiserList = parser.populateAdvertiserList(rawJsonData);
-
-        //Query MX for line items of each advertiser, save them to advertiser list
-        int count = 0;
-        for (Advertiser advertiser : advertiserList) {
-            httpConnection.setUrl(mxUrl + "/api/catalog/advertisers/" + advertiser.getAdvertiserID() + "/line-items");
-            try {
-                httpConnection.requestData(mxRequestProperties);
-                rawJsonData = httpConnection.getJSONData();
-                List<LineItem> lineItemList = parser.populateLineItemList(rawJsonData);
-                for (LineItem lineItem : lineItemList) {
-                    httpConnection.setUrl(mxUrl + "/api/catalog/advertisers/" + advertiser.getAdvertiserID() +
-                            "/line-items/" + lineItem.getLineItemID() + "/campaigns");
-                    httpConnection.requestData(mxRequestProperties);
-                    rawJsonData = httpConnection.getJSONData();
-                    List<Campaign> campaignList = parser.populateCampaignList(rawJsonData);
-                    lineItem.setCampaignList(campaignList);
-                }
-                advertiser = new Advertiser(advertiser.getAdvertiserID(), lineItemList);
-                advertiserList.set(count, advertiser);
-            } catch (FileNotFoundException e) {
-                advertiserList.get(count).setLive(false);
-                LOG.debug(advertiser.getAdvertiserID() + ": No line items found, live set to false.");
+        final List<Advertiser> liveAdvertiserList = new ArrayList<Advertiser>();
+        for(Advertiser ad : advertiserList) {
+            if(ad.isLive()) {
+                liveAdvertiserList.add(ad);
             }
-            count++;
         }
 
         httpConnection.authorizeAppNexusConnection(appNexusUsername, appNexusPassword);
 
         //For every advertiser, request report
-        for (Advertiser advertiser : advertiserList) {
-            if (advertiser.isLive()) {
+        for (Advertiser advertiser : liveAdvertiserList) {
 
-                List<String[]> csvData = AppNexusReportRequests.getLineItemReport("yesterday", advertiser.getAdvertiserID(),
-                        appNexusUrl, httpConnection);
+            List<String[]> csvData = AppNexusReportRequests.getLineItemReport("yesterday", advertiser.getAdvertiserID(),
+                    appNexusUrl, httpConnection);
 
-                //remove header string
-                csvData.remove(0);
+            //remove header string
+            csvData.remove(0);
 
-                //add yesterday stats to line item
-                for (String[] line : csvData) {
-                    ReportData reportData = new ReportData(Integer.parseInt(line[1]), Integer.parseInt(line[2]),
-                            Integer.parseInt(line[3]), Float.parseFloat(line[4]), Float.parseFloat(line[5]),
-                            Float.parseFloat(line[6]), Float.parseFloat(line[7]), Float.parseFloat(line[8]), line[0]);
-                    for (LineItem li : advertiser.getLineItemList()) {
-                        if(li.getLineItemID().equals(reportData.getId()))
-                            li.setDayReportData(reportData);
-                    }
-                }
-
-                csvData = AppNexusReportRequests.getCampaignReport("yesterday", advertiser.getAdvertiserID(),
-                        appNexusUrl, httpConnection);
-
-                //remove header string
-                csvData.remove(0);
-
-                for (String[] line : csvData) {
-                    ReportData reportData = new ReportData(Integer.parseInt(line[1]), Integer.parseInt(line[2]),
-                            Integer.parseInt(line[3]), Float.parseFloat(line[4]), Float.parseFloat(line[5]),
-                            Float.parseFloat(line[6]), Float.parseFloat(line[7]), Float.parseFloat(line[8]), line[0]);
-                    for (LineItem li : advertiser.getLineItemList()) {
-                        for (Campaign camp : li.getCampaignList()) {
-                            if (camp.getCampaignID().equals(reportData.getId()))
-                                camp.setDayReportData(reportData);
-                        }
-                    }
-                }
-
-                csvData = AppNexusReportRequests.getLineItemReport("lifetime", advertiser.getAdvertiserID(),
-                        appNexusUrl, httpConnection);
-
-                //remove header string
-                csvData.remove(0);
-
-                //add lifetime stats to lineitem
-                for (String[] line : csvData) {
-                    ReportData reportData = new ReportData(Integer.parseInt(line[1]), Integer.parseInt(line[2]),
-                            Integer.parseInt(line[3]), Float.parseFloat(line[4]), Float.parseFloat(line[5]),
-                            Float.parseFloat(line[6]), Float.parseFloat(line[7]), Float.parseFloat(line[8]), line[0]);
-                    for (LineItem li : advertiser.getLineItemList()) {
-                        if(li.getLineItemID().equals(reportData.getId()))
-                            li.setLifetimeReportData(reportData);
-                    }
-                }
-
-                csvData = AppNexusReportRequests.getCampaignReport("lifetime", advertiser.getAdvertiserID(),
-                        appNexusUrl, httpConnection);
-
-                //remove header string
-                csvData.remove(0);
-
-                //add lifetime stats to campaign
-                for (String[] line : csvData) {
-
-                    ReportData reportData = new ReportData(Integer.parseInt(line[1]), Integer.parseInt(line[2]),
-                            Integer.parseInt(line[3]), Float.parseFloat(line[4]), Float.parseFloat(line[5]),
-                            Float.parseFloat(line[6]), Float.parseFloat(line[7]), Float.parseFloat(line[8]), line[0]);
-
-                    for (String str : line) {
-                        LOG.debug(str);
-                    }
-                    LOG.debug(reportData.getImps() + " " + reportData.getClicks() +
-                            " " + reportData.getTotalConversions() + " " + reportData.getMediaCost());
-
-                    for (LineItem li : advertiser.getLineItemList()) {
-                        for (Campaign camp : li.getCampaignList()) {
-                            if (camp.getCampaignID().equals(reportData.getId()))
-                                camp.setLifetimeReportData(reportData);
-                        }
-                    }
-                }
+            //add yesterday stats to line item
+            ArrayList<DailyData> dailyLineItems = new ArrayList<DailyData>();
+            for (String[] line : csvData) {
+                DailyData data = new DailyData();
+                data.setId(line[0]);
+                data.setName(line[1]);
+                data.setImps(line[2]);
+                data.setClicks(line[3]);
+                data.setTotalConv(line[4]);
+                data.setMediaCost(line[5]);
+                data.setCtr(line[6]);
+                data.setConvRate(line[7]);
+                data.setCpm(line[8]);
+                data.setCpc(line[9]);
+                dailyLineItems.add(data);
             }
+            advertiser.setDailyLineItems(dailyLineItems);
+
+
+            csvData = AppNexusReportRequests.getLineItemReport("lifetime", advertiser.getAdvertiserID(),
+                    appNexusUrl, httpConnection);
+
+            //remove header string
+            csvData.remove(0);
+
+            //add lifetime stats to line item
+            ArrayList<DailyData> lifetimeLineItems = new ArrayList<DailyData>();
+            for (String[] line : csvData) {
+                DailyData data = new DailyData();
+                data.setId(line[0]);
+                data.setName(line[1]);
+                data.setImps(line[2]);
+                data.setClicks(line[3]);
+                data.setTotalConv(line[4]);
+                data.setMediaCost(line[5]);
+                data.setCtr(line[6]);
+                data.setConvRate(line[7]);
+                data.setCpm(line[8]);
+                data.setCpc(line[9]);
+                lifetimeLineItems.add(data);
+            }
+            advertiser.setLifetimeLineItems(lifetimeLineItems);
+
+
+            csvData = AppNexusReportRequests.getCampaignReport("yesterday", advertiser.getAdvertiserID(),
+                    appNexusUrl, httpConnection);
+
+            //remove header string
+            csvData.remove(0);
+
+            //add yesterday stats to campaign
+            ArrayList<DailyData> dailyCampaigns = new ArrayList<DailyData>();
+            for (String[] line : csvData) {
+                DailyData data = new DailyData();
+                data.setId(line[0]);
+                data.setName(line[1]);
+                data.setImps(line[2]);
+                data.setClicks(line[3]);
+                data.setTotalConv(line[4]);
+                data.setMediaCost(line[5]);
+                data.setCtr(line[6]);
+                data.setConvRate(line[7]);
+                data.setCpm(line[8]);
+                data.setCpc(line[9]);
+                dailyCampaigns.add(data);
+            }
+            advertiser.setDailyCampaigns(dailyCampaigns);
+
+
+            csvData = AppNexusReportRequests.getCampaignReport("lifetime", advertiser.getAdvertiserID(),
+                    appNexusUrl, httpConnection);
+
+            //remove header string
+            csvData.remove(0);
+
+            //add yesterday stats to line item
+            ArrayList<DailyData> lifetimeCampaigns = new ArrayList<DailyData>();
+            for (String[] line : csvData) {
+                DailyData data = new DailyData();
+                data.setId(line[0]);
+                data.setName(line[1]);
+                data.setImps(line[2]);
+                data.setClicks(line[3]);
+                data.setTotalConv(line[4]);
+                data.setMediaCost(line[5]);
+                data.setCtr(line[6]);
+                data.setConvRate(line[7]);
+                data.setCpm(line[8]);
+                data.setCpc(line[9]);
+                lifetimeCampaigns.add(data);
+            }
+            advertiser.setLifetimeCampaigns(lifetimeCampaigns);
+
         }
-        ExcelWriter.writeDailyAdvertiserReport(advertiserList, outputPath);
+
+        /*final ObjectOutputStream fos = new ObjectOutputStream(new FileOutputStream(outputPath+"/test.dat", true));
+        try {
+            fos.writeObject(advertiserList);
+            fos.close();
+        } catch (IOException e) {
+            LOG.debug("Saving object failed.");
+            e.printStackTrace();
+        }*/
+
+        ReportWriter.writeAdvertiserDailyReport(liveAdvertiserList, outputPath);
     }
 }
