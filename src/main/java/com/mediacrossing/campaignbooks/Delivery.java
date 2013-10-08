@@ -12,8 +12,9 @@ public class Delivery {
     private int imps;
     private int clicks;
     private int convs;
+    private float ctr;
 
-    public Delivery(String date, String campaignID, String delivery, String imps, String clicks, String convs) throws ParseException {
+    public Delivery(String date, String campaignID, String delivery, String imps, String clicks, String convs, String ctr) throws ParseException {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         this.date = new DateTime(sdf.parse(date));
         this.campaignID = campaignID;
@@ -21,6 +22,7 @@ public class Delivery {
         this.imps = Integer.parseInt(imps);
         this.clicks = Integer.parseInt(clicks);
         this.convs = Integer.parseInt(convs);
+        this.ctr = Float.parseFloat(ctr);
     }
 
     public int getConvs() {
@@ -45,5 +47,9 @@ public class Delivery {
 
     public int getClicks() {
         return clicks;
+    }
+
+    public float getCtr() {
+        return ctr;
     }
 }
