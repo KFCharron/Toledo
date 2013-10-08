@@ -1,6 +1,7 @@
 package com.mediacrossing.advertiser_daily_report;
 
 import org.joda.time.DateTime;
+import org.joda.time.Duration;
 
 public class DailyData {
 
@@ -18,6 +19,31 @@ public class DailyData {
     private DateTime endDay;
     private float dailyBudget;
     private float lifetimeBudget;
+
+    public float getPercentThroughFlight() {
+        if(startDay != null && endDay != null) {
+            DateTime now = new DateTime();
+            Duration nowToEnd = new Duration(now, endDay);
+            Duration full = new Duration(startDay, endDay);
+            return nowToEnd.getStandardDays()/full.getStandardDays();
+        } else return 0;
+    }
+
+    public float getPercentThroughLifetimeBudget() {
+        return Float.parseFloat(mediaCost)/lifetimeBudget;
+    }
+
+    public float getSuggestedDailyBudget() {
+        if (endDay != null) {
+            DateTime now = new DateTime();
+            Duration nowToEnd = new Duration(now, endDay);
+
+            return (lifetimeBudget-Float.parseFloat(mediaCost))/nowToEnd.getStandardDays();
+        } else {
+            return 0;
+        }
+
+    }
 
     public float getLifetimeBudget() {
         return lifetimeBudget;
@@ -83,36 +109,36 @@ public class DailyData {
         return name;
     }
 
-    public String getImps() {
-        return imps;
+    public int getImps() {
+        return Integer.parseInt(imps);
     }
 
-    public String getClicks() {
-        return clicks;
+    public int getClicks() {
+        return Integer.parseInt(clicks);
     }
 
-    public String getTotalConv() {
-        return totalConv;
+    public Integer getTotalConv() {
+        return Integer.parseInt(totalConv);
     }
 
-    public String getMediaCost() {
-        return mediaCost;
+    public Float getMediaCost() {
+        return Float.parseFloat(mediaCost);
     }
 
-    public String getCtr() {
-        return ctr;
+    public Float getCtr() {
+        return Float.parseFloat(ctr);
     }
 
-    public String getConvRate() {
-        return convRate;
+    public Float getConvRate() {
+        return Float.parseFloat(convRate);
     }
 
-    public String getCpm() {
-        return cpm;
+    public Float getCpm() {
+        return Float.parseFloat(cpm);
     }
 
-    public String getCpc() {
-        return cpc;
+    public Float getCpc() {
+        return Float.parseFloat(cpc);
     }
 
     public DateTime getStartDay() {
