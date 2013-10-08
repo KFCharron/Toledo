@@ -82,7 +82,7 @@ public class RunCampaignBooks {
                     List<Campaign> campaignList = parser.populateCampaignList(rawJsonData);
                     lineItem.setCampaignList(campaignList);
                 }
-                advertiser = new Advertiser(advertiser.getAdvertiserID(), lineItemList);
+                advertiser = new Advertiser(advertiser.getAdvertiserID(), advertiser.getAdvertiserName(), lineItemList);
                 advertiserList.set(count, advertiser);
             } catch (FileNotFoundException e) {
                 advertiserList.get(count).setLive(false);
@@ -124,7 +124,7 @@ public class RunCampaignBooks {
 
             //Creates new delivery, adds it to campaign if ids match
             for (String[] line : csvData) {
-                Delivery delivery = new Delivery(line[0], line[1], line[2], line[3], line[4], line[5]);
+                Delivery delivery = new Delivery(line[0], line[1], line[2], line[3], line[4], line[5], line[6]);
                 for(LineItem lineItem : advertiser.getLineItemList()) {
                     for(Campaign campaign : lineItem.getCampaignList()) {
                         if (campaign.getCampaignID().equals(delivery.getCampaignID())) {
@@ -167,7 +167,7 @@ public class RunCampaignBooks {
             }
         }
 
-        //Build and save excel book, each sheet being its own line item
+        //Build and save excel book, each sheet being its own advertiser
         for (Advertiser advertiser : liveAdvertiserList) {
             ExcelWriter.writeAdvertiserSheetToWorkbook(advertiser);
         }
