@@ -73,6 +73,7 @@ public class RunAdvertiserDaily {
         //For every advertiser, request report
         for (Advertiser advertiser : liveAdvertiserList) {
 
+            //request yesterday line item report
             List<String[]> csvData = AppNexusReportRequests.getLineItemReport("yesterday", advertiser.getAdvertiserID(),
                     appNexusUrl, httpConnection);
 
@@ -97,7 +98,7 @@ public class RunAdvertiserDaily {
             }
             advertiser.setDailyLineItems(dailyLineItems);
 
-
+            //request lifetime line item report
             csvData = AppNexusReportRequests.getLineItemReport("lifetime", advertiser.getAdvertiserID(),
                     appNexusUrl, httpConnection);
 
@@ -122,7 +123,7 @@ public class RunAdvertiserDaily {
             }
             advertiser.setLifetimeLineItems(lifetimeLineItems);
 
-
+            //request yesterday campaign report
             csvData = AppNexusReportRequests.getCampaignReport("yesterday", advertiser.getAdvertiserID(),
                     appNexusUrl, httpConnection);
 
@@ -147,7 +148,7 @@ public class RunAdvertiserDaily {
             }
             advertiser.setDailyCampaigns(dailyCampaigns);
 
-
+            //request lifetime campaign report
             csvData = AppNexusReportRequests.getCampaignReport("lifetime", advertiser.getAdvertiserID(),
                     appNexusUrl, httpConnection);
 
@@ -172,8 +173,11 @@ public class RunAdvertiserDaily {
             }
             advertiser.setLifetimeCampaigns(lifetimeCampaigns);
 
+            //populate each advertiser with matching data
             for (Advertiser ad : liveAdvertiserList) {
+                //get line item data
                 httpConnection.requestLineItemsFromMX(mxUrl, ad.getAdvertiserID());
+                //save to a list of line items
                 List<LineItem> lineItems = DataParse.populateLineItemList(httpConnection.getJSONData());
                 for(LineItem li : lineItems) {
                     for(DailyData data : lifetimeLineItems) {
@@ -192,6 +196,8 @@ public class RunAdvertiserDaily {
                             data.setLifetimeBudget(li.getLifetimeBudget());
                         }
                     }
+
+                    //get campaign data
                     httpConnection.setUrl(mxUrl + "/api/catalog/advertisers/" + advertiser.getAdvertiserID() +
                             "/line-items/" + li.getLineItemID() + "/campaigns");
                     httpConnection.requestData(mxRequestProperties);
@@ -217,6 +223,7 @@ public class RunAdvertiserDaily {
                 }
             }
         }
+        //Write report
         ReportWriter.writeAdvertiserDailyReport(liveAdvertiserList, outputPath);
     }
 }
