@@ -25,6 +25,7 @@ public class DataParse {
         for (JsonElement advertiser : advertiserJsonArray) {
             JsonObject jsonObject = advertiser.getAsJsonObject();
             advertiserList.add(new Advertiser(jsonObject.get("id").toString().replace("\"",""),
+                    jsonObject.get("name").toString().replace("\"", ""),
                     jsonObject.get("status").toString().replace("\"", "")));
         }
         return advertiserList;
