@@ -8,6 +8,7 @@ import java.util.List;
 public class Advertiser {
 
     private String advertiserID;
+    private String advertiserName;
     private List<LineItem> lineItemList;
     private boolean live = true;
     private ArrayList<DailyData> dailyLineItems;
@@ -15,17 +16,15 @@ public class Advertiser {
     private ArrayList<DailyData> lifetimeLineItems;
     private ArrayList<DailyData> lifetimeCampaigns;
 
-    public Advertiser(String advertiserID, List<LineItem> lineItemList) {
+    public Advertiser(String advertiserID, String advertiserName, List<LineItem> lineItemList) {
         this.advertiserID = advertiserID;
+        this.advertiserName = advertiserName;
         this.lineItemList = lineItemList;
     }
 
-    public Advertiser(String advertiserID) {
+    public Advertiser(String advertiserID, String advertiserName, String status) {
         this.advertiserID = advertiserID;
-    }
-
-    public Advertiser(String advertiserID, String status) {
-        this.advertiserID = advertiserID;
+        this.advertiserName = advertiserName;
         if(status.equals("inactive")) {
             this.live = false;
         }
@@ -33,6 +32,10 @@ public class Advertiser {
 
     public String getAdvertiserID() {
         return advertiserID;
+    }
+
+    public String getAdvertiserName() {
+        return advertiserName;
     }
 
     public List<LineItem> getLineItemList() {
