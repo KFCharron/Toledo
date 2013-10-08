@@ -160,8 +160,8 @@ public class AppNexusReportRequests {
                 "            \"total_revenue\",\n" +
                 "            \"imps\",\n" +
                 "            \"clicks\",\n" +
-                "            \"total_convs\"\n" +
-
+                "            \"total_convs\",\n" +
+                "            \"ctr\"\n" +
                 "        ],\n" +
                 "        \"row_per\":[\n" +
                 "            \"campaign_id\",\n" +
