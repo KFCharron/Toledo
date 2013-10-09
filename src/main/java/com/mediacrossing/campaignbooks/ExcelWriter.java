@@ -301,13 +301,7 @@ public class ExcelWriter {
                                                                         del.getConvs() + "\n" +
                                                                         ctrDf.format(del.getCtr() * 100) + "%");
                             cellCount++;
-                            /*campRow.createCell(cellCount).setCellValue(del.getClicks());
-                            cellCount++;
-                            campRow.createCell(cellCount).setCellValue(del.getConvs());
-                            cellCount++;
-                            campRow.createCell(cellCount).setCellValue(ctrDf.format(del.getCtr()) + "%");
-                            cellCount++;*/
-                            //alternate styling for easier readability
+
                             if(x % 2 == 1) {
                                 campRow.getCell(cellCount-1).setCellStyle(altRow);
                             }
