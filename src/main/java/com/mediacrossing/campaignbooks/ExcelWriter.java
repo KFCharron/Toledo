@@ -251,6 +251,13 @@ public class ExcelWriter {
                 campRow.createCell(5).setCellValue(ctrDf.format(camp.getLifetimeCtr()*100) + "%");
                 campRow.createCell(8).setCellValue("Imps:\nClicks:\nConvs:\nCTR:");
 
+                //enable newlines
+                CellStyle cs = WORKBOOK.createCellStyle();
+                cs.setWrapText(true);
+                campRow.getCell(8).setCellStyle(cs);
+                //increase row height to accomodate 4 lines of text
+                campRow.setHeightInPoints((4*lineItemSheet.getDefaultRowHeightInPoints()));
+
                 //if camp inactive, italic name
                 if (camp.getStatus().equals("inactive")) {
                     Font italics = WORKBOOK.createFont();
@@ -273,6 +280,7 @@ public class ExcelWriter {
                 CellStyle altRow = WORKBOOK.createCellStyle();
                 altRow.setFillForegroundColor(HSSFColor.LIGHT_GREEN.index);
                 altRow.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+                altRow.setWrapText(true);
 
                 //for every day between start date and now, create column
                 for (long x = startToNow.getStandardDays(); x > 0; x--) {
@@ -300,6 +308,8 @@ public class ExcelWriter {
                                                                         del.getClicks() + "\n" +
                                                                         del.getConvs() + "\n" +
                                                                         ctrDf.format(del.getCtr() * 100) + "%");
+                            campRow.getCell(cellCount).setCellStyle(cs);
+
                             cellCount++;
 
                             if(x % 2 == 1) {
