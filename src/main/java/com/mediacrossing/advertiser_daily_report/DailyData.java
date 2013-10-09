@@ -19,13 +19,24 @@ public class DailyData {
     private DateTime endDay;
     private float dailyBudget;
     private float lifetimeBudget;
+    private String status = "";
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
     public float getPercentThroughFlight() {
         if(startDay != null && endDay != null) {
             DateTime now = new DateTime();
             Duration nowToEnd = new Duration(now, endDay);
             Duration full = new Duration(startDay, endDay);
-            return nowToEnd.getStandardDays()/full.getStandardDays();
+            float nte = nowToEnd.getStandardDays();
+            float ste = full.getStandardDays();
+            return nte/ste;
         } else return 0;
     }
 
