@@ -368,7 +368,6 @@ public class HTTPConnection {
                 "        \"report_interval\":\"yesterday\",\n" +
                 "        \"format\":\"csv\",\n" +
                 "        \"emails\":[\n" +
-                "            \"kyle.charron@mediacrossing.com\"\n" +
                 "        ],\n" +
                 "        \"orders\": [\n" +
                 "                    {\n" +
