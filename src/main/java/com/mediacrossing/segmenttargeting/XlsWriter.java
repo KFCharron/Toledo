@@ -286,7 +286,7 @@ public class XlsWriter {
                         if(currentSegmentArray.get(y).getAction().equals("exclude")) {
                             oneLine.append("("+currentSegmentArray.get(y).getAction()+")");
                         }
-                        oneLine.append(currentSegmentArray.get(y).getName());
+                        oneLine.append("(" + currentSegmentArray.get(y).getId() + ")" + currentSegmentArray.get(y).getName());
                         oneLine.append("]");
                         if((y+1) < currentSegmentArray.size()) {
                             oneLine.append(" " + currentSegmentArray.get(y).getBoolOp() + " ");

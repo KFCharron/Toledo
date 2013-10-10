@@ -1,9 +1,12 @@
 package com.mediacrossing.advertiser_daily_report;
 
 import org.joda.time.DateTime;
+import org.joda.time.Days;
 import org.joda.time.Duration;
 
-public class DailyData {
+import java.io.Serializable;
+
+public class DailyData implements Serializable{
 
     private String id;
     private String name;
@@ -32,11 +35,12 @@ public class DailyData {
     public float getPercentThroughFlight() {
         if(startDay != null && endDay != null) {
             DateTime now = new DateTime();
-            Duration nowToEnd = new Duration(now, endDay);
-            Duration full = new Duration(startDay, endDay);
-            float nte = nowToEnd.getStandardDays();
-            float ste = full.getStandardDays();
-            return nte/ste;
+            float full = Days.daysBetween(startDay.toDateMidnight(), endDay.toDateMidnight()).getDays();
+            float startToNow = Days.daysBetween(startDay.toDateMidnight(), now.toDateMidnight()).getDays();
+
+            if(startToNow/full > 1) return 1;
+            else return startToNow/full;
+
         } else return 0;
     }
 
