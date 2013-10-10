@@ -2,10 +2,11 @@ package com.mediacrossing.campaignbooks;
 
 import org.joda.time.DateTime;
 
+import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
-public class Delivery {
+public class Delivery implements Serializable {
     private DateTime date;
     private String campaignID;
     private float delivery;

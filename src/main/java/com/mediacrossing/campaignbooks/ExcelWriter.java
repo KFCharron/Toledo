@@ -13,7 +13,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
+
 
 public class ExcelWriter {
 
@@ -112,6 +112,7 @@ public class ExcelWriter {
             Float totalCumulativeDelivery = 0.0f;
             float[] totalDailyDelivery = new float[100];
             for(float num : totalDailyDelivery) {
+                //noinspection UnusedAssignment
                 num = 0;
             }
             int cellTrack = 0;

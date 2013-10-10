@@ -3,12 +3,14 @@ package com.mediacrossing.campaignbooks;
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
 
+import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class LineItem {
+public class LineItem implements Serializable {
 
     private String lineItemID;
     private String lineItemName;
@@ -18,7 +20,7 @@ public class LineItem {
     private float dailyBudget;
     private long daysActive;
     private long daysRemaining;
-    private List<Campaign> campaignList;
+    private ArrayList<Campaign> campaignList;
     private ReportData dayReportData;
     private ReportData lifetimeReportData;
     private DateTime startDateTime;
@@ -132,7 +134,7 @@ public class LineItem {
         return daysRemaining;
     }
 
-    public void setCampaignList(List<Campaign> campaignList) {
+    public void setCampaignList(ArrayList<Campaign> campaignList) {
         this.campaignList = campaignList;
     }
 

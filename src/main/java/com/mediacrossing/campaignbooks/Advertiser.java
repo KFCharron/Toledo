@@ -2,21 +2,22 @@ package com.mediacrossing.campaignbooks;
 
 import com.mediacrossing.advertiser_daily_report.DailyData;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Advertiser {
+public class Advertiser implements Serializable {
 
     private String advertiserID;
     private String advertiserName;
-    private List<LineItem> lineItemList;
+    private ArrayList<LineItem> lineItemList;
     private boolean live = true;
     private ArrayList<DailyData> dailyLineItems;
     private ArrayList<DailyData> dailyCampaigns;
     private ArrayList<DailyData> lifetimeLineItems;
     private ArrayList<DailyData> lifetimeCampaigns;
 
-    public Advertiser(String advertiserID, String advertiserName, List<LineItem> lineItemList) {
+    public Advertiser(String advertiserID, String advertiserName, ArrayList<LineItem> lineItemList) {
         this.advertiserID = advertiserID;
         this.advertiserName = advertiserName;
         this.lineItemList = lineItemList;

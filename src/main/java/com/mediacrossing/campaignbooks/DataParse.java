@@ -32,8 +32,8 @@ public class DataParse {
 
     }
 
-    public static List<LineItem> populateLineItemList (String rawData) throws ParseException {
-        List<LineItem> lineItemList = new ArrayList<LineItem>();
+    public static ArrayList<LineItem> populateLineItemList(String rawData) throws ParseException {
+        ArrayList<LineItem> lineItemList = new ArrayList<LineItem>();
         JsonElement jsonElement = new JsonParser().parse(rawData);
         for (JsonElement lineItem : jsonElement.getAsJsonArray()) {
             JsonObject jsonObject = lineItem.getAsJsonObject();
@@ -50,8 +50,8 @@ public class DataParse {
         return lineItemList;
     }
 
-    public static List<Campaign> populateCampaignList (String rawData) throws ParseException {
-        List<Campaign> campaignList = new ArrayList<Campaign>();
+    public static ArrayList<Campaign> populateCampaignList(String rawData) throws ParseException {
+        ArrayList<Campaign> campaignList = new ArrayList<Campaign>();
         JsonElement jsonElement = new JsonParser().parse(rawData);
         JsonArray campaignJsonArray = jsonElement.getAsJsonArray();
         for (JsonElement campaign : campaignJsonArray) {

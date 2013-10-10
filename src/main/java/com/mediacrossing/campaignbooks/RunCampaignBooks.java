@@ -73,13 +73,13 @@ public class RunCampaignBooks {
             try {
                 httpConnection.requestData(mxRequestProperties);
                 rawJsonData = httpConnection.getJSONData();
-                List<LineItem> lineItemList = parser.populateLineItemList(rawJsonData);
+                ArrayList<LineItem> lineItemList = parser.populateLineItemList(rawJsonData);
                 for (LineItem lineItem : lineItemList) {
                     httpConnection.setUrl(mxUrl + "/api/catalog/advertisers/" + advertiser.getAdvertiserID() +
                             "/line-items/" + lineItem.getLineItemID() + "/campaigns");
                     httpConnection.requestData(mxRequestProperties);
                     rawJsonData = httpConnection.getJSONData();
-                    List<Campaign> campaignList = parser.populateCampaignList(rawJsonData);
+                    ArrayList<Campaign> campaignList = parser.populateCampaignList(rawJsonData);
                     lineItem.setCampaignList(campaignList);
                 }
                 advertiser = new Advertiser(advertiser.getAdvertiserID(), advertiser.getAdvertiserName(), lineItemList);

@@ -1,6 +1,8 @@
 package com.mediacrossing.campaignbooks;
 
-public class ReportData {
+import java.io.Serializable;
+
+public class ReportData implements Serializable {
 
     private int imps;
     private int clicks;

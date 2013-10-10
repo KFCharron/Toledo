@@ -3,13 +3,14 @@ package com.mediacrossing.campaignbooks;
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
 
+import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 
-public class Campaign {
+public class Campaign implements Serializable {
     private String campaignID;
     private String campaignName;
     private String status;
@@ -17,7 +18,7 @@ public class Campaign {
     private float dailyBudget;
     private float totalDelivery;
     private long daysActive;
-    private List<Delivery> deliveries = new LinkedList<Delivery>();
+    private ArrayList<Delivery> deliveries = new ArrayList<Delivery>();
     private ReportData dayReportData;
     private ReportData lifetimeReportData;
     private long daysRemaining;
