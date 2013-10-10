@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scala.Tuple2;
 
+import java.io.*;
 import java.util.*;
 
 public class RunAdvertiserDaily {
@@ -31,6 +32,8 @@ public class RunAdvertiserDaily {
 
         registerLoggerWithUncaughtExceptions();
 
+
+
         //Declare variables
         ConfigurationProperties properties = new ConfigurationProperties(args);
         String mxUrl = properties.getMxUrl();
@@ -44,6 +47,21 @@ public class RunAdvertiserDaily {
         HTTPConnection httpConnection = new HTTPConnection(mxUsername, mxPassword);
         DataParse parser = new DataParse();
 
+        //for faster debugging
+        boolean development = true;
+        if (development) {
+            try{
+                FileInputStream door = new FileInputStream("/Users/charronkyle/Desktop/AdvertiserList.ser");
+                ObjectInputStream reader = new ObjectInputStream(door);
+                List<Advertiser> adList = (List<Advertiser>) reader.readObject();
+                ReportWriter.writeAdvertiserDailyReport(adList, outputPath);
+                System.exit(0);
+
+            }catch (IOException e){
+                e.printStackTrace();
+                System.exit(1);
+            }
+        }
 
         final List<Tuple2<String, String>> mxRequestProperties =
                 Collections.unmodifiableList(
@@ -51,7 +69,6 @@ public class RunAdvertiserDaily {
                                 ConnectionRequestProperties.authorization(
                                         mxUsername,
                                         mxPassword)));
-
 
 
         //Query MX for all advertisers
@@ -62,6 +79,7 @@ public class RunAdvertiserDaily {
         //Parse and save to list of advertisers
         final List<Advertiser> advertiserList = parser.populateAdvertiserList(rawJsonData);
         final List<Advertiser> liveAdvertiserList = new ArrayList<Advertiser>();
+
         for(Advertiser ad : advertiserList) {
             if(ad.isLive()) {
                 liveAdvertiserList.add(ad);
@@ -186,6 +204,7 @@ public class RunAdvertiserDaily {
                             data.setStartDay(li.getStartDateTime());
                             data.setEndDay(li.getEndDateTime());
                             data.setLifetimeBudget(li.getLifetimeBudget());
+                            data.setStatus(li.getStatus());
                         }
                     }
                     for(DailyData data : dailyLineItems) {
@@ -194,6 +213,7 @@ public class RunAdvertiserDaily {
                             data.setStartDay(li.getStartDateTime());
                             data.setEndDay(li.getEndDateTime());
                             data.setLifetimeBudget(li.getLifetimeBudget());
+                            data.setStatus(li.getStatus());
                         }
                     }
 
@@ -209,6 +229,7 @@ public class RunAdvertiserDaily {
                                 data.setStartDay(camp.getStartDate());
                                 data.setEndDay(camp.getEndDate());
                                 data.setLifetimeBudget(camp.getLifetimeBudget());
+                                data.setStatus(camp.getStatus());
                             }
                         }
                         for(DailyData data : dailyCampaigns) {
@@ -217,12 +238,26 @@ public class RunAdvertiserDaily {
                                 data.setStartDay(camp.getStartDate());
                                 data.setEndDay(camp.getEndDate());
                                 data.setLifetimeBudget(camp.getLifetimeBudget());
+                                data.setStatus(camp.getStatus());
                             }
                         }
                     }
                 }
             }
         }
+
+        // Serialize data object to a file
+        try {
+            ObjectOutputStream out = new ObjectOutputStream
+                    (new FileOutputStream("/Users/charronkyle/Desktop/AdvertiserList.ser"));
+            out.writeObject(liveAdvertiserList);
+            out.close();
+        } catch (IOException e) {
+            LOG.error("Serialization Failed!");
+            LOG.error(e.toString());
+        }
+
+
         //Write report
         ReportWriter.writeAdvertiserDailyReport(liveAdvertiserList, outputPath);
     }
