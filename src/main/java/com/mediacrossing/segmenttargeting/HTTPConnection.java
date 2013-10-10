@@ -522,4 +522,54 @@ public class HTTPConnection {
 
 
     }
+
+    public String requestConversionReport(String adId, String jsonPost) throws IOException {
+        this.setUrl("http://api.appnexus.com/report?advertiser_id=" + adId);
+
+        java.net.URL wsURL = new URL(null, url,new sun.net.www.protocol.https.Handler());
+        HttpsURLConnection con = (HttpsURLConnection) wsURL.openConnection();
+
+        //add request header
+        con.setRequestMethod("POST");
+        con.setRequestProperty("Content-Type", "application/json");
+        //Set Auth Token
+        con.setRequestProperty("Authorization", this.getAuthorizationToken());
+        //Authorization JSON data
+
+        // Send post request
+        con.setDoOutput(true);
+        DataOutputStream wr = new DataOutputStream(con.getOutputStream());
+        wr.writeBytes(jsonPost);
+        wr.flush();
+        wr.close();
+
+        int responseCode = con.getResponseCode();
+        LOG.debug("\nSending 'POST' request to URL : " + url);
+        LOG.debug("Response Code : " + responseCode);
+
+        BufferedReader in = new BufferedReader(
+                new InputStreamReader(con.getInputStream()));
+        String inputLine;
+        StringBuilder response = new StringBuilder();
+
+        while ((inputLine = in.readLine()) != null) {
+            response.append(inputLine);
+        }
+        in.close();
+
+        //Received JSON data
+        String rawJSON = response.toString();
+        LOG.debug(rawJSON);
+
+        //Parse JSON, obtain token
+        JsonElement jelement = new JsonParser().parse(rawJSON);
+        JsonObject jobject = jelement.getAsJsonObject();
+        jobject = jobject.getAsJsonObject("response");
+        String reportId = jobject.get("report_id").toString().replace("\"", "");
+        if (reportId.isEmpty()) {
+            LOG.error("ReportID not received.");
+        }
+
+        return reportId;
+    }
 }
