@@ -302,5 +302,54 @@ public class AppNexusReportRequests {
         return httpConnection.getCsvData();
     }
 
+    public static List<String[]> getConversionReport(String adId, String anUrl, HTTPConnection http) throws Exception {
+
+        String jsonPostData = "{\n" +
+                "    \"report\":\n" +
+                "    {\n" +
+                "        \"report_type\": \"attributed_conversions\",\n" +
+                "        \"columns\": [\n" +
+                "            \"line_item\",\n" +
+                "            \"campaign\",\n" +
+                "            \"order_id\",\n" +
+                "            \"user_id\",\n" +
+                "            \"post_click_or_post_view_conv\",\n" +
+                "      \"creative\",\n" +
+                "      \"auction_id\",\n" +
+                "      \"external_data\",\n" +
+                "      \"imp_time\",\n" +
+                "      \"datetime\"\n" +
+                "        ],\n" +
+                "        \"filters\": [\n" +
+                "        ],\n" +
+                "        \"groups\": [\n" +
+                "        ],\n" +
+                "        \"orders\": [\n" +
+                "           {"+
+                "            \"order_by\":\"datetime\", \"direction\":\"DESC\" } \n" +
+                "        ],\n" +
+                "       \"report_interval\": \"last_7_days\"," +
+                "        \"emails\": [],\n" +
+                "        \"format\": \"csv\"\n" +
+                "    }\n" +
+                "}";
+        String reportId = http.requestConversionReport(adId, jsonPostData);
+        boolean ready = false;
+        while (!ready) {
+            //Check to see if report is ready
+            String jsonResponse = http.fetchDownloadUrl(reportId);
+            LOG.debug(jsonResponse);
+            ready = dataParse.parseReportStatus(jsonResponse);
+            if (!ready)
+                Thread.sleep(20000);
+        }
+        //Report is ready, download it
+        String downloadUrl = anUrl + dataParse.getReportUrl();
+        http.requestDownload(downloadUrl);
+
+        return http.getCsvData();
+
+    }
+
 }
 
