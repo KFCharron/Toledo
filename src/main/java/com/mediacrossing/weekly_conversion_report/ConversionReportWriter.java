@@ -19,7 +19,6 @@ public class ConversionReportWriter {
         int rowCount = 0;
 
         DataFormat df = wb.createDataFormat();
-
         CellStyle fullCurrency = wb.createCellStyle();
         fullCurrency.setDataFormat(df.getFormat("$#,##0.00"));
 
@@ -88,7 +87,7 @@ public class ConversionReportWriter {
                     dataRow.createCell(4).setCellValue(data.getPixelName());
                     dataRow.createCell(5).setCellValue(data.getImpType());
                     dataRow.createCell(6).setCellValue(data.getPostClickOrPostViewConv());
-                    dataRow.createCell(7).setCellValue(data.getPostClickOrPoseViewRevenue());
+                    dataRow.createCell(7).setCellValue(Float.parseFloat(data.getPostClickOrPoseViewRevenue()));
                     dataRow.createCell(8).setCellValue(data.getOrderId());
                     dataRow.createCell(9).setCellValue(data.getUserId());
                     dataRow.createCell(10).setCellValue(data.getAuctionId());
