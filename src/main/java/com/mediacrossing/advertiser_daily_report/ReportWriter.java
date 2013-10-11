@@ -18,9 +18,6 @@ public class ReportWriter {
 
         //init workbook, decimal formats
         Workbook wb = new HSSFWorkbook();
-        DecimalFormat ctrDf = new DecimalFormat("#.0000");
-        DecimalFormat df = new DecimalFormat("#.00");
-        DecimalFormat perDf = new DecimalFormat("##");
 
         //Create new sheet
         Sheet sheet = wb.createSheet("Advertiser Daily");
@@ -76,19 +73,19 @@ public class ReportWriter {
                 dataRow.createCell(2).setCellValue(data.getImps());
                 dataRow.createCell(3).setCellValue(data.getClicks());
                 dataRow.createCell(4).setCellValue(data.getTotalConv());
-                dataRow.createCell(5).setCellValue("$" + df.format(data.getMediaCost()));
-                dataRow.createCell(6).setCellValue(ctrDf.format(data.getCtr() * 100) + "%");
-                dataRow.createCell(7).setCellValue(ctrDf.format(data.getConvRate()));
-                dataRow.createCell(8).setCellValue("$" + df.format(data.getCpm()));
-                dataRow.createCell(9).setCellValue("$" + df.format(data.getCpc()));
+                dataRow.createCell(5).setCellValue(data.getMediaCost());
+                dataRow.createCell(6).setCellValue(data.getCtr());
+                dataRow.createCell(7).setCellValue(data.getConvRate());
+                dataRow.createCell(8).setCellValue(data.getCpm());
+                dataRow.createCell(9).setCellValue(data.getCpc());
                 if(data.getStartDay() != null && data.getEndDay() != null) {
                     dataRow.createCell(10).setCellValue(data.getStartDay().getMonthOfYear() + "/" +
                         data.getStartDay().getDayOfMonth());
                     dataRow.createCell(11).setCellValue(data.getEndDay().getMonthOfYear() + "/" +
                         data.getEndDay().getDayOfMonth());
-                    dataRow.createCell(12).setCellValue(perDf.format(data.getPercentThroughFlight()*100) + "%");
-                    dataRow.createCell(13).setCellValue("$" + data.getDailyBudget());
-                    dataRow.createCell(14).setCellValue("$" + data.getLifetimeBudget());
+                    dataRow.createCell(12).setCellValue(data.getPercentThroughFlight());
+                    dataRow.createCell(13).setCellValue(data.getDailyBudget());
+                    dataRow.createCell(14).setCellValue(data.getLifetimeBudget());
                 } else {
                     dataRow.createCell(10);
                     dataRow.createCell(11);
@@ -137,19 +134,19 @@ public class ReportWriter {
                 dataRow.createCell(2).setCellValue(data.getImps());
                 dataRow.createCell(3).setCellValue(data.getClicks());
                 dataRow.createCell(4).setCellValue(data.getTotalConv());
-                dataRow.createCell(5).setCellValue("$" + df.format(data.getMediaCost()));
-                dataRow.createCell(6).setCellValue(ctrDf.format(data.getCtr() * 100) + "%");
-                dataRow.createCell(7).setCellValue(ctrDf.format(data.getConvRate()));
-                dataRow.createCell(8).setCellValue("$" + df.format(data.getCpm()));
-                dataRow.createCell(9).setCellValue("$" + df.format(data.getCpc()));
+                dataRow.createCell(5).setCellValue(data.getMediaCost());
+                dataRow.createCell(6).setCellValue(data.getCtr());
+                dataRow.createCell(7).setCellValue(data.getConvRate());
+                dataRow.createCell(8).setCellValue(data.getCpm());
+                dataRow.createCell(9).setCellValue(data.getCpc());
                 if(data.getStartDay() != null && data.getEndDay() != null) {
                     dataRow.createCell(10).setCellValue(data.getStartDay().getMonthOfYear() + "/" +
                         data.getStartDay().getDayOfMonth());
                     dataRow.createCell(11).setCellValue(data.getEndDay().getMonthOfYear() + "/" +
                         data.getEndDay().getDayOfMonth());
-                    dataRow.createCell(12).setCellValue(perDf.format(data.getPercentThroughFlight()*100) + "%");
-                    dataRow.createCell(13).setCellValue("$" + data.getDailyBudget());
-                    dataRow.createCell(14).setCellValue("$" + data.getLifetimeBudget());
+                    dataRow.createCell(12).setCellValue(data.getPercentThroughFlight());
+                    dataRow.createCell(13).setCellValue(data.getDailyBudget());
+                    dataRow.createCell(14).setCellValue(data.getLifetimeBudget());
                 } else {
                     dataRow.createCell(10);
                     dataRow.createCell(11);
@@ -206,22 +203,21 @@ public class ReportWriter {
                     dataRow.createCell(2).setCellValue(data.getImps());
                     dataRow.createCell(3).setCellValue(data.getClicks());
                     dataRow.createCell(4).setCellValue(data.getTotalConv());
-                    dataRow.createCell(5).setCellValue("$" + df.format(data.getMediaCost()));
-                    dataRow.createCell(6).setCellValue(ctrDf.format(data.getCtr() * 100) + "%");
-                    dataRow.createCell(7).setCellValue(ctrDf.format(data.getConvRate()));
-                    dataRow.createCell(8).setCellValue("$" + df.format(data.getCpm()));
-                    dataRow.createCell(9).setCellValue("$" + df.format(data.getCpc()));
+                    dataRow.createCell(5).setCellValue(data.getMediaCost());
+                    dataRow.createCell(6).setCellValue(data.getCtr());
+                    dataRow.createCell(7).setCellValue(data.getConvRate());
+                    dataRow.createCell(8).setCellValue(data.getCpm());
+                    dataRow.createCell(9).setCellValue(data.getCpc());
                     if(data.getStartDay() != null && data.getEndDay() != null) {
                         dataRow.createCell(10).setCellValue(data.getStartDay().getMonthOfYear() + "/" +
                                 data.getStartDay().getDayOfMonth());
                         dataRow.createCell(11).setCellValue(data.getEndDay().getMonthOfYear() + "/" +
                                 data.getEndDay().getDayOfMonth());
-                        dataRow.createCell(12).setCellValue(perDf.format(data.getPercentThroughFlight()*100) + "%");
-                        dataRow.createCell(13).setCellValue("$" + data.getDailyBudget());
-                        dataRow.createCell(14).setCellValue("$" + data.getLifetimeBudget());
-                        dataRow.createCell(15).setCellValue(perDf.format(data.getPercentThroughLifetimeBudget()*100)
-                                + "%");
-                        dataRow.createCell(16).setCellValue("$" + df.format(data.getSuggestedDailyBudget()));
+                        dataRow.createCell(12).setCellValue(data.getPercentThroughFlight());
+                        dataRow.createCell(13).setCellValue(data.getDailyBudget());
+                        dataRow.createCell(14).setCellValue(data.getLifetimeBudget());
+                        dataRow.createCell(15).setCellValue(data.getPercentThroughLifetimeBudget());
+                        dataRow.createCell(16).setCellValue(data.getSuggestedDailyBudget());
                     } else {
                         dataRow.createCell(10);
                         dataRow.createCell(11);
@@ -277,22 +273,21 @@ public class ReportWriter {
                     dataRow.createCell(2).setCellValue(data.getImps());
                     dataRow.createCell(3).setCellValue(data.getClicks());
                     dataRow.createCell(4).setCellValue(data.getTotalConv());
-                    dataRow.createCell(5).setCellValue("$" + df.format(data.getMediaCost()));
-                    dataRow.createCell(6).setCellValue(ctrDf.format(data.getCtr()*100) + "%");
-                    dataRow.createCell(7).setCellValue(ctrDf.format(data.getConvRate()));
-                    dataRow.createCell(8).setCellValue("$" + df.format(data.getCpm()));
-                    dataRow.createCell(9).setCellValue("$" + df.format(data.getCpc()));
+                    dataRow.createCell(5).setCellValue(data.getMediaCost());
+                    dataRow.createCell(6).setCellValue(data.getCtr());
+                    dataRow.createCell(7).setCellValue(data.getConvRate());
+                    dataRow.createCell(8).setCellValue(data.getCpm());
+                    dataRow.createCell(9).setCellValue(data.getCpc());
                     if(data.getStartDay() != null && data.getEndDay() != null) {
                         dataRow.createCell(10).setCellValue(data.getStartDay().getMonthOfYear() + "/" +
                                 data.getStartDay().getDayOfMonth());
                         dataRow.createCell(11).setCellValue(data.getEndDay().getMonthOfYear() + "/" +
                                 data.getEndDay().getDayOfMonth());
-                        dataRow.createCell(12).setCellValue(perDf.format(data.getPercentThroughFlight()*100) + "%");
-                        dataRow.createCell(13).setCellValue("$" + data.getDailyBudget());
-                        dataRow.createCell(14).setCellValue("$" + data.getLifetimeBudget());
-                        dataRow.createCell(15).setCellValue(perDf.format(data.getPercentThroughLifetimeBudget()*100)
-                                + "%");
-                        dataRow.createCell(16).setCellValue("$" + df.format(data.getSuggestedDailyBudget()));
+                        dataRow.createCell(12).setCellValue(data.getPercentThroughFlight());
+                        dataRow.createCell(13).setCellValue(data.getDailyBudget());
+                        dataRow.createCell(14).setCellValue(data.getLifetimeBudget());
+                        dataRow.createCell(15).setCellValue(data.getPercentThroughLifetimeBudget());
+                        dataRow.createCell(16).setCellValue(data.getSuggestedDailyBudget());
                     } else {
                         dataRow.createCell(10);
                         dataRow.createCell(11);
