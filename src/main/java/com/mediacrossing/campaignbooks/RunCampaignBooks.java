@@ -48,6 +48,25 @@ public class RunCampaignBooks {
         HTTPConnection httpConnection = new HTTPConnection(mxUsername, mxPassword);
         DataParse parser = new DataParse();
 
+        //for faster debugging
+        boolean development = true;
+        if (development) {
+            try{
+                FileInputStream door = new FileInputStream("/Users/charronkyle/Desktop/CampaignBookData.ser");
+                ObjectInputStream reader = new ObjectInputStream(door);
+                List<Advertiser> adList = (List<Advertiser>) reader.readObject();
+                for (Advertiser advertiser : adList) {
+                    ExcelWriter.writeAdvertiserSheetToWorkbook(advertiser);
+                }
+                ExcelWriter.writeWorkbookToFileWithOutputPath(outputPath);
+                System.exit(0);
+
+            }catch (IOException e){
+                e.printStackTrace();
+                System.exit(1);
+            }
+        }
+
 
         final List<Tuple2<String, String>> mxRequestProperties =
                 Collections.unmodifiableList(
@@ -165,6 +184,17 @@ public class RunCampaignBooks {
                         camp.getDeliveries().remove(0);
                 }
             }
+        }
+
+        // Serialize data object to a file
+        try {
+            ObjectOutputStream out = new ObjectOutputStream
+                    (new FileOutputStream("/Users/charronkyle/Desktop/CampaignBookData.ser"));
+            out.writeObject(liveAdvertiserList);
+            out.close();
+        } catch (IOException e) {
+            LOG.error("Serialization Failed!");
+            LOG.error(e.toString());
         }
 
         //Build and save excel book, each sheet being its own advertiser
