@@ -18,6 +18,11 @@ public class ConversionReportWriter {
         Sheet sheet = wb.createSheet("Conversions Report");
         int rowCount = 0;
 
+        DataFormat df = wb.createDataFormat();
+
+        CellStyle fullCurrency = wb.createCellStyle();
+        fullCurrency.setDataFormat(df.getFormat("$#,##0.00"));
+
         for (ConversionAdvertiser ad : adList) {
             if(ad.getConversionDataList().size() > 0) {
                 //name row
@@ -90,6 +95,9 @@ public class ConversionReportWriter {
                     dataRow.createCell(11).setCellValue(data.getExternalData());
                     dataRow.createCell(12).setCellValue(data.getImpTime());
                     dataRow.createCell(13).setCellValue(data.getDatetime());
+
+                    //style currency
+                    dataRow.getCell(7).setCellStyle(fullCurrency);
 
                     rowCount++;
                 }
