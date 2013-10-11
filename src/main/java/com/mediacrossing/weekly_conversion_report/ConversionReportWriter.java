@@ -45,14 +45,19 @@ public class ConversionReportWriter {
                 Row headerRow = sheet.createRow(rowCount);
                 headerRow.createCell(0).setCellValue("LineItem");
                 headerRow.createCell(1).setCellValue("Campaign");
-                headerRow.createCell(2).setCellValue("Order ID");
-                headerRow.createCell(3).setCellValue("User ID");
-                headerRow.createCell(4).setCellValue("Conv Type");
-                headerRow.createCell(5).setCellValue("Creative");
-                headerRow.createCell(6).setCellValue("Auction ID");
-                headerRow.createCell(7).setCellValue("External Data");
-                headerRow.createCell(8).setCellValue("Imp Time");
-                headerRow.createCell(9).setCellValue("Datetime");
+                headerRow.createCell(2).setCellValue("Creative");
+                headerRow.createCell(3).setCellValue("Pixel ID");
+                headerRow.createCell(4).setCellValue("Pixel Name");
+                headerRow.createCell(5).setCellValue("Imp Type");
+                headerRow.createCell(6).setCellValue("Post Click/Post View Conv.");
+                headerRow.createCell(7).setCellValue("Post Click/Post View Rev.");
+                headerRow.createCell(8).setCellValue("Order ID");
+                headerRow.createCell(9).setCellValue("User ID");
+                headerRow.createCell(10).setCellValue("Auction ID");
+                headerRow.createCell(11).setCellValue("External Data");
+                headerRow.createCell(12).setCellValue("Imp Time");
+                headerRow.createCell(13).setCellValue("Datetime");
+
 
                 //style header
                 Font font2 = wb.createFont();
@@ -73,14 +78,18 @@ public class ConversionReportWriter {
                     Row dataRow = sheet.createRow(rowCount);
                     dataRow.createCell(0).setCellValue(data.getLineItem());
                     dataRow.createCell(1).setCellValue(data.getCampaign());
-                    dataRow.createCell(2).setCellValue(data.getOrderId());
-                    dataRow.createCell(3).setCellValue(data.getUserId());
-                    dataRow.createCell(4).setCellValue(data.getPostClickOrPostViewConv());
-                    dataRow.createCell(5).setCellValue(data.getCreative());
-                    dataRow.createCell(6).setCellValue(data.getAuctionId());
-                    dataRow.createCell(7).setCellValue(data.getExternalData());
-                    dataRow.createCell(8).setCellValue(data.getImpTime());
-                    dataRow.createCell(9).setCellValue(data.getDatetime());
+                    dataRow.createCell(2).setCellValue(data.getCreative());
+                    dataRow.createCell(3).setCellValue(data.getPixelId());
+                    dataRow.createCell(4).setCellValue(data.getPixelName());
+                    dataRow.createCell(5).setCellValue(data.getImpType());
+                    dataRow.createCell(6).setCellValue(data.getPostClickOrPostViewConv());
+                    dataRow.createCell(7).setCellValue(data.getPostClickOrPoseViewRevenue());
+                    dataRow.createCell(8).setCellValue(data.getOrderId());
+                    dataRow.createCell(9).setCellValue(data.getUserId());
+                    dataRow.createCell(10).setCellValue(data.getAuctionId());
+                    dataRow.createCell(11).setCellValue(data.getExternalData());
+                    dataRow.createCell(12).setCellValue(data.getImpTime());
+                    dataRow.createCell(13).setCellValue(data.getDatetime());
 
                     rowCount++;
                 }
@@ -88,7 +97,7 @@ public class ConversionReportWriter {
             }
         }
 
-        for(int x = 0; x<= 9; x++) {
+        for(int x = 0; x<= 13; x++) {
             sheet.autoSizeColumn(x);
         }
 

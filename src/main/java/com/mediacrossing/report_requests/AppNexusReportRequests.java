@@ -318,7 +318,11 @@ public class AppNexusReportRequests {
                 "      \"auction_id\",\n" +
                 "      \"external_data\",\n" +
                 "      \"imp_time\",\n" +
-                "      \"datetime\"\n" +
+                "      \"datetime\",\n" +
+                "      \"pixel_id\",\n" +
+                "      \"pixel_name\",\n" +
+                "      \"imp_type\",\n" +
+                "      \"post_click_or_post_view_revenue\"\n" +
                 "        ],\n" +
                 "        \"filters\": [\n" +
                 "        ],\n" +

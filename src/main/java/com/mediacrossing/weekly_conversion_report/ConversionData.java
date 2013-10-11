@@ -14,6 +14,42 @@ public class ConversionData implements Serializable{
     private String externalData;
     private String impTime;
     private String datetime;
+    private String pixelId;
+    private String pixelName;
+    private String impType;
+    private String postClickOrPoseViewRevenue;
+
+    public String getPixelId() {
+        return pixelId;
+    }
+
+    public void setPixelId(String pixelId) {
+        this.pixelId = pixelId;
+    }
+
+    public String getPixelName() {
+        return pixelName;
+    }
+
+    public void setPixelName(String pixelName) {
+        this.pixelName = pixelName;
+    }
+
+    public String getImpType() {
+        return impType;
+    }
+
+    public void setImpType(String impType) {
+        this.impType = impType;
+    }
+
+    public String getPostClickOrPoseViewRevenue() {
+        return postClickOrPoseViewRevenue;
+    }
+
+    public void setPostClickOrPostViewRevenue(String postClickOrPoseViewRevenue) {
+        this.postClickOrPoseViewRevenue = postClickOrPoseViewRevenue;
+    }
 
     public String getLineItem() {
         return lineItem;

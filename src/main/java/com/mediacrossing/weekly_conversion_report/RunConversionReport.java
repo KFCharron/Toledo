@@ -105,6 +105,10 @@ public class RunConversionReport {
                 cd.setExternalData(l[7]);
                 cd.setImpTime(l[8]);
                 cd.setDatetime(l[9]);
+                cd.setPixelId(l[10]);
+                cd.setPixelName(l[11]);
+                cd.setImpType(l[12]);
+                cd.setPostClickOrPostViewRevenue(l[13]);
                 cdList.add(cd);
             }
             ad.setConversionDataList(cdList);
