@@ -10,6 +10,7 @@ import org.joda.time.*;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.DecimalFormat;
 
 
 public class ExcelWriter {
@@ -24,6 +25,22 @@ public class ExcelWriter {
         String sheetName = WorkbookUtil.createSafeSheetName(ad.getAdvertiserName() +
                 " (" +  ad.getAdvertiserID() + ")");
         Sheet lineItemSheet = WORKBOOK.createSheet(sheetName);
+
+
+        DataFormat df = WORKBOOK.createDataFormat();
+
+        CellStyle fullCurrency = WORKBOOK.createCellStyle();
+        fullCurrency.setDataFormat(df.getFormat("$#,##0.00"));
+
+        CellStyle halfCurrency = WORKBOOK.createCellStyle();
+        halfCurrency.setDataFormat(df.getFormat("$#,##0"));
+
+        CellStyle percentage = WORKBOOK.createCellStyle();
+        percentage.setDataFormat(df.getFormat("0%"));
+
+        CellStyle ctrPercentage = WORKBOOK.createCellStyle();
+        ctrPercentage.setDataFormat(df.getFormat("0.0000%"));
+
 
         int rowCount = 0;
 
@@ -78,7 +95,6 @@ public class ExcelWriter {
             lineItemRow.createCell(8); //same here
             lineItemRow.createCell(10).setCellValue(lineItem.getDaysRemaining());
 
-
             //get duration passed
             float flightPer = 0;
             if(lineItem.getStartDateTime() != null && lineItem.getEndDateTime() != null) {
@@ -91,6 +107,12 @@ public class ExcelWriter {
             }
             lineItemRow.createCell(9).setCellValue(flightPer);
 
+            //set styles
+            lineItemRow.getCell(2).setCellStyle(halfCurrency);
+            lineItemRow.getCell(6).setCellStyle(fullCurrency);
+            lineItemRow.getCell(7).setCellStyle(fullCurrency);
+            lineItemRow.getCell(8).setCellStyle(fullCurrency);
+            lineItemRow.getCell(9).setCellStyle(percentage);
 
             rowCount+=2;
 
@@ -163,15 +185,19 @@ public class ExcelWriter {
                 }
                 campaignRow.createCell(5).setCellValue(campaign.getDaysActive());
                 campaignRow.createCell(6).setCellValue(campaign.getActualDailyBudget());
+                //cell 7 dailyPacing set later
                 campaignRow.createCell(8).setCellValue(campaign.getTotalDelivery());
 
-
-                int cellCount = 9;
+                //set styles
+                campaignRow.getCell(2).setCellStyle(halfCurrency);
+                campaignRow.getCell(6).setCellStyle(fullCurrency);
+                campaignRow.getCell(8).setCellStyle(fullCurrency);
 
                 //add yellow if total delivery within 2 daily budgets of lifetime budget
                 CellStyle yellowStyle = WORKBOOK.createCellStyle();
                 yellowStyle.setFillForegroundColor(IndexedColors.LIGHT_YELLOW.index);
                 yellowStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+                yellowStyle.setDataFormat(df.getFormat("$#,##0.00"));
                 if (campaign.getTotalDelivery() >= campaign.getLifetimeBudget() - (campaign.getDailyBudget()*2)) {
                     campaignRow.getCell(8).setCellStyle(yellowStyle);
                 }
@@ -179,10 +205,12 @@ public class ExcelWriter {
                 CellStyle redStyle = WORKBOOK.createCellStyle();
                 redStyle.setFillForegroundColor(IndexedColors.RED.index);
                 redStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+                redStyle.setDataFormat(df.getFormat("$#,##0.00"));
                 if (campaign.getTotalDelivery() >= campaign.getLifetimeBudget()) {
                     campaignRow.getCell(8).setCellStyle(redStyle);
                 }
 
+                int cellCount = 9;
 
                 //list daily deliveries
                 for (long x = startToNow.getStandardDays(); x > 0; x--) {
@@ -200,6 +228,8 @@ public class ExcelWriter {
                                         del.getDate().getMonthOfYear()) {
 
                             campaignRow.createCell(cellCount).setCellValue(del.getDelivery());
+                            //set style
+                            campaignRow.getCell(cellCount).setCellStyle(fullCurrency);
                             //add to total count for the column
                             totalDailyDelivery[cellCount] += del.getDelivery();
                         }
@@ -230,18 +260,29 @@ public class ExcelWriter {
             totalRow.createCell(7).setCellValue(totalActualDailyBudget);
             totalRow.createCell(8).setCellValue(totalCumulativeDelivery);
 
+            //set cell styles
+            totalRow.getCell(2).setCellStyle(fullCurrency);
+            totalRow.getCell(6).setCellStyle(fullCurrency);
+            totalRow.getCell(7).setCellStyle(fullCurrency);
+            totalRow.getCell(8).setCellStyle(fullCurrency);
+
             for(int x = cellTrack - 1; x > 8; x--) {
                 totalRow.createCell(x).setCellValue(totalDailyDelivery[x]);
+                //set style
+                totalRow.getCell(x).setCellStyle(fullCurrency);
             }
 
             //set total pacing
             lineItemRow.getCell(7).setCellValue(((lineItem.getLifetimeBudget()-totalCumulativeDelivery)
                     /lineItem.getDaysRemaining()));
+            //set style
+            lineItemRow.getCell(7).setCellStyle(fullCurrency);
 
             //set % lt budget used
             double perLTBudget = totalCumulativeDelivery/lineItem.getLifetimeBudget();
             if (perLTBudget > 1) perLTBudget = 1;
             lineItemRow.getCell(8).setCellValue(perLTBudget);
+            lineItemRow.getCell(8).setCellStyle(percentage);
 
             rowCount+=3;
 
@@ -272,6 +313,9 @@ public class ExcelWriter {
                 campRow.createCell(4).setCellValue(camp.getLifetimeConvs());
                 campRow.createCell(5).setCellValue(camp.getLifetimeCtr());
                 campRow.createCell(8).setCellValue("Imps:\nClicks:\nConvs:\nCTR:");
+
+                //style cells
+                campRow.getCell(5).setCellStyle(ctrPercentage);
 
                 //enable newlines
                 CellStyle cs = WORKBOOK.createCellStyle();
@@ -326,10 +370,12 @@ public class ExcelWriter {
                             //don't add blank cells
                             blankCells = false;
 
+                            DecimalFormat decimalFormat = new DecimalFormat("#.0###%");
+
                             campRow.createCell(cellCount).setCellValue(del.getImps() + "\n" +
                                                                         del.getClicks() + "\n" +
                                                                         del.getConvs() + "\n" +
-                                                                        del.getCtr());
+                                                                        decimalFormat.format(del.getCtr()));
                             campRow.getCell(cellCount).setCellStyle(cs);
 
                             cellCount++;
