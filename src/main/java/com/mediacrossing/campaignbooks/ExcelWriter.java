@@ -6,30 +6,25 @@ import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.WorkbookUtil;
 import org.joda.time.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.DecimalFormat;
 
 
 public class ExcelWriter {
 
     private static Workbook WORKBOOK = new HSSFWorkbook();
 
-    private static final Logger LOG = LoggerFactory.getLogger(ExcelWriter.class);
+    //private static final Logger LOG = LoggerFactory.getLogger(ExcelWriter.class);
 
     public static void writeAdvertiserSheetToWorkbook(Advertiser ad) {
-
-        //create decimal format
-        DecimalFormat df = new DecimalFormat("#.00");
 
         //Create new sheet
         String sheetName = WorkbookUtil.createSafeSheetName(ad.getAdvertiserName() +
                 " (" +  ad.getAdvertiserID() + ")");
         Sheet lineItemSheet = WORKBOOK.createSheet(sheetName);
+
         int rowCount = 0;
 
         for (int a = ad.getLineItemList().size()-1; a >= 0; a--) {
@@ -45,7 +40,10 @@ public class ExcelWriter {
             lineItemHeader.createCell(4).setCellValue("End Date");
             lineItemHeader.createCell(5).setCellValue("# of Days");
             lineItemHeader.createCell(6).setCellValue("Daily Budget");
-            lineItemHeader.createCell(7).setCellValue("Days Remaining");
+            lineItemHeader.createCell(7).setCellValue("Total Pacing");
+            lineItemHeader.createCell(8).setCellValue("LT Budget Used");
+            lineItemHeader.createCell(10).setCellValue("Days Remaining");
+            lineItemHeader.createCell(9).setCellValue("Duration Passed");
 
             //style header
             Font font = WORKBOOK.createFont();
@@ -71,12 +69,28 @@ public class ExcelWriter {
             Row lineItemRow = lineItemSheet.createRow(rowCount);
             lineItemRow.createCell(0);
             lineItemRow.createCell(1).setCellValue(lineItem.getLineItemName());
-            lineItemRow.createCell(2).setCellValue("$" + lineItem.getLifetimeBudget());
+            lineItemRow.createCell(2).setCellValue(lineItem.getLifetimeBudget());
             lineItemRow.createCell(3).setCellValue(lineItem.getStartDateString());
             lineItemRow.createCell(4).setCellValue(lineItem.getEndDateString());
             lineItemRow.createCell(5).setCellValue(lineItem.getDaysActive());
-            lineItemRow.createCell(6).setCellValue("$" + lineItem.getDailyBudget());
-            lineItemRow.createCell(7).setCellValue(lineItem.getDaysRemaining());
+            lineItemRow.createCell(6).setCellValue(lineItem.getDailyBudget());
+            lineItemRow.createCell(7); //set after obtaining all pacing numbers
+            lineItemRow.createCell(8); //same here
+            lineItemRow.createCell(10).setCellValue(lineItem.getDaysRemaining());
+
+
+            //get duration passed
+            float flightPer = 0;
+            if(lineItem.getStartDateTime() != null && lineItem.getEndDateTime() != null) {
+                DateTime now = new DateTime();
+                float full = Days.daysBetween(lineItem.getStartDateTime(), lineItem.getEndDateTime()).getDays();
+                float stn = Days.daysBetween(lineItem.getStartDateTime(), now.toDateMidnight()).getDays();
+
+                if(stn / full > 1) flightPer = 1;
+                else flightPer = stn / full;
+            }
+            lineItemRow.createCell(9).setCellValue(flightPer);
+
 
             rowCount+=2;
 
@@ -89,7 +103,7 @@ public class ExcelWriter {
             campaignHeaderRow.createCell(4).setCellValue("End Date");
             campaignHeaderRow.createCell(5).setCellValue("# Days");
             campaignHeaderRow.createCell(6).setCellValue("Daily Budget");
-            campaignHeaderRow.createCell(7).setCellValue("Pacing");
+            campaignHeaderRow.createCell(7).setCellValue("Daily Pacing");
             campaignHeaderRow.createCell(8).setCellValue("Total Delivery");
 
             //style header
@@ -110,8 +124,8 @@ public class ExcelWriter {
             Float totalDailyBudget = 0.0f;
             Float totalActualDailyBudget = 0.0f;
             Float totalCumulativeDelivery = 0.0f;
-            float[] totalDailyDelivery = new float[100];
-            for(float num : totalDailyDelivery) {
+            double[] totalDailyDelivery = new double[100];
+            for(double num : totalDailyDelivery) {
                 //noinspection UnusedAssignment
                 num = 0;
             }
@@ -139,7 +153,7 @@ public class ExcelWriter {
                     campaignRow.getCell(1).setCellStyle(bolds);
                 }
 
-                campaignRow.createCell(2).setCellValue("$" + campaign.getLifetimeBudget());
+                campaignRow.createCell(2).setCellValue(campaign.getLifetimeBudget());
                 //only add date if they're not null
                 if (campaign.getStartDate() != null && campaign.getEndDate() != null) {
                     campaignRow.createCell(3).setCellValue(campaign.getStartDate().getMonthOfYear() +
@@ -148,9 +162,9 @@ public class ExcelWriter {
                             "/" + campaign.getEndDate().getDayOfMonth());
                 }
                 campaignRow.createCell(5).setCellValue(campaign.getDaysActive());
-                campaignRow.createCell(6).setCellValue("$" + campaign.getDailyBudget());
-                campaignRow.createCell(7).setCellValue("$" + df.format(campaign.getActualDailyBudget()));
-                campaignRow.createCell(8).setCellValue("$" + df.format(campaign.getTotalDelivery()));
+                campaignRow.createCell(6).setCellValue(campaign.getActualDailyBudget());
+                campaignRow.createCell(8).setCellValue(campaign.getTotalDelivery());
+
 
                 int cellCount = 9;
 
@@ -185,7 +199,7 @@ public class ExcelWriter {
                                         .plusDays((int)x).monthOfYear().getAsString()) ==
                                         del.getDate().getMonthOfYear()) {
 
-                            campaignRow.createCell(cellCount).setCellValue("$" + df.format(del.getDelivery()));
+                            campaignRow.createCell(cellCount).setCellValue(del.getDelivery());
                             //add to total count for the column
                             totalDailyDelivery[cellCount] += del.getDelivery();
                         }
@@ -211,13 +225,23 @@ public class ExcelWriter {
             //display totals
             Row totalRow = lineItemSheet.createRow(rowCount);
             totalRow.createCell(1).setCellValue("Column Totals:");
-            totalRow.createCell(2).setCellValue("$" + df.format(totalLifetimeBudget));
-            totalRow.createCell(6).setCellValue("$" + df.format(totalDailyBudget));
-            totalRow.createCell(7).setCellValue("$" + df.format(totalActualDailyBudget));
-            totalRow.createCell(8).setCellValue("$" + df.format(totalCumulativeDelivery));
+            totalRow.createCell(2).setCellValue(totalLifetimeBudget);
+            totalRow.createCell(6).setCellValue(totalDailyBudget);
+            totalRow.createCell(7).setCellValue(totalActualDailyBudget);
+            totalRow.createCell(8).setCellValue(totalCumulativeDelivery);
+
             for(int x = cellTrack - 1; x > 8; x--) {
-                totalRow.createCell(x).setCellValue("$" + df.format(totalDailyDelivery[x]));
+                totalRow.createCell(x).setCellValue(totalDailyDelivery[x]);
             }
+
+            //set total pacing
+            lineItemRow.getCell(7).setCellValue(((lineItem.getLifetimeBudget()-totalCumulativeDelivery)
+                    /lineItem.getDaysRemaining()));
+
+            //set % lt budget used
+            double perLTBudget = totalCumulativeDelivery/lineItem.getLifetimeBudget();
+            if (perLTBudget > 1) perLTBudget = 1;
+            lineItemRow.getCell(8).setCellValue(perLTBudget);
 
             rowCount+=3;
 
@@ -238,9 +262,6 @@ public class ExcelWriter {
 
             rowCount++;
 
-            //create decimal format for ctr
-            DecimalFormat ctrDf = new DecimalFormat("#.0000");
-
             //populate data for every campaign
             for(Campaign camp : lineItem.getCampaignList()) {
                 Row campRow = lineItemSheet.createRow(rowCount);
@@ -249,7 +270,7 @@ public class ExcelWriter {
                 campRow.createCell(2).setCellValue(camp.getLifetimeImps());
                 campRow.createCell(3).setCellValue(camp.getLifetimeClicks());
                 campRow.createCell(4).setCellValue(camp.getLifetimeConvs());
-                campRow.createCell(5).setCellValue(ctrDf.format(camp.getLifetimeCtr()*100) + "%");
+                campRow.createCell(5).setCellValue(camp.getLifetimeCtr());
                 campRow.createCell(8).setCellValue("Imps:\nClicks:\nConvs:\nCTR:");
 
                 //enable newlines
@@ -308,7 +329,7 @@ public class ExcelWriter {
                             campRow.createCell(cellCount).setCellValue(del.getImps() + "\n" +
                                                                         del.getClicks() + "\n" +
                                                                         del.getConvs() + "\n" +
-                                                                        ctrDf.format(del.getCtr() * 100) + "%");
+                                                                        del.getCtr());
                             campRow.getCell(cellCount).setCellStyle(cs);
 
                             cellCount++;
