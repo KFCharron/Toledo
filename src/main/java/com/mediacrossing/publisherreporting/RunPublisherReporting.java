@@ -1,4 +1,4 @@
-package com.mediacrossing.publisher_reporting;
+package com.mediacrossing.publisherreporting;
 
 import com.mediacrossing.campaignbooks.DataParse;
 import com.mediacrossing.properties.ConfigurationProperties;

@@ -1,4 +1,4 @@
-package com.mediacrossing.publisher_reporting;
+package com.mediacrossing.publisherreporting;
 
 import java.text.DecimalFormat;
 
