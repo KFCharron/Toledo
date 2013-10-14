@@ -2,7 +2,6 @@ package com.mediacrossing.campaignbooks;
 
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.WorkbookUtil;
 import org.joda.time.*;
@@ -10,7 +9,6 @@ import org.joda.time.*;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.DecimalFormat;
 
 
 public class ExcelWriter {
@@ -303,8 +301,59 @@ public class ExcelWriter {
 
             rowCount++;
 
+            CellStyle impStyle = WORKBOOK.createCellStyle();
+            impStyle.setBorderBottom(CellStyle.BORDER_NONE);
+            impStyle.setBorderTop(CellStyle.BORDER_THICK);
+
+            CellStyle greenImpStyle = WORKBOOK.createCellStyle();
+            greenImpStyle.setBorderBottom(CellStyle.BORDER_NONE);
+            greenImpStyle.setBorderTop(CellStyle.BORDER_THICK);
+            greenImpStyle.setFillForegroundColor(IndexedColors.LIGHT_GREEN.index);
+            greenImpStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
+
+            CellStyle clickConvStyle = WORKBOOK.createCellStyle();
+            clickConvStyle.setBorderTop(CellStyle.BORDER_NONE);
+            clickConvStyle.setBorderBottom(CellStyle.BORDER_NONE);
+
+            CellStyle greenClickConvStyle = WORKBOOK.createCellStyle();
+            greenClickConvStyle.setBorderTop(CellStyle.BORDER_NONE);
+            greenClickConvStyle.setBorderBottom(CellStyle.BORDER_NONE);
+            greenClickConvStyle.setFillForegroundColor(IndexedColors.LIGHT_GREEN.index);
+            greenClickConvStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
+
+            CellStyle ctrStyle = WORKBOOK.createCellStyle();
+            ctrStyle.setBorderTop(CellStyle.BORDER_NONE);
+            ctrStyle.setBorderBottom(CellStyle.BORDER_THICK);
+            DataFormat decFor = WORKBOOK.createDataFormat();
+            ctrStyle.setDataFormat(decFor.getFormat("#.0###%"));
+
+            CellStyle greenCtrStyle = WORKBOOK.createCellStyle();
+            greenCtrStyle.setBorderTop(CellStyle.BORDER_NONE);
+            greenCtrStyle.setBorderBottom(CellStyle.BORDER_THICK);
+            greenCtrStyle.setFillForegroundColor(IndexedColors.LIGHT_GREEN.index);
+            greenCtrStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
+            greenCtrStyle.setDataFormat(decFor.getFormat("#.0###%"));
+
+            CellStyle bottomBorder = WORKBOOK.createCellStyle();
+            bottomBorder.setBorderTop(CellStyle.BORDER_NONE);
+            bottomBorder.setBorderBottom(CellStyle.BORDER_THICK);
+
+            CellStyle topBorder = WORKBOOK.createCellStyle();
+            topBorder.setBorderTop(CellStyle.BORDER_THICK);
+
+
             //populate data for every campaign
             for(Campaign camp : lineItem.getCampaignList()) {
+                Row impRow = lineItemSheet.createRow(rowCount);
+                impRow.createCell(8).setCellValue("Imps:");
+                rowCount++;
+                Row clickRow = lineItemSheet.createRow(rowCount);
+                clickRow.createCell(8).setCellValue("Clicks:");
+                rowCount++;
+                Row convRow = lineItemSheet.createRow(rowCount);
+                convRow.createCell(8).setCellValue("Convs:");
+                rowCount++;
+
                 Row campRow = lineItemSheet.createRow(rowCount);
                 campRow.createCell(0).setCellValue(camp.getCampaignID());
                 campRow.createCell(1).setCellValue(camp.getCampaignName());
@@ -312,17 +361,12 @@ public class ExcelWriter {
                 campRow.createCell(3).setCellValue(camp.getLifetimeClicks());
                 campRow.createCell(4).setCellValue(camp.getLifetimeConvs());
                 campRow.createCell(5).setCellValue(camp.getLifetimeCtr());
-                campRow.createCell(8).setCellValue("Imps:\nClicks:\nConvs:\nCTR:");
+                campRow.createCell(6);
+                campRow.createCell(7);
+                campRow.createCell(8).setCellValue("CTR:");
 
                 //style cells
                 campRow.getCell(5).setCellStyle(ctrPercentage);
-
-                //enable newlines
-                CellStyle cs = WORKBOOK.createCellStyle();
-                cs.setWrapText(true);
-                campRow.getCell(8).setCellStyle(cs);
-                //increase row height to accomodate 4 lines of text
-                campRow.setHeightInPoints((4*lineItemSheet.getDefaultRowHeightInPoints()));
 
                 //if camp inactive, italic name
                 if (camp.getStatus().equals("inactive")) {
@@ -341,12 +385,14 @@ public class ExcelWriter {
                 }
 
                 int cellCount = 9;
-
-                //Style columns for easier readability
-                CellStyle altRow = WORKBOOK.createCellStyle();
-                altRow.setFillForegroundColor(HSSFColor.LIGHT_GREEN.index);
-                altRow.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
-                altRow.setWrapText(true);
+                for (int x = 0; x < 9; x++)
+                    impRow.createCell(x);
+                for (Cell cell : campRow) {
+                    cell.setCellStyle(bottomBorder);
+                }
+                for (Cell cell : impRow) {
+                    cell.setCellStyle(topBorder);
+                }
 
                 //for every day between start date and now, create column
                 for (long x = startToNow.getStandardDays(); x > 0; x--) {
@@ -370,23 +416,46 @@ public class ExcelWriter {
                             //don't add blank cells
                             blankCells = false;
 
-                            DecimalFormat decimalFormat = new DecimalFormat("#.0###%");
+                            impRow.createCell(cellCount).setCellValue(del.getImps());
+                            clickRow.createCell(cellCount).setCellValue(del.getClicks());
+                            convRow.createCell(cellCount).setCellValue(del.getConvs());
+                            campRow.createCell(cellCount).setCellValue(del.getCtr());
 
-                            campRow.createCell(cellCount).setCellValue(del.getImps() + "\n" +
-                                                                        del.getClicks() + "\n" +
-                                                                        del.getConvs() + "\n" +
-                                                                        decimalFormat.format(del.getCtr()));
-                            campRow.getCell(cellCount).setCellStyle(cs);
-
-                            cellCount++;
+                            //set cell styles
+                            impRow.getCell(cellCount).setCellStyle(impStyle);
+                            clickRow.getCell(cellCount).setCellStyle(clickConvStyle);
+                            convRow.getCell(cellCount).setCellStyle(clickConvStyle);
+                            campRow.getCell(cellCount).setCellStyle(ctrStyle);
 
                             if(x % 2 == 1) {
-                                campRow.getCell(cellCount-1).setCellStyle(altRow);
+                                impRow.getCell(cellCount).setCellStyle(greenImpStyle);
+                                clickRow.getCell(cellCount).setCellStyle(greenClickConvStyle);
+                                convRow.getCell(cellCount).setCellStyle(greenClickConvStyle);
+                                campRow.getCell(cellCount).setCellStyle(greenCtrStyle);
                             }
+                            cellCount++;
                         }
                     }
                     //add blank cells if there is no data
                     if(blankCells) {
+                        impRow.createCell(cellCount);
+                        clickRow.createCell(cellCount);
+                        convRow.createCell(cellCount);
+                        campRow.createCell(cellCount);
+
+                        //set cell styles
+                        impRow.getCell(cellCount).setCellStyle(impStyle);
+                        clickRow.getCell(cellCount).setCellStyle(clickConvStyle);
+                        convRow.getCell(cellCount).setCellStyle(clickConvStyle);
+                        campRow.getCell(cellCount).setCellStyle(ctrStyle);
+
+                        if(x % 2 == 1) {
+                            impRow.getCell(cellCount).setCellStyle(greenImpStyle);
+                            clickRow.getCell(cellCount).setCellStyle(greenClickConvStyle);
+                            convRow.getCell(cellCount).setCellStyle(greenClickConvStyle);
+                            campRow.getCell(cellCount).setCellStyle(greenCtrStyle);
+                        }
+
                         cellCount++;
                     }
 
@@ -394,6 +463,7 @@ public class ExcelWriter {
                 rowCount++;
             }
             rowCount+=3;
+
         }
     }
 
