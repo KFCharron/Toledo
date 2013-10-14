@@ -1,6 +1,8 @@
 package com.mediacrossing.segmenttargeting;
 
-public class CountryTarget {
+import java.io.Serializable;
+
+public class CountryTarget implements Serializable{
     private String country;
     private String name;
 

@@ -1,6 +1,8 @@
 package com.mediacrossing.segmenttargeting;
 
-public class DMATarget {
+import java.io.Serializable;
+
+public class DMATarget implements Serializable{
     private String dma;
     private String name;
 

@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import scala.Tuple2;
 import scala.concurrent.duration.Duration;
 
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -61,6 +62,23 @@ public class RunSegmentTargeting {
         APPNEXUS_PARTITION_SIZE = properties.getPartitionSize();
         APPNEXUS_REQUEST_DELAY = properties.getRequestDelayInSeconds();
 
+        //for faster debugging
+        boolean development = true;
+        if (development) {
+            try{
+                FileInputStream door = new FileInputStream("/Users/charronkyle/Desktop/TargetSegmentingData.ser");
+                ObjectInputStream reader = new ObjectInputStream(door);
+                dataStore.setLiveCampaignArrayList((ArrayList<Campaign>) reader.readObject());
+                //Write xls file for all target segment reports
+                XlsWriter xlsWriter = new XlsWriter();
+                xlsWriter.writeAllReports(dataStore.getLiveCampaignArrayList(), fileOutputPath);
+                System.exit(0);
+
+            }catch (IOException e){
+                e.printStackTrace();
+                System.exit(1);
+            }
+        }
 
         //Get Token
         httpConnection.authorizeAppNexusConnection(appNexusUsername, appNexusPassword);
@@ -197,6 +215,16 @@ public class RunSegmentTargeting {
         //update live campaign list
         dataStore.setLiveCampaignArrayList(newCampaignArrayList);
 
+        // Serialize data object to a file
+        try {
+            ObjectOutputStream out = new ObjectOutputStream
+                    (new FileOutputStream("/Users/charronkyle/Desktop/TargetSegmentingData.ser"));
+            out.writeObject(newCampaignArrayList);
+            out.close();
+        } catch (IOException e) {
+            LOG.error("Serialization Failed!");
+            LOG.error(e.toString());
+        }
 
         xlsWriter.writeSegmentLoadFile(dataStore.getLiveCampaignArrayList(), fileOutputPath);
 

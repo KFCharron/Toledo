@@ -1,6 +1,8 @@
 package com.mediacrossing.segmenttargeting;
 
-public class Segment {
+import java.io.Serializable;
+
+public class Segment implements Serializable{
     private String id;
     private String name;
     private String action;

@@ -1,9 +1,10 @@
 package com.mediacrossing.segmenttargeting;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Profile {
+public class Profile implements Serializable{
     private String id;
     private FrequencyTarget frequencyTarget;
     private GeographyTarget geographyTarget;

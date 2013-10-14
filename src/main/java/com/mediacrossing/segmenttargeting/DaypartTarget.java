@@ -1,6 +1,8 @@
 package com.mediacrossing.segmenttargeting;
 
-public class DaypartTarget {
+import java.io.Serializable;
+
+public class DaypartTarget implements Serializable{
     private String day;
     private int startHour;
     private int endHour;

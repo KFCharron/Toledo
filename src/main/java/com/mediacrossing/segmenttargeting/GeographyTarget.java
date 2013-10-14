@@ -1,8 +1,9 @@
 package com.mediacrossing.segmenttargeting;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class GeographyTarget {
+public class GeographyTarget implements Serializable{
     private ArrayList<CountryTarget> countryTargetList = new ArrayList<CountryTarget>();
     private ArrayList<DMATarget> dmaTargetList = new ArrayList<DMATarget>();
     private ArrayList<ZipTarget> zipTargetList = new ArrayList<ZipTarget>();

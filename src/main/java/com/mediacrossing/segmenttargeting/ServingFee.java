@@ -1,6 +1,8 @@
 package com.mediacrossing.segmenttargeting;
 
-public class ServingFee {
+import java.io.Serializable;
+
+public class ServingFee implements Serializable{
     private String brokerName;
     private String paymentType;
     private String value;

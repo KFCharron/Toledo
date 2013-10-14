@@ -1,8 +1,9 @@
 package com.mediacrossing.segmenttargeting;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class SegmentGroupTarget {
+public class SegmentGroupTarget implements Serializable{
 
     private String boolOp;
     private ArrayList<Segment> segmentArrayList = new ArrayList<Segment>();

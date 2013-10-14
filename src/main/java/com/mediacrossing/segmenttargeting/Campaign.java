@@ -1,9 +1,10 @@
 package com.mediacrossing.segmenttargeting;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Campaign {
+public class Campaign implements Serializable {
     private String id;
     private String name;
     private String profileID;

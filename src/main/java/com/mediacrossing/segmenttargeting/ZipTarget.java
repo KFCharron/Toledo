@@ -1,6 +1,8 @@
 package com.mediacrossing.segmenttargeting;
 
-public class ZipTarget {
+import java.io.Serializable;
+
+public class ZipTarget implements Serializable{
     private String fromZip;
     private String toZip;
 

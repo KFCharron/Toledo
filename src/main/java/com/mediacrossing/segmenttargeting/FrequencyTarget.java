@@ -1,6 +1,8 @@
 package com.mediacrossing.segmenttargeting;
 
-public class FrequencyTarget {
+import java.io.Serializable;
+
+public class FrequencyTarget implements Serializable {
     private String maxLifetimeImps;
     private String minSessionImps;
     private String maxSessionImps;
