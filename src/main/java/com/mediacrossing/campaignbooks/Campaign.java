@@ -19,8 +19,6 @@ public class Campaign implements Serializable {
     private float totalDelivery;
     private long daysActive;
     private ArrayList<Delivery> deliveries = new ArrayList<Delivery>();
-    private ReportData dayReportData;
-    private ReportData lifetimeReportData;
     private long daysRemaining;
     private int lifetimeImps;
     private int lifetimeClicks;
@@ -83,22 +81,6 @@ public class Campaign implements Serializable {
         return endDate;
     }
 
-    public ReportData getDayReportData() {
-        return dayReportData;
-    }
-
-    public void setDayReportData(ReportData dayReportData) {
-        this.dayReportData = dayReportData;
-    }
-
-    public ReportData getLifetimeReportData() {
-        return lifetimeReportData;
-    }
-
-    public void setLifetimeReportData(ReportData lifetimeReportData) {
-        this.lifetimeReportData = lifetimeReportData;
-    }
-
     public void addToDeliveries(Delivery delivery) {
         deliveries.add(delivery);
     }
@@ -138,15 +120,6 @@ public class Campaign implements Serializable {
 
     public List<Delivery> getDeliveries() {
         return deliveries;
-    }
-
-    public long getFlightPercentage() {
-        //TODO
-        return 1L;
-    }
-
-    public long getDaysRemaining() {
-        return daysRemaining;
     }
 
     public int getLifetimeImps() {

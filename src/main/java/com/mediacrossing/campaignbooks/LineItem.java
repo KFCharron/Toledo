@@ -21,8 +21,6 @@ public class LineItem implements Serializable {
     private long daysActive;
     private long daysRemaining;
     private ArrayList<Campaign> campaignList;
-    private ReportData dayReportData;
-    private ReportData lifetimeReportData;
     private DateTime startDateTime;
     private DateTime endDateTime;
     private String status;
@@ -70,24 +68,8 @@ public class LineItem implements Serializable {
         return startDateTime;
     }
 
-    public ReportData getDayReportData() {
-        return dayReportData;
-    }
-
     public Date getEndDate() {
         return endDate;
-    }
-
-    public void setDayReportData(ReportData dayReportData) {
-        this.dayReportData = dayReportData;
-    }
-
-    public ReportData getLifetimeReportData() {
-        return lifetimeReportData;
-    }
-
-    public void setLifetimeReportData(ReportData lifetimeReportData) {
-        this.lifetimeReportData = lifetimeReportData;
     }
 
     public String getLineItemID() {
