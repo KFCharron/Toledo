@@ -48,7 +48,7 @@ public class RunAdvertiserDaily {
         DataParse parser = new DataParse();
 
         //for faster debugging
-        boolean development = true;
+        boolean development = false;
         if (development) {
             try{
                 FileInputStream door = new FileInputStream("/Users/charronkyle/Desktop/AdvertiserList.ser");
@@ -247,6 +247,7 @@ public class RunAdvertiserDaily {
         }
 
         // Serialize data object to a file
+/*
         try {
             ObjectOutputStream out = new ObjectOutputStream
                     (new FileOutputStream("/Users/charronkyle/Desktop/AdvertiserList.ser"));
@@ -256,6 +257,7 @@ public class RunAdvertiserDaily {
             LOG.error("Serialization Failed!");
             LOG.error(e.toString());
         }
+*/
 
 
         //Write report

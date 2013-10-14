@@ -116,7 +116,7 @@ public class RunConversionReport {
         }
 
         // Serialize data object to a file
-        try {
+        /*try {
             ObjectOutputStream out = new ObjectOutputStream
                     (new FileOutputStream("/Users/charronkyle/Desktop/ConvAdvertiserList.ser"));
             out.writeObject(liveAdvertiserList);
@@ -124,7 +124,7 @@ public class RunConversionReport {
         } catch (IOException e) {
             LOG.error("Serialization Failed!");
             LOG.error(e.toString());
-        }
+        }*/
 
 
         //Write report

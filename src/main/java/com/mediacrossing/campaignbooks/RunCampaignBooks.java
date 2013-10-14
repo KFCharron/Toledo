@@ -187,7 +187,7 @@ public class RunCampaignBooks {
         }
 
         // Serialize data object to a file
-        try {
+        /*try {
             ObjectOutputStream out = new ObjectOutputStream
                     (new FileOutputStream("/Users/charronkyle/Desktop/CampaignBookData.ser"));
             out.writeObject(liveAdvertiserList);
@@ -195,7 +195,7 @@ public class RunCampaignBooks {
         } catch (IOException e) {
             LOG.error("Serialization Failed!");
             LOG.error(e.toString());
-        }
+        }*/
 
         //Build and save excel book, each sheet being its own advertiser
         for (Advertiser advertiser : liveAdvertiserList) {
