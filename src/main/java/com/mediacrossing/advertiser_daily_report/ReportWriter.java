@@ -8,19 +8,59 @@ import org.apache.poi.ss.usermodel.*;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.DecimalFormat;
 import java.util.List;
 
 public class ReportWriter {
 
     public static void writeAdvertiserDailyReport(List<Advertiser> advertiserList, String outputPath)
             throws IOException {
+        
+
 
         //init workbook, decimal formats
         Workbook wb = new HSSFWorkbook();
 
         //Create new sheet
         Sheet sheet = wb.createSheet("Advertiser Daily");
+
+        //set up formatting styles
+        DataFormat df = wb.createDataFormat();
+
+        CellStyle fullCurrency = wb.createCellStyle();
+        fullCurrency.setDataFormat(df.getFormat("$#,##0.00"));
+
+        CellStyle halfCurrency = wb.createCellStyle();
+        halfCurrency.setDataFormat(df.getFormat("$#,##0"));
+
+        CellStyle percentage = wb.createCellStyle();
+        percentage.setDataFormat(df.getFormat("0%"));
+
+        CellStyle ctrPercentage = wb.createCellStyle();
+        ctrPercentage.setDataFormat(df.getFormat("#.0000%"));
+
+        CellStyle greenFullCurrency = wb.createCellStyle();
+        greenFullCurrency.setDataFormat(df.getFormat("$#,##0.00"));
+        greenFullCurrency.setFillForegroundColor(IndexedColors.LIGHT_GREEN.index);
+        greenFullCurrency.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+
+        CellStyle greenHalfCurrency = wb.createCellStyle();
+        greenHalfCurrency.setDataFormat(df.getFormat("$#,##0"));
+        greenHalfCurrency.setFillForegroundColor(IndexedColors.LIGHT_GREEN.index);
+        greenHalfCurrency.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+
+        CellStyle greenPercentage = wb.createCellStyle();
+        greenPercentage.setDataFormat(df.getFormat("0%"));
+        greenPercentage.setFillForegroundColor(IndexedColors.LIGHT_GREEN.index);
+        greenPercentage.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+
+        CellStyle greenCtrPercentage = wb.createCellStyle();
+        greenCtrPercentage.setDataFormat(df.getFormat("0.0000%"));
+        greenCtrPercentage.setFillForegroundColor(IndexedColors.LIGHT_GREEN.index);
+        greenCtrPercentage.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+
+        CellStyle greenStyle = wb.createCellStyle();
+        greenStyle.setFillForegroundColor(IndexedColors.LIGHT_GREEN.index);
+        greenStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
 
         //title header
         Row titleRow = sheet.createRow(0);
@@ -39,11 +79,6 @@ public class ReportWriter {
         //create 24hr subheader
         Row subtitleRow = sheet.createRow(2);
         subtitleRow.createCell(0).setCellValue("24 hours:");
-
-        //Pattern style
-        CellStyle pattern = wb.createCellStyle();
-        pattern.setFillForegroundColor(IndexedColors.LIGHT_GREEN.index);
-        pattern.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
 
         //create line item column names
         Row lineItemHeader = sheet.createRow(4);
@@ -93,11 +128,33 @@ public class ReportWriter {
                     dataRow.createCell(13);
                     dataRow.createCell(14);
                 }
+
+                dataRow.getCell(5).setCellStyle(fullCurrency);
+                dataRow.getCell(6).setCellStyle(ctrPercentage);
+                dataRow.getCell(7).setCellStyle(ctrPercentage);
+                dataRow.getCell(8).setCellStyle(fullCurrency);
+                dataRow.getCell(9).setCellStyle(fullCurrency);
+                dataRow.getCell(12).setCellStyle(percentage);
+                dataRow.getCell(13).setCellStyle(fullCurrency);
+                dataRow.getCell(14).setCellStyle(halfCurrency);
+
                 //Pattern rows
                 if(rowCount % 2 == 1) {
-                    for(Cell c : dataRow) {
-                        c.setCellStyle(pattern);
-                    }
+                    dataRow.getCell(0).setCellStyle(greenStyle);
+                    dataRow.getCell(1).setCellStyle(greenStyle);
+                    dataRow.getCell(2).setCellStyle(greenStyle);
+                    dataRow.getCell(3).setCellStyle(greenStyle);
+                    dataRow.getCell(4).setCellStyle(greenStyle);
+                    dataRow.getCell(5).setCellStyle(greenFullCurrency);
+                    dataRow.getCell(6).setCellStyle(greenCtrPercentage);
+                    dataRow.getCell(7).setCellStyle(greenCtrPercentage);
+                    dataRow.getCell(8).setCellStyle(greenFullCurrency);
+                    dataRow.getCell(9).setCellStyle(greenFullCurrency);
+                    dataRow.getCell(10).setCellStyle(greenStyle);
+                    dataRow.getCell(11).setCellStyle(greenStyle);
+                    dataRow.getCell(12).setCellStyle(greenPercentage);
+                    dataRow.getCell(13).setCellStyle(greenFullCurrency);
+                    dataRow.getCell(14).setCellStyle(greenHalfCurrency);
                 }
                 rowCount++;
             }
@@ -154,12 +211,35 @@ public class ReportWriter {
                     dataRow.createCell(13);
                     dataRow.createCell(14);
                 }
-                //pattern rows
+
+                dataRow.getCell(5).setCellStyle(fullCurrency);
+                dataRow.getCell(6).setCellStyle(ctrPercentage);
+                dataRow.getCell(7).setCellStyle(ctrPercentage);
+                dataRow.getCell(8).setCellStyle(fullCurrency);
+                dataRow.getCell(9).setCellStyle(fullCurrency);
+                dataRow.getCell(12).setCellStyle(percentage);
+                dataRow.getCell(13).setCellStyle(fullCurrency);
+                dataRow.getCell(14).setCellStyle(halfCurrency);
+
+                //Pattern rows
                 if(rowCount % 2 == 1) {
-                    for(Cell c : dataRow) {
-                        c.setCellStyle(pattern);
-                    }
+                    dataRow.getCell(0).setCellStyle(greenStyle);
+                    dataRow.getCell(1).setCellStyle(greenStyle);
+                    dataRow.getCell(2).setCellStyle(greenStyle);
+                    dataRow.getCell(3).setCellStyle(greenStyle);
+                    dataRow.getCell(4).setCellStyle(greenStyle);
+                    dataRow.getCell(5).setCellStyle(greenFullCurrency);
+                    dataRow.getCell(6).setCellStyle(greenCtrPercentage);
+                    dataRow.getCell(7).setCellStyle(greenCtrPercentage);
+                    dataRow.getCell(8).setCellStyle(greenFullCurrency);
+                    dataRow.getCell(9).setCellStyle(greenFullCurrency);
+                    dataRow.getCell(10).setCellStyle(greenStyle);
+                    dataRow.getCell(11).setCellStyle(greenStyle);
+                    dataRow.getCell(12).setCellStyle(greenPercentage);
+                    dataRow.getCell(13).setCellStyle(greenFullCurrency);
+                    dataRow.getCell(14).setCellStyle(greenHalfCurrency);
                 }
+
                 rowCount++;
             }
         }
@@ -227,11 +307,37 @@ public class ReportWriter {
                         dataRow.createCell(15);
                         dataRow.createCell(16);
                     }
-                    //pattern rows
+
+                    dataRow.getCell(5).setCellStyle(fullCurrency);
+                    dataRow.getCell(6).setCellStyle(ctrPercentage);
+                    dataRow.getCell(7).setCellStyle(ctrPercentage);
+                    dataRow.getCell(8).setCellStyle(fullCurrency);
+                    dataRow.getCell(9).setCellStyle(fullCurrency);
+                    dataRow.getCell(12).setCellStyle(percentage);
+                    dataRow.getCell(13).setCellStyle(fullCurrency);
+                    dataRow.getCell(14).setCellStyle(halfCurrency);
+                    dataRow.getCell(15).setCellStyle(percentage);
+                    dataRow.getCell(16).setCellStyle(fullCurrency);
+
+                    //Pattern rows
                     if(rowCount % 2 == 1) {
-                        for(Cell c : dataRow) {
-                            c.setCellStyle(pattern);
-                        }
+                        dataRow.getCell(0).setCellStyle(greenStyle);
+                        dataRow.getCell(1).setCellStyle(greenStyle);
+                        dataRow.getCell(2).setCellStyle(greenStyle);
+                        dataRow.getCell(3).setCellStyle(greenStyle);
+                        dataRow.getCell(4).setCellStyle(greenStyle);
+                        dataRow.getCell(5).setCellStyle(greenFullCurrency);
+                        dataRow.getCell(6).setCellStyle(greenCtrPercentage);
+                        dataRow.getCell(7).setCellStyle(greenCtrPercentage);
+                        dataRow.getCell(8).setCellStyle(greenFullCurrency);
+                        dataRow.getCell(9).setCellStyle(greenFullCurrency);
+                        dataRow.getCell(10).setCellStyle(greenStyle);
+                        dataRow.getCell(11).setCellStyle(greenStyle);
+                        dataRow.getCell(12).setCellStyle(greenPercentage);
+                        dataRow.getCell(13).setCellStyle(greenFullCurrency);
+                        dataRow.getCell(14).setCellStyle(greenHalfCurrency);
+                        dataRow.getCell(15).setCellStyle(greenPercentage);
+                        dataRow.getCell(16).setCellStyle(greenFullCurrency);
                     }
                     rowCount++;
                 }
@@ -297,11 +403,37 @@ public class ReportWriter {
                         dataRow.createCell(15);
                         dataRow.createCell(16);
                     }
-                    //pattern rows
+
+                    dataRow.getCell(5).setCellStyle(fullCurrency);
+                    dataRow.getCell(6).setCellStyle(ctrPercentage);
+                    dataRow.getCell(7).setCellStyle(ctrPercentage);
+                    dataRow.getCell(8).setCellStyle(fullCurrency);
+                    dataRow.getCell(9).setCellStyle(fullCurrency);
+                    dataRow.getCell(12).setCellStyle(percentage);
+                    dataRow.getCell(13).setCellStyle(fullCurrency);
+                    dataRow.getCell(14).setCellStyle(halfCurrency);
+                    dataRow.getCell(15).setCellStyle(percentage);
+                    dataRow.getCell(16).setCellStyle(fullCurrency);
+
+                    //Pattern rows
                     if(rowCount % 2 == 1) {
-                        for(Cell c : dataRow) {
-                            c.setCellStyle(pattern);
-                        }
+                        dataRow.getCell(0).setCellStyle(greenStyle);
+                        dataRow.getCell(1).setCellStyle(greenStyle);
+                        dataRow.getCell(2).setCellStyle(greenStyle);
+                        dataRow.getCell(3).setCellStyle(greenStyle);
+                        dataRow.getCell(4).setCellStyle(greenStyle);
+                        dataRow.getCell(5).setCellStyle(greenFullCurrency);
+                        dataRow.getCell(6).setCellStyle(greenCtrPercentage);
+                        dataRow.getCell(7).setCellStyle(greenCtrPercentage);
+                        dataRow.getCell(8).setCellStyle(greenFullCurrency);
+                        dataRow.getCell(9).setCellStyle(greenFullCurrency);
+                        dataRow.getCell(10).setCellStyle(greenStyle);
+                        dataRow.getCell(11).setCellStyle(greenStyle);
+                        dataRow.getCell(12).setCellStyle(greenPercentage);
+                        dataRow.getCell(13).setCellStyle(greenFullCurrency);
+                        dataRow.getCell(14).setCellStyle(greenHalfCurrency);
+                        dataRow.getCell(15).setCellStyle(greenPercentage);
+                        dataRow.getCell(16).setCellStyle(greenFullCurrency);
                     }
                     rowCount++;
                 }
