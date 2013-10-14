@@ -476,38 +476,6 @@ public class XlsWriter {
         }
     }
 
-    public void writeSegmentFile(ArrayList<Campaign> campaignArrayList, String outputPath) throws IOException {
-        setCAMPAIGNARRAYLIST(campaignArrayList);
-        setOUTPUTPATH(outputPath);
-        WORKBOOK = new HSSFWorkbook();
-        buildSegmentSheet();
-        writeWorkbookToFileWithName("SegmentReport.xls");
-    }
-
-    public void writeDaypartFile(ArrayList<Campaign> campaignArrayList, String outputPath) throws IOException {
-        setCAMPAIGNARRAYLIST(campaignArrayList);
-        setOUTPUTPATH(outputPath);
-        WORKBOOK = new HSSFWorkbook();
-        buildDaypartSheet();
-        writeWorkbookToFileWithName("DaypartReport.xls");
-    }
-
-    public void writeGeographyFile(ArrayList<Campaign> campaignArrayList, String outputPath) throws IOException {
-        setCAMPAIGNARRAYLIST(campaignArrayList);
-        setOUTPUTPATH(outputPath);
-        WORKBOOK = new HSSFWorkbook();
-        buildGeographySheet();
-        writeWorkbookToFileWithName("GeographyReport.xls");
-    }
-
-    public void writeFrequencyFile(ArrayList<Campaign> campaignArrayList, String outputPath) throws IOException {
-        setCAMPAIGNARRAYLIST(campaignArrayList);
-        setOUTPUTPATH(outputPath);
-        WORKBOOK = new HSSFWorkbook();
-        buildFrequencySheet();
-        writeWorkbookToFileWithName("FrequencyReport.xls");
-    }
-
     public void writeSegmentLoadFile(ArrayList<Campaign> campaignArrayList, String outputPath) throws IOException {
         setCAMPAIGNARRAYLIST(campaignArrayList);
         setOUTPUTPATH(outputPath);
