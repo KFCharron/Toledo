@@ -1,8 +1,9 @@
 package com.mediacrossing.segmenttargeting.profiles
 
 import java.util
-import com.mediacrossing.segmenttargeting.{HTTPConnection, JSONParse, Profile}
 import scala.collection.JavaConverters._
+import com.mediacrossing.dailycheckupsreport.{HTTPConnection, Profile, JSONParse}
+import com.mediacrossing.dailycheckupsreport.profiles.ProfileRepository
 
 class TruncatedProfileRepository(http: HTTPConnection,
                                  profileCount: Int) extends ProfileRepository {

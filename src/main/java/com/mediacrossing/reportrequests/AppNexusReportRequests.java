@@ -1,7 +1,7 @@
 package com.mediacrossing.reportrequests;
 
 import com.mediacrossing.campaignbooks.DataParse;
-import com.mediacrossing.segmenttargeting.HTTPConnection;
+import com.mediacrossing.dailycheckupsreport.HTTPConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

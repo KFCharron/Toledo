@@ -1,4 +1,4 @@
-package com.mediacrossing.segmenttargeting;
+package com.mediacrossing.dailycheckupsreport;
 import com.mediacrossing.publisherreporting.Publisher;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;

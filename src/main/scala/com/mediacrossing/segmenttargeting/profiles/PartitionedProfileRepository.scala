@@ -6,6 +6,8 @@ import scala.collection.JavaConverters._
 import scala.concurrent.duration.Duration
 import java.io.IOException
 import org.slf4j.LoggerFactory
+import com.mediacrossing.dailycheckupsreport.{HTTPConnection, Profile, JSONParse}
+import com.mediacrossing.dailycheckupsreport.profiles.ProfileRepository
 
 class PartitionedProfileRepository(http: HTTPConnection,
                                    partitionSize: Int,

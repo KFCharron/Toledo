@@ -1,9 +1,9 @@
-package com.mediacrossing.segmenttargeting;
+package com.mediacrossing.dailycheckupsreport;
 
+import com.mediacrossing.dailycheckupsreport.profiles.ProfileRepository;
 import com.mediacrossing.properties.ConfigurationProperties;
 import com.mediacrossing.reportrequests.AppNexusReportRequests;
 import com.mediacrossing.segmenttargeting.profiles.PartitionedProfileRepository;
-import com.mediacrossing.segmenttargeting.profiles.ProfileRepository;
 import com.mediacrossing.segmenttargeting.profiles.TruncatedProfileRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

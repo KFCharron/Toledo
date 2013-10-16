@@ -1,4 +1,4 @@
-package com.mediacrossing.segmenttargeting;
+package com.mediacrossing.dailycheckupsreport;
 
 import au.com.bytecode.opencsv.CSVReader;
 import com.google.gson.JsonElement;

@@ -1,6 +1,6 @@
-package com.mediacrossing.segmenttargeting.profiles;
+package com.mediacrossing.dailycheckupsreport.profiles;
 
-import com.mediacrossing.segmenttargeting.Profile;
+import com.mediacrossing.dailycheckupsreport.Profile;
 import scala.Tuple2;
 
 import java.util.Collections;

@@ -1,4 +1,4 @@
-package com.mediacrossing.segmenttargeting;
+package com.mediacrossing.dailycheckupsreport;
 
 import java.io.Serializable;
 

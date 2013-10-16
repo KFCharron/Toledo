@@ -4,7 +4,7 @@ import com.mediacrossing.campaignbooks.*;
 import com.mediacrossing.connections.ConnectionRequestProperties;
 import com.mediacrossing.properties.ConfigurationProperties;
 import com.mediacrossing.reportrequests.AppNexusReportRequests;
-import com.mediacrossing.segmenttargeting.HTTPConnection;
+import com.mediacrossing.dailycheckupsreport.HTTPConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scala.Tuple2;
