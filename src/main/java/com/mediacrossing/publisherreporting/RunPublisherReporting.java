@@ -2,7 +2,7 @@ package com.mediacrossing.publisherreporting;
 
 import com.mediacrossing.campaignbooks.DataParse;
 import com.mediacrossing.properties.ConfigurationProperties;
-import com.mediacrossing.report_requests.AppNexusReportRequests;
+import com.mediacrossing.reportrequests.AppNexusReportRequests;
 import com.mediacrossing.segmenttargeting.HTTPConnection;
 import com.mediacrossing.segmenttargeting.XlsWriter;
 import org.slf4j.Logger;

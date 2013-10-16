@@ -1,4 +1,4 @@
-package com.mediacrossing.report_requests;
+package com.mediacrossing.reportrequests;
 
 import com.mediacrossing.campaignbooks.DataParse;
 import com.mediacrossing.segmenttargeting.HTTPConnection;

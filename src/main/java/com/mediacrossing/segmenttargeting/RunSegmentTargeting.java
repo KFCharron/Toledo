@@ -1,7 +1,7 @@
 package com.mediacrossing.segmenttargeting;
 
 import com.mediacrossing.properties.ConfigurationProperties;
-import com.mediacrossing.report_requests.AppNexusReportRequests;
+import com.mediacrossing.reportrequests.AppNexusReportRequests;
 import com.mediacrossing.segmenttargeting.profiles.PartitionedProfileRepository;
 import com.mediacrossing.segmenttargeting.profiles.ProfileRepository;
 import com.mediacrossing.segmenttargeting.profiles.TruncatedProfileRepository;
