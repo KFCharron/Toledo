@@ -15,11 +15,11 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
-public class RunSegmentTargeting {
+public class RunDailyCheckUps {
 
     private static int APPNEXUS_PARTITION_SIZE;
     private static Duration APPNEXUS_REQUEST_DELAY;
-    private static final Logger LOG = LoggerFactory.getLogger(RunSegmentTargeting.class);
+    private static final Logger LOG = LoggerFactory.getLogger(RunDailyCheckUps.class);
 
     private static ProfileRepository development(HTTPConnection r) {
         return new TruncatedProfileRepository(r, 10);
