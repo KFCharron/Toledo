@@ -1,4 +1,4 @@
-package com.mediacrossing.advertiser_daily_report;
+package com.mediacrossing.advertiserdailyreport;
 
 import com.mediacrossing.campaignbooks.*;
 import com.mediacrossing.connections.ConnectionRequestProperties;

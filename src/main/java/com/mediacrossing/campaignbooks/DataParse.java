@@ -4,7 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.mediacrossing.publisher_reporting.Publisher;
+import com.mediacrossing.publisherreporting.Publisher;
 
 import java.text.ParseException;
 import java.util.ArrayList;

@@ -1,5 +1,5 @@
 package com.mediacrossing.segmenttargeting;
-import com.mediacrossing.publisher_reporting.Publisher;
+import com.mediacrossing.publisherreporting.Publisher;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;

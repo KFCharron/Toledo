@@ -1,4 +1,4 @@
-package com.mediacrossing.advertiser_daily_report;
+package com.mediacrossing.advertiserdailyreport;
 
 import org.joda.time.DateTime;
 import org.joda.time.Days;

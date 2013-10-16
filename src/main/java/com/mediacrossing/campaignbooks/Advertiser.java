@@ -1,6 +1,6 @@
 package com.mediacrossing.campaignbooks;
 
-import com.mediacrossing.advertiser_daily_report.DailyData;
+import com.mediacrossing.advertiserdailyreport.DailyData;
 
 import java.io.Serializable;
 import java.util.ArrayList;

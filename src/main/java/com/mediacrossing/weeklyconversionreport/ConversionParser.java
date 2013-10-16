@@ -1,4 +1,4 @@
-package com.mediacrossing.weekly_conversion_report;
+package com.mediacrossing.weeklyconversionreport;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
