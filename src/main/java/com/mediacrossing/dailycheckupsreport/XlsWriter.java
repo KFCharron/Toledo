@@ -1,4 +1,5 @@
 package com.mediacrossing.dailycheckupsreport;
+import com.mediacrossing.publisherreporting.Placement;
 import com.mediacrossing.publisherreporting.Publisher;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -552,11 +553,15 @@ public class XlsWriter {
         writeWorkbookToFileWithName("SegmentLoadReport.xls");
     }
 
-    public static void writePublisherReport(ArrayList<Publisher> pubList, String outputPath) throws IOException {
+    public static void writePublisherReport(ArrayList<Publisher> dayPubList,
+                                            ArrayList<Publisher> lifetimePubList,
+                                            ArrayList<Placement> dayPlaceList,
+                                            ArrayList<Placement> lifetimePlaceList,
+                                            String outputPath) throws IOException {
 
         WORKBOOK = new HSSFWorkbook();
         //Create new sheet
-        Sheet publisherSheet = WORKBOOK.createSheet("PublisherReport");
+        Sheet publisherSheet = WORKBOOK.createSheet("24hr Publishers");
 
         //Header row
         Row headerRow = publisherSheet.createRow((short) 0);
@@ -581,7 +586,7 @@ public class XlsWriter {
             c.setCellStyle(bold);
 
         short rowCounter = 1;
-        for(Publisher pub : pubList) {
+        for(Publisher pub : dayPubList) {
             Row dataRow = publisherSheet.createRow(rowCounter);
             dataRow.createCell(0).setCellValue(pub.getId());
             dataRow.createCell(1).setCellValue(pub.getPublisherName());
@@ -596,6 +601,137 @@ public class XlsWriter {
         }
 
         for(int x = 0; x<= 8; x++) {
+            publisherSheet.autoSizeColumn(x);
+        }
+
+
+        //build new sheet for lifetime publisher stats
+        publisherSheet = WORKBOOK.createSheet("Lifetime Publishers");
+
+        //Header row
+        headerRow = publisherSheet.createRow((short) 0);
+        headerRow.createCell(0).setCellValue("Publisher ID");
+        headerRow.createCell(1).setCellValue("Publisher Name");
+        headerRow.createCell(2).setCellValue("Total Imps");
+        headerRow.createCell(3).setCellValue("Imps Sold");
+        headerRow.createCell(4).setCellValue("Clicks");
+        headerRow.createCell(5).setCellValue("RTB Imps");
+        headerRow.createCell(6).setCellValue("Imps Kept");
+        headerRow.createCell(7).setCellValue("Default Imps");
+        headerRow.createCell(8).setCellValue("PSA Imps");
+
+        for(Cell c : headerRow)
+            c.setCellStyle(bold);
+
+        rowCounter = 1;
+        for(Publisher pub : lifetimePubList) {
+            Row dataRow = publisherSheet.createRow(rowCounter);
+            dataRow.createCell(0).setCellValue(pub.getId());
+            dataRow.createCell(1).setCellValue(pub.getPublisherName());
+            dataRow.createCell(2).setCellValue(pub.getImpsTotal());
+            dataRow.createCell(3).setCellValue(pub.getImpsSold());
+            dataRow.createCell(4).setCellValue(pub.getClicks());
+            dataRow.createCell(5).setCellValue(pub.getRtbPercentage() + "% (" + pub.getImpsRtb() + ")");
+            dataRow.createCell(6).setCellValue(pub.getKeptPercentage() + "% (" + pub.getImpsKept() + ")");
+            dataRow.createCell(7).setCellValue(pub.getDefaultPercentage() + "% (" + pub.getImpsDefault() + ")");
+            dataRow.createCell(8).setCellValue(pub.getPsaPercentage() + "% (" + pub.getImpsPsa() + ")");
+            rowCounter++;
+        }
+
+        for(int x = 0; x<= 8; x++) {
+            publisherSheet.autoSizeColumn(x);
+        }
+
+        //Create cell style for network revenue
+        DataFormat df = WORKBOOK.createDataFormat();
+        CellStyle fullCurrency = WORKBOOK.createCellStyle();
+        fullCurrency.setDataFormat(df.getFormat("$#,##0.00"));
+
+        //day placement sheet
+        publisherSheet = WORKBOOK.createSheet("24hr Placements");
+
+        //Header row
+        headerRow = publisherSheet.createRow((short) 0);
+        headerRow.createCell(0).setCellValue("Placement ID");
+        headerRow.createCell(1).setCellValue("Placement Name");
+        headerRow.createCell(2).setCellValue("Site ID");
+        headerRow.createCell(3).setCellValue("Site Name");
+        headerRow.createCell(4).setCellValue("Imps Total");
+        headerRow.createCell(5).setCellValue("Imps Sold");
+        headerRow.createCell(6).setCellValue("Clicks");
+        headerRow.createCell(7).setCellValue("RTB");
+        headerRow.createCell(8).setCellValue("Kept");
+        headerRow.createCell(9).setCellValue("Default");
+        headerRow.createCell(10).setCellValue("PSA");
+        headerRow.createCell(11).setCellValue("Network Revenue");
+
+        for(Cell c : headerRow)
+            c.setCellStyle(bold);
+
+        rowCounter = 1;
+        for(Placement p : dayPlaceList) {
+            Row dataRow = publisherSheet.createRow(rowCounter);
+            dataRow.createCell(0).setCellValue(p.getId());
+            dataRow.createCell(1).setCellValue(p.getName());
+            dataRow.createCell(2).setCellValue(p.getSiteId());
+            dataRow.createCell(3).setCellValue(p.getSiteName());
+            dataRow.createCell(4).setCellValue(p.getImpsTotal());
+            dataRow.createCell(5).setCellValue(p.getImpsSold());
+            dataRow.createCell(6).setCellValue(p.getClicks());
+            dataRow.createCell(7).setCellValue(p.getRtbImps() + "(" + p.getRtbPercentage() + "%)");
+            dataRow.createCell(8).setCellValue(p.getKeptImps() + "(" + p.getKeptPercentage() + "%)");
+            dataRow.createCell(9).setCellValue(p.getDefaultImps() + "(" + p.getDefaultPercentage() + "%)");
+            dataRow.createCell(10).setCellValue(p.getPsaImps() + "(" + p.getPsaPercentage() + "%)");
+            dataRow.createCell(11).setCellValue(p.getNetworkRevenue());
+            dataRow.getCell(11).setCellStyle(fullCurrency);
+            rowCounter++;
+        }
+
+        for(int x = 0; x<= 11; x++) {
+            publisherSheet.autoSizeColumn(x);
+        }
+
+        //lifetime placement sheet
+        publisherSheet = WORKBOOK.createSheet("Lifetime Placements");
+
+        //Header row
+        headerRow = publisherSheet.createRow((short) 0);
+        headerRow.createCell(0).setCellValue("Placement ID");
+        headerRow.createCell(1).setCellValue("Placement Name");
+        headerRow.createCell(2).setCellValue("Site ID");
+        headerRow.createCell(3).setCellValue("Site Name");
+        headerRow.createCell(4).setCellValue("Imps Total");
+        headerRow.createCell(5).setCellValue("Imps Sold");
+        headerRow.createCell(6).setCellValue("Clicks");
+        headerRow.createCell(7).setCellValue("RTB");
+        headerRow.createCell(8).setCellValue("Kept");
+        headerRow.createCell(9).setCellValue("Default");
+        headerRow.createCell(10).setCellValue("PSA");
+        headerRow.createCell(11).setCellValue("Network Revenue");
+
+        for(Cell c : headerRow)
+            c.setCellStyle(bold);
+
+        rowCounter = 1;
+        for(Placement p : lifetimePlaceList) {
+            Row dataRow = publisherSheet.createRow(rowCounter);
+            dataRow.createCell(0).setCellValue(p.getId());
+            dataRow.createCell(1).setCellValue(p.getName());
+            dataRow.createCell(2).setCellValue(p.getSiteId());
+            dataRow.createCell(3).setCellValue(p.getSiteName());
+            dataRow.createCell(4).setCellValue(p.getImpsTotal());
+            dataRow.createCell(5).setCellValue(p.getImpsSold());
+            dataRow.createCell(6).setCellValue(p.getClicks());
+            dataRow.createCell(7).setCellValue(p.getRtbImps() + "(" + p.getRtbPercentage() + "%)");
+            dataRow.createCell(8).setCellValue(p.getKeptImps() + "(" + p.getKeptPercentage() + "%)");
+            dataRow.createCell(9).setCellValue(p.getDefaultImps() + "(" + p.getDefaultPercentage() + "%)");
+            dataRow.createCell(10).setCellValue(p.getPsaImps() + "(" + p.getPsaPercentage() + "%)");
+            dataRow.createCell(11).setCellValue(p.getNetworkRevenue());
+            dataRow.getCell(11).setCellStyle(fullCurrency);
+            rowCounter++;
+        }
+
+        for(int x = 0; x<= 11; x++) {
             publisherSheet.autoSizeColumn(x);
         }
 

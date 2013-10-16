@@ -1,8 +1,9 @@
 package com.mediacrossing.publisherreporting;
 
+import java.io.Serializable;
 import java.text.DecimalFormat;
 
-public class Publisher {
+public class Publisher implements Serializable {
     private String id;
     private String publisherName;
     private float impsTotal;
@@ -34,10 +35,19 @@ public class Publisher {
         this.impsDefault = impsDefault;
         this.impsPsa = impsPsa;
         DecimalFormat df = new DecimalFormat("#.00");
-        this.rtbPercentage = df.format(impsRtb / impsTotal * 100);
-        this.keptPercentage = df.format(impsKept / impsTotal * 100);
-        this.defaultPercentage = df.format(impsDefault / impsTotal * 100);
-        this.psaPercentage = df.format(impsPsa / impsTotal * 100);
+        if (impsTotal != 0) {
+            this.rtbPercentage = df.format(impsRtb / impsTotal * 100);
+            this.keptPercentage = df.format(impsKept / impsTotal * 100);
+            this.defaultPercentage = df.format(impsDefault / impsTotal * 100);
+            this.psaPercentage = df.format(impsPsa / impsTotal * 100);
+        }
+        else {
+            this.rtbPercentage = "";
+            this.keptPercentage = "";
+            this.defaultPercentage = "";
+            this.psaPercentage = "";
+        }
+
     }
 
     public String getId() {

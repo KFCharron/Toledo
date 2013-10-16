@@ -36,11 +36,33 @@ public class AppNexusReportRequests {
 
     }
 
-    public static List<String[]> getPublisherReport(String publisherId,
+    public static List<String[]> getPublisherReport(String publisherId, String interval,
                                                        String appNexusUrl,
                                                        HTTPConnection httpConnection) throws Exception {
 
-        String reportId = httpConnection.requestPublisherReport(publisherId);
+        String reportId = httpConnection.requestPublisherReport(publisherId, interval);
+        boolean ready = false;
+        while (!ready) {
+            //Check to see if report is ready
+            String jsonResponse = httpConnection.fetchDownloadUrl(reportId);
+            LOG.debug(jsonResponse);
+            ready = dataParse.parseReportStatus(jsonResponse);
+            if (!ready)
+                Thread.sleep(20000);
+        }
+        //Report is ready, download it
+        String downloadUrl = appNexusUrl + dataParse.getReportUrl();
+        httpConnection.requestDownload(downloadUrl);
+
+        return httpConnection.getCsvData();
+
+    }
+
+    public static List<String[]> getPlacementReport(String publisherId, String interval,
+                                                    String appNexusUrl,
+                                                    HTTPConnection httpConnection) throws Exception {
+
+        String reportId = httpConnection.requestPlacementReport(publisherId, interval);
         boolean ready = false;
         while (!ready) {
             //Check to see if report is ready

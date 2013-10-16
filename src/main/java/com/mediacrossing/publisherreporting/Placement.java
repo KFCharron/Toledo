@@ -1,6 +1,7 @@
 package com.mediacrossing.publisherreporting;
 
 import java.io.Serializable;
+import java.text.DecimalFormat;
 
 public class Placement implements Serializable{
 
@@ -16,6 +17,35 @@ public class Placement implements Serializable{
     private int defaultImps;
     private int psaImps;
     private float networkRevenue;
+    private DecimalFormat df = new DecimalFormat("#.00");
+
+    public String getRtbPercentage() {
+        if (impsTotal == 0) {
+            return "";
+        }
+        return df.format(rtbImps / impsTotal * 100);
+    }
+
+    public String getKeptPercentage() {
+        if (impsTotal == 0) {
+            return "";
+        }
+        return df.format(keptImps / impsTotal * 100);
+    }
+
+    public String getDefaultPercentage() {
+        if (impsTotal == 0) {
+            return "";
+        }
+        return df.format(defaultImps / impsTotal * 100);
+    }
+
+    public String getPsaPercentage() {
+        if (impsTotal == 0) {
+            return "";
+        }
+        return df.format(psaImps / impsTotal * 100);
+    }
 
     public String getId() {
         return id;

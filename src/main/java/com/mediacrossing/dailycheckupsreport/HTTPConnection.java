@@ -335,7 +335,7 @@ public class HTTPConnection {
         this.requestData(appNexusRequestProperties());
     }
 
-    public String requestPublisherReport(String publisherId) throws IOException {
+    public String requestPublisherReport(String publisherId, String interval) throws IOException {
 
         this.setUrl("http://api.appnexus.com/report?publisher_id=" + publisherId);
 
@@ -365,7 +365,7 @@ public class HTTPConnection {
                 "        \"row_per\":[\n" +
                 "            \"publisher_id\"\n" +
                 "        ],\n" +
-                "        \"report_interval\":\"yesterday\",\n" +
+                "        \"report_interval\":\""+ interval +"\",\n" +
                 "        \"format\":\"csv\",\n" +
                 "        \"emails\":[\n" +
                 "        ],\n" +
@@ -416,6 +416,90 @@ public class HTTPConnection {
 
 
     }
+
+    public String requestPlacementReport(String publisherId, String interval) throws IOException {
+
+        this.setUrl("http://api.appnexus.com/report?publisher_id=" + publisherId);
+
+        java.net.URL wsURL = new URL(null, url,new sun.net.www.protocol.https.Handler());
+        HttpsURLConnection con = (HttpsURLConnection) wsURL.openConnection();
+
+        //add request header
+        con.setRequestMethod("POST");
+        con.setRequestProperty("Content-Type", "application/json");
+        //Set Auth Token
+        con.setRequestProperty("Authorization", this.getAuthorizationToken());
+        //Authorization JSON data
+        String urlParameters = "{\n" +
+                "    \"report\":\n" +
+                "    {\n" +
+                "        \"report_type\": \"network_publisher_analytics\",\n" +
+                "        \"columns\":[\n" +
+                "\t\t\"placement_id\",\n" +
+                "\t\t\"placement_name\",\n" +
+                "\t\t\"site_id\",\n" +
+                "\t\t\"site_name\",\n" +
+                "\t\t\"imps_total\",\n" +
+                "\t\t\"imps_sold\",\n" +
+                "\t\t\"clicks\",\n" +
+                "            \t \"imps_rtb\",\n" +
+                "            \t \"imps_kept\",\n" +
+                "            \t \"imps_default\",\n" +
+                "            \t \"imps_psa\",\n" +
+                "\t\t\"network_revenue\"\n" +
+                "        ],\n" +
+                "        \"row_per\":[\n" +
+                "            \"placement_id\"\n" +
+                "        ],\n" +
+                "        \"report_interval\":\"lifetime\",\n" +
+                "        \"orders\": [\n" +
+                "                    {\n" +
+                "                        \"order_by\":\"placement_id\", \n" +
+                "                        \"direction\":\"DESC\"\n" +
+                "                    }\n" +
+                "                    ]\n" +
+                "    }\n" +
+                "}";
+
+        // Send post request
+        con.setDoOutput(true);
+        DataOutputStream wr = new DataOutputStream(con.getOutputStream());
+        wr.writeBytes(urlParameters);
+        wr.flush();
+        wr.close();
+
+        int responseCode = con.getResponseCode();
+        LOG.debug("\nSending 'POST' request to URL : " + url);
+        LOG.debug("Response Code : " + responseCode);
+
+        BufferedReader in = new BufferedReader(
+                new InputStreamReader(con.getInputStream()));
+        String inputLine;
+        StringBuilder response = new StringBuilder();
+
+        while ((inputLine = in.readLine()) != null) {
+            response.append(inputLine);
+        }
+        in.close();
+
+        //Received JSON data
+        String rawJSON = response.toString();
+        LOG.debug(rawJSON);
+
+        //Parse JSON, obtain token
+        JsonElement jelement = new JsonParser().parse(rawJSON);
+        JsonObject jobject = jelement.getAsJsonObject();
+        jobject = jobject.getAsJsonObject("response");
+        String reportId = jobject.get("report_id").toString().replace("\"", "");
+        if (reportId.isEmpty()) {
+            LOG.error("ReportID not received.");
+        }
+
+        return reportId;
+
+
+    }
+
 
     public String requestAdvertiserAnalyticReport(String advertiserId, String jsonPostData) throws IOException {
 
