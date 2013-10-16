@@ -21,7 +21,7 @@ public class ReportWriter {
         Workbook wb = new HSSFWorkbook();
 
         //Create new sheet
-        Sheet sheet = wb.createSheet("Advertiser Daily");
+        Sheet sheet = wb.createSheet("24hr Line Items");
 
         //set up formatting styles
         DataFormat df = wb.createDataFormat();
@@ -100,6 +100,14 @@ public class ReportWriter {
 
         //for every advertiser, add a data row for each line item
         int rowCount = 5;
+        int impTotal = 0;
+        int clickTotal = 0;
+        int convTotal = 0;
+        float mediaCostTotal = 0.0f;
+        float cpmTotal = 0.0f;
+        float cpcTotal = 0.0f;
+        float dailyBudgetTotal = 0.0f;
+        int lifetimeBudgetTotal = 0;
         for(Advertiser ad : advertiserList) {
             for(DailyData data : ad.getDailyLineItems()) {
                 Row dataRow = sheet.createRow(rowCount);
@@ -157,11 +165,48 @@ public class ReportWriter {
                     dataRow.getCell(14).setCellStyle(greenHalfCurrency);
                 }
                 rowCount++;
+
+                //add to totals
+                impTotal += data.getImps();
+                clickTotal += data.getClicks();
+                convTotal += data.getTotalConv();
+                mediaCostTotal += data.getMediaCost();
+                cpmTotal += data.getCpm();
+                cpcTotal += data.getCpc();
+                dailyBudgetTotal += data.getDailyBudget();
+                lifetimeBudgetTotal += data.getLifetimeBudget();
             }
+        }
+        rowCount++;
+        //populate total row
+        Row totalRow = sheet.createRow(rowCount);
+        totalRow.createCell(1).setCellValue("Totals:");
+        totalRow.createCell(2).setCellValue(impTotal);
+        totalRow.createCell(3).setCellValue(clickTotal);
+        totalRow.createCell(4).setCellValue(convTotal);
+        totalRow.createCell(5).setCellValue(mediaCostTotal);
+        totalRow.createCell(8).setCellValue(cpmTotal);
+        totalRow.createCell(9).setCellValue(cpcTotal);
+        totalRow.createCell(13).setCellValue(dailyBudgetTotal);
+        totalRow.createCell(14).setCellValue(lifetimeBudgetTotal);
+
+        //style total row
+        totalRow.getCell(5).setCellStyle(fullCurrency);
+        totalRow.getCell(8).setCellStyle(fullCurrency);
+        totalRow.getCell(9).setCellStyle(fullCurrency);
+        totalRow.getCell(13).setCellStyle(fullCurrency);
+        totalRow.getCell(14).setCellStyle(halfCurrency);
+
+        //autosize columns
+        for (int x = 0; x < 15; x++) {
+            sheet.autoSizeColumn(x);
         }
 
         //add column names for campaign header
-        rowCount+=2;
+
+        sheet = wb.createSheet("24hr Campaigns");
+        rowCount = 0;
+
         Row campaignHeader = sheet.createRow(rowCount);
         campaignHeader.createCell(0).setCellValue("Campaign ID");
         campaignHeader.createCell(1).setCellValue("Campaign Name");
@@ -183,6 +228,14 @@ public class ReportWriter {
         rowCount++;
 
         //add data row for each campaign
+        impTotal = 0;
+        clickTotal = 0;
+        convTotal = 0;
+        mediaCostTotal = 0.0f;
+        cpmTotal = 0.0f;
+        cpcTotal = 0.0f;
+        dailyBudgetTotal = 0.0f;
+        lifetimeBudgetTotal = 0;
         for(Advertiser ad : advertiserList) {
             for(DailyData data : ad.getDailyCampaigns()) {
                 Row dataRow = sheet.createRow(rowCount);
@@ -241,11 +294,45 @@ public class ReportWriter {
                 }
 
                 rowCount++;
+
+                //add to totals
+                impTotal += data.getImps();
+                clickTotal += data.getClicks();
+                convTotal += data.getTotalConv();
+                mediaCostTotal += data.getMediaCost();
+                cpmTotal += data.getCpm();
+                cpcTotal += data.getCpc();
+                dailyBudgetTotal += data.getDailyBudget();
+                lifetimeBudgetTotal += data.getLifetimeBudget();
             }
         }
-
         rowCount++;
+        //populate total row
+        totalRow = sheet.createRow(rowCount);
+        totalRow.createCell(1).setCellValue("Totals:");
+        totalRow.createCell(2).setCellValue(impTotal);
+        totalRow.createCell(3).setCellValue(clickTotal);
+        totalRow.createCell(4).setCellValue(convTotal);
+        totalRow.createCell(5).setCellValue(mediaCostTotal);
+        totalRow.createCell(8).setCellValue(cpmTotal);
+        totalRow.createCell(9).setCellValue(cpcTotal);
+        totalRow.createCell(13).setCellValue(dailyBudgetTotal);
+        totalRow.createCell(14).setCellValue(lifetimeBudgetTotal);
 
+        //style total row
+        totalRow.getCell(5).setCellStyle(fullCurrency);
+        totalRow.getCell(8).setCellStyle(fullCurrency);
+        totalRow.getCell(9).setCellStyle(fullCurrency);
+        totalRow.getCell(13).setCellStyle(fullCurrency);
+        totalRow.getCell(14).setCellStyle(halfCurrency);
+
+        //autosize columns
+        for (int x = 0; x < 15; x++) {
+            sheet.autoSizeColumn(x);
+        }
+
+        sheet = wb.createSheet("Lifetime Line Items");
+        rowCount = 0;
         //repeat for lifetime stats
         Row nextSubtitleRow = sheet.createRow(rowCount);
         nextSubtitleRow.createCell(0).setCellValue("Lifetime:");
@@ -274,6 +361,15 @@ public class ReportWriter {
 
         rowCount++;
 
+        //add data row for each campaign
+        impTotal = 0;
+        clickTotal = 0;
+        convTotal = 0;
+        mediaCostTotal = 0.0f;
+        cpmTotal = 0.0f;
+        cpcTotal = 0.0f;
+        dailyBudgetTotal = 0.0f;
+        lifetimeBudgetTotal = 0;
         for(Advertiser ad : advertiserList) {
             for(DailyData data : ad.getLifetimeLineItems()) {
                 if (data.getStatus().equals("active")) {
@@ -340,12 +436,48 @@ public class ReportWriter {
                         dataRow.getCell(16).setCellStyle(greenFullCurrency);
                     }
                     rowCount++;
+
+                    //add to totals
+                    impTotal += data.getImps();
+                    clickTotal += data.getClicks();
+                    convTotal += data.getTotalConv();
+                    mediaCostTotal += data.getMediaCost();
+                    cpmTotal += data.getCpm();
+                    cpcTotal += data.getCpc();
+                    dailyBudgetTotal += data.getDailyBudget();
+                    lifetimeBudgetTotal += data.getLifetimeBudget();
                 }
 
             }
         }
+        rowCount++;
+        //populate total row
+        totalRow = sheet.createRow(rowCount);
+        totalRow.createCell(1).setCellValue("Totals:");
+        totalRow.createCell(2).setCellValue(impTotal);
+        totalRow.createCell(3).setCellValue(clickTotal);
+        totalRow.createCell(4).setCellValue(convTotal);
+        totalRow.createCell(5).setCellValue(mediaCostTotal);
+        totalRow.createCell(8).setCellValue(cpmTotal);
+        totalRow.createCell(9).setCellValue(cpcTotal);
+        totalRow.createCell(13).setCellValue(dailyBudgetTotal);
+        totalRow.createCell(14).setCellValue(lifetimeBudgetTotal);
 
-        rowCount+=2;
+        //style total row
+        totalRow.getCell(5).setCellStyle(fullCurrency);
+        totalRow.getCell(8).setCellStyle(fullCurrency);
+        totalRow.getCell(9).setCellStyle(fullCurrency);
+        totalRow.getCell(13).setCellStyle(fullCurrency);
+        totalRow.getCell(14).setCellStyle(halfCurrency);
+
+        //autosize columns
+        for (int x = 0; x < 17; x++) {
+            sheet.autoSizeColumn(x);
+        }
+
+        sheet = wb.createSheet("Lifetime Campaigns");
+        rowCount = 0;
+
         Row nextCampaignHeader = sheet.createRow(rowCount);
         nextCampaignHeader.createCell(0).setCellValue("Campaign ID");
         nextCampaignHeader.createCell(1).setCellValue("Campaign Name");
@@ -370,6 +502,15 @@ public class ReportWriter {
 
         rowCount++;
 
+        //add data row for each campaign
+        impTotal = 0;
+        clickTotal = 0;
+        convTotal = 0;
+        mediaCostTotal = 0.0f;
+        cpmTotal = 0.0f;
+        cpcTotal = 0.0f;
+        dailyBudgetTotal = 0.0f;
+        lifetimeBudgetTotal = 0;
         for(Advertiser ad : advertiserList) {
             for(DailyData data : ad.getLifetimeCampaigns()) {
                 if (data.getStatus().equals("active")) {
@@ -436,10 +577,39 @@ public class ReportWriter {
                         dataRow.getCell(16).setCellStyle(greenFullCurrency);
                     }
                     rowCount++;
+
+                    //add to totals
+                    impTotal += data.getImps();
+                    clickTotal += data.getClicks();
+                    convTotal += data.getTotalConv();
+                    mediaCostTotal += data.getMediaCost();
+                    cpmTotal += data.getCpm();
+                    cpcTotal += data.getCpc();
+                    dailyBudgetTotal += data.getDailyBudget();
+                    lifetimeBudgetTotal += data.getLifetimeBudget();
                 }
 
             }
         }
+        rowCount++;
+        //populate total row
+        totalRow = sheet.createRow(rowCount);
+        totalRow.createCell(1).setCellValue("Totals:");
+        totalRow.createCell(2).setCellValue(impTotal);
+        totalRow.createCell(3).setCellValue(clickTotal);
+        totalRow.createCell(4).setCellValue(convTotal);
+        totalRow.createCell(5).setCellValue(mediaCostTotal);
+        totalRow.createCell(8).setCellValue(cpmTotal);
+        totalRow.createCell(9).setCellValue(cpcTotal);
+        totalRow.createCell(13).setCellValue(dailyBudgetTotal);
+        totalRow.createCell(14).setCellValue(lifetimeBudgetTotal);
+
+        //style total row
+        totalRow.getCell(5).setCellStyle(fullCurrency);
+        totalRow.getCell(8).setCellStyle(fullCurrency);
+        totalRow.getCell(9).setCellStyle(fullCurrency);
+        totalRow.getCell(13).setCellStyle(fullCurrency);
+        totalRow.getCell(14).setCellStyle(halfCurrency);
 
         //style subheaders
         Font smallBold = wb.createFont();

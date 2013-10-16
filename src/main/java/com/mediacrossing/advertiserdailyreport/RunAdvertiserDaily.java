@@ -48,7 +48,7 @@ public class RunAdvertiserDaily {
         DataParse parser = new DataParse();
 
         //for faster debugging
-        boolean development = false;
+        boolean development = true;
         if (development) {
             try{
                 FileInputStream door = new FileInputStream("/Users/charronkyle/Desktop/AdvertiserList.ser");
