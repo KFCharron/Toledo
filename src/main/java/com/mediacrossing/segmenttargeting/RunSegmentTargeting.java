@@ -63,7 +63,7 @@ public class RunSegmentTargeting {
         APPNEXUS_REQUEST_DELAY = properties.getRequestDelayInSeconds();
 
         //for faster debugging
-        boolean development = true;
+        boolean development = false;
         if (development) {
             try{
                 FileInputStream door = new FileInputStream("/Users/charronkyle/Desktop/TargetSegmentingData.ser");
@@ -215,7 +215,7 @@ public class RunSegmentTargeting {
         //update live campaign list
         dataStore.setLiveCampaignArrayList(newCampaignArrayList);
 
-        // Serialize data object to a file
+        /*// Serialize data object to a file
         try {
             ObjectOutputStream out = new ObjectOutputStream
                     (new FileOutputStream("/Users/charronkyle/Desktop/TargetSegmentingData.ser"));
@@ -224,7 +224,7 @@ public class RunSegmentTargeting {
         } catch (IOException e) {
             LOG.error("Serialization Failed!");
             LOG.error(e.toString());
-        }
+        }*/
 
         xlsWriter.writeSegmentLoadFile(dataStore.getLiveCampaignArrayList(), fileOutputPath);
 

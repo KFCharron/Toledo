@@ -17,11 +17,6 @@ public class XlsWriter {
     private static Workbook WORKBOOK;
     private static ArrayList<Campaign> CAMPAIGNARRAYLIST;
     private static String OUTPUTPATH;
-    private static ArrayList<SegmentRow> SEGMENTROWLIST;
-
-    public static void setSEGMENTROWLIST(ArrayList<SegmentRow> SEGMENTROWLIST) {
-        XlsWriter.SEGMENTROWLIST = SEGMENTROWLIST;
-    }
 
     public static void setCAMPAIGNARRAYLIST(ArrayList<Campaign> CAMPAIGNARRAYLIST) {
         XlsWriter.CAMPAIGNARRAYLIST = CAMPAIGNARRAYLIST;
@@ -48,7 +43,12 @@ public class XlsWriter {
         buildFrequencySheet();
         buildDaypartSheet();
         buildGeographySheet();
-        writeWorkbookToFileWithName("TargetSegmentReports.xls");
+        buildInsertionFeeSheet();
+        //freeze top row for every sheet
+        for (int x = 0; x < 5; x++) {
+            WORKBOOK.getSheetAt(x).createFreezePane(0,1);
+        }
+        writeWorkbookToFileWithName("DailyCheckUps.xls");
 
     }
 
@@ -63,11 +63,11 @@ public class XlsWriter {
         headerRow.createCell(1).setCellValue("Line Item");
         headerRow.createCell(2).setCellValue("Campaign ID");
         headerRow.createCell(3).setCellValue("Campaign Name");
-        headerRow.createCell(4).setCellValue("Action");
-        headerRow.createCell(5).setCellValue("Countries");
-        headerRow.createCell(6).setCellValue("Zips");
-        headerRow.createCell(7).setCellValue("DMA Action");
-        headerRow.createCell(8).setCellValue("Designated Market Areas");
+        headerRow.createCell(4).setCellValue("DMA Action");
+        headerRow.createCell(5).setCellValue("Designated Market Areas");
+        headerRow.createCell(6).setCellValue("Action");
+        headerRow.createCell(7).setCellValue("Zip Targets");
+        headerRow.createCell(8).setCellValue("Country");
 
         //Setting column widths
         segmentSheet.setColumnWidth(0, 3072);
@@ -87,42 +87,56 @@ public class XlsWriter {
 
         //Repeat row for every campaign in list
         int rowCounter = 1;
-        for (Campaign campaign : CAMPAIGNARRAYLIST) {
+        for (Campaign camp : CAMPAIGNARRAYLIST) {
             Row campaignRow = segmentSheet.createRow(rowCounter);
-            campaignRow.createCell(0).setCellValue(campaign.getAdvertiserID());
-            campaignRow.createCell(1).setCellValue(campaign.getLineItemID());
-            campaignRow.createCell(2).setCellValue(campaign.getId());
-            campaignRow.createCell(3).setCellValue(campaign.getName());
-            campaignRow.createCell(4).setCellValue(campaign.getGeographyTargets().getCountryAction());
+            campaignRow.createCell(0).setCellValue(camp.getAdvertiserID());
+            campaignRow.createCell(1).setCellValue(camp.getLineItemID());
+            campaignRow.createCell(2).setCellValue(camp.getId());
+            campaignRow.createCell(3).setCellValue(camp.getName());
+
             StringBuilder stringBuilder = new StringBuilder();
-            int index = 0;
-            for(CountryTarget country : campaign.getGeographyTargets().getCountryTargetList()) {
+            int index = 1;
+            for(DMATarget dma : camp.getGeographyTargets().getDmaTargetList()) {
+                stringBuilder.append(dma.getName());
+                stringBuilder.append("     ");
+                if(index % 5 == 0) {
+                    stringBuilder.append("\n");
+                }
+                index++;
+            }
+            campaignRow.createCell(5).setCellValue(stringBuilder.toString());
+
+            campaignRow.createCell(4);
+            if (camp.getGeographyTargets().getDmaTargetList().size() != 0)
+                campaignRow.getCell(4).setCellValue(camp.getGeographyTargets().getDmaAction());
+
+            stringBuilder = new StringBuilder();
+            index = 1;
+            for(ZipTarget zip : camp.getGeographyTargets().getZipTargetList()) {
+                stringBuilder.append(zip.getFromZip());
+                stringBuilder.append("-");
+                stringBuilder.append(zip.getToZip());
+                stringBuilder.append("     ");
+                if(index % 5 == 0) {
+                    stringBuilder.append("\n");
+                }
+                index++;
+            }
+            campaignRow.createCell(7).setCellValue(stringBuilder.toString());
+
+            campaignRow.createCell(6);
+            if(camp.getGeographyTargets().getCountryTargetList().size() != 0)
+                campaignRow.getCell(6).setCellValue(camp.getGeographyTargets().getCountryAction());
+
+
+            stringBuilder = new StringBuilder();
+            index = 0;
+            for(CountryTarget country : camp.getGeographyTargets().getCountryTargetList()) {
                 if (index > 0) {
                     stringBuilder.append(", ");
                 }
                 stringBuilder.append(country.getName());
                 index++;
-            }
-            campaignRow.createCell(5).setCellValue(stringBuilder.toString());
-            stringBuilder = new StringBuilder();
-            index = 0;
-            for(ZipTarget zip : campaign.getGeographyTargets().getZipTargetList()) {
-                if (index > 0) {
-                    stringBuilder.append(", ");
-                }
-                stringBuilder.append(zip.getFromZip());
-                stringBuilder.append(" - ");
-                stringBuilder.append(zip.getToZip());
-            }
-            campaignRow.createCell(6).setCellValue(stringBuilder.toString());
-            campaignRow.createCell(7).setCellValue(campaign.getGeographyTargets().getDmaAction());
-            stringBuilder = new StringBuilder();
-            index = 0;
-            for(DMATarget dma : campaign.getGeographyTargets().getDmaTargetList()) {
-                if (index > 0) {
-                    stringBuilder.append(", ");
-                }
-                stringBuilder.append(dma.getName());
             }
             campaignRow.createCell(8).setCellValue(stringBuilder.toString());
 
@@ -248,7 +262,6 @@ public class XlsWriter {
             headerRow.createCell(2).setCellValue("Campaign ID");
             headerRow.createCell(3).setCellValue("Campaign");
             headerRow.createCell(4).setCellValue("Segments");
-            headerRow.createCell(5).setCellValue("Insertion Fees");
 
             //Setting ID columns to the width of 10 chars
             segmentSheet.setColumnWidth(0, 3072);
@@ -262,7 +275,7 @@ public class XlsWriter {
             font.setBoldweight((short) 700);
             CellStyle bold = WORKBOOK.createCellStyle();
             bold.setFont(font);
-            for(int x = 0; x < 6; x++)
+            for(int x = 0; x < 5; x++)
                 headerRow.getCell(x).setCellStyle(bold);
 
 
@@ -289,30 +302,17 @@ public class XlsWriter {
                         oneLine.append("(" + currentSegmentArray.get(y).getId() + ")" + currentSegmentArray.get(y).getName());
                         oneLine.append("]");
                         if((y+1) < currentSegmentArray.size()) {
-                            oneLine.append(" " + currentSegmentArray.get(y).getBoolOp() + " ");
+                            oneLine.append("\n" + currentSegmentArray.get(y).getBoolOp() + "\n");
                         }
                     }
-                    oneLine.append("}");
+                    oneLine.append("}\n ");
 
                     if ((x+1) < campaign.getSegmentGroupTargetList().size()) {
-                        oneLine.append("\n -" + (campaign.getSegmentGroupTargetList().get(x).getBoolOp()) + "- \n");
-                        linebreakCount += 2;
+                        oneLine.append("\n -" + (campaign.getSegmentGroupTargetList().get(x).getBoolOp().toUpperCase()) + "- \n\n");
+                        linebreakCount += 3;
                     }
                 }
                 campaignRow.createCell(4).setCellValue(oneLine.toString());
-
-                oneLine = new StringBuffer();
-                if(campaign.getServingFeeList() != null) {
-                    for(ServingFee fee : campaign.getServingFeeList()) {
-                        oneLine.append(fee.getBrokerName() + " ");
-                        oneLine.append(fee.getPaymentType() + " ");
-                        oneLine.append("$" + fee.getValue() + " ");
-                        oneLine.append("for " + fee.getDescription() + "\n");
-                    }
-                }
-                campaignRow.createCell(5).setCellValue(oneLine.toString());
-
-
 
                 //Styles for patterning rows
                 CellStyle altRow = WORKBOOK.createCellStyle();
@@ -326,11 +326,11 @@ public class XlsWriter {
 
                 //Pattern rows
                 if((rowCounter % 2) == 1) {
-                    for (int x = 0; x < 6; x++)
+                    for (int x = 0; x < 5; x++)
                         campaignRow.getCell(x).setCellStyle(altRow);
                 }
                 else {
-                    for (int x = 0; x < 6; x++)
+                    for (int x = 0; x < 5; x++)
                         campaignRow.getCell(x).setCellStyle(whiteRow);
                 }
 
@@ -340,9 +340,77 @@ public class XlsWriter {
             //auto-size columns
             segmentSheet.autoSizeColumn(3);
             segmentSheet.autoSizeColumn(4);
-            segmentSheet.autoSizeColumn(5);
+    }
 
+    public void buildInsertionFeeSheet() {
 
+        //Create new sheet
+        Sheet insertionSheet = WORKBOOK.createSheet("Insertion Fees");
+
+        //Header row
+        Row headerRow = insertionSheet.createRow((short) 0);
+        headerRow.createCell(0).setCellValue("Advertiser");
+        headerRow.createCell(1).setCellValue("Line Item");
+        headerRow.createCell(2).setCellValue("Campaign ID");
+        headerRow.createCell(3).setCellValue("Campaign");
+        headerRow.createCell(4).setCellValue("Insertion Fees");
+
+        //Setting ID columns to the width of 10 chars
+        insertionSheet.setColumnWidth(0, 3072);
+        insertionSheet.setColumnWidth(1, 2560);
+        insertionSheet.setColumnWidth(2, 3840);
+
+        //Style header
+        Font font = WORKBOOK.createFont();
+        font.setFontHeightInPoints((short) 14);
+        font.setBoldweight((short) 700);
+        CellStyle bold = WORKBOOK.createCellStyle();
+        bold.setFont(font);
+        for(Cell c : headerRow)
+            c.setCellStyle(bold);
+
+        //Repeat row for every campaign
+        short rowCount = 1;
+        for (Campaign c : CAMPAIGNARRAYLIST) {
+            Row campRow = insertionSheet.createRow(rowCount);
+            campRow.createCell(0).setCellValue(c.getAdvertiserID());
+            campRow.createCell(1).setCellValue(c.getLineItemID());
+            campRow.createCell(2).setCellValue(c.getId());
+            campRow.createCell(3).setCellValue(c.getName());
+            StringBuffer sb = new StringBuffer();
+            if (c.getServingFeeList() != null) {
+                for (ServingFee fee : c.getServingFeeList()) {
+                    sb.append(fee.getBrokerName() + " " );
+                    sb.append("$" + fee.getValue() + " ");
+                    sb.append(fee.getPaymentType() + " ");
+                    sb.append("for " + fee.getDescription() + "\n");
+                }
+            }
+            campRow.createCell(4).setCellValue(sb.toString());
+
+            //Styles for patterning rows
+            CellStyle altRow = WORKBOOK.createCellStyle();
+            altRow.setFillForegroundColor(HSSFColor.LIGHT_GREEN.index);
+            altRow.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+            altRow.setWrapText(true);
+            CellStyle whiteRow = WORKBOOK.createCellStyle();
+            whiteRow.setWrapText(true);
+
+            if ((rowCount % 2) == 1) {
+                for (Cell cc : campRow) {
+                    cc.setCellStyle(altRow);
+                }
+            } else {
+                for ( Cell cc : campRow) {
+                    cc.setCellStyle(whiteRow);
+                }
+            }
+
+            rowCount++;
+        }
+
+        insertionSheet.autoSizeColumn(3);
+        insertionSheet.autoSizeColumn(4);
 
     }
 
