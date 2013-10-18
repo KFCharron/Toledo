@@ -1,13 +1,14 @@
 package com.mediacrossing.campaignbooks;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.joda.time.Duration;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 import java.io.Serializable;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class Campaign implements Serializable {
@@ -37,17 +38,15 @@ public class Campaign implements Serializable {
         this.status = status;
 
         //Converting parsed date strings to Date objects
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
         if (!startDate.equals("null")) {
-            Date start = sdf.parse(startDate);
-            this.startDate = new DateTime(start);
+            this.startDate = new DateTime(formatter.parseDateTime(startDate), DateTimeZone.UTC);
         }
         else {
             this.startDate = null;
         }
         if (!endDate.equals("null")) {
-            Date end = sdf.parse(endDate);
-            this.endDate = new DateTime(end);
+            this.endDate = new DateTime(formatter.parseDateTime(endDate), DateTimeZone.UTC);
         }
         else {
             this.endDate = null;

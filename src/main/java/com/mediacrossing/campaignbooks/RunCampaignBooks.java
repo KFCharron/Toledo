@@ -46,7 +46,6 @@ public class RunCampaignBooks {
         String mxUsername = properties.getMxUsername();
         String mxPassword = properties.getMxPassword();
         HTTPConnection httpConnection = new HTTPConnection(mxUsername, mxPassword);
-        DataParse parser = new DataParse();
 
         //for faster debugging
         boolean development = false;
@@ -83,29 +82,29 @@ public class RunCampaignBooks {
         rawJsonData = httpConnection.getJSONData();
 
         //Parse and save to list of advertisers
-        final List<Advertiser> advertiserList = parser.populateAdvertiserList(rawJsonData);
+        final List<Advertiser> advertiserList = DataParse.populateAdvertiserList(rawJsonData);
 
         //Query MX for line items and campaigns of each advertiser, save them to advertiser list
         int count = 0;
-        for (Advertiser advertiser : advertiserList) {
-            httpConnection.setUrl(mxUrl + "/api/catalog/advertisers/" + advertiser.getAdvertiserID() + "/line-items");
+        for (Advertiser ad : advertiserList) {
+            httpConnection.setUrl(mxUrl + "/api/catalog/advertisers/" + ad.getAdvertiserID() + "/line-items");
             try {
                 httpConnection.requestData(mxRequestProperties);
                 rawJsonData = httpConnection.getJSONData();
-                ArrayList<LineItem> lineItemList = parser.populateLineItemList(rawJsonData);
+                ArrayList<LineItem> lineItemList = DataParse.populateLineItemList(rawJsonData);
                 for (LineItem lineItem : lineItemList) {
-                    httpConnection.setUrl(mxUrl + "/api/catalog/advertisers/" + advertiser.getAdvertiserID() +
+                    httpConnection.setUrl(mxUrl + "/api/catalog/advertisers/" + ad.getAdvertiserID() +
                             "/line-items/" + lineItem.getLineItemID() + "/campaigns");
                     httpConnection.requestData(mxRequestProperties);
                     rawJsonData = httpConnection.getJSONData();
-                    ArrayList<Campaign> campaignList = parser.populateCampaignList(rawJsonData);
+                    ArrayList<Campaign> campaignList = DataParse.populateCampaignList(rawJsonData);
                     lineItem.setCampaignList(campaignList);
                 }
-                advertiser = new Advertiser(advertiser.getAdvertiserID(), advertiser.getAdvertiserName(), lineItemList);
-                advertiserList.set(count, advertiser);
+                ad = new Advertiser(ad.getAdvertiserID(), ad.getAdvertiserName(), lineItemList);
+                advertiserList.set(count, ad);
             } catch (FileNotFoundException e) {
                 advertiserList.get(count).setLive(false);
-                LOG.debug(advertiser.getAdvertiserID() + ": No line items found, live set to false.");
+                LOG.debug(ad.getAdvertiserID() + ": No line items found, live set to false.");
             }
             count++;
         }
@@ -117,14 +116,14 @@ public class RunCampaignBooks {
         for (Advertiser ad : advertiserList) {
             ad.setLive(false);
             for(LineItem li : ad.getLineItemList()) {
-                if(li.getDaysRemaining() > 0 && li.getEndDate()!= null) {
+                if(li.getDaysRemaining() > 0 && li.getEndDateTime()!= null) {
                     ad.setLive(true);
                 }
             }
         }
 
         //Create new list with only live advertisers
-        ArrayList<Advertiser> liveAdvertiserList = new ArrayList<Advertiser>();
+        final ArrayList<Advertiser> liveAdvertiserList = new ArrayList<Advertiser>();
         for (Advertiser ad : advertiserList) {
             if (ad.isLive()) {
                 liveAdvertiserList.add(ad);
@@ -132,11 +131,11 @@ public class RunCampaignBooks {
         }
 
         //For every advertiser, request report
-        for (Advertiser advertiser : liveAdvertiserList) {
+        for (Advertiser ad : liveAdvertiserList) {
 
             //request daily deliveries
-            List<String[]> csvData = AppNexusReportRequests.getAdvertiserAnalyticReport(advertiser.getAdvertiserID(),
-                        appNexusUrl, httpConnection);
+            List<String[]> csvData = AppNexusReportRequests.getAdvertiserAnalyticReport(ad.getAdvertiserID(),
+                    appNexusUrl, httpConnection);
 
             //remove header string
             csvData.remove(0);
@@ -144,7 +143,7 @@ public class RunCampaignBooks {
             //Creates new delivery, adds it to campaign if ids match
             for (String[] line : csvData) {
                 Delivery delivery = new Delivery(line[0], line[1], line[2], line[3], line[4], line[5], line[6]);
-                for(LineItem lineItem : advertiser.getLineItemList()) {
+                for(LineItem lineItem : ad.getLineItemList()) {
                     for(Campaign campaign : lineItem.getCampaignList()) {
                         if (campaign.getCampaignID().equals(delivery.getCampaignID())) {
                             campaign.addToDeliveries(delivery);
@@ -155,7 +154,7 @@ public class RunCampaignBooks {
             }
 
             //request lifetime stats
-            csvData = AppNexusReportRequests.getLifetimeAdvertiserReport(advertiser.getAdvertiserID(),
+            csvData = AppNexusReportRequests.getLifetimeAdvertiserReport(ad.getAdvertiserID(),
                     appNexusUrl, httpConnection);
 
             //remove header string
@@ -163,7 +162,7 @@ public class RunCampaignBooks {
 
             //Creates new delivery, adds it to campaign if ids match
             for (String[] line : csvData) {
-                for(LineItem li : advertiser.getLineItemList()) {
+                for(LineItem li : ad.getLineItemList()) {
                     for(Campaign camp : li.getCampaignList()) {
                        if(camp.getCampaignID().equals(line[0])) {
                            camp.setLifetimeImps(Integer.parseInt(line[1]));
@@ -177,14 +176,14 @@ public class RunCampaignBooks {
         }
 
         //Remove the first delivery from each campaign, incomplete data
-        for (Advertiser ad : liveAdvertiserList) {
+        /*for (Advertiser ad : liveAdvertiserList) {
             for(LineItem li : ad.getLineItemList()) {
                 for(Campaign camp : li.getCampaignList()) {
                     if(camp.getDeliveries().size() > 0)
                         camp.getDeliveries().remove(0);
                 }
             }
-        }
+        }*/
 
         // Serialize data object to a file
         /*try {

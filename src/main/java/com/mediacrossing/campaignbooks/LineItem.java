@@ -1,21 +1,21 @@
 package com.mediacrossing.campaignbooks;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.joda.time.Duration;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class LineItem implements Serializable {
 
     private String lineItemID;
     private String lineItemName;
-    private Date startDate;
-    private Date endDate;
     private float lifetimeBudget;
     private float dailyBudget;
     private long daysActive;
@@ -32,13 +32,11 @@ public class LineItem implements Serializable {
         this.lineItemID = lineItemID;
         this.lineItemName = lineItemName;
         this.status = status;
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
         if(!startDate.equals("null") && !endDate.equals("null")) {
-            this.startDate = sdf.parse(startDate);
-            this.startDateTime = new DateTime(startDate);
-            this.endDate = sdf.parse(endDate);
-            this.endDateTime = new DateTime(endDate);
+            this.startDateTime = new DateTime(formatter.parseDateTime(startDate), DateTimeZone.UTC);
+            this.endDateTime = new DateTime(formatter.parseDateTime(endDate), DateTimeZone.UTC);
         }
 
         Duration startToEnd = new Duration(startDateTime, endDateTime);
@@ -68,10 +66,6 @@ public class LineItem implements Serializable {
         return startDateTime;
     }
 
-    public Date getEndDate() {
-        return endDate;
-    }
-
     public String getLineItemID() {
         return lineItemID;
     }
@@ -81,16 +75,16 @@ public class LineItem implements Serializable {
     }
 
     public String getStartDateString() {
-        if(startDate != null) {
-           return new SimpleDateFormat("dd-MMM").format(startDate);
+        if(startDateTime != null) {
+           return (startDateTime.monthOfYear().getAsString() + "/" + startDateTime.dayOfMonth().getAsString());
         } else {
            return "";
         }
     }
 
     public String getEndDateString() {
-        if(startDate != null) {
-            return new SimpleDateFormat("dd-MMM").format(endDate);
+        if(endDateTime != null) {
+            return (endDateTime.monthOfYear().getAsString() + "/" + endDateTime.dayOfMonth().getAsString());
         } else {
             return "";
         }
@@ -118,12 +112,6 @@ public class LineItem implements Serializable {
 
     public void setCampaignList(ArrayList<Campaign> campaignList) {
         this.campaignList = campaignList;
-    }
-
-    public long getFlightPercentage() {
-        long duration = this.endDate.getTime() - this.startDate.getTime();
-        long timeSinceStart = new Date().getTime() - this.startDate.getTime();
-        return(timeSinceStart / duration * 100);
     }
 
     public DateTime getEndDateTime() {

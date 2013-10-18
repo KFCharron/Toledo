@@ -41,6 +41,11 @@ public class ExcelWriter {
 
 
         int rowCount = 0;
+        //setup totals for entire advertiser
+        float ltBudgetGrandTotal = 0;
+        float dailyBudgetGrandTotal = 0;
+        float cumulativeDeliveryGrandTotal = 0;
+        double[] dailyDeliveryGrandTotal = new double[100];
 
         for (int a = ad.getLineItemList().size()-1; a >= 0; a--) {
 
@@ -211,7 +216,7 @@ public class ExcelWriter {
                 int cellCount = 9;
 
                 //list daily deliveries
-                for (long x = startToNow.getStandardDays(); x > 0; x--) {
+                for (long x = startToNow.getStandardDays()-1; x > 0; x--) {
                     //add header cell with date
                     campaignHeaderRow.createCell(cellCount)
                             .setCellValue(lineItem.getStartDateTime().plusDays((int)x).monthOfYear().getAsString() +
@@ -219,10 +224,10 @@ public class ExcelWriter {
                     //step through every delivery
                     for(Delivery del : campaign.getDeliveries()) {
                         //if the dates match, add them
-                        if(Integer.parseInt(lineItem.getStartDateTime()
-                                .plusDays((int)x).dayOfMonth().getAsString()) == del.getDate().getDayOfMonth() &&
-                                Integer.parseInt(lineItem.getStartDateTime()
-                                        .plusDays((int)x).monthOfYear().getAsString()) ==
+                        if(lineItem.getStartDateTime()
+                                .plusDays((int)x).dayOfMonth().get() == del.getDate().getDayOfMonth() &&
+                                lineItem.getStartDateTime()
+                                        .plusDays((int)x).monthOfYear().get() ==
                                         del.getDate().getMonthOfYear()) {
 
                             campaignRow.createCell(cellCount).setCellValue(del.getDelivery());
@@ -230,6 +235,7 @@ public class ExcelWriter {
                             campaignRow.getCell(cellCount).setCellStyle(fullCurrency);
                             //add to total count for the column
                             totalDailyDelivery[cellCount] += del.getDelivery();
+                            dailyDeliveryGrandTotal[cellCount] += del.getDelivery();
                         }
                     }
                     cellCount++;
@@ -257,6 +263,11 @@ public class ExcelWriter {
             totalRow.createCell(6).setCellValue(totalDailyBudget);
             totalRow.createCell(7).setCellValue(totalActualDailyBudget);
             totalRow.createCell(8).setCellValue(totalCumulativeDelivery);
+
+            //add to grand totals
+            ltBudgetGrandTotal += totalLifetimeBudget;
+            dailyBudgetGrandTotal += totalDailyBudget;
+            cumulativeDeliveryGrandTotal += totalCumulativeDelivery;
 
             //set cell styles
             totalRow.getCell(2).setCellStyle(fullCurrency);
@@ -385,7 +396,7 @@ public class ExcelWriter {
                 }
 
                 int cellCount = 9;
-                for (int x = 0; x < 9; x++)
+                for (int x = 0; x < 8; x++)
                     impRow.createCell(x);
                 for (Cell cell : campRow) {
                     cell.setCellStyle(bottomBorder);
@@ -395,7 +406,7 @@ public class ExcelWriter {
                 }
 
                 //for every day between start date and now, create column
-                for (long x = startToNow.getStandardDays(); x > 0; x--) {
+                for (long x = startToNow.getStandardDays()-1; x > 0; x--) {
 
                     //add date header
                     campHeaderRow.createCell(cellCount)
@@ -407,11 +418,11 @@ public class ExcelWriter {
                     for(Delivery del : camp.getDeliveries()) {
 
                         //if the dates match
-                        if(Integer.parseInt(lineItem.getStartDateTime().plusDays((int)x).dayOfMonth().getAsString())
+                        if(lineItem.getStartDateTime().plusDays((int)x).dayOfMonth().get()
                                 == del.getDate().getDayOfMonth() &&
-                                Integer.parseInt(lineItem.getStartDateTime()
+                                lineItem.getStartDateTime()
                                         .plusDays((int)x).monthOfYear()
-                                        .getAsString()) == del.getDate().getMonthOfYear()) {
+                                        .get() == del.getDate().getMonthOfYear()) {
 
                             //don't add blank cells
                             blankCells = false;
@@ -465,10 +476,31 @@ public class ExcelWriter {
             rowCount+=3;
 
         }
+        //Display totals
+        Row grandTotal = lineItemSheet.createRow(rowCount);
+        grandTotal.createCell(1).setCellValue("Grand");
+        grandTotal.createCell(2).setCellValue(dailyBudgetGrandTotal);
+        grandTotal.createCell(3).setCellValue(ltBudgetGrandTotal);
+        grandTotal.createCell(4).setCellValue(cumulativeDeliveryGrandTotal);
+
+        //set styles
+        grandTotal.getCell(2).setCellStyle(fullCurrency);
+        grandTotal.getCell(3).setCellStyle(fullCurrency);
+        grandTotal.getCell(4).setCellStyle(fullCurrency);
+
+        //Display daily grand totals
+        int cellCount = 9;
+        while(cellCount < dailyDeliveryGrandTotal.length) {
+            grandTotal.createCell(cellCount).setCellValue(dailyDeliveryGrandTotal[cellCount]);
+            grandTotal.getCell(cellCount).setCellStyle(fullCurrency);
+            if(dailyDeliveryGrandTotal[cellCount] == 0) grandTotal.removeCell(grandTotal.getCell(cellCount));
+            cellCount++;
+        }
+
     }
 
     public static void writeWorkbookToFileWithOutputPath(String outputPath) throws IOException {
-        FileOutputStream fileOut = new FileOutputStream(new File(outputPath, "CampaignBooks.xls"));
+        FileOutputStream fileOut = new FileOutputStream(new File(outputPath, "AutomatedCampaignBooks.xls"));
         WORKBOOK.write(fileOut);
         fileOut.close();
     }
