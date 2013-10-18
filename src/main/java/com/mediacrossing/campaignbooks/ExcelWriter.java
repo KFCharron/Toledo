@@ -62,8 +62,8 @@ public class ExcelWriter {
             lineItemHeader.createCell(6).setCellValue("Daily Budget");
             lineItemHeader.createCell(7).setCellValue("Total Pacing");
             lineItemHeader.createCell(8).setCellValue("LT Budget Used");
-            lineItemHeader.createCell(10).setCellValue("Days Remaining");
-            lineItemHeader.createCell(9).setCellValue("Duration Passed");
+            lineItemHeader.createCell(10).setCellValue("Days Rem.");
+            lineItemHeader.createCell(9).setCellValue("Flight");
 
             //style header
             Font font = WORKBOOK.createFont();
@@ -166,16 +166,10 @@ public class ExcelWriter {
                 if (campaign.getStatus().equals("inactive")) {
                     Font italics = WORKBOOK.createFont();
                     italics.setItalic(true);
+                    italics.setColor(IndexedColors.GREY_25_PERCENT.getIndex());
                     CellStyle style = WORKBOOK.createCellStyle();
                     style.setFont(italics);
                     campaignRow.getCell(1).setCellStyle(style);
-                } else {
-                    //if active, bold camp name
-                    Font bolding = WORKBOOK.createFont();
-                    bolding.setBoldweight((short)500);
-                    CellStyle bolds = WORKBOOK.createCellStyle();
-                    bolds.setFont(bolding);
-                    campaignRow.getCell(1).setCellStyle(bolds);
                 }
 
                 campaignRow.createCell(2).setCellValue(campaign.getLifetimeBudget());
@@ -349,6 +343,12 @@ public class ExcelWriter {
             bottomBorder.setBorderTop(CellStyle.BORDER_NONE);
             bottomBorder.setBorderBottom(CellStyle.BORDER_THICK);
 
+            CellStyle bottomBorderCtr = WORKBOOK.createCellStyle();
+            bottomBorderCtr.setBorderTop(CellStyle.BORDER_NONE);
+            bottomBorderCtr.setBorderBottom(CellStyle.BORDER_THICK);
+            bottomBorderCtr.setDataFormat(df.getFormat("0.0000%"));
+
+
             CellStyle topBorder = WORKBOOK.createCellStyle();
             topBorder.setBorderTop(CellStyle.BORDER_THICK);
 
@@ -376,25 +376,7 @@ public class ExcelWriter {
                 campRow.createCell(7);
                 campRow.createCell(8).setCellValue("CTR:");
 
-                //style cells
-                campRow.getCell(5).setCellStyle(ctrPercentage);
-
                 //if camp inactive, italic name
-                if (camp.getStatus().equals("inactive")) {
-                    Font italics = WORKBOOK.createFont();
-                    italics.setItalic(true);
-                    CellStyle style = WORKBOOK.createCellStyle();
-                    style.setFont(italics);
-                    campRow.getCell(1).setCellStyle(style);
-                } else {
-                    //if camp active, bold name
-                    Font bolding = WORKBOOK.createFont();
-                    bolding.setBoldweight((short)500);
-                    CellStyle bolds = WORKBOOK.createCellStyle();
-                    bolds.setFont(bolding);
-                    campRow.getCell(1).setCellStyle(bolds);
-                }
-
                 int cellCount = 9;
                 for (int x = 0; x < 8; x++)
                     impRow.createCell(x);
@@ -404,6 +386,18 @@ public class ExcelWriter {
                 for (Cell cell : impRow) {
                     cell.setCellStyle(topBorder);
                 }
+
+                if (camp.getStatus().equals("inactive")) {
+                    Font italics = WORKBOOK.createFont();
+                    italics.setItalic(true);
+                    italics.setColor(IndexedColors.GREY_25_PERCENT.getIndex());
+                    CellStyle style = WORKBOOK.createCellStyle();
+                    style.setBorderTop(CellStyle.BORDER_NONE);
+                    style.setBorderBottom(CellStyle.BORDER_THICK);
+                    style.setFont(italics);
+                    campRow.getCell(1).setCellStyle(style);
+                }
+                campRow.getCell(5).setCellStyle(bottomBorderCtr);
 
                 //for every day between start date and now, create column
                 for (long x = startToNow.getStandardDays()-1; x > 0; x--) {
