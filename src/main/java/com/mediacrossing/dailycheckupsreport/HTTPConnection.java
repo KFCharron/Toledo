@@ -451,7 +451,7 @@ public class HTTPConnection {
                 "        \"row_per\":[\n" +
                 "            \"placement_id\"\n" +
                 "        ],\n" +
-                "        \"report_interval\":\"lifetime\",\n" +
+                "        \"report_interval\":\"" + interval + "\",\n" +
                 "        \"orders\": [\n" +
                 "                    {\n" +
                 "                        \"order_by\":\"placement_id\", \n" +
@@ -598,7 +598,7 @@ public class HTTPConnection {
         JsonObject jobject = jelement.getAsJsonObject();
         jobject = jobject.getAsJsonObject("response");
         String reportId = jobject.get("report_id").toString().replace("\"", "");
-        if (reportId.isEmpty()) {
+        if (reportId == null) {
             LOG.error("ReportID not received.");
         }
 
