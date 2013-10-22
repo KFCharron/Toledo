@@ -1,5 +1,6 @@
-package com.mediacrossing.dailycheckupsreport;
+package com.mediacrossing.segmentloadreport;
 
+import com.mediacrossing.dailycheckupsreport.*;
 import com.mediacrossing.dailycheckupsreport.profiles.ProfileRepository;
 import com.mediacrossing.properties.ConfigurationProperties;
 import com.mediacrossing.reportrequests.AppNexusReportRequests;
@@ -15,11 +16,11 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
-public class RunDailyCheckUps {
+public class RunSegmentLoadReport {
 
     private static int APPNEXUS_PARTITION_SIZE;
     private static Duration APPNEXUS_REQUEST_DELAY;
-    private static final Logger LOG = LoggerFactory.getLogger(RunDailyCheckUps.class);
+    private static final Logger LOG = LoggerFactory.getLogger(RunSegmentLoadReport.class);
 
     private static ProfileRepository development(HTTPConnection r) {
         return new TruncatedProfileRepository(r, 10);
@@ -71,7 +72,7 @@ public class RunDailyCheckUps {
                 dataStore.setLiveCampaignArrayList((ArrayList<Campaign>) reader.readObject());
                 //Write xls file for all target segment reports
                 XlsWriter xlsWriter = new XlsWriter();
-                xlsWriter.writeAllReports(dataStore.getLiveCampaignArrayList(), fileOutputPath);
+                xlsWriter.writeSegmentLoadFile(dataStore.getLiveCampaignArrayList(), fileOutputPath);
                 System.exit(0);
 
             }catch (IOException e){
@@ -109,11 +110,109 @@ public class RunDailyCheckUps {
             c.setProfile(profiles.get(index));
         }
 
-        //Write xls file for all target segment reports
-        XlsWriter xlsWriter = new XlsWriter();
-        xlsWriter.writeAllReports(dataStore.getLiveCampaignArrayList(), fileOutputPath);
+        /*
+        Segment Load Report
+        */
 
-       /*// Serialize data object to a file
+
+        //Request advertiser analytic reports to obtain daily campaign impressions
+        //collect set of unique advertiser ids
+        HashSet<String> advertiserIdSet = new HashSet<String>();
+        for (Campaign campaign : dataStore.getLiveCampaignArrayList()) {
+            advertiserIdSet.add(campaign.getAdvertiserID());
+        }
+
+        //For every ad id, query MX
+        //step through each campaign, add advertiser to it
+        //Request reports for each ad id
+        ArrayList<Campaign> campaignList = dataStore.getLiveCampaignArrayList();
+        List<String[]> csvData;
+        for(String advertiserId : advertiserIdSet) {
+
+            csvData = AppNexusReportRequests.getCampaignImpsReport(advertiserId,
+                    appNexusUrl, httpConnection);
+
+            //remove header
+            csvData.remove(0);
+
+            //for every row in the file
+            for (String[] line : csvData) {
+                for(Campaign campaign : campaignList) {
+                    if(campaign.getId().equals(line[0])) {
+                        campaign.setDailyImps(Integer.parseInt(line[1]));
+                    }
+                }
+            }
+        }
+        //update the live campaign list in the data store
+        dataStore.setLiveCampaignArrayList(campaignList);
+
+        //Collect all segments into one list
+        ArrayList<Segment> allSegments = new ArrayList<Segment>();
+        for(Campaign campaign : dataStore.getCampaignArrayList()) {
+            for(SegmentGroupTarget segmentGroupTarget : campaign.getProfile().getSegmentGroupTargets()) {
+                for(Segment segment : segmentGroupTarget.getSegmentArrayList()) {
+                    if(segment.getAction().equals("include")) {
+                        allSegments.add(segment);
+                    }
+                }
+            }
+        }
+        //Create set of unique segmentIds
+        HashSet segmentIdSet = new HashSet();
+        for(Segment segment : allSegments) {
+            segmentIdSet.add(segment.getId());
+        }
+
+        csvData = AppNexusReportRequests.getSegmentLoadReport(segmentIdSet,
+                appNexusUrl, httpConnection);
+
+        //remove header data
+        csvData.remove(0);
+
+        //save segment data to each segment
+        ArrayList<Campaign> newCampaignArrayList = dataStore.getLiveCampaignArrayList();
+
+        //collect ad ids
+        HashSet<String> uniqueAdIds = new HashSet<String>();
+        for (Campaign camp : newCampaignArrayList) {
+            uniqueAdIds.add(camp.getAdvertiserID());
+        }
+
+        //step through all campaigns, compare both line IDs and ad ids
+        for (String adId : uniqueAdIds) {
+            httpConnection.requestAdvertiserFromMX(mxUrl, adId);
+            String jsonData = httpConnection.getJSONData();
+            for (Campaign camp : newCampaignArrayList) {
+                if (camp.getAdvertiserID().equals(adId)) {
+                    camp.setAdvertiserName(parser.obtainAdvertiserName(jsonData));
+                    ArrayList<String> liArray = parser.obtainLineItemArray(jsonData);
+                    for(String li : liArray) {
+                        if(camp.getLineItemID().equals(li)) {
+                            httpConnection.requestLineItemsFromMX(mxUrl, adId);
+                            camp.setLineItemName(parser.obtainLineItemName(httpConnection.getJSONData(),li));
+                        }
+                    }
+                }
+            }
+        }
+
+        for (String[] line : csvData) {
+            for(Campaign campaign : newCampaignArrayList) {
+                for(SegmentGroupTarget segmentGroupTarget : campaign.getProfile().getSegmentGroupTargets()) {
+                    for(Segment segment : segmentGroupTarget.getSegmentArrayList()) {
+                        if(segment.getId().equals(line[0])) {
+                            segment.setTotalSegmentLoads(line[3]);
+                            segment.setDailySegmentLoads(line[4]);
+                        }
+                    }
+                }
+            }
+        }
+        //update live campaign list
+        dataStore.setLiveCampaignArrayList(newCampaignArrayList);
+
+        /*// Serialize data object to a file
         try {
             ObjectOutputStream out = new ObjectOutputStream
                     (new FileOutputStream("/Users/charronkyle/Desktop/TargetSegmentingData.ser"));
@@ -123,5 +222,8 @@ public class RunDailyCheckUps {
             LOG.error("Serialization Failed!");
             LOG.error(e.toString());
         }*/
+
+        XlsWriter xlsWriter = new XlsWriter();
+        xlsWriter.writeSegmentLoadFile(dataStore.getLiveCampaignArrayList(), fileOutputPath);
     }
 }
