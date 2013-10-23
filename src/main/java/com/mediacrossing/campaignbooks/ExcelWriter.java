@@ -181,13 +181,14 @@ public class ExcelWriter {
                             "/" + campaign.getEndDate().getDayOfMonth());
                 }
                 campaignRow.createCell(5).setCellValue(campaign.getDaysActive());
-                campaignRow.createCell(6).setCellValue(campaign.getActualDailyBudget());
-                //cell 7 dailyPacing set later
+                campaignRow.createCell(6).setCellValue(campaign.getDailyBudget());
+                campaignRow.createCell(7).setCellValue(campaign.getActualDailyBudget());
                 campaignRow.createCell(8).setCellValue(campaign.getTotalDelivery());
 
                 //set styles
                 campaignRow.getCell(2).setCellStyle(halfCurrency);
                 campaignRow.getCell(6).setCellStyle(fullCurrency);
+                campaignRow.getCell(7).setCellStyle(fullCurrency);
                 campaignRow.getCell(8).setCellStyle(fullCurrency);
 
                 //add yellow if total delivery within 2 daily budgets of lifetime budget
@@ -210,7 +211,7 @@ public class ExcelWriter {
                 int cellCount = 9;
 
                 //list daily deliveries
-                for (long x = startToNow.getStandardDays()-1; x > 0; x--) {
+                for (long x = startToNow.getStandardDays()-1; x >= 0; x--) {
                     //add header cell with date
                     campaignHeaderRow.createCell(cellCount)
                             .setCellValue(lineItem.getStartDateTime().plusDays((int)x).monthOfYear().getAsString() +
@@ -400,7 +401,7 @@ public class ExcelWriter {
                 campRow.getCell(5).setCellStyle(bottomBorderCtr);
 
                 //for every day between start date and now, create column
-                for (long x = startToNow.getStandardDays()-1; x > 0; x--) {
+                for (long x = startToNow.getStandardDays()-1; x >= 0; x--) {
 
                     //add date header
                     campHeaderRow.createCell(cellCount)

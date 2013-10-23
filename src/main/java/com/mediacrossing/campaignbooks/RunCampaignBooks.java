@@ -48,7 +48,7 @@ public class RunCampaignBooks {
         HTTPConnection httpConnection = new HTTPConnection(mxUsername, mxPassword);
 
         //for faster debugging
-        boolean development = false;
+        boolean development = true;
         if (development) {
             try{
                 FileInputStream door = new FileInputStream("/Users/charronkyle/Desktop/CampaignBookData.ser");
@@ -175,15 +175,6 @@ public class RunCampaignBooks {
             }
         }
 
-        //Remove the first delivery from each campaign, incomplete data
-        /*for (Advertiser ad : liveAdvertiserList) {
-            for(LineItem li : ad.getLineItemList()) {
-                for(Campaign camp : li.getCampaignList()) {
-                    if(camp.getDeliveries().size() > 0)
-                        camp.getDeliveries().remove(0);
-                }
-            }
-        }*/
 
         // Serialize data object to a file
         /*try {
