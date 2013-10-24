@@ -1,16 +1,27 @@
 package com.mediacrossing.dailycheckupsreport;
 
+import org.joda.time.DateTime;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Profile implements Serializable{
     private String id;
+    private DateTime lastModified;
     private FrequencyTarget frequencyTarget;
     private GeographyTarget geographyTarget;
     private ArrayList<DaypartTarget> daypartTargetList = new ArrayList<DaypartTarget>();
     private List<SegmentGroupTarget> segmentGroupTargets = new ArrayList<SegmentGroupTarget>();
 
+    public boolean modifiedYesterday() {
+        if (lastModified.isAfter(new DateTime().toDateMidnight().minusDays(1))) return true;
+        else return false;
+    }
+
+    public void setLastModified(DateTime lastModified) {
+        this.lastModified = lastModified;
+    }
 
     public List<SegmentGroupTarget> getSegmentGroupTargets() {
         return segmentGroupTargets;

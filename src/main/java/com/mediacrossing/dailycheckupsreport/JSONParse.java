@@ -6,6 +6,10 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Map;
 
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,6 +27,17 @@ public class JSONParse {
         }
 
         return reportId;
+    }
+
+    public static DateTime obtainLastModified(String rawData) {
+        JsonElement jelement = new JsonParser().parse(rawData);
+        JsonObject jobject = jelement.getAsJsonObject();
+        jobject = jobject.getAsJsonObject("response");
+        jobject = jobject.getAsJsonObject("profile");
+        String dateString = jobject.get("last_modified").toString().replace("\"", "");
+        DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+        return new DateTime(dtf.parseDateTime(dateString), DateTimeZone.UTC);
+
     }
 
     public static FrequencyTarget populateFrequencyTarget(String rawData) {
