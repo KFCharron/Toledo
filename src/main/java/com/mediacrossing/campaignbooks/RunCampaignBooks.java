@@ -48,7 +48,7 @@ public class RunCampaignBooks {
         HTTPConnection httpConnection = new HTTPConnection(mxUsername, mxPassword);
 
         //for faster debugging
-        boolean development = true;
+        boolean development = false;
         if (development) {
             try{
                 FileInputStream door = new FileInputStream("/Users/charronkyle/Desktop/CampaignBookData.ser");
