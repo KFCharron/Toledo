@@ -13,7 +13,7 @@ import java.util.ArrayList;
 
 public class XlsWriter {
 
-    private static final Logger LOG = LoggerFactory.getLogger(HTTPConnection.class);
+    private static final Logger LOG = LoggerFactory.getLogger(XlsWriter.class);
 
     private static Workbook WORKBOOK;
     private static ArrayList<Campaign> CAMPAIGNARRAYLIST;
@@ -35,7 +35,7 @@ public class XlsWriter {
         LOG.info(workbookName + " written to " + OUTPUTPATH);
     }
 
-    public void writeAllReports(ArrayList<Campaign> campaignArrayList, String outputPath) throws IOException {
+    public static void writeAllReports(ArrayList<Campaign> campaignArrayList, String outputPath) throws IOException {
 
         setCAMPAIGNARRAYLIST(campaignArrayList);
         setOUTPUTPATH(outputPath);
@@ -53,7 +53,7 @@ public class XlsWriter {
 
     }
 
-    public void buildGeographySheet() {
+    public static void buildGeographySheet() {
 
         //Create new sheet
         Sheet segmentSheet = WORKBOOK.createSheet("Geography");
@@ -167,7 +167,7 @@ public class XlsWriter {
         }
     }
 
-    public void buildDaypartSheet() {
+    public static void buildDaypartSheet() {
 
         //Create new sheet
         Sheet segmentSheet = WORKBOOK.createSheet("Daypart");
@@ -251,7 +251,7 @@ public class XlsWriter {
 
     }
 
-    public void buildSegmentSheet() {
+    public static void buildSegmentSheet() {
 
             //Create new sheet
             Sheet segmentSheet = WORKBOOK.createSheet("Target Segment");
@@ -343,7 +343,7 @@ public class XlsWriter {
             segmentSheet.autoSizeColumn(4);
     }
 
-    public void buildInsertionFeeSheet() {
+    public static void buildInsertionFeeSheet() {
 
         //Create new sheet
         Sheet insertionSheet = WORKBOOK.createSheet("Insertion Fees");
@@ -415,7 +415,7 @@ public class XlsWriter {
 
     }
 
-    public void buildFrequencySheet() {
+    public static void buildFrequencySheet() {
 
         //Create new sheet
         Sheet segmentSheet = WORKBOOK.createSheet("Frequency");

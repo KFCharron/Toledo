@@ -1,17 +1,13 @@
 package com.mediacrossing.weeklyconversionreport;
 
-import com.mediacrossing.connections.ConnectionRequestProperties;
+import com.mediacrossing.connections.AppNexusService;
+import com.mediacrossing.connections.MxService;
 import com.mediacrossing.properties.ConfigurationProperties;
-import com.mediacrossing.reportrequests.AppNexusReportRequests;
-import com.mediacrossing.dailycheckupsreport.HTTPConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import scala.Tuple2;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 public class RunConversionReport {
@@ -37,13 +33,19 @@ public class RunConversionReport {
         ConfigurationProperties properties = new ConfigurationProperties(args);
         String mxUrl = properties.getMxUrl();
         String appNexusUrl = properties.getAppNexusUrl();
-        String rawJsonData;
         String outputPath = properties.getOutputPath();
         String appNexusUsername = properties.getAppNexusUsername();
         String appNexusPassword = properties.getAppNexusPassword();
         String mxUsername = properties.getMxUsername();
         String mxPassword = properties.getMxPassword();
-        HTTPConnection httpConnection = new HTTPConnection(mxUsername, mxPassword);
+        MxService mxConn;
+        if (mxUsername == null) {
+            mxConn = new MxService(mxUrl);
+        } else {
+            mxConn = new MxService(mxUrl, mxUsername, mxPassword);
+        }
+        AppNexusService anConn = new AppNexusService(appNexusUrl, appNexusUsername,
+                appNexusPassword);
 
         //for faster debugging
         boolean development = false;
@@ -61,32 +63,14 @@ public class RunConversionReport {
             }
         }
 
-        //request advertisers
-        final List<Tuple2<String, String>> mxRequestProperties =
-                Collections.unmodifiableList(
-                        Arrays.asList(
-                                ConnectionRequestProperties.authorization(
-                                        mxUsername,
-                                        mxPassword)));
-
-
-        //Query MX for all advertisers
-        httpConnection.setUrl(mxUrl + "/api/catalog/advertisers");
-        httpConnection.requestData(mxRequestProperties);
-        rawJsonData = httpConnection.getJSONData();
-
-        //Authorize AN connection
-        httpConnection.authorizeAppNexusConnection(appNexusUsername, appNexusPassword);
-
         //Parse and save to list of advertisers
-        final ArrayList<ConversionAdvertiser> liveAdvertiserList = ConversionParser.populateLiveAdvertiserList(rawJsonData);
+        final ArrayList<ConversionAdvertiser> liveAdvertiserList = mxConn.requestAllConversionAdvertisers();
 
         //request report for each advertiser
         for (ConversionAdvertiser ad : liveAdvertiserList) {
 
             //request yesterday line item report
-            List<String[]> csvData = AppNexusReportRequests.getConversionReport(ad.getAdvertiserId(),
-                    appNexusUrl, httpConnection);
+            List<String[]> csvData = anConn.getConversionReport(ad.getAdvertiserId());
 
             //remove header string
             csvData.remove(0);

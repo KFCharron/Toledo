@@ -26,8 +26,8 @@ public class ConfigurationProperties {
     public ConfigurationProperties(String[] args) throws IOException {
 
         Properties prop = new Properties();
-        File configFile = new File(args[0].substring("--properties-file=".length()));
-//        File configFile = new File("/Users/charronkyle/Desktop/config.properties");
+//        File configFile = new File(args[0].substring("--properties-file=".length()));
+        File configFile = new File("/Users/charronkyle/Desktop/config.properties");
         InputStream is = new FileInputStream(configFile);
         try {
             prop.load(is);

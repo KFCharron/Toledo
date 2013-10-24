@@ -1,9 +1,9 @@
 package com.mediacrossing.segmentloadreport;
 
+import com.mediacrossing.connections.*;
 import com.mediacrossing.dailycheckupsreport.*;
 import com.mediacrossing.dailycheckupsreport.profiles.ProfileRepository;
 import com.mediacrossing.properties.ConfigurationProperties;
-import com.mediacrossing.reportrequests.AppNexusReportRequests;
 import com.mediacrossing.segmenttargeting.profiles.PartitionedProfileRepository;
 import com.mediacrossing.segmenttargeting.profiles.TruncatedProfileRepository;
 import org.slf4j.Logger;
@@ -20,13 +20,13 @@ public class RunSegmentLoadReport {
 
     private static int APPNEXUS_PARTITION_SIZE;
     private static Duration APPNEXUS_REQUEST_DELAY;
-    private static final Logger LOG = LoggerFactory.getLogger(RunSegmentLoadReport.class);
+    private static final Logger LOG = LoggerFactory.getLogger(RunDailyCheckUps.class);
 
-    private static ProfileRepository development(HTTPConnection r) {
+    private static ProfileRepository development(HTTPRequest r) {
         return new TruncatedProfileRepository(r, 10);
     }
 
-    private static ProfileRepository production(HTTPConnection r) {
+    private static ProfileRepository production(HTTPRequest r) {
         return new PartitionedProfileRepository(
                 r,
                 APPNEXUS_PARTITION_SIZE,
@@ -49,17 +49,22 @@ public class RunSegmentLoadReport {
         registerLoggerWithUncaughtExceptions();
 
         //Declare Variables
-        JSONParse parser = new JSONParse();
         ConfigurationProperties properties = new ConfigurationProperties(args);
         String mxUsername = properties.getMxUsername();
         String mxPassword = properties.getMxPassword();
-        HTTPConnection httpConnection = new HTTPConnection(mxUsername, mxPassword);
-        DataStore dataStore = new DataStore();
-        String appNexusUsername = properties.getAppNexusUsername();
-        String appNexusPassword = properties.getAppNexusPassword();
-        String fileOutputPath = properties.getOutputPath();
         String mxUrl = properties.getMxUrl();
+        MxService mxConn;
+        if (mxUsername == null) {
+            mxConn = new MxService(mxUrl);
+        } else {
+            mxConn = new MxService(mxUrl, mxUsername, mxPassword);
+        }
         String appNexusUrl = properties.getAppNexusUrl();
+        AppNexusService anConn = new AppNexusService(appNexusUrl, properties.getAppNexusUsername(),
+                properties.getAppNexusPassword());
+        DataStore dataStore = new DataStore();
+        String fileOutputPath = properties.getOutputPath();
+
         APPNEXUS_PARTITION_SIZE = properties.getPartitionSize();
         APPNEXUS_REQUEST_DELAY = properties.getRequestDelayInSeconds();
 
@@ -71,8 +76,7 @@ public class RunSegmentLoadReport {
                 ObjectInputStream reader = new ObjectInputStream(door);
                 dataStore.setLiveCampaignArrayList((ArrayList<Campaign>) reader.readObject());
                 //Write xls file for all target segment reports
-                XlsWriter xlsWriter = new XlsWriter();
-                xlsWriter.writeSegmentLoadFile(dataStore.getLiveCampaignArrayList(), fileOutputPath);
+                XlsWriter.writeAllReports(dataStore.getLiveCampaignArrayList(), fileOutputPath);
                 System.exit(0);
 
             }catch (IOException e){
@@ -81,19 +85,13 @@ public class RunSegmentLoadReport {
             }
         }
 
-        //Get Token
-        httpConnection.authorizeAppNexusConnection(appNexusUsername, appNexusPassword);
-
         //Get All Campaigns from MX, save them into list
-        httpConnection.requestAllCampaignsFromMX(mxUrl);
-        LOG.debug(httpConnection.getJSONData());
-        dataStore.setCampaignArrayList(parser.populateCampaignArrayList(httpConnection.getJSONData()));
-        dataStore.setLiveCampaignArrayList();
+        dataStore.setCampaignArrayList(mxConn.requestAllCampaigns());
         LOG.info(dataStore.getLiveCampaignArrayList().size() + " campaigns are live.");
 
 
         //Get Profile data for each Campaign, save campaign
-        final ProfileRepository profileRepository = production(httpConnection);
+        final ProfileRepository profileRepository = production(anConn.requests);
 
         final List<Tuple2<String, String>> advertiserIdAndProfileIds =
                 new ArrayList<Tuple2<String, String>>();
@@ -103,8 +101,7 @@ public class RunSegmentLoadReport {
         }
 
         final List<Profile> profiles = profileRepository.findBy(advertiserIdAndProfileIds);
-        LOG.debug(profiles.size() + " " + advertiserIdAndProfileIds.size()
-                + " " + dataStore.getLiveCampaignArrayList().size());
+
         for (int index = 0; index < profiles.size(); index++) {
             Campaign c = dataStore.getLiveCampaignArrayList().get(index);
             c.setProfile(profiles.get(index));
@@ -129,8 +126,7 @@ public class RunSegmentLoadReport {
         List<String[]> csvData;
         for(String advertiserId : advertiserIdSet) {
 
-            csvData = AppNexusReportRequests.getCampaignImpsReport(advertiserId,
-                    appNexusUrl, httpConnection);
+            csvData = anConn.getCampaignImpsReport(advertiserId);
 
             //remove header
             csvData.remove(0);
@@ -152,7 +148,7 @@ public class RunSegmentLoadReport {
         for(Campaign campaign : dataStore.getCampaignArrayList()) {
             for(SegmentGroupTarget segmentGroupTarget : campaign.getProfile().getSegmentGroupTargets()) {
                 for(Segment segment : segmentGroupTarget.getSegmentArrayList()) {
-                    if(segment.getAction().equals("include")) {
+                    if(segment.getAction().equals("include") && !segment.getCode().contains("DLTD")) {
                         allSegments.add(segment);
                     }
                 }
@@ -164,8 +160,7 @@ public class RunSegmentLoadReport {
             segmentIdSet.add(segment.getId());
         }
 
-        csvData = AppNexusReportRequests.getSegmentLoadReport(segmentIdSet,
-                appNexusUrl, httpConnection);
+        csvData = anConn.getSegmentLoadReport(segmentIdSet);
 
         //remove header data
         csvData.remove(0);
@@ -181,16 +176,14 @@ public class RunSegmentLoadReport {
 
         //step through all campaigns, compare both line IDs and ad ids
         for (String adId : uniqueAdIds) {
-            httpConnection.requestAdvertiserFromMX(mxUrl, adId);
-            String jsonData = httpConnection.getJSONData();
+            String jsonData = mxConn.requestAdvertiser(adId);
             for (Campaign camp : newCampaignArrayList) {
                 if (camp.getAdvertiserID().equals(adId)) {
-                    camp.setAdvertiserName(parser.obtainAdvertiserName(jsonData));
-                    ArrayList<String> liArray = parser.obtainLineItemArray(jsonData);
+                    camp.setAdvertiserName(JSONParse.obtainAdvertiserName(jsonData));
+                    ArrayList<String> liArray = JSONParse.obtainLineItemArray(jsonData);
                     for(String li : liArray) {
                         if(camp.getLineItemID().equals(li)) {
-                            httpConnection.requestLineItemsFromMX(mxUrl, adId);
-                            camp.setLineItemName(parser.obtainLineItemName(httpConnection.getJSONData(),li));
+                            camp.setLineItemName(JSONParse.obtainLineItemName(mxConn.requestLineItemNames(adId),li));
                         }
                     }
                 }
@@ -212,10 +205,10 @@ public class RunSegmentLoadReport {
         //update live campaign list
         dataStore.setLiveCampaignArrayList(newCampaignArrayList);
 
-        /*// Serialize data object to a file
-        try {
+        // Serialize data object to a file
+        /*try {
             ObjectOutputStream out = new ObjectOutputStream
-                    (new FileOutputStream("/Users/charronkyle/Desktop/TargetSegmentingData.ser"));
+                    (new FileOutputStream("/Users/charronkyle/Desktop/SegmentLoadData.ser"));
             out.writeObject(newCampaignArrayList);
             out.close();
         } catch (IOException e) {

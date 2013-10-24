@@ -9,6 +9,7 @@ public class Segment implements Serializable{
     private String boolOp;
     private String totalSegmentLoads;
     private String dailySegmentLoads;
+    private String code;
 
     public String getTotalSegmentLoads() {
         return totalSegmentLoads;
@@ -26,11 +27,12 @@ public class Segment implements Serializable{
         this.dailySegmentLoads = dailySegmentLoads;
     }
 
-    public Segment (String id, String name, String action, String boolOp) {
+    public Segment (String id, String name, String action, String boolOp, String code) {
         this.id = id;
         this.name = name;
         this.action = action;
         this.boolOp = boolOp;
+        this.code = code;
     }
 
     public String getBoolOp() {
@@ -51,4 +53,7 @@ public class Segment implements Serializable{
         return action;
     }
 
+    public String getCode() {
+        return code;
+    }
 }

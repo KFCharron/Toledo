@@ -11,10 +11,21 @@ import org.slf4j.LoggerFactory;
 
 public class JSONParse {
 
-    private static final Logger LOG = LoggerFactory.getLogger(HTTPConnection.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JSONParse.class);
 
+    public static String obtainReportId (String json) {
+        JsonElement jelement = new JsonParser().parse(json);
+        JsonObject jobject = jelement.getAsJsonObject();
+        jobject = jobject.getAsJsonObject("response");
+        String reportId = jobject.get("report_id").toString().replace("\"", "");
+        if (reportId == null) {
+            LOG.error("ReportID not received.");
+        }
 
-    public FrequencyTarget populateFrequencyTarget(String rawData) {
+        return reportId;
+    }
+
+    public static FrequencyTarget populateFrequencyTarget(String rawData) {
 
         JsonElement jelement = new JsonParser().parse(rawData);
         JsonObject jobject = jelement.getAsJsonObject();
@@ -32,7 +43,7 @@ public class JSONParse {
                 maxDayImps, minMinPerImp, maxPageImps);
     }
 
-    public ArrayList<DaypartTarget> populateDaypartTarget(String rawData) {
+    public static ArrayList<DaypartTarget> populateDaypartTarget(String rawData) {
 
         JsonElement jelement = new JsonParser().parse(rawData);
         JsonObject jobject = jelement.getAsJsonObject();
@@ -55,7 +66,7 @@ public class JSONParse {
         return newDaypartTarget;
     }
 
-    public GeographyTarget populateGeographyTarget(String rawData) {
+    public static GeographyTarget populateGeographyTarget(String rawData) {
 
         JsonElement jelement = new JsonParser().parse(rawData);
         JsonObject jobject = jelement.getAsJsonObject();
@@ -120,7 +131,7 @@ public class JSONParse {
         return new GeographyTarget(countryTargetList, dmaTargetList, countryAction, dmaAction, zipTargetList);
     }
 
-    public ArrayList<Campaign> populateCampaignArrayList(String rawData) throws ParseException {
+    public static ArrayList<Campaign> populateCampaignArrayList(String rawData) throws ParseException {
 
         ArrayList<Campaign> campaignArrayList1 = new ArrayList<Campaign>();
         JsonElement jelement = new JsonParser().parse(rawData);
@@ -159,7 +170,7 @@ public class JSONParse {
 
     }
 
-    public ArrayList<SegmentGroupTarget> populateSegmentGroupTargetList(String rawData) {
+    public static ArrayList<SegmentGroupTarget> populateSegmentGroupTargetList(String rawData) {
         JsonElement jelement = new JsonParser().parse(rawData);
         JsonObject jobject = jelement.getAsJsonObject();
         jobject = jobject.getAsJsonObject("response");
@@ -182,7 +193,8 @@ public class JSONParse {
                         String action = kobject.get("action").toString().replace("\"", "");
                         String id = kobject.get("id").toString().replace("\"", "");
                         String name = kobject.get("name").toString().replace("\"", "");
-                        Segment newSegment = new Segment(id, name, action, segmentBoolOp);
+                        String code = kobject.get("code").toString().replace("\"", "");
+                        Segment newSegment = new Segment(id, name, action, segmentBoolOp, code);
                         newSegmentArrayList.add(y, newSegment);
                     }
                 }
@@ -196,7 +208,7 @@ public class JSONParse {
         return newSegmentGroupTargetList;
     }
 
-    public String obtainLineItemName (String rawData, String lineItemId) {
+    public static String obtainLineItemName (String rawData, String lineItemId) {
        JsonElement je = new JsonParser().parse(rawData);
        JsonArray ja = je.getAsJsonArray();
        for (JsonElement jEl : ja) {
@@ -208,13 +220,13 @@ public class JSONParse {
        return "Not found";
     }
 
-    public String obtainAdvertiserName (String rawData) {
+    public static String obtainAdvertiserName (String rawData) {
         JsonElement je = new JsonParser().parse(rawData);
         JsonObject jo = je.getAsJsonObject();
         return jo.get("name").toString().replace("\"", "");
     }
 
-    public ArrayList<String> obtainLineItemArray (String rawData) {
+    public static ArrayList<String> obtainLineItemArray (String rawData) {
         ArrayList<String> liArray = new ArrayList<String>();
         JsonElement je = new JsonParser().parse(rawData);
         JsonObject jo = je.getAsJsonObject();
@@ -223,6 +235,18 @@ public class JSONParse {
             liArray.add(jEl.getAsString().replace("\"", ""));
         }
         return liArray;
+    }
+
+    public static String obtainToken (String raw) {
+        JsonElement jelement = new JsonParser().parse(raw);
+        JsonObject jobject = jelement.getAsJsonObject();
+        jobject = jobject.getAsJsonObject("response");
+        String token = jobject.get("token").toString();
+        token = token.replace("\"", "");
+        if (token.isEmpty()) {
+            LOG.error("Token not received.");
+        }
+        return token;
     }
 
 }

@@ -1,13 +1,11 @@
 package com.mediacrossing.advertiserdailyreport;
 
 import com.mediacrossing.campaignbooks.*;
-import com.mediacrossing.connections.ConnectionRequestProperties;
+import com.mediacrossing.connections.AppNexusService;
+import com.mediacrossing.connections.MxService;
 import com.mediacrossing.properties.ConfigurationProperties;
-import com.mediacrossing.reportrequests.AppNexusReportRequests;
-import com.mediacrossing.dailycheckupsreport.HTTPConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import scala.Tuple2;
 
 import java.io.*;
 import java.util.*;
@@ -32,20 +30,21 @@ public class RunAdvertiserDaily {
 
         registerLoggerWithUncaughtExceptions();
 
-
-
         //Declare variables
         ConfigurationProperties properties = new ConfigurationProperties(args);
         String mxUrl = properties.getMxUrl();
         String appNexusUrl = properties.getAppNexusUrl();
-        String rawJsonData;
         String outputPath = properties.getOutputPath();
-        String appNexusUsername = properties.getAppNexusUsername();
-        String appNexusPassword = properties.getAppNexusPassword();
         String mxUsername = properties.getMxUsername();
         String mxPassword = properties.getMxPassword();
-        HTTPConnection httpConnection = new HTTPConnection(mxUsername, mxPassword);
-        DataParse parser = new DataParse();
+        MxService mxConn;
+        if (mxUsername == null) {
+            mxConn = new MxService(mxUrl);
+        } else {
+            mxConn = new MxService(mxUrl, mxUsername, mxPassword);
+        }
+        AppNexusService anConn = new AppNexusService(appNexusUrl, properties.getAppNexusUsername(),
+                properties.getAppNexusPassword());
 
         //for faster debugging
         boolean development = false;
@@ -63,21 +62,8 @@ public class RunAdvertiserDaily {
             }
         }
 
-        final List<Tuple2<String, String>> mxRequestProperties =
-                Collections.unmodifiableList(
-                        Arrays.asList(
-                                ConnectionRequestProperties.authorization(
-                                        mxUsername,
-                                        mxPassword)));
-
-
-        //Query MX for all advertisers
-        httpConnection.setUrl(mxUrl + "/api/catalog/advertisers");
-        httpConnection.requestData(mxRequestProperties);
-        rawJsonData = httpConnection.getJSONData();
-
         //Parse and save to list of advertisers
-        final List<Advertiser> advertiserList = parser.populateAdvertiserList(rawJsonData);
+        final List<Advertiser> advertiserList = mxConn.requestAllAdvertisers();
         final List<Advertiser> liveAdvertiserList = new ArrayList<Advertiser>();
 
         for(Advertiser ad : advertiserList) {
@@ -86,14 +72,11 @@ public class RunAdvertiserDaily {
             }
         }
 
-        httpConnection.authorizeAppNexusConnection(appNexusUsername, appNexusPassword);
-
         //For every advertiser, request report
         for (Advertiser advertiser : liveAdvertiserList) {
 
             //request yesterday line item report
-            List<String[]> csvData = AppNexusReportRequests.getLineItemReport("yesterday", advertiser.getAdvertiserID(),
-                    appNexusUrl, httpConnection);
+            List<String[]> csvData = anConn.getLineItemReport("yesterday", advertiser.getAdvertiserID());
 
             //remove header string
             csvData.remove(0);
@@ -117,8 +100,7 @@ public class RunAdvertiserDaily {
             advertiser.setDailyLineItems(dailyLineItems);
 
             //request lifetime line item report
-            csvData = AppNexusReportRequests.getLineItemReport("lifetime", advertiser.getAdvertiserID(),
-                    appNexusUrl, httpConnection);
+            csvData = anConn.getLineItemReport("lifetime", advertiser.getAdvertiserID());
 
             //remove header string
             csvData.remove(0);
@@ -142,8 +124,7 @@ public class RunAdvertiserDaily {
             advertiser.setLifetimeLineItems(lifetimeLineItems);
 
             //request yesterday campaign report
-            csvData = AppNexusReportRequests.getCampaignReport("yesterday", advertiser.getAdvertiserID(),
-                    appNexusUrl, httpConnection);
+            csvData = anConn.getCampaignReport("yesterday", advertiser.getAdvertiserID());
 
             //remove header string
             csvData.remove(0);
@@ -167,8 +148,7 @@ public class RunAdvertiserDaily {
             advertiser.setDailyCampaigns(dailyCampaigns);
 
             //request lifetime campaign report
-            csvData = AppNexusReportRequests.getCampaignReport("lifetime", advertiser.getAdvertiserID(),
-                    appNexusUrl, httpConnection);
+            csvData = anConn.getCampaignReport("lifetime", advertiser.getAdvertiserID());
 
             //remove header string
             csvData.remove(0);
@@ -194,9 +174,8 @@ public class RunAdvertiserDaily {
             //populate each advertiser with matching data
             for (Advertiser ad : liveAdvertiserList) {
                 //get line item data
-                httpConnection.requestLineItemsFromMX(mxUrl, ad.getAdvertiserID());
                 //save to a list of line items
-                List<LineItem> lineItems = DataParse.populateLineItemList(httpConnection.getJSONData());
+                List<LineItem> lineItems = mxConn.requestLineItemsForAdvertiser(ad.getAdvertiserID());
                 for(LineItem li : lineItems) {
                     for(DailyData data : lifetimeLineItems) {
                         if(li.getLineItemID().equals(data.getId())) {
@@ -218,10 +197,8 @@ public class RunAdvertiserDaily {
                     }
 
                     //get campaign data
-                    httpConnection.setUrl(mxUrl + "/api/catalog/advertisers/" + advertiser.getAdvertiserID() +
-                            "/line-items/" + li.getLineItemID() + "/campaigns");
-                    httpConnection.requestData(mxRequestProperties);
-                    List<Campaign> campaigns = DataParse.populateCampaignList(httpConnection.getJSONData());
+                    List<Campaign> campaigns = mxConn.requestCampaignsForLineItem(advertiser.getAdvertiserID(),
+                            li.getLineItemID());
                     for(Campaign camp : campaigns) {
                         for(DailyData data : lifetimeCampaigns) {
                             if(camp.getCampaignID().equals(data.getId())) {
@@ -247,8 +224,7 @@ public class RunAdvertiserDaily {
         }
 
         // Serialize data object to a file
-/*
-        try {
+        /*try {
             ObjectOutputStream out = new ObjectOutputStream
                     (new FileOutputStream("/Users/charronkyle/Desktop/AdvertiserList.ser"));
             out.writeObject(liveAdvertiserList);
@@ -256,8 +232,9 @@ public class RunAdvertiserDaily {
         } catch (IOException e) {
             LOG.error("Serialization Failed!");
             LOG.error(e.toString());
-        }
-*/
+        }*/
+
+
 
 
         //Write report

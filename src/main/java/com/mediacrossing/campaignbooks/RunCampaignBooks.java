@@ -1,18 +1,14 @@
 package com.mediacrossing.campaignbooks;
 
-import com.mediacrossing.connections.ConnectionRequestProperties;
+import com.mediacrossing.connections.AppNexusService;
+import com.mediacrossing.connections.MxService;
 import com.mediacrossing.properties.ConfigurationProperties;
-import com.mediacrossing.reportrequests.AppNexusReportRequests;
-import com.mediacrossing.dailycheckupsreport.HTTPConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import scala.Tuple2;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Arrays;
 
 public class RunCampaignBooks {
 
@@ -39,13 +35,19 @@ public class RunCampaignBooks {
         ConfigurationProperties properties = new ConfigurationProperties(args);
         String mxUrl = properties.getMxUrl();
         String appNexusUrl = properties.getAppNexusUrl();
-        String rawJsonData;
         String outputPath = properties.getOutputPath();
         String appNexusUsername = properties.getAppNexusUsername();
         String appNexusPassword = properties.getAppNexusPassword();
         String mxUsername = properties.getMxUsername();
         String mxPassword = properties.getMxPassword();
-        HTTPConnection httpConnection = new HTTPConnection(mxUsername, mxPassword);
+        MxService mxConn;
+        if (mxUsername == null) {
+            mxConn = new MxService(mxUrl);
+        } else {
+            mxConn = new MxService(mxUrl, mxUsername, mxPassword);
+        }
+        AppNexusService anConn = new AppNexusService(appNexusUrl, appNexusUsername,
+                appNexusPassword);
 
         //for faster debugging
         boolean development = false;
@@ -66,38 +68,18 @@ public class RunCampaignBooks {
             }
         }
 
-
-        final List<Tuple2<String, String>> mxRequestProperties =
-                Collections.unmodifiableList(
-                        Arrays.asList(
-                                ConnectionRequestProperties.authorization(
-                                        mxUsername,
-                                        mxPassword)));
-
-
-
-        //Query MX for all advertisers
-        httpConnection.setUrl(mxUrl + "/api/catalog/advertisers");
-        httpConnection.requestData(mxRequestProperties);
-        rawJsonData = httpConnection.getJSONData();
-
         //Parse and save to list of advertisers
-        final List<Advertiser> advertiserList = DataParse.populateAdvertiserList(rawJsonData);
+        final List<Advertiser> advertiserList = mxConn.requestAllAdvertisers();
 
         //Query MX for line items and campaigns of each advertiser, save them to advertiser list
         int count = 0;
         for (Advertiser ad : advertiserList) {
-            httpConnection.setUrl(mxUrl + "/api/catalog/advertisers/" + ad.getAdvertiserID() + "/line-items");
             try {
-                httpConnection.requestData(mxRequestProperties);
-                rawJsonData = httpConnection.getJSONData();
-                ArrayList<LineItem> lineItemList = DataParse.populateLineItemList(rawJsonData);
+                ArrayList<LineItem> lineItemList = mxConn.requestLineItemsForAdvertiser(ad.getAdvertiserID());
                 for (LineItem lineItem : lineItemList) {
-                    httpConnection.setUrl(mxUrl + "/api/catalog/advertisers/" + ad.getAdvertiserID() +
-                            "/line-items/" + lineItem.getLineItemID() + "/campaigns");
-                    httpConnection.requestData(mxRequestProperties);
-                    rawJsonData = httpConnection.getJSONData();
-                    ArrayList<Campaign> campaignList = DataParse.populateCampaignList(rawJsonData);
+
+                    ArrayList<Campaign> campaignList =
+                            mxConn.requestCampaignsForLineItem(ad.getAdvertiserID(), lineItem.getLineItemID());
                     lineItem.setCampaignList(campaignList);
                 }
                 ad = new Advertiser(ad.getAdvertiserID(), ad.getAdvertiserName(), lineItemList);
@@ -108,9 +90,6 @@ public class RunCampaignBooks {
             }
             count++;
         }
-
-        //Authorize AN Connection
-        httpConnection.authorizeAppNexusConnection(appNexusUsername, appNexusPassword);
 
         //restrict requested reports to only advertisers w/ live campaigns
         for (Advertiser ad : advertiserList) {
@@ -134,8 +113,7 @@ public class RunCampaignBooks {
         for (Advertiser ad : liveAdvertiserList) {
 
             //request daily deliveries
-            List<String[]> csvData = AppNexusReportRequests.getAdvertiserAnalyticReport(ad.getAdvertiserID(),
-                    appNexusUrl, httpConnection);
+            List<String[]> csvData = anConn.getAdvertiserAnalyticReport(ad.getAdvertiserID());
 
             //remove header string
             csvData.remove(0);
@@ -154,8 +132,7 @@ public class RunCampaignBooks {
             }
 
             //request lifetime stats
-            csvData = AppNexusReportRequests.getLifetimeAdvertiserReport(ad.getAdvertiserID(),
-                    appNexusUrl, httpConnection);
+            csvData = anConn.getLifetimeAdvertiserReport(ad.getAdvertiserID());
 
             //remove header string
             csvData.remove(0);
@@ -164,12 +141,12 @@ public class RunCampaignBooks {
             for (String[] line : csvData) {
                 for(LineItem li : ad.getLineItemList()) {
                     for(Campaign camp : li.getCampaignList()) {
-                       if(camp.getCampaignID().equals(line[0])) {
-                           camp.setLifetimeImps(Integer.parseInt(line[1]));
-                           camp.setLifetimeClicks(Integer.parseInt(line[2]));
-                           camp.setLifetimeCtr(Float.parseFloat(line[3]));
-                           camp.setLifetimeConvs(Integer.parseInt(line[4]));
-                       }
+                        if(camp.getCampaignID().equals(line[0])) {
+                            camp.setLifetimeImps(Integer.parseInt(line[1]));
+                            camp.setLifetimeClicks(Integer.parseInt(line[2]));
+                            camp.setLifetimeCtr(Float.parseFloat(line[3]));
+                            camp.setLifetimeConvs(Integer.parseInt(line[4]));
+                        }
                     }
                 }
             }

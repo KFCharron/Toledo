@@ -2,10 +2,11 @@ package com.mediacrossing.segmenttargeting.profiles
 
 import java.util
 import scala.collection.JavaConverters._
-import com.mediacrossing.dailycheckupsreport.{HTTPConnection, Profile, JSONParse}
+import com.mediacrossing.dailycheckupsreport.{Profile, JSONParse}
 import com.mediacrossing.dailycheckupsreport.profiles.ProfileRepository
+import com.mediacrossing.connections.HTTPRequest
 
-class TruncatedProfileRepository(http: HTTPConnection,
+class TruncatedProfileRepository(http: HTTPRequest,
                                  profileCount: Int) extends ProfileRepository {
 
   def findBy(advertiserIdAndProfileIds: util.List[(String, String)]): util.List[Profile] =
@@ -13,14 +14,13 @@ class TruncatedProfileRepository(http: HTTPConnection,
       for {
         (advertiserId, profileId) <- advertiserIdAndProfileIds.asScala.take(profileCount)
       } yield {
-        http.requestProfile(profileId, advertiserId)
+        val json = http.getRequest("http://api.appnexus.com/profile?id=" + profileId + "&advertiser_id=" + advertiserId)
 
-        val parser = new JSONParse
         val p = new Profile
-        p.setFrequencyTarget(parser.populateFrequencyTarget(http.getJSONData))
-        p.setDaypartTargetList(parser.populateDaypartTarget(http.getJSONData))
-        p.setGeographyTarget(parser.populateGeographyTarget(http.getJSONData))
-        p.setSegmentGroupTargets(parser.populateSegmentGroupTargetList(http.getJSONData))
+        p.setFrequencyTarget(JSONParse.populateFrequencyTarget(json))
+        p.setDaypartTargetList(JSONParse.populateDaypartTarget(json))
+        p.setGeographyTarget(JSONParse.populateGeographyTarget(json))
+        p.setSegmentGroupTargets(JSONParse.populateSegmentGroupTargetList(json))
 
         p
       })

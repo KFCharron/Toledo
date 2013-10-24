@@ -1,9 +1,7 @@
 package com.mediacrossing.publisherreporting;
 
-import com.mediacrossing.campaignbooks.DataParse;
+import com.mediacrossing.connections.AppNexusService;
 import com.mediacrossing.properties.ConfigurationProperties;
-import com.mediacrossing.reportrequests.AppNexusReportRequests;
-import com.mediacrossing.dailycheckupsreport.HTTPConnection;
 import com.mediacrossing.dailycheckupsreport.XlsWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,14 +33,11 @@ public class RunPublisherReporting {
         //Declare variables
         ConfigurationProperties properties = new ConfigurationProperties(args);
         String appNexusUrl = properties.getAppNexusUrl();
-        String rawJsonData;
         String outputPath = properties.getOutputPath();
         String appNexusUsername = properties.getAppNexusUsername();
         String appNexusPassword = properties.getAppNexusPassword();
-        String mxUsername = properties.getMxUsername();
-        String mxPassword = properties.getMxPassword();
-        HTTPConnection httpConnection = new HTTPConnection(mxUsername, mxPassword);
-        DataParse parser = new DataParse();
+        AppNexusService anConn = new AppNexusService(appNexusUrl, appNexusUsername,
+                appNexusPassword);
 
         //for faster debugging
         boolean development = false;
@@ -61,36 +56,31 @@ public class RunPublisherReporting {
             }
         }
 
-        httpConnection.authorizeAppNexusConnection(appNexusUsername, appNexusPassword);
-        //request publisher data from AN
-        httpConnection.requestPublishersFromAN(appNexusUrl);
-        rawJsonData = httpConnection.getJSONData();
-
         //get yesterday publisher report
-        ArrayList<Publisher> dayPubList = parser.parsePublisherIds(rawJsonData);
+        ArrayList<Publisher> commonData = anConn.requestPublishers();
+        ArrayList<Publisher> dayPubList = commonData;
         ArrayList<Publisher> newPl = new ArrayList<Publisher>();
+
         for(Publisher pub : dayPubList) {
-            List<String[]> csvData =
-                    AppNexusReportRequests.getPublisherReport(pub.getId(),"yesterday", appNexusUrl, httpConnection);
+            List<String[]> csvData = anConn.getPublisherReport("yesterday", pub.getId());
 
             //remove header
             csvData.remove(0);
 
             //for every row in the file
             for (String[] line : csvData) {
-               newPl.add(new Publisher(line[0], pub.getPublisherName(), Float.parseFloat(line[1]),
-                       Integer.parseInt(line[2]), Integer.parseInt(line[3]), Float.parseFloat(line[4]),
-                       Float.parseFloat(line[5]), Float.parseFloat(line[6]), Float.parseFloat(line[7])));
+                newPl.add(new Publisher(line[0], pub.getPublisherName(), Float.parseFloat(line[1]),
+                        Integer.parseInt(line[2]), Integer.parseInt(line[3]), Float.parseFloat(line[4]),
+                        Float.parseFloat(line[5]), Float.parseFloat(line[6]), Float.parseFloat(line[7])));
             }
         }
         dayPubList = newPl;
 
         //get lifetime pub report
-        ArrayList<Publisher> lifetimePubList = parser.parsePublisherIds(rawJsonData);
+        ArrayList<Publisher> lifetimePubList = commonData;
         ArrayList<Publisher> newLtPubList = new ArrayList<Publisher>();
         for(Publisher pub : lifetimePubList) {
-            List<String[]> csvData =
-                    AppNexusReportRequests.getPublisherReport(pub.getId(), "lifetime", appNexusUrl, httpConnection);
+            List<String[]> csvData = anConn.getPublisherReport("lifetime", pub.getId());
             //remove header
             csvData.remove(0);
 
@@ -106,8 +96,7 @@ public class RunPublisherReporting {
         //get yesterday placement report
         ArrayList<Placement> dayPlacementList = new ArrayList<Placement>();
         for (Publisher pub : lifetimePubList) {
-            List<String[]> csvData =
-                    AppNexusReportRequests.getPlacementReport(pub.getId(), "yesterday", appNexusUrl, httpConnection);
+            List<String[]> csvData = anConn.getPlacementReport("yesterday", pub.getId());
             //remove header
             csvData.remove(0);
 
@@ -133,8 +122,7 @@ public class RunPublisherReporting {
         //get lifetime placement report
         ArrayList<Placement> lifetimePlacementList = new ArrayList<Placement>();
         for (Publisher pub : lifetimePubList) {
-            List<String[]> csvData =
-                    AppNexusReportRequests.getPlacementReport(pub.getId(), "lifetime", appNexusUrl, httpConnection);
+            List<String[]> csvData = anConn.getPlacementReport("lifetime", pub.getId());
             //remove header
             csvData.remove(0);
 
@@ -157,8 +145,8 @@ public class RunPublisherReporting {
             }
         }
 
-        /*// Serialize data object to a file
-        ArrayList<ArrayList> arrayLists = new ArrayList<ArrayList>();
+        // Serialize data object to a file
+        /*ArrayList<ArrayList> arrayLists = new ArrayList<ArrayList>();
         arrayLists.add(dayPubList);
         arrayLists.add(lifetimePubList);
         arrayLists.add(dayPlacementList);

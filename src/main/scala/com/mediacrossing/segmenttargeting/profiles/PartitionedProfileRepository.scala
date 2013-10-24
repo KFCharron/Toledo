@@ -1,19 +1,19 @@
 package com.mediacrossing.segmenttargeting.profiles
 
 import java.util
-import com.mediacrossing.segmenttargeting._
 import scala.collection.JavaConverters._
 import scala.concurrent.duration.Duration
 import java.io.IOException
 import org.slf4j.LoggerFactory
-import com.mediacrossing.dailycheckupsreport.{HTTPConnection, Profile, JSONParse}
+import com.mediacrossing.dailycheckupsreport.{Profile, JSONParse}
 import com.mediacrossing.dailycheckupsreport.profiles.ProfileRepository
+import com.mediacrossing.connections.HTTPRequest
 
-class PartitionedProfileRepository(http: HTTPConnection,
+class PartitionedProfileRepository(http: HTTPRequest,
                                    partitionSize: Int,
                                    requestDelay: Duration) extends ProfileRepository {
 
-  private val log = LoggerFactory.getLogger(classOf[HTTPConnection])
+  private val log = LoggerFactory.getLogger(classOf[HTTPRequest])
 
   def findBy(advertiserIdAndProfileIds: util.List[(String, String)]): util.List[Profile] =
     (
@@ -26,10 +26,10 @@ class PartitionedProfileRepository(http: HTTPConnection,
         } yield {
           var success = false
           var requestCount = 1
-
+          var json = ""
           while (!success) {
             try {
-              http.requestProfile(profileId, advertiserId)
+              json = http.getRequest("http://api.appnexus.com/profile?id=" + profileId + "&advertiser_id=" + advertiserId)
               success = true
 
               log.info("Received profile [profileId = " + profileId +
@@ -48,12 +48,11 @@ class PartitionedProfileRepository(http: HTTPConnection,
           }
 
 
-          val parser = new JSONParse
           val p = new Profile
-          p.setFrequencyTarget(parser.populateFrequencyTarget(http.getJSONData))
-          p.setDaypartTargetList(parser.populateDaypartTarget(http.getJSONData))
-          p.setGeographyTarget(parser.populateGeographyTarget(http.getJSONData))
-          p.setSegmentGroupTargets(parser.populateSegmentGroupTargetList(http.getJSONData))
+          p.setFrequencyTarget(JSONParse.populateFrequencyTarget(json))
+          p.setDaypartTargetList(JSONParse.populateDaypartTarget(json))
+          p.setGeographyTarget(JSONParse.populateGeographyTarget(json))
+          p.setSegmentGroupTargets(JSONParse.populateSegmentGroupTargetList(json))
 
           p
         }

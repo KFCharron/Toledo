@@ -12,9 +12,9 @@ import java.util.List;
 
 public class DataParse {
 
-    private String reportUrl;
+    private static String reportUrl;
 
-    public String getReportUrl() {
+    public static String getReportUrl() {
         return reportUrl;
     }
 
@@ -76,7 +76,7 @@ public class DataParse {
 
 
 
-    public boolean parseReportStatus(String rawData) {
+    public static boolean parseReportStatus(String rawData) {
         JsonElement jsonElement = new JsonParser().parse(rawData);
         JsonObject jsonObject = jsonElement.getAsJsonObject().getAsJsonObject("response");
         if(jsonObject.get("execution_status").toString().equals("\"ready\"")) {
@@ -88,7 +88,7 @@ public class DataParse {
             return false;
     }
 
-    public ArrayList<Publisher> parsePublisherIds(String rawData) {
+    public static ArrayList<Publisher> parsePublisherIds(String rawData) {
         ArrayList<Publisher> pl = new ArrayList<Publisher>();
         JsonElement je = new JsonParser().parse(rawData);
         JsonObject jo = je.getAsJsonObject().getAsJsonObject("response");

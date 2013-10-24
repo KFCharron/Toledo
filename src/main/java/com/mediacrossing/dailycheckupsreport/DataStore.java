@@ -15,16 +15,6 @@ public class DataStore {
 
     public void setCampaignArrayList(ArrayList<Campaign> campaignArrayList) throws ParseException {
         this.campaignArrayList = campaignArrayList;
-
-    }
-
-    //returns a new list of live campaigns out of all campaigns
-    public ArrayList<Campaign> getLiveCampaignArrayList() {
-        return liveCampaignArrayList;
-    }
-
-    public void setLiveCampaignArrayList() throws ParseException {
-        //builds live campaign list
         for (Campaign c : campaignArrayList) {
             if (!c.getEndDate().equals("null")) {
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
@@ -35,6 +25,11 @@ public class DataStore {
                 }
             }
         }
+    }
+
+    //returns a new list of live campaigns out of all campaigns
+    public ArrayList<Campaign> getLiveCampaignArrayList() {
+        return liveCampaignArrayList;
     }
 
     public void setLiveCampaignArrayList(ArrayList<Campaign> campaignArrayList) {
