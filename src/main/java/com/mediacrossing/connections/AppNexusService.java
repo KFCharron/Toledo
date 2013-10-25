@@ -63,7 +63,7 @@ public class AppNexusService {
                 "    }\n" +
                 "}";
 
-        String json = requests.postRequest(url+"report?publisher_id="+pubId, jsonPost);
+        String json = requests.postRequest(url+"/report?publisher_id="+pubId, jsonPost);
         return downloadReportWhenReady(json);
     }
 
@@ -139,7 +139,7 @@ public class AppNexusService {
                 "    }\n" +
                 "}";;
 
-        String json = requests.postRequest(url+"report?advertiser_id="+adId,jsonPost);
+        String json = requests.postRequest(url+"/report?advertiser_id="+adId,jsonPost);
         return downloadReportWhenReady(json);
     }
 
@@ -283,7 +283,7 @@ public class AppNexusService {
                 "    }\n" +
                 "}";
 
-        String json = requests.postRequest(url + "report", post);
+        String json = requests.postRequest(url + "/report", post);
 
         return downloadReportWhenReady(json);
     }
@@ -313,7 +313,7 @@ public class AppNexusService {
                 "        \"format\": \"csv\"\n" +
                 "    }\n" +
                 "}";
-        String json = requests.postRequest(url + "report?advertiser_id=" + adId, jsonPostData);
+        String json = requests.postRequest(url + "/report?advertiser_id=" + adId, jsonPostData);
 
         return downloadReportWhenReady(json);
     }
@@ -344,7 +344,7 @@ public class AppNexusService {
                 "    }\n" +
                 "}";
 
-        String json = requests.postRequest(url + "report?advertiser_id=" + adId, jsonPostData);
+        String json = requests.postRequest(url + "/report?advertiser_id=" + adId, jsonPostData);
         return downloadReportWhenReady(json);
     }
 
@@ -354,7 +354,7 @@ public class AppNexusService {
         boolean ready = false;
         while (!ready) {
             //Check to see if report is ready
-            String jsonResponse = requests.getRequest(url + "report?id=" + reportId);
+            String jsonResponse = requests.getRequest(url + "/report?id=" + reportId);
             LOG.debug(jsonResponse);
             ready = DataParse.parseReportStatus(jsonResponse);
             if (!ready)
