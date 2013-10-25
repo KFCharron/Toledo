@@ -289,10 +289,11 @@ public class ExcelWriter {
             if (perLTBudget > 1) perLTBudget = 1;
             lineItemRow.getCell(8).setCellValue(perLTBudget);
             lineItemRow.getCell(8).setCellStyle(percentage);
+
             long daysPassed = lineItem.getDaysActive()-lineItem.getDaysRemaining();
             float pacing = totalCumulativeDelivery / (lineItem.getDailyBudget() * daysPassed);
             lineItemRow.createCell(11).setCellValue(pacing);
-            lineItemRow.createCell(11).setCellStyle(percentage);
+            lineItemRow.getCell(11).setCellStyle(percentage);
 
             rowCount+=3;
 
