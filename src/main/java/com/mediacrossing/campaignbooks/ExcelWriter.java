@@ -9,6 +9,7 @@ import org.joda.time.*;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.DecimalFormat;
 
 
 public class ExcelWriter {
@@ -64,6 +65,7 @@ public class ExcelWriter {
             lineItemHeader.createCell(8).setCellValue("LT Budget Used");
             lineItemHeader.createCell(10).setCellValue("Days Rem.");
             lineItemHeader.createCell(9).setCellValue("Flight");
+            lineItemHeader.createCell(11).setCellValue("Pacing");
 
             //style header
             Font font = WORKBOOK.createFont();
@@ -287,6 +289,10 @@ public class ExcelWriter {
             if (perLTBudget > 1) perLTBudget = 1;
             lineItemRow.getCell(8).setCellValue(perLTBudget);
             lineItemRow.getCell(8).setCellStyle(percentage);
+            long daysPassed = lineItem.getDaysActive()-lineItem.getDaysRemaining();
+            float pacing = totalCumulativeDelivery / (lineItem.getDailyBudget() * daysPassed);
+            lineItemRow.createCell(11).setCellValue(pacing);
+            lineItemRow.createCell(11).setCellStyle(percentage);
 
             rowCount+=3;
 
