@@ -53,7 +53,7 @@ public class RunCampaignBooks {
         boolean development = false;
         if (development) {
             try{
-                FileInputStream door = new FileInputStream("/Users/charronkyle/Desktop/CampaignBookData.ser");
+                FileInputStream door = new FileInputStream("/Users/charronkyle/Desktop/ReportData/CampaignBookData.ser");
                 ObjectInputStream reader = new ObjectInputStream(door);
                 List<Advertiser> adList = (List<Advertiser>) reader.readObject();
                 for (Advertiser advertiser : adList) {
@@ -156,7 +156,7 @@ public class RunCampaignBooks {
         // Serialize data object to a file
         /*try {
             ObjectOutputStream out = new ObjectOutputStream
-                    (new FileOutputStream("/Users/charronkyle/Desktop/CampaignBookData.ser"));
+                    (new FileOutputStream("/Users/charronkyle/Desktop/ReportData/CampaignBookData.ser"));
             out.writeObject(liveAdvertiserList);
             out.close();
         } catch (IOException e) {

@@ -51,7 +51,7 @@ public class RunConversionReport {
         boolean development = false;
         if (development) {
             try{
-                FileInputStream door = new FileInputStream("/Users/charronkyle/Desktop/ConvAdvertiserList.ser");
+                FileInputStream door = new FileInputStream("/Users/charronkyle/Desktop/ReportData/ConvAdvertiserList.ser");
                 ObjectInputStream reader = new ObjectInputStream(door);
                 ArrayList<ConversionAdvertiser> adList = (ArrayList<ConversionAdvertiser>) reader.readObject();
                 ConversionReportWriter.writeReportToFile(adList, outputPath);
@@ -102,7 +102,7 @@ public class RunConversionReport {
         // Serialize data object to a file
         /*try {
             ObjectOutputStream out = new ObjectOutputStream
-                    (new FileOutputStream("/Users/charronkyle/Desktop/ConvAdvertiserList.ser"));
+                    (new FileOutputStream("/Users/charronkyle/Desktop/ReportData/ConvAdvertiserList.ser"));
             out.writeObject(liveAdvertiserList);
             out.close();
         } catch (IOException e) {

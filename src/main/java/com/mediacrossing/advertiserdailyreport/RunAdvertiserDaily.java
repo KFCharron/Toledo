@@ -50,7 +50,7 @@ public class RunAdvertiserDaily {
         boolean development = false;
         if (development) {
             try{
-                FileInputStream door = new FileInputStream("/Users/charronkyle/Desktop/AdvertiserList.ser");
+                FileInputStream door = new FileInputStream("/Users/charronkyle/Desktop/ReportData/AdvertiserList.ser");
                 ObjectInputStream reader = new ObjectInputStream(door);
                 List<Advertiser> adList = (List<Advertiser>) reader.readObject();
                 ReportWriter.writeAdvertiserDailyReport(adList, outputPath);
@@ -226,7 +226,7 @@ public class RunAdvertiserDaily {
         // Serialize data object to a file
         /*try {
             ObjectOutputStream out = new ObjectOutputStream
-                    (new FileOutputStream("/Users/charronkyle/Desktop/AdvertiserList.ser"));
+                    (new FileOutputStream("/Users/charronkyle/Desktop/ReportData/AdvertiserList.ser"));
             out.writeObject(liveAdvertiserList);
             out.close();
         } catch (IOException e) {

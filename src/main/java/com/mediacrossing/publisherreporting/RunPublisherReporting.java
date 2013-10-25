@@ -43,7 +43,7 @@ public class RunPublisherReporting {
         boolean development = false;
         if (development) {
             try{
-                FileInputStream door = new FileInputStream("/Users/charronkyle/Desktop/PublisherLists.ser");
+                FileInputStream door = new FileInputStream("/Users/charronkyle/Desktop/ReportData/PublisherLists.ser");
                 ObjectInputStream reader = new ObjectInputStream(door);
                 ArrayList<ArrayList> arrayLists = (ArrayList<ArrayList>) reader.readObject();
                 XlsWriter.writePublisherReport(arrayLists.get(0), arrayLists.get(1),
@@ -153,7 +153,7 @@ public class RunPublisherReporting {
         arrayLists.add(lifetimePlacementList);
         try {
             ObjectOutputStream out = new ObjectOutputStream
-                    (new FileOutputStream("/Users/charronkyle/Desktop/PublisherLists.ser"));
+                    (new FileOutputStream("/Users/charronkyle/Desktop/ReportData/PublisherLists.ser"));
             out.writeObject(arrayLists);
             out.close();
         } catch (IOException e) {

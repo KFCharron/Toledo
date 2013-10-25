@@ -72,7 +72,7 @@ public class RunDailyCheckUps {
         boolean development = false;
         if (development) {
             try{
-                FileInputStream door = new FileInputStream("/Users/charronkyle/Desktop/TargetSegmentingData.ser");
+                FileInputStream door = new FileInputStream("/Users/charronkyle/Desktop/ReportData/TargetSegmentingData.ser");
                 ObjectInputStream reader = new ObjectInputStream(door);
                 dataStore.setLiveCampaignArrayList((ArrayList<Campaign>) reader.readObject());
                 //Write xls file for all target segment reports
@@ -113,7 +113,7 @@ public class RunDailyCheckUps {
        /*// Serialize data object to a file
         try {
             ObjectOutputStream out = new ObjectOutputStream
-                    (new FileOutputStream("/Users/charronkyle/Desktop/TargetSegmentingData.ser"));
+                    (new FileOutputStream("/Users/charronkyle/Desktop/ReportData/TargetSegmentingData.ser"));
             out.writeObject(newCampaignArrayList);
             out.close();
         } catch (IOException e) {
