@@ -8,23 +8,18 @@ import org.joda.time.format.DateTimeFormatter;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Placement implements Serializable {
+public class PublisherConfig implements Serializable {
 
     private String id;
     private String name;
-    private String state;
     private DateTime lastModified;
-    private ArrayList<IdName> filteredAdvertisers;
-    private ArrayList<IdName> contentCategories;
+    private ArrayList<Placement> placements;
+    private ArrayList<PaymentRule> paymentRules;
+    private ArrayList<YMProfile> ymProfiles;
 
-    public Placement(String id, String name, String state, ArrayList<IdName> filteredAdvertisers,
-                     ArrayList<IdName> contentCategories, String lastModified)
-    {
+    public PublisherConfig(String id, String name, String lastModified) {
         this.id = id;
         this.name = name;
-        this.state = state;
-        this.filteredAdvertisers = filteredAdvertisers;
-        this.contentCategories = contentCategories;
         DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
         this.lastModified = new DateTime(dtf.parseDateTime(lastModified), DateTimeZone.UTC);
     }
@@ -33,20 +28,32 @@ public class Placement implements Serializable {
         return id;
     }
 
+    public void setPlacements(ArrayList<Placement> placements) {
+        this.placements = placements;
+    }
+
+    public void setPaymentRules(ArrayList<PaymentRule> paymentRules) {
+        this.paymentRules = paymentRules;
+    }
+
     public String getName() {
         return name;
     }
 
-    public String getState() {
-        return state;
+    public ArrayList<Placement> getPlacements() {
+        return placements;
     }
 
-    public ArrayList<IdName> getFilteredAdvertisers() {
-        return filteredAdvertisers;
+    public ArrayList<PaymentRule> getPaymentRules() {
+        return paymentRules;
     }
 
-    public ArrayList<IdName> getContentCategories() {
-        return contentCategories;
+    public ArrayList<YMProfile> getYmProfiles() {
+        return ymProfiles;
+    }
+
+    public void setYmProfiles(ArrayList<YMProfile> ymProfiles) {
+        this.ymProfiles = ymProfiles;
     }
 
     public boolean modifiedYesterday() {

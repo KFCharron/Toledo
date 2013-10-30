@@ -6,30 +6,24 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
-public class PaymentRule implements Serializable {
+public class YMProfile implements Serializable {
 
     private String id;
     private String name;
-    private String state;
-    private String pricingType;
-    private double revshare;
-    private String priority;
+    private String description;
     private DateTime lastModified;
+    private ArrayList<FloorRule> floorRules;
 
-    public PaymentRule(String id, String name, String state, String pricingType,
-                       double revshare, String priority, String lastModified) {
+    public YMProfile(String id, String name, String description, ArrayList<FloorRule> floorRules, String lastModified) {
         this.id = id;
         this.name = name;
-        this.state = state;
-        this.pricingType = pricingType;
-        this.revshare = revshare;
-        this.priority = priority;
+        this.description = description;
+        this.floorRules = floorRules;
         DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
         this.lastModified = new DateTime(dtf.parseDateTime(lastModified), DateTimeZone.UTC);
     }
-
-
 
     public String getId() {
         return id;
@@ -39,20 +33,12 @@ public class PaymentRule implements Serializable {
         return name;
     }
 
-    public String getState() {
-        return state;
+    public String getDescription() {
+        return description;
     }
 
-    public String getPricingType() {
-        return pricingType;
-    }
-
-    public double getRevshare() {
-        return revshare;
-    }
-
-    public String getPriority() {
-        return priority;
+    public ArrayList<FloorRule> getFloorRules() {
+        return floorRules;
     }
 
     public boolean modifiedYesterday() {

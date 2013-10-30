@@ -88,7 +88,7 @@ public class DataParse {
             return false;
     }
 
-    public static ArrayList<Publisher> parsePublisherIds(String rawData) {
+    public static ArrayList<Publisher> parsePublisherIdAndName(String rawData) {
         ArrayList<Publisher> pl = new ArrayList<Publisher>();
         JsonElement je = new JsonParser().parse(rawData);
         JsonObject jo = je.getAsJsonObject().getAsJsonObject("response");
@@ -96,7 +96,8 @@ public class DataParse {
         for(JsonElement jsonElement : ja) {
             jo = jsonElement.getAsJsonObject();
             pl.add(new Publisher(jo.get("id").toString().replace("\"", ""),
-                    jo.get("name").toString().replace("\"", "")));
+                    jo.get("name").toString().replace("\"", ""),
+                    jo.get("last_modified").toString().replace("\"", "")));
         }
         return pl;
     }

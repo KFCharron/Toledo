@@ -2,10 +2,12 @@ package com.mediacrossing.connections;
 
 import com.mediacrossing.campaignbooks.DataParse;
 import com.mediacrossing.dailycheckupsreport.JSONParse;
+import com.mediacrossing.publishercheckup.*;
 import com.mediacrossing.publisherreporting.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scala.Tuple2;
+import scala.concurrent.duration.Duration;
 
 import java.util.*;
 
@@ -15,6 +17,23 @@ public class AppNexusService {
 
     public HTTPRequest requests;
     private String url;
+    private int partitionSize;
+    private Duration delay;
+    private int queryCount;
+
+    public AppNexusService(String url, String username, String password, int anPartitionSize, Duration dur) throws Exception {
+        String authJson = "{\"auth\":{\"username\":\"" + username +
+                "\",\"password\":\"" + password + "\"}}";
+        String tokenJson = new HTTPSRequest().postRequest("https://api.appnexus.com/auth", authJson);
+        String token = JSONParse.obtainToken(tokenJson);
+        Iterable<Tuple2<String, String>> requestProperties = Collections.unmodifiableList(
+                Arrays.asList(ConnectionRequestProperties.authorization(token)));
+        this.requests = new HTTPRequest(requestProperties);
+        this.url = url;
+        this.partitionSize = anPartitionSize;
+        this.delay = dur;
+        this.queryCount = 0;
+    }
 
     public AppNexusService(String url, String username, String password) throws Exception {
         String authJson = "{\"auth\":{\"username\":\"" + username +
@@ -27,9 +46,43 @@ public class AppNexusService {
         this.url = url;
     }
 
+    private void throttleCheck() throws InterruptedException {
+        this.queryCount++;
+        if(this.queryCount >= this.partitionSize) {
+            Thread.sleep(delay.toMillis());
+            this.queryCount = 0;
+        }
+    }
+
     public ArrayList<Publisher> requestPublishers() throws Exception {
         String json = requests.getRequest(url + "/publisher");
-        return DataParse.parsePublisherIds(json);
+        throttleCheck();
+        return DataParse.parsePublisherIdAndName(json);
+    }
+
+    public ArrayList<PublisherConfig> requestPublisherConfigs() throws Exception {
+        ArrayList<Publisher> temp = requestPublishers();
+        ArrayList<PublisherConfig> pubConfigs = new ArrayList<PublisherConfig>();
+        for (Publisher p : temp) pubConfigs.add(new PublisherConfig(p.getId(), p.getPublisherName(), p.getLastModified()));
+        return pubConfigs;
+    }
+
+    public ArrayList<Placement> requestPlacements(String pubId) throws Exception {
+        String json = requests.getRequest(url+"/placement?publisher_id="+pubId);
+        throttleCheck();
+        return ResponseParser.parsePlacements(json);
+    }
+
+    public ArrayList<PaymentRule> requestPaymentRules(String pubId) throws Exception {
+        String json = requests.getRequest(url+"/payment-rule?publisher_id=" + pubId);
+        throttleCheck();
+        return ResponseParser.parsePaymentRules(json);
+    }
+
+    public ArrayList<YMProfile> requestYmProfiles (String pubId) throws Exception {
+        String json = requests.getRequest(url+"/ym-profile?publisher_id="+pubId);
+        throttleCheck();
+        return ResponseParser.parseYmProfiles(json);
     }
 
     public List<String[]> getPublisherReport(String interval, String pubId) throws Exception {

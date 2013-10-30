@@ -5,6 +5,7 @@ import com.mediacrossing.properties.ConfigurationProperties;
 import com.mediacrossing.dailycheckupsreport.XlsWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import scala.concurrent.duration.Duration;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -36,8 +37,10 @@ public class RunPublisherReporting {
         String outputPath = properties.getOutputPath();
         String appNexusUsername = properties.getAppNexusUsername();
         String appNexusPassword = properties.getAppNexusPassword();
+        int anPartitionSize = properties.getPartitionSize();
+        Duration requestDelayInSeconds = properties.getRequestDelayInSeconds();
         AppNexusService anConn = new AppNexusService(appNexusUrl, appNexusUsername,
-                appNexusPassword);
+                appNexusPassword, anPartitionSize, requestDelayInSeconds);
 
         //for faster debugging
         boolean development = false;
