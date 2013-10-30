@@ -27,7 +27,7 @@ public class ExcelWriter {
                 " (" +  ad.getAdvertiserID() + ")");
         Sheet lineItemSheet = WORKBOOK.createSheet(sheetName);
 
-
+        System.out.println("Test push.");
         DataFormat df = WORKBOOK.createDataFormat();
 
         CellStyle fullCurrency = WORKBOOK.createCellStyle();
