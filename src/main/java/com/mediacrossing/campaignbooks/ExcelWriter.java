@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 
 
 public class ExcelWriter {
@@ -46,7 +47,7 @@ public class ExcelWriter {
         float ltBudgetGrandTotal = 0;
         float dailyBudgetGrandTotal = 0;
         float cumulativeDeliveryGrandTotal = 0;
-        double[] dailyDeliveryGrandTotal = new double[100];
+        double[] dailyDeliveryGrandTotal = new double[1000];
 
         for (int a = ad.getLineItemList().size()-1; a >= 0; a--) {
 
@@ -151,7 +152,9 @@ public class ExcelWriter {
             Float totalDailyBudget = 0.0f;
             Float totalActualDailyBudget = 0.0f;
             Float totalCumulativeDelivery = 0.0f;
-            double[] totalDailyDelivery = new double[100];
+            //FIXME
+            double[] totalDailyDelivery = new double[1000];
+            ArrayList<Double> tots = new ArrayList<Double>();
             for(double num : totalDailyDelivery) {
                 //noinspection UnusedAssignment
                 num = 0;
