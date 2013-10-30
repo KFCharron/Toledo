@@ -11,6 +11,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 
 
 public class ExcelWriter {
@@ -47,7 +48,14 @@ public class ExcelWriter {
         float ltBudgetGrandTotal = 0;
         float dailyBudgetGrandTotal = 0;
         float cumulativeDeliveryGrandTotal = 0;
-        double[] dailyDeliveryGrandTotal = new double[1000];
+        int maxDays = 0;
+        DateTime today = new DateTime();
+        for (LineItem l : ad.getLineItemList()) {
+            Duration startToNow = new Duration(l.getStartDateTime(), today);
+            if (startToNow.getStandardDays()-1 > maxDays) maxDays = (int)startToNow.getStandardDays()-1;
+        }
+        ArrayList<Float> grandTots =
+                new ArrayList<Float>(Collections.nCopies(maxDays+10, 0f));
 
         for (int a = ad.getLineItemList().size()-1; a >= 0; a--) {
 
@@ -152,13 +160,9 @@ public class ExcelWriter {
             Float totalDailyBudget = 0.0f;
             Float totalActualDailyBudget = 0.0f;
             Float totalCumulativeDelivery = 0.0f;
-            //FIXME
-            double[] totalDailyDelivery = new double[1000];
-            ArrayList<Double> tots = new ArrayList<Double>();
-            for(double num : totalDailyDelivery) {
-                //noinspection UnusedAssignment
-                num = 0;
-            }
+            ArrayList<Float> tots =
+                    new ArrayList<Float>(Collections.nCopies((int)(startToNow.getStandardDays()+9), 0f));
+
             int cellTrack = 0;
 
             //add a row of stats for every campaign
@@ -234,8 +238,8 @@ public class ExcelWriter {
                             //set style
                             campaignRow.getCell(cellCount).setCellStyle(fullCurrency);
                             //add to total count for the column
-                            totalDailyDelivery[cellCount] += del.getDelivery();
-                            dailyDeliveryGrandTotal[cellCount] += del.getDelivery();
+                            tots.set(cellCount, del.getDelivery()+ tots.get(cellCount));
+                            grandTots.set(cellCount, del.getDelivery()+ grandTots.get(cellCount));
                         }
                     }
                     cellCount++;
@@ -276,7 +280,7 @@ public class ExcelWriter {
             totalRow.getCell(8).setCellStyle(fullCurrency);
 
             for(int x = cellTrack - 1; x > 8; x--) {
-                totalRow.createCell(x).setCellValue(totalDailyDelivery[x]);
+                totalRow.createCell(x).setCellValue(tots.get(x));
                 //set style
                 totalRow.getCell(x).setCellStyle(fullCurrency);
             }
@@ -495,10 +499,10 @@ public class ExcelWriter {
 
         //Display daily grand totals
         int cellCount = 9;
-        while(cellCount < dailyDeliveryGrandTotal.length) {
-            grandTotal.createCell(cellCount).setCellValue(dailyDeliveryGrandTotal[cellCount]);
+        while(cellCount < grandTots.size()) {
+            grandTotal.createCell(cellCount).setCellValue(grandTots.get(cellCount));
             grandTotal.getCell(cellCount).setCellStyle(fullCurrency);
-            if(dailyDeliveryGrandTotal[cellCount] == 0) grandTotal.removeCell(grandTotal.getCell(cellCount));
+            if(grandTots.get(cellCount) == 0) grandTotal.removeCell(grandTotal.getCell(cellCount));
             cellCount++;
         }
 
