@@ -47,7 +47,7 @@ public class RunAdvertiserDaily {
                 properties.getAppNexusPassword());
 
         //for faster debugging
-        boolean development = true;
+        boolean development = false;
         if (development) {
             try{
                 FileInputStream door = new FileInputStream("/Users/charronkyle/Desktop/ReportData/AdvertiserList.ser");

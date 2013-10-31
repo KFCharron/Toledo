@@ -69,7 +69,7 @@ public class RunSegmentLoadReport {
         APPNEXUS_REQUEST_DELAY = properties.getRequestDelayInSeconds();
 
         //for faster debugging
-        boolean development = true;
+        boolean development = false;
         if (development) {
             try{
                 FileInputStream door = new FileInputStream("/Users/charronkyle/Desktop/ReportData/TargetSegmentingData.ser");

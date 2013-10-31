@@ -44,7 +44,7 @@ public class RunPublisherCheckUp {
         Workbook wb = new HSSFWorkbook();
 
         //for faster debugging
-        boolean development = true;
+        boolean development = false;
         if (development) {
             try{
                 FileInputStream door =
