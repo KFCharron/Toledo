@@ -4,6 +4,8 @@ import com.mediacrossing.connections.AppNexusService;
 import com.mediacrossing.properties.ConfigurationProperties;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.joda.time.DateTimeZone;
+import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scala.concurrent.duration.Duration;
@@ -42,7 +44,7 @@ public class RunPublisherCheckUp {
         Workbook wb = new HSSFWorkbook();
 
         //for faster debugging
-        boolean development = false;
+        boolean development = true;
         if (development) {
             try{
                 FileInputStream door =
@@ -50,7 +52,9 @@ public class RunPublisherCheckUp {
                 ObjectInputStream reader = new ObjectInputStream(door);
                 ArrayList<PublisherConfig> pubList = (ArrayList<PublisherConfig>) reader.readObject();
                 wb = ReportGenerator.writePublisherCheckUpReport(pubList);
-                FileOutputStream fileOut = new FileOutputStream(new File(outPath, "PublisherCheckUps.xls"));
+                LocalDate today = new LocalDate(DateTimeZone.UTC);
+                FileOutputStream fileOut =
+                        new FileOutputStream(new File(outPath, "PublisherCheckUps_"+today.toString()+".xls"));
                 wb.write(fileOut);
                 fileOut.close();
                 System.exit(0);
@@ -86,7 +90,8 @@ public class RunPublisherCheckUp {
         wb = ReportGenerator.writePublisherCheckUpReport(pubs);
 
         //write wb to file
-        FileOutputStream fileOut = new FileOutputStream(new File(outPath, "PublisherCheckUps.xls"));
+        LocalDate today = new LocalDate(DateTimeZone.UTC);
+        FileOutputStream fileOut = new FileOutputStream(new File(outPath, "PublisherCheckUps_"+today.toString()+".xls"));
         wb.write(fileOut);
         fileOut.close();
     }

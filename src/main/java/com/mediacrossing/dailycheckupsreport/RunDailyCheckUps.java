@@ -69,7 +69,7 @@ public class RunDailyCheckUps {
         APPNEXUS_REQUEST_DELAY = properties.getRequestDelayInSeconds();
 
         //for faster debugging
-        boolean development = false;
+        boolean development = true;
         if (development) {
             try{
                 FileInputStream door = new FileInputStream("/Users/charronkyle/Desktop/ReportData/TargetSegmentingData.ser");

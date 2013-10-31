@@ -5,6 +5,8 @@ import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.*;
+import org.joda.time.DateTimeZone;
+import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,7 +51,8 @@ public class XlsWriter {
         for (int x = 0; x < 5; x++) {
             WORKBOOK.getSheetAt(x).createFreezePane(0,1);
         }
-        writeWorkbookToFileWithName("DailyCheckUps.xls");
+        LocalDate today = new LocalDate(DateTimeZone.UTC);
+        writeWorkbookToFileWithName("DailyCheckUps_"+today.toString()+".xls");
 
     }
 
@@ -597,7 +600,8 @@ public class XlsWriter {
         setOUTPUTPATH(outputPath);
         WORKBOOK = new HSSFWorkbook();
         buildSegmentLoadSheet();
-        writeWorkbookToFileWithName("SegmentLoadReport.xls");
+        LocalDate today = new LocalDate(DateTimeZone.UTC);
+        writeWorkbookToFileWithName("SegmentLoadReport_"+today.toString()+".xls");
     }
 
     public static void writePublisherReport(ArrayList<Publisher> dayPubList,
@@ -783,7 +787,8 @@ public class XlsWriter {
         }
 
         OUTPUTPATH = outputPath;
-        writeWorkbookToFileWithName("PublisherReport.xls");
+        LocalDate today = new LocalDate(DateTimeZone.UTC);
+        writeWorkbookToFileWithName("PublisherReport_"+today.toString()+".xls");
 
 
     }

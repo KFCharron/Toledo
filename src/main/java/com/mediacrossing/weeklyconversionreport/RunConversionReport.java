@@ -48,7 +48,7 @@ public class RunConversionReport {
                 appNexusPassword);
 
         //for faster debugging
-        boolean development = false;
+        boolean development = true;
         if (development) {
             try{
                 FileInputStream door = new FileInputStream("/Users/charronkyle/Desktop/ReportData/ConvAdvertiserList.ser");

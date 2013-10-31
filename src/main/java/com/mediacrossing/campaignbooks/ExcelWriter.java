@@ -9,7 +9,6 @@ import org.joda.time.*;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -508,7 +507,9 @@ public class ExcelWriter {
     }
 
     public static void writeWorkbookToFileWithOutputPath(String outputPath) throws IOException {
-        FileOutputStream fileOut = new FileOutputStream(new File(outputPath, "AutomatedCampaignBooks.xls"));
+        LocalDate today = new LocalDate(DateTimeZone.UTC);
+        FileOutputStream fileOut =
+                new FileOutputStream(new File(outputPath, "AutomatedCampaignBooks_"+today.toString()+".xls"));
         WORKBOOK.write(fileOut);
         fileOut.close();
     }

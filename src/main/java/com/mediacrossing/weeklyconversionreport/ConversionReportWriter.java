@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
+import org.joda.time.DateTimeZone;
+import org.joda.time.LocalDate;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -108,7 +110,9 @@ public class ConversionReportWriter {
             sheet.autoSizeColumn(x);
         }
 
-        FileOutputStream fileOut = new FileOutputStream(new File(outputPath, "ConversionsReport.xls"));
+        LocalDate today = new LocalDate(DateTimeZone.UTC);
+        FileOutputStream fileOut =
+                new FileOutputStream(new File(outputPath, "ConversionsReport_"+today.toString()+".xls"));
         wb.write(fileOut);
         fileOut.close();
     }
