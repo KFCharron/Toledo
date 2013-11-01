@@ -4,6 +4,8 @@ import com.mediacrossing.campaignbooks.DataParse;
 import com.mediacrossing.dailycheckupsreport.JSONParse;
 import com.mediacrossing.publishercheckup.*;
 import com.mediacrossing.publisherreporting.Publisher;
+import com.mediacrossing.weeklypublisherreport.WeeklyPlacement;
+import com.mediacrossing.weeklypublisherreport.WeeklyPublisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scala.Tuple2;
@@ -67,6 +69,13 @@ public class AppNexusService {
         return pubConfigs;
     }
 
+    public ArrayList<WeeklyPublisher> requestWeeklyPublishers() throws Exception {
+        ArrayList<Publisher> temp = requestPublishers();
+        ArrayList<WeeklyPublisher> weeklyPubs = new ArrayList<WeeklyPublisher>();
+        for (Publisher p : temp) weeklyPubs.add(new WeeklyPublisher(p.getId(), p.getPublisherName()));
+        return weeklyPubs;
+    }
+
     public ArrayList<Placement> requestPlacements(String pubId) throws Exception {
         String json = requests.getRequest(url+"/placement?publisher_id="+pubId);
         throttleCheck();
@@ -83,6 +92,46 @@ public class AppNexusService {
         String json = requests.getRequest(url+"/ym-profile?publisher_id="+pubId);
         throttleCheck();
         return ResponseParser.parseYmProfiles(json);
+    }
+
+    public List<String[]> requestWeeklyPublisherReport (String pubId) throws Exception {
+        String jsonPost = "{\n" +
+                "    \"report\":\n" +
+                "    {\n" +
+                "        \"report_type\":\"network_publisher_analytics\",\n" +
+                "        \"columns\":[\n" +
+                "            \"publisher_id\",\n" +
+                "            \"imps_total\",\n" +
+                "            \"imps_sold\",\n" +
+                "            \"clicks\",\n" +
+                "            \"imps_rtb\",\n" +
+                "            \"imps_kept\",\n" +
+                "            \"imps_default\",\n" +
+                "            \"imps_psa\"\n" +
+                "        ],\n" +
+                "        \"row_per\":[\n" +
+                "            \"publisher_id\"\n" +
+                "        ],\n" +
+                "        \"report_interval\":\"last_7_days\",\n" +
+                "        \"format\":\"csv\",\n" +
+                "        \"emails\":[\n" +
+                "        ],\n" +
+                "        \"orders\": [\n" +
+                "                    {\n" +
+                "                        \"order_by\":\"day\", \n" +
+                "                        \"direction\":\"DESC\"\n" +
+                "                    },\n" +
+                "                    {\n" +
+                "                        \"order_by\":\"placement_id\", \n" +
+                "                        \"direction\":\"DESC\"\n" +
+                "                    }\n" +
+                "                    ],\n" +
+                "        \"timezone\": \"EST5EDT\""+
+                "    }\n" +
+                "}";
+
+        String json = requests.postRequest(url+"/report?publisher_id="+pubId, jsonPost);
+        return ResponseParser.parsePlacementReport(downloadReportWhenReady(json));
     }
 
     public List<String[]> getPublisherReport(String interval, String pubId) throws Exception {
@@ -112,7 +161,8 @@ public class AppNexusService {
                 "                        \"order_by\":\"publisher_id\", \n" +
                 "                        \"direction\":\"DESC\"\n" +
                 "                    }\n" +
-                "                    ]\n" +
+                "                    ],\n" +
+                "        \"timezone\": \"EST5EDT\""+
                 "    }\n" +
                 "}";
 
@@ -148,7 +198,8 @@ public class AppNexusService {
                 "                        \"order_by\":\"placement_id\", \n" +
                 "                        \"direction\":\"DESC\"\n" +
                 "                    }\n" +
-                "                    ]\n" +
+                "                    ],\n" +
+                "        \"timezone\": \"EST5EDT\""+
                 "    }\n" +
                 "}";
 
@@ -188,7 +239,8 @@ public class AppNexusService {
                 "        ],\n" +
                 "       \"report_interval\": \"last_7_days\"," +
                 "        \"emails\": [],\n" +
-                "        \"format\": \"csv\"\n" +
+                "        \"format\": \"csv\",\n" +
+                "        \"timezone\": \"EST5EDT\""+
                 "    }\n" +
                 "}";;
 
@@ -228,7 +280,8 @@ public class AppNexusService {
                 "                        \"order_by\":\"campaign_id\",\n" +
                 "                        \"direction\":\"DESC\"\n" +
                 "                    }\n" +
-                "                    ]\n" +
+                "                    ],\n" +
+                "        \"timezone\": \"EST5EDT\""+
                 "    }\n" +
                 "}";
         String json = requests.postRequest(url + "/report?advertiser_id=" + adId, jsonPostData);
@@ -256,7 +309,8 @@ public class AppNexusService {
                 "        \"report_interval\":\"lifetime\",\n" +
                 "        \"format\":\"csv\",\n" +
                 "        \"emails\":[\n" +
-                "        ]\n" +
+                "        ],\n" +
+                "        \"timezone\": \"EST5EDT\""+
                 "    }\n" +
                 "}";
         String json = requests.postRequest(url + "/report?advertiser_id=" + adId, jsonPostData);
@@ -285,7 +339,8 @@ public class AppNexusService {
                 "                        \"order_by\":\"campaign_id\",\n" +
                 "                        \"direction\":\"DESC\"\n" +
                 "                    }\n" +
-                "                    ]\n" +
+                "                    ],\n" +
+                "        \"timezone\": \"EST5EDT\""+
                 "    }\n" +
                 "}";
 
@@ -332,7 +387,8 @@ public class AppNexusService {
                 "            \"day\"\n" +
                 "        ],\n" +
                 "        \"emails\": [],\n" +
-                "        \"format\": \"csv\"\n" +
+                "        \"format\": \"csv\",\n" +
+                "        \"timezone\": \"EST5EDT\""+
                 "    }\n" +
                 "}";
 
@@ -363,7 +419,8 @@ public class AppNexusService {
                 "            \"line_item_id\"\n" +
                 "        ],\n" +
                 "        \"report_interval\": \"" + interval + "\",\n" +
-                "        \"format\": \"csv\"\n" +
+                "        \"format\": \"csv\",\n" +
+                "        \"timezone\": \"EST5EDT\""+
                 "    }\n" +
                 "}";
         String json = requests.postRequest(url + "/report?advertiser_id=" + adId, jsonPostData);
@@ -393,7 +450,8 @@ public class AppNexusService {
                 "            \"campaign_id\"\n" +
                 "        ],\n" +
                 "        \"report_interval\": \"" + interval + "\",\n" +
-                "        \"format\": \"csv\"\n" +
+                "        \"format\": \"csv\",\n" +
+                "        \"timezone\": \"EST5EDT\""+
                 "    }\n" +
                 "}";
 
