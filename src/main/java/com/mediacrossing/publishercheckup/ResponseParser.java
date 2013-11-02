@@ -4,8 +4,10 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.mediacrossing.weeklypublisherreport.DailyPublisherData;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ResponseParser {
 
@@ -137,4 +139,10 @@ public class ResponseParser {
         }
         return ymProfiles;
     }
+
+    public static List<String[]> parsePlacementReport (List<String[]> csvData) {
+        return null;
+    }
+
+
 }
