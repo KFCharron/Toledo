@@ -5,6 +5,10 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mediacrossing.weeklypublisherreport.DailyPublisherData;
+import com.mediacrossing.weeklypublisherreport.WeeklyPlacement;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -140,9 +144,34 @@ public class ResponseParser {
         return ymProfiles;
     }
 
-    public static List<String[]> parsePlacementReport (List<String[]> csvData) {
-        return null;
+    public static ArrayList<WeeklyPlacement> parsePlacementReport (List<String[]> csvData) {
+
+        csvData.remove(0);
+        ArrayList<WeeklyPlacement> placements = new ArrayList<WeeklyPlacement>();
+        DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyy-MM-dd");
+
+        for (String[] l : csvData) {
+            DailyPublisherData data = new DailyPublisherData();
+            data.setDate(new DateTime(dtf.parseDateTime(l[0])));
+            data.setAvails(Integer.parseInt(l[3]));
+            data.setImps(Integer.parseInt(l[4]) + Integer.parseInt(l[5]));
+            data.setUnfilled(Integer.parseInt(l[6]) + Integer.parseInt(l[7]) + Integer.parseInt(l[8]));
+            data.setErrors(Integer.parseInt(l[9]) + Integer.parseInt(l[10]) + Integer.parseInt(l[11]));
+            data.seteCpm(Float.parseFloat(l[12]));
+            data.setGross(Float.parseFloat(l[13]));
+            Boolean found = false;
+            for (WeeklyPlacement p : placements) {
+                if (p.getId().equals(l[1])) {
+                    p.getDailyDataList().add(data);
+                    found = true;
+                }
+            }
+            if (!found) {
+                WeeklyPlacement p = new WeeklyPlacement(l[1], l[2]);
+                p.getDailyDataList().add(data);
+                placements.add(p);
+            }
+        }
+        return placements;
     }
-
-
 }
