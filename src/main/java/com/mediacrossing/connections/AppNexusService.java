@@ -72,7 +72,7 @@ public class AppNexusService {
     public ArrayList<WeeklyPublisher> requestWeeklyPublishers() throws Exception {
         ArrayList<Publisher> temp = requestPublishers();
         ArrayList<WeeklyPublisher> weeklyPubs = new ArrayList<WeeklyPublisher>();
-        for (Publisher p : temp) weeklyPubs.add(new WeeklyPublisher(p.getId(), p.getPublisherName()));
+        for (Publisher p : temp) weeklyPubs.add(new WeeklyPublisher(p.getId(), p.getPublisherName(), p.getStatus()));
         return weeklyPubs;
     }
 

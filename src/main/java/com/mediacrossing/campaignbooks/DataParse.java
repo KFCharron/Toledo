@@ -97,7 +97,8 @@ public class DataParse {
             jo = jsonElement.getAsJsonObject();
             pl.add(new Publisher(jo.get("id").toString().replace("\"", ""),
                     jo.get("name").toString().replace("\"", ""),
-                    jo.get("last_modified").toString().replace("\"", "")));
+                    jo.get("last_modified").toString().replace("\"", ""),
+                    jo.get("state").toString().replace("\"", "")));
         }
         return pl;
     }

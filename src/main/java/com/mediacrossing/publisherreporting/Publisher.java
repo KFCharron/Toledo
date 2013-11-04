@@ -18,11 +18,13 @@ public class Publisher implements Serializable {
     private String defaultPercentage;
     private String psaPercentage;
     private String lastModified;
+    private String status;
 
-    public Publisher(String id, String publisherName, String lastModified) {
+    public Publisher(String id, String publisherName, String lastModified, String status) {
         this.id = id;
         this.publisherName = publisherName;
         this.lastModified = lastModified;
+        this.status = status;
     }
 
     public Publisher(String id, String publisherName, float impsTotal, int impsSold,
@@ -106,6 +108,10 @@ public class Publisher implements Serializable {
 
     public String getPsaPercentage() {
         return psaPercentage;
+    }
+
+    public String getStatus() {
+        return status;
     }
 }
 
