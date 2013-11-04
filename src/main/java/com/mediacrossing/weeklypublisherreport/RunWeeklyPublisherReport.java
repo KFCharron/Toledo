@@ -4,6 +4,7 @@ import com.mediacrossing.connections.AppNexusService;
 import com.mediacrossing.properties.ConfigurationProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import scala.concurrent.duration.Duration;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -33,8 +34,10 @@ public class RunWeeklyPublisherReport {
         String outputPath = properties.getOutputPath();
         String appNexusUsername = properties.getAppNexusUsername();
         String appNexusPassword = properties.getAppNexusPassword();
+        int anPartitionSize = properties.getPartitionSize();
+        Duration requestDelayInSeconds = properties.getRequestDelayInSeconds();
         AppNexusService anConn = new AppNexusService(appNexusUrl, appNexusUsername,
-                appNexusPassword);
+                appNexusPassword, anPartitionSize, requestDelayInSeconds);
 
         //for faster debugging
         boolean development = false;
@@ -54,7 +57,13 @@ public class RunWeeklyPublisherReport {
         }
 
         //Request publishers
-        ArrayList<WeeklyPublisher> pubList = anConn.requestWeeklyPublishers();
+        ArrayList<WeeklyPublisher> largerPubList = anConn.requestWeeklyPublishers();
+        ArrayList<WeeklyPublisher> pubList = new ArrayList<WeeklyPublisher>();
+
+        //remove inactive publishers
+        for (WeeklyPublisher p : largerPubList) {
+            if (p.getStatus().equals("active")) pubList.add(p);
+        }
 
         for (WeeklyPublisher p : pubList) {
             p.setPaymentRules(anConn.requestPaymentRules(p.getId()));
