@@ -94,23 +94,30 @@ public class AppNexusService {
         return ResponseParser.parseYmProfiles(json);
     }
 
-    public List<String[]> requestWeeklyPublisherReport (String pubId) throws Exception {
+    public ArrayList<WeeklyPlacement> requestWeeklyPublisherReport (String pubId) throws Exception {
         String jsonPost = "{\n" +
                 "    \"report\":\n" +
                 "    {\n" +
                 "        \"report_type\":\"network_publisher_analytics\",\n" +
                 "        \"columns\":[\n" +
-                "            \"publisher_id\",\n" +
+                "            \"day\",\n" +
+                "            \"placement_id\",\n" +
+                "            \"placement_name\",\n" +
                 "            \"imps_total\",\n" +
-                "            \"imps_sold\",\n" +
-                "            \"clicks\",\n" +
-                "            \"imps_rtb\",\n" +
                 "            \"imps_kept\",\n" +
+                "            \"imps_resold\",\n" +
                 "            \"imps_default\",\n" +
-                "            \"imps_psa\"\n" +
+                "            \"imps_psa\",\n" +
+                "            \"imps_blank\",\n" +
+                "            \"imps_psa_error\",\n" +
+                "            \"imps_default_error\",\n" +
+                "            \"imps_default_bidder\",\n" +
+                "            \"publisher_rpm\",\n" +
+                "            \"publisher_revenue\"\n" +
                 "        ],\n" +
                 "        \"row_per\":[\n" +
-                "            \"publisher_id\"\n" +
+                "            \"day\",\n" +
+                "            \"placement_id\"\n" +
                 "        ],\n" +
                 "        \"report_interval\":\"last_7_days\",\n" +
                 "        \"format\":\"csv\",\n" +
