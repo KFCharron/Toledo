@@ -126,7 +126,7 @@ public class AppNexusService {
                 "        \"orders\": [\n" +
                 "                    {\n" +
                 "                        \"order_by\":\"day\", \n" +
-                "                        \"direction\":\"DESC\"\n" +
+                "                        \"direction\":\"ASC\"\n" +
                 "                    },\n" +
                 "                    {\n" +
                 "                        \"order_by\":\"placement_id\", \n" +
