@@ -2,14 +2,10 @@ package com.mediacrossing.weeklypublisherreport;
 
 import com.mediacrossing.connections.AppNexusService;
 import com.mediacrossing.properties.ConfigurationProperties;
-import com.mediacrossing.publishercheckup.PublisherConfig;
-import com.mediacrossing.publisherreporting.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
+import java.io.*;
 import java.util.ArrayList;
 
 public class RunWeeklyPublisherReport {
@@ -46,8 +42,10 @@ public class RunWeeklyPublisherReport {
             try{
                 FileInputStream door = new FileInputStream("/Users/charronkyle/Desktop/ReportData/WeeklyPubList.ser");
                 ObjectInputStream reader = new ObjectInputStream(door);
-                //ArrayList<PublisherConfig> adList = (ArrayList<ConversionAdvertiser>) reader.readObject();
-                //ConversionReportWriter.writeReportToFile(adList, outputPath);
+                ArrayList<WeeklyPublisher> pubList = (ArrayList<WeeklyPublisher>) reader.readObject();
+                for (WeeklyPublisher p : pubList) {
+                    WeeklyReportWriter.writeReportToFile(p, outputPath);
+                }
                 System.exit(0);
             }catch (IOException e){
                 e.printStackTrace();
@@ -58,32 +56,26 @@ public class RunWeeklyPublisherReport {
         //Request publishers
         ArrayList<WeeklyPublisher> pubList = anConn.requestWeeklyPublishers();
 
-        //Request pub payment rule
         for (WeeklyPublisher p : pubList) {
             p.setPaymentRules(anConn.requestPaymentRules(p.getId()));
-            //p.setPlacements(anConn.requestWeeklyPublisherReport(p.getId()));
+            p.setPlacements(anConn.requestWeeklyPublisherReport(p.getId()));
         }
 
-        //Request net pub report
-
-
-
-
-
-
-
-
-
         // Serialize data object to a file
-        /*try {
+        try {
             ObjectOutputStream out = new ObjectOutputStream
                     (new FileOutputStream("/Users/charronkyle/Desktop/ReportData/WeeklyPubList.ser"));
-            out.writeObject(//TODO);
+            out.writeObject(pubList);
             out.close();
         } catch (IOException e) {
             LOG.error("Serialization Failed!");
             LOG.error(e.toString());
-        }*/
+        }
+
+        //Create file for every publisher
+        for (WeeklyPublisher p : pubList) {
+           WeeklyReportWriter.writeReportToFile(p, outputPath);
+        }
 
     }
 }
