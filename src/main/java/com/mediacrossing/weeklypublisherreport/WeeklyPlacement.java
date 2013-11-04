@@ -1,8 +1,9 @@
 package com.mediacrossing.weeklypublisherreport;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class WeeklyPlacement {
+public class WeeklyPlacement implements Serializable {
 
     private String id;
     private String name;

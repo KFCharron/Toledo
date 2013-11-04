@@ -2,7 +2,9 @@ package com.mediacrossing.weeklypublisherreport;
 
 import org.joda.time.DateTime;
 
-public class DailyPublisherData {
+import java.io.Serializable;
+
+public class DailyPublisherData implements Serializable {
 
     private DateTime date;
     private int avails;
