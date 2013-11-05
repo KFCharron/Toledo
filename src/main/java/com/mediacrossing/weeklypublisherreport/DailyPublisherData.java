@@ -14,6 +14,19 @@ public class DailyPublisherData implements Serializable {
     private int unfilled;
     private float gross;
 
+    public DailyPublisherData() {
+    }
+
+    public DailyPublisherData(DateTime date) {
+        this.date = date;
+        this.avails = 0;
+        this.imps = 0;
+        this.errors = 0;
+        this.eCpm = 0;
+        this.unfilled = 0;
+        this.gross = 0;
+    }
+
     public DateTime getDate() {
         return date;
     }
