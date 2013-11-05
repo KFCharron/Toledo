@@ -174,4 +174,22 @@ public class ResponseParser {
         }
         return placements;
     }
+
+    public static ArrayList<String> parseTopBrandsOrBuyers(List<String[]> csvData) {
+
+        csvData.remove(0);
+        ArrayList<String> brandNames = new ArrayList<String>();
+
+        int count = 0;
+        for (String[] l : csvData) {
+           if (count < 10) {
+               brandNames.add(l[0]);
+               count++;
+           }
+        }
+
+        return brandNames;
+    }
+
+
 }

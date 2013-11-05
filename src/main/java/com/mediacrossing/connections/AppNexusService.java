@@ -141,6 +141,113 @@ public class AppNexusService {
         return ResponseParser.parsePlacementReport(downloadReportWhenReady(json));
     }
 
+    public ArrayList<WeeklyPlacement> requestMonthlyPublisherReport (String pubId) throws Exception {
+        String jsonPost = "{\n" +
+                "    \"report\":\n" +
+                "    {\n" +
+                "        \"report_type\":\"network_publisher_analytics\",\n" +
+                "        \"columns\":[\n" +
+                "            \"day\",\n" +
+                "            \"placement_id\",\n" +
+                "            \"placement_name\",\n" +
+                "            \"imps_total\",\n" +
+                "            \"imps_kept\",\n" +
+                "            \"imps_resold\",\n" +
+                "            \"imps_default\",\n" +
+                "            \"imps_psa\",\n" +
+                "            \"imps_blank\",\n" +
+                "            \"imps_psa_error\",\n" +
+                "            \"imps_default_error\",\n" +
+                "            \"imps_default_bidder\",\n" +
+                "            \"publisher_rpm\",\n" +
+                "            \"publisher_revenue\"\n" +
+                "        ],\n" +
+                "        \"row_per\":[\n" +
+                "            \"day\",\n" +
+                "            \"placement_id\"\n" +
+                "        ],\n" +
+                "        \"report_interval\":\"last_month\",\n" +
+                "        \"format\":\"csv\",\n" +
+                "        \"emails\":[\n" +
+                "        ],\n" +
+                "        \"orders\": [\n" +
+                "                    {\n" +
+                "                        \"order_by\":\"day\", \n" +
+                "                        \"direction\":\"ASC\"\n" +
+                "                    },\n" +
+                "                    {\n" +
+                "                        \"order_by\":\"placement_id\", \n" +
+                "                        \"direction\":\"DESC\"\n" +
+                "                    }\n" +
+                "                    ],\n" +
+                "        \"timezone\": \"EST5EDT\""+
+                "    }\n" +
+                "}";
+
+        String json = requests.postRequest(url+"/report?publisher_id="+pubId, jsonPost);
+        return ResponseParser.parsePlacementReport(downloadReportWhenReady(json));
+    }
+
+    public ArrayList<String> requestTopBuyerReport (String pubId) throws Exception {
+        String jsonPost = "{\n" +
+                "    \"report\":\n" +
+                "    {\n" +
+                "        \"report_type\": \"network_publisher_analytics\",\n" +
+                "        \"columns\":[\n" +
+                "            \"buyer_member_name\",\n" +
+                "            \"network_revenue\"\n" +
+                "        ],\n" +
+                "        \"row_per\":[\n" +
+                "            \"buyer_member_name\"\n" +
+                "        ],\n" +
+                "        \"report_interval\":\"last_month\",\n" +
+                "        \"format\":\"csv\",\n" +
+                "        \"emails\":[\n" +
+                "        ],\n" +
+                "        \"orders\": [\n" +
+                "                    {\n" +
+                "                        \"order_by\":\"network_revenue\", \n" +
+                "                        \"direction\":\"DESC\"\n" +
+                "                    }\n" +
+                "                    ]\n" +
+                "        \"timezone\": \"EST5EDT\""+
+                "    }\n" +
+                "}";
+        String json = requests.postRequest(url+"/report?publisher_id="+pubId, jsonPost);
+        return ResponseParser.parseTopBrandsOrBuyers(downloadReportWhenReady(json));
+
+    }
+
+    public ArrayList<String> requestTopBrandReport (String pubId) throws Exception {
+        String jsonPost = "{\n" +
+                "    \"report\":\n" +
+                "    {\n" +
+                "        \"report_type\": \"network_publisher_analytics\",\n" +
+                "        \"columns\":[\n" +
+                "            \"brand_name\",\n" +
+                "            \"network_revenue\"\n" +
+                "        ],\n" +
+                "        \"row_per\":[\n" +
+                "            \"brand_name\"\n" +
+                "        ],\n" +
+                "        \"report_interval\":\"last_month\",\n" +
+                "        \"format\":\"csv\",\n" +
+                "        \"emails\":[\n" +
+                "        ],\n" +
+                "        \"orders\": [\n" +
+                "                    {\n" +
+                "                        \"order_by\":\"network_revenue\", \n" +
+                "                        \"direction\":\"DESC\"\n" +
+                "                    }\n" +
+                "                    ]\n" +
+                "        \"timezone\": \"EST5EDT\""+
+                "    }\n" +
+                "}";
+        String json = requests.postRequest(url+"/report?publisher_id="+pubId, jsonPost);
+        return ResponseParser.parseTopBrandsOrBuyers(downloadReportWhenReady(json));
+
+    }
+
     public List<String[]> getPublisherReport(String interval, String pubId) throws Exception {
         String jsonPost = "{\n" +
                 "    \"report\":\n" +
