@@ -209,7 +209,7 @@ public class AppNexusService {
                 "                        \"order_by\":\"network_revenue\", \n" +
                 "                        \"direction\":\"DESC\"\n" +
                 "                    }\n" +
-                "                    ]\n" +
+                "                    ],\n" +
                 "        \"timezone\": \"EST5EDT\""+
                 "    }\n" +
                 "}";
@@ -239,7 +239,7 @@ public class AppNexusService {
                 "                        \"order_by\":\"network_revenue\", \n" +
                 "                        \"direction\":\"DESC\"\n" +
                 "                    }\n" +
-                "                    ]\n" +
+                "                    ],\n" +
                 "        \"timezone\": \"EST5EDT\""+
                 "    }\n" +
                 "}";
