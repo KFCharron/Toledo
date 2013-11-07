@@ -2,6 +2,7 @@ package com.mediacrossing.connections;
 
 import com.mediacrossing.campaignbooks.DataParse;
 import com.mediacrossing.dailycheckupsreport.JSONParse;
+import com.mediacrossing.monthlybillingreport.BillingAdvertiser;
 import com.mediacrossing.publishercheckup.*;
 import com.mediacrossing.publisherreporting.Publisher;
 import com.mediacrossing.weeklypublisherreport.WeeklyPlacement;
@@ -92,6 +93,74 @@ public class AppNexusService {
         String json = requests.getRequest(url+"/ym-profile?publisher_id="+pubId);
         throttleCheck();
         return ResponseParser.parseYmProfiles(json);
+    }
+
+    public ArrayList<BillingAdvertiser> requestBillingReport () throws Exception {
+        String jsonPost = "{\n" +
+                "    \"report\":\n" +
+                "    {\n" +
+                "        \"report_type\": \"network_analytics\",\n" +
+                "        \"columns\": [\n" +
+                "            \"advertiser_id\",\n" +
+                "            \"advertiser_name\",\n" +
+                "            \"campaign_id\",\n" +
+                "            \"campaign_name\",\n" +
+                "            \"imps\",\n" +
+                "            \"clicks\",\n" +
+                "            \"total_convs\",\n" +
+                "            \"cost\",\n" +
+                "            \"revenue\"\n" +
+                "        ],\n" +
+                "        \"row_per\" :[\n" +
+                "            \"campaign_id\"\n" +
+                "        ],\n" +
+                "        \"report_interval\": \"last_month\",\n" +
+                "        \"format\": \"csv\",\n" +
+                "        \"emails\":[],\n" +
+                "        \"orders\": [\n" +
+                "            {\n" +
+                "            \"order_by\" : \"campaign_id\",\n" +
+                "            \"direction\": \"DESC\"\n" +
+                "            }\n" +
+                "        ],\n" +
+                "        \"timezone\": \"EST5EDT\"\n" +
+                "    }\n" +
+                "}";
+
+        String json = requests.postRequest(url+"/report", jsonPost);
+        return ResponseParser.parseBillingReport(downloadReportWhenReady(json));
+    }
+
+    public List<String[]> requestSellerReport () throws Exception {
+        String jsonPost = "{\n" +
+                "    \"report\":\n" +
+                "    {\n" +
+                "        \"report_type\": \"network_analytics\",\n" +
+                "        \"columns\": [\n" +
+                "            \"seller_member_id\",\n" +
+                "            \"seller_member_name\",\n" +
+                "            \"campaign_id\",\n" +
+                "            \"imps\"\n" +
+                "        ],\n" +
+                "        \"row_per\" :[\n" +
+                "            \"campaign_id\",\n" +
+                "            \"seller_member_id\"\n" +
+                "        ],\n" +
+                "        \"report_interval\": \"last_month\",\n" +
+                "        \"format\": \"csv\",\n" +
+                "        \"emails\":[],\n" +
+                "        \"orders\": [\n" +
+                "            {\n" +
+                "            \"order_by\" : \"seller_member_id\",\n" +
+                "            \"direction\": \"DESC\"\n" +
+                "            }\n" +
+                "        ],\n" +
+                "        \"timezone\": \"EST5EDT\"\n" +
+                "    }\n" +
+                "}";
+
+        String json = requests.postRequest(url+"/report", jsonPost);
+        return downloadReportWhenReady(json);
     }
 
     public ArrayList<WeeklyPlacement> requestWeeklyPublisherReport (String pubId) throws Exception {
