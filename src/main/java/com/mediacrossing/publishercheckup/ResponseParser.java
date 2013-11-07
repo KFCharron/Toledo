@@ -4,6 +4,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.mediacrossing.monthlybillingreport.BillingAdvertiser;
+import com.mediacrossing.monthlybillingreport.BillingCampaign;
 import com.mediacrossing.weeklypublisherreport.DailyPublisherData;
 import com.mediacrossing.weeklypublisherreport.WeeklyPlacement;
 import org.joda.time.DateTime;
@@ -173,6 +175,32 @@ public class ResponseParser {
             }
         }
         return placements;
+    }
+
+    public static ArrayList<BillingAdvertiser> parseBillingReport (List<String[]> csvData) {
+        csvData.remove(0);
+        ArrayList<BillingAdvertiser> ads = new ArrayList<BillingAdvertiser>();
+        for (String[] l : csvData) {
+            BillingCampaign camp = new BillingCampaign(l[2], l[3], Integer.parseInt(l[4]),
+                    Integer.parseInt(l[5]),
+                    Integer.parseInt(l[6]),
+                    Float.parseFloat(l[7]),
+                    Float.parseFloat(l[8]));
+            boolean saved = false;
+            //FIXME
+            for (BillingAdvertiser ad : ads) {
+               if (l[0].equals(ad.getId())) {
+                   ad.getCampaigns().add(camp);
+                   saved = true;
+               }
+            }
+            if (!saved) {
+                BillingAdvertiser ad = new BillingAdvertiser(l[1], l[0]);
+                ad.getCampaigns().add(camp);
+                ads.add(ad);
+            }
+        }
+        return ads;
     }
 
     public static ArrayList<String> parseTopBrandsOrBuyers(List<String[]> csvData) {
