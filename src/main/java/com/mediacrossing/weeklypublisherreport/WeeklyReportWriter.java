@@ -97,7 +97,14 @@ public class WeeklyReportWriter {
         //Write sheet for each placement
         for (WeeklyPlacement place : p.getPlacements()) {
             String sheetName = WorkbookUtil.createSafeSheetName(place.getName()+"("+place.getId()+")");
-            Sheet placementSheet = wb.createSheet(sheetName);
+            Sheet placementSheet;
+            try {
+                placementSheet = wb.createSheet(sheetName);
+            }catch (Exception e) {
+                //duplicate found, fix it.
+                placementSheet =
+                        wb.createSheet(WorkbookUtil.createSafeSheetName("(" + place.getId() + ")" + place.getName()));
+            }
             Row headerRow = placementSheet.createRow(0);
             headerRow.createCell(0).setCellValue("Day");
             headerRow.createCell(1).setCellValue("Avails");
