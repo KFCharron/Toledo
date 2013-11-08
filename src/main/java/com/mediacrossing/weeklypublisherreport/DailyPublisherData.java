@@ -12,7 +12,8 @@ public class DailyPublisherData implements Serializable {
     private int errors;
     private float eCpm;
     private int unfilled;
-    private float gross;
+    private float publisherRevenue;
+    private float networkRevenue;
 
     public DailyPublisherData() {
     }
@@ -24,7 +25,16 @@ public class DailyPublisherData implements Serializable {
         this.errors = 0;
         this.eCpm = 0;
         this.unfilled = 0;
-        this.gross = 0;
+        this.publisherRevenue = 0;
+        this.networkRevenue = 0;
+    }
+
+    public float getNetworkRevenue() {
+        return networkRevenue;
+    }
+
+    public void setNetworkRevenue(float networkRevenue) {
+        this.networkRevenue = networkRevenue;
     }
 
     public DateTime getDate() {
@@ -75,11 +85,11 @@ public class DailyPublisherData implements Serializable {
         this.unfilled = unfilled;
     }
 
-    public float getGross() {
-        return gross;
+    public float getPublisherRevenue() {
+        return publisherRevenue;
     }
 
-    public void setGross(float gross) {
-        this.gross = gross;
+    public void setPublisherRevenue(float publisherRevenue) {
+        this.publisherRevenue = publisherRevenue;
     }
 }

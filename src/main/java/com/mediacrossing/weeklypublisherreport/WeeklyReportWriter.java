@@ -41,8 +41,8 @@ public class WeeklyReportWriter {
                        grandTotal.setImps(grandTotal.getImps() + d.getImps());
                        daily.setErrors(daily.getErrors() + d.getErrors());
                        grandTotal.setErrors(grandTotal.getErrors() + d.getErrors());
-                       daily.setGross(daily.getGross() + d.getGross());
-                       grandTotal.setGross(grandTotal.getGross() + d.getGross());
+                       daily.setPublisherRevenue(daily.getPublisherRevenue() + d.getPublisherRevenue());
+                       grandTotal.setPublisherRevenue(grandTotal.getPublisherRevenue() + d.getPublisherRevenue());
                        daily.setUnfilled(daily.getUnfilled() + d.getUnfilled());
                        grandTotal.setUnfilled(grandTotal.getUnfilled() + d.getUnfilled());
                        cpmCount++;
@@ -73,7 +73,7 @@ public class WeeklyReportWriter {
             dataRow.createCell(3).setCellValue(d.getUnfilled());
             dataRow.createCell(4).setCellValue(d.getErrors());
             dataRow.createCell(5).setCellValue(d.geteCpm());
-            dataRow.createCell(6).setCellValue(d.getGross());
+            dataRow.createCell(6).setCellValue(d.getPublisherRevenue());
 
             dataRow.getCell(5).setCellStyle(fullCurrency);
             dataRow.getCell(6).setCellStyle(fullCurrency);
@@ -86,7 +86,7 @@ public class WeeklyReportWriter {
         totalRow.createCell(3).setCellValue(grandTotal.getUnfilled());
         totalRow.createCell(4).setCellValue(grandTotal.getErrors());
         totalRow.createCell(5).setCellValue(grandTotal.geteCpm() / 7);
-        totalRow.createCell(6).setCellValue(grandTotal.getGross());
+        totalRow.createCell(6).setCellValue(grandTotal.getPublisherRevenue());
 
         totalRow.getCell(5).setCellStyle(fullCurrency);
         totalRow.getCell(6).setCellStyle(fullCurrency);
@@ -125,7 +125,7 @@ public class WeeklyReportWriter {
                 dataRow.createCell(3).setCellValue(data.getUnfilled());
                 dataRow.createCell(4).setCellValue(data.getErrors());
                 dataRow.createCell(5).setCellValue(data.geteCpm());
-                dataRow.createCell(6).setCellValue(data.getGross());
+                dataRow.createCell(6).setCellValue(data.getPublisherRevenue());
 
                 dataRow.getCell(5).setCellStyle(fullCurrency);
                 dataRow.getCell(6).setCellStyle(fullCurrency);

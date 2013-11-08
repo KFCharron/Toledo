@@ -160,7 +160,8 @@ public class ResponseParser {
             data.setUnfilled(Integer.parseInt(l[6]) + Integer.parseInt(l[7]) + Integer.parseInt(l[8]));
             data.setErrors(Integer.parseInt(l[9]) + Integer.parseInt(l[10]) + Integer.parseInt(l[11]));
             data.seteCpm(Float.parseFloat(l[12]));
-            data.setGross(Float.parseFloat(l[13]));
+            data.setPublisherRevenue(Float.parseFloat(l[13]));
+            data.setNetworkRevenue(Float.parseFloat(l[14]));
             Boolean found = false;
             for (WeeklyPlacement p : placements) {
                 if (p.getId().equals(l[1])) {
