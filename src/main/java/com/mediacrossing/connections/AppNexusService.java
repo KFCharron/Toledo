@@ -182,7 +182,8 @@ public class AppNexusService {
                 "            \"imps_default_error\",\n" +
                 "            \"imps_default_bidder\",\n" +
                 "            \"publisher_rpm\",\n" +
-                "            \"publisher_revenue\"\n" +
+                "            \"publisher_revenue\",\n" +
+                "            \"network_revenue\"\n" +
                 "        ],\n" +
                 "        \"row_per\":[\n" +
                 "            \"day\",\n" +
