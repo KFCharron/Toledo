@@ -44,13 +44,10 @@ public class RunMonthlyPublisherReport {
         boolean development = true;
         if (development) {
             try{
-                FileInputStream door = new FileInputStream("/Users/charronkyle/Desktop/ReportData/WeeklyPubList.ser");
+                FileInputStream door = new FileInputStream("/Users/charronkyle/Desktop/ReportData/MonthlyPubList.ser");
                 ObjectInputStream reader = new ObjectInputStream(door);
                 ArrayList<WeeklyPublisher> pubList = (ArrayList<WeeklyPublisher>) reader.readObject();
-                for (WeeklyPublisher p : pubList) {
-                    //TODO
-                    //WeeklyReportWriter.writeReportToFile(p, outputPath);
-                }
+                for (WeeklyPublisher p : pubList)  MonthlyPublisherReportWriter.writeReportToFile(p, outputPath);
                 System.exit(0);
             }catch (IOException e){
                 e.printStackTrace();
@@ -77,7 +74,7 @@ public class RunMonthlyPublisherReport {
         // Serialize data object to a file
         try {
             ObjectOutputStream out = new ObjectOutputStream
-                    (new FileOutputStream("/Users/charronkyle/Desktop/ReportData/WeeklyPubList.ser"));
+                    (new FileOutputStream("/Users/charronkyle/Desktop/ReportData/MonthlyPubList.ser"));
             out.writeObject(pubList);
             out.close();
         } catch (IOException e) {
@@ -86,10 +83,6 @@ public class RunMonthlyPublisherReport {
         }
 
         //Create file for every publisher
-        for (WeeklyPublisher p : pubList) {
-            //TODO
-            //WeeklyReportWriter.writeReportToFile(p, outputPath);
-        }
-
+        for (WeeklyPublisher p : pubList) MonthlyPublisherReportWriter.writeReportToFile(p, outputPath);
     }
 }
