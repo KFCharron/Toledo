@@ -46,7 +46,7 @@ public class XlsWriter {
         buildFrequencySheet();
         buildDaypartSheet();
         buildGeographySheet();
-        buildInsertionFeeSheet();
+        buildServingFeeSheet();
         //freeze top row for every sheet
         for (int x = 0; x < 5; x++) {
             WORKBOOK.getSheetAt(x).createFreezePane(0,1);
@@ -89,6 +89,17 @@ public class XlsWriter {
         for(int x = 0; x < 9; x++)
             headerRow.getCell(x).setCellStyle(bold);
 
+        //Styles for patterning rows
+        Font alert = WORKBOOK.createFont();
+        alert.setBoldweight((short)1000);
+        alert.setColor(IndexedColors.RED.getIndex());
+
+        CellStyle altRow = WORKBOOK.createCellStyle();
+        altRow.setFillForegroundColor(HSSFColor.LIGHT_GREEN.index);
+        altRow.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+        altRow.setWrapText(true);
+        CellStyle whiteRow = WORKBOOK.createCellStyle();
+        whiteRow.setWrapText(true);
 
         //Repeat row for every campaign in list
         int rowCounter = 1;
@@ -145,20 +156,6 @@ public class XlsWriter {
             }
             campaignRow.createCell(8).setCellValue(stringBuilder.toString());
 
-
-
-            //Styles for patterning rows
-            Font alert = WORKBOOK.createFont();
-            alert.setBoldweight((short)1000);
-            alert.setColor(IndexedColors.RED.getIndex());
-
-            CellStyle altRow = WORKBOOK.createCellStyle();
-            altRow.setFillForegroundColor(HSSFColor.LIGHT_GREEN.index);
-            altRow.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
-            altRow.setWrapText(true);
-            CellStyle whiteRow = WORKBOOK.createCellStyle();
-            whiteRow.setWrapText(true);
-
             if(camp.getProfile().modifiedYesterday()) {
                 altRow.setFont(alert);
                 whiteRow.setFont(alert);
@@ -213,6 +210,16 @@ public class XlsWriter {
         for(int x = 0; x < cellCount; x++)
             headerRow.getCell(x).setCellStyle(bold);
 
+        //Styles for patterning rows
+        Font alert = WORKBOOK.createFont();
+        alert.setBoldweight((short)1000);
+
+        CellStyle altRow = WORKBOOK.createCellStyle();
+        altRow.setFillForegroundColor(HSSFColor.LIGHT_GREEN.index);
+        altRow.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+        altRow.setWrapText(true);
+        CellStyle whiteRow = WORKBOOK.createCellStyle();
+        whiteRow.setWrapText(true);
 
         //Repeat row for every campaign in list
         int rowCounter = 1;
@@ -232,17 +239,6 @@ public class XlsWriter {
                     }
                     segmentSheet.autoSizeColumn(x+5);
                 }
-
-                //Styles for patterning rows
-                Font alert = WORKBOOK.createFont();
-                alert.setBoldweight((short)1000);
-
-                CellStyle altRow = WORKBOOK.createCellStyle();
-                altRow.setFillForegroundColor(HSSFColor.LIGHT_GREEN.index);
-                altRow.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
-                altRow.setWrapText(true);
-                CellStyle whiteRow = WORKBOOK.createCellStyle();
-                whiteRow.setWrapText(true);
 
                 if(campaign.getProfile().modifiedYesterday()) {
                     altRow.setFont(alert);
@@ -305,6 +301,15 @@ public class XlsWriter {
             for(int x = 0; x < 5; x++)
                 headerRow.getCell(x).setCellStyle(bold);
 
+            //Styles for patterning rows
+            Font alert = WORKBOOK.createFont();
+            alert.setBoldweight((short)1000);
+            CellStyle altRow = WORKBOOK.createCellStyle();
+            altRow.setFillForegroundColor(HSSFColor.LIGHT_GREEN.index);
+            altRow.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+            altRow.setWrapText(true);
+            CellStyle whiteRow = WORKBOOK.createCellStyle();
+            whiteRow.setWrapText(true);
 
             //Repeat row for every campaign in list
             short rowCounter = 1;
@@ -341,15 +346,7 @@ public class XlsWriter {
                 }
                 campaignRow.createCell(4).setCellValue(oneLine.toString());
 
-                //Styles for patterning rows
-                Font alert = WORKBOOK.createFont();
-                alert.setBoldweight((short)1000);
-                CellStyle altRow = WORKBOOK.createCellStyle();
-                altRow.setFillForegroundColor(HSSFColor.LIGHT_GREEN.index);
-                altRow.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
-                altRow.setWrapText(true);
-                CellStyle whiteRow = WORKBOOK.createCellStyle();
-                whiteRow.setWrapText(true);
+
 
                 campaignRow.setHeightInPoints(linebreakCount * segmentSheet.getDefaultRowHeightInPoints());
 
@@ -377,23 +374,23 @@ public class XlsWriter {
             segmentSheet.autoSizeColumn(4);
     }
 
-    public static void buildInsertionFeeSheet() {
+    public static void buildServingFeeSheet() {
 
         //Create new sheet
-        Sheet insertionSheet = WORKBOOK.createSheet("Insertion Fees");
+        Sheet servingSheet = WORKBOOK.createSheet("Serving Fees");
 
         //Header row
-        Row headerRow = insertionSheet.createRow((short) 0);
+        Row headerRow = servingSheet.createRow((short) 0);
         headerRow.createCell(0).setCellValue("Advertiser");
         headerRow.createCell(1).setCellValue("Line Item");
         headerRow.createCell(2).setCellValue("Campaign ID");
         headerRow.createCell(3).setCellValue("Campaign");
-        headerRow.createCell(4).setCellValue("Insertion Fees");
+        headerRow.createCell(4).setCellValue("Serving Fees");
 
         //Setting ID columns to the width of 10 chars
-        insertionSheet.setColumnWidth(0, 3072);
-        insertionSheet.setColumnWidth(1, 2560);
-        insertionSheet.setColumnWidth(2, 3840);
+        servingSheet.setColumnWidth(0, 3072);
+        servingSheet.setColumnWidth(1, 2560);
+        servingSheet.setColumnWidth(2, 3840);
 
         //Style header
         Font font = WORKBOOK.createFont();
@@ -404,10 +401,20 @@ public class XlsWriter {
         for(Cell c : headerRow)
             c.setCellStyle(bold);
 
+        //Styles for patterning rows
+        Font alert = WORKBOOK.createFont();
+        alert.setBoldweight((short)1000);
+        CellStyle altRow = WORKBOOK.createCellStyle();
+        altRow.setFillForegroundColor(HSSFColor.LIGHT_GREEN.index);
+        altRow.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+        altRow.setWrapText(true);
+        CellStyle whiteRow = WORKBOOK.createCellStyle();
+        whiteRow.setWrapText(true);
+
         //Repeat row for every campaign
         short rowCount = 1;
         for (Campaign c : CAMPAIGNARRAYLIST) {
-            Row campRow = insertionSheet.createRow(rowCount);
+            Row campRow = servingSheet.createRow(rowCount);
             campRow.createCell(0).setCellValue(c.getAdvertiserID());
             campRow.createCell(1).setCellValue(c.getLineItemID());
             campRow.createCell(2).setCellValue(c.getId());
@@ -423,15 +430,7 @@ public class XlsWriter {
             }
             campRow.createCell(4).setCellValue(sb.toString());
 
-            //Styles for patterning rows
-            Font alert = WORKBOOK.createFont();
-            alert.setBoldweight((short)1000);
-            CellStyle altRow = WORKBOOK.createCellStyle();
-            altRow.setFillForegroundColor(HSSFColor.LIGHT_GREEN.index);
-            altRow.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
-            altRow.setWrapText(true);
-            CellStyle whiteRow = WORKBOOK.createCellStyle();
-            whiteRow.setWrapText(true);
+
 
             if(c.getProfile().modifiedYesterday()) {
                 altRow.setFont(alert);
@@ -452,8 +451,8 @@ public class XlsWriter {
             rowCount++;
         }
 
-        insertionSheet.autoSizeColumn(3);
-        insertionSheet.autoSizeColumn(4);
+        servingSheet.autoSizeColumn(3);
+        servingSheet.autoSizeColumn(4);
 
     }
 
@@ -487,6 +486,15 @@ public class XlsWriter {
         for(int x = 0; x < 7; x++)
             headerRow.getCell(x).setCellStyle(bold);
 
+        //Styles for patterning rows
+        Font alert = WORKBOOK.createFont();
+        alert.setBoldweight((short)1000);
+        CellStyle altRow = WORKBOOK.createCellStyle();
+        altRow.setFillForegroundColor(HSSFColor.LIGHT_GREEN.index);
+        altRow.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+        altRow.setWrapText(true);
+        CellStyle whiteRow = WORKBOOK.createCellStyle();
+        whiteRow.setWrapText(true);
 
         //Repeat row for every campaign in list
         short rowCounter = 1;
@@ -500,15 +508,6 @@ public class XlsWriter {
             campaignRow.createCell(5).setCellValue(campaign.getFrequencyTargets().getMaxDayImps());
             campaignRow.createCell(6).setCellValue(campaign.getFrequencyTargets().getMinMinutesPerImp());
 
-            //Styles for patterning rows
-            Font alert = WORKBOOK.createFont();
-            alert.setBoldweight((short)1000);
-            CellStyle altRow = WORKBOOK.createCellStyle();
-            altRow.setFillForegroundColor(HSSFColor.LIGHT_GREEN.index);
-            altRow.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
-            altRow.setWrapText(true);
-            CellStyle whiteRow = WORKBOOK.createCellStyle();
-            whiteRow.setWrapText(true);
 
             if(campaign.getProfile().modifiedYesterday()) {
                 altRow.setFont(alert);
