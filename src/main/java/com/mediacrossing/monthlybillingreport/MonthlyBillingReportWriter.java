@@ -94,6 +94,9 @@ public class MonthlyBillingReportWriter {
         summarySheet.autoSizeColumn(0);
         summarySheet.autoSizeColumn(1);
 
+        //Create sheet summing up by every advert.
+        Sheet advertiserSummary = wb.createSheet("Advertiser Summary");
+        ArrayList<BillingAdvertiser> adSummaryList = new ArrayList<BillingAdvertiser>();
 
         //Create sheet for every advertiser
         for (BillingAdvertiser ad : adList) {
@@ -128,6 +131,8 @@ public class MonthlyBillingReportWriter {
             headerRow.createCell(23).setCellValue("GP Margin");
 
             int rowCount = 0;
+
+            BillingAdvertiser totalAdvertiser = new BillingAdvertiser(ad.getName(), ad.getId());
             BillingCampaign adTotal = new BillingCampaign();
 
             for (BillingCampaign c : ad.getCampaigns()) {
@@ -181,6 +186,11 @@ public class MonthlyBillingReportWriter {
                 adTotal.setAlcTotal(adTotal.getAlcTotal() + c.getAlcTotal());
                 
             }
+
+            //add totals to advertiser summary sheet
+            totalAdvertiser.getCampaigns().add(adTotal);
+            adSummaryList.add(totalAdvertiser);
+
             rowCount++;
             Row totalRow = advertiserSheet.createRow(++rowCount);
             totalRow.createCell(0).setCellValue("Totals:");
@@ -212,6 +222,70 @@ public class MonthlyBillingReportWriter {
 
             for (int x = 0; x < 24; x++) advertiserSheet.autoSizeColumn(x);
         }
+
+        //build advertiser summary page
+        Row summaryHeader = advertiserSummary.createRow(0);
+        summaryHeader.createCell(0).setCellValue("Advertiser");
+        summaryHeader.createCell(1).setCellValue("Imps");
+        summaryHeader.createCell(2).setCellValue("Clicks");
+        summaryHeader.createCell(3).setCellValue("Convs");
+        summaryHeader.createCell(4).setCellValue("3rd Party Imps.");
+        summaryHeader.createCell(5).setCellValue("Billable Imps");
+        summaryHeader.createCell(6).setCellValue("CPM");
+        summaryHeader.createCell(7).setCellValue("App Nexus Rev.");
+        summaryHeader.createCell(8).setCellValue("Billable To Client");
+        summaryHeader.createCell(9).setCellValue("Media Cost");
+        summaryHeader.createCell(10).setCellValue("AdEx Imps");
+        summaryHeader.createCell(11).setCellValue("AppNexus Imps");
+        summaryHeader.createCell(12).setCellValue("Brilig Imps");
+        summaryHeader.createCell(13).setCellValue("ALC");
+        summaryHeader.createCell(14).setCellValue("Evidon");
+        summaryHeader.createCell(15).setCellValue("BlueKai");
+        summaryHeader.createCell(16).setCellValue("Grapeshot");
+        summaryHeader.createCell(17).setCellValue("Integral");
+        summaryHeader.createCell(18).setCellValue("Amazon Cost");
+        summaryHeader.createCell(19).setCellValue("AdX Cost");
+        summaryHeader.createCell(20).setCellValue("Brilig Cost");
+        summaryHeader.createCell(21).setCellValue("Total Cost");
+        summaryHeader.createCell(22).setCellValue("Gross Profit");
+        summaryHeader.createCell(23).setCellValue("GP Margin");
+        
+        int rowCount = 1;
+        for (BillingAdvertiser ad : adSummaryList) {
+            for (BillingCampaign c : ad.getCampaigns()) {
+                Row adRow = advertiserSummary.createRow(rowCount);
+                adRow.createCell(0).setCellValue(ad.getName());
+                adRow.createCell(1).setCellValue(c.getImps());
+                adRow.createCell(2).setCellValue(c.getClicks());
+                adRow.createCell(3).setCellValue(c.getConvs());
+                adRow.createCell(4);
+                adRow.createCell(5);
+                adRow.createCell(6);
+                adRow.createCell(7).setCellValue(c.getNetworkRevenue());
+                adRow.createCell(8);
+                adRow.createCell(9).setCellValue(c.getMediaCost());
+                adRow.createCell(10).setCellValue(c.getAdExImps());
+                adRow.createCell(11).setCellValue(c.getAppNexusImps());
+                adRow.createCell(12).setCellValue(c.getBriligImps());
+                adRow.createCell(13).setCellValue(c.getAlcTotal());
+                adRow.createCell(14).setCellValue(c.getEvidonTotal());
+                adRow.createCell(15).setCellValue(c.getBlueKaiTotal());
+                adRow.createCell(16).setCellValue(c.getGrapeshotTotal());
+                adRow.createCell(17).setCellValue(c.getIntegralTotal());
+
+                adRow.getCell(7).setCellStyle(fullCurrency);
+                adRow.getCell(9).setCellStyle(fullCurrency);
+                adRow.getCell(13).setCellStyle(fullCurrency);
+                adRow.getCell(14).setCellStyle(fullCurrency);
+                adRow.getCell(15).setCellStyle(fullCurrency);
+                adRow.getCell(16).setCellStyle(fullCurrency);
+                adRow.getCell(17).setCellStyle(fullCurrency);
+
+                rowCount++;
+            }
+        }
+        for (int x = 0; x < 24; x++) advertiserSummary.autoSizeColumn(x);
+
 
         //Export file
         LocalDate now = new LocalDate(DateTimeZone.UTC);

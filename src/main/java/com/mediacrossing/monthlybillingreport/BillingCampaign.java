@@ -63,6 +63,10 @@ public class BillingCampaign implements Serializable {
         this.grapeshotTotal = 0;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public int getBriligImps() {
         return briligImps;
     }
