@@ -84,17 +84,31 @@ public class RunMonthlyBillingReport {
                 for (BillingCampaign bc : a.getCampaigns()) {
                     if (bc.getId().equals(c.getId())) {
                         for (ServingFee fee : c.getServingFeeList()) {
+                            Float imps = (float)bc.getImps();
                             if (fee.getBrokerName().equals("Integral Ad Science")) {
                                 bc.setIntegralFee(Float.parseFloat(fee.getValue()));
-                                bc.setIntegralTotal(bc.getImps()/1000*bc.getIntegralFee());
+                                bc.setIntegralTotal((imps/(float)1000)*bc.getIntegralFee());
                             }
                             if (fee.getBrokerName().equals("Evidon")) {
                                 bc.setEvidonFee(Float.parseFloat(fee.getValue()));
-                                bc.setEvidonTotal(bc.getImps()/1000*bc.getEvidonFee());
+                                bc.setEvidonTotal((imps/(float)1000)*bc.getEvidonFee());
                             }
                             if (fee.getBrokerName().equals("Brilig")) {
                                 bc.setBriligFee(Float.parseFloat(fee.getValue()));
-                                bc.setBriligTotal(bc.getImps()/1000*bc.getBriligFee());
+                                bc.setBriligTotal((imps/(float)1000)*bc.getBriligFee());
+                                bc.setBriligImps(bc.getImps());
+                            }
+                            if (fee.getBrokerName().equals("BlueKai")) {
+                                bc.setBlueKaiFee(Float.parseFloat(fee.getValue()));
+                                bc.setBlueKaiTotal((imps/(float)1000)*bc.getBlueKaiFee());
+                            }
+                            if (fee.getBrokerName().equals("Grapeshot")) {
+                                bc.setGrapeshotFee(Float.parseFloat(fee.getValue()));
+                                bc.setGrapeshotTotal((imps/(float)1000)*bc.getGrapeshotFee());
+                            }
+                            if (fee.getBrokerName().equals("ALC")) {
+                                bc.setAlcFee(Float.parseFloat(fee.getValue()));
+                                bc.setAlcTotal((imps/(float)1000)*bc.getAlcFee());
                             }
                         }
                     }
