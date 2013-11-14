@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mediacrossing.monthlybillingreport.BillingAdvertiser;
 import com.mediacrossing.monthlybillingreport.BillingCampaign;
+import com.mediacrossing.weeklydomainreport.Domain;
 import com.mediacrossing.weeklypublisherreport.DailyPublisherData;
 import com.mediacrossing.weeklypublisherreport.WeeklyPlacement;
 import org.joda.time.DateTime;
@@ -53,6 +54,20 @@ public class ResponseParser {
             }
         }
         return placements;
+    }
+
+    public static ArrayList<Domain> parseDomainReport (List<String[]> csvData) {
+        ArrayList<Domain> domains = new ArrayList<Domain>();
+        csvData.remove(0);
+        for (String[] l : csvData) {
+            domains.add(new Domain(l[0], Double.parseDouble(l[1]), Integer.parseInt(l[2]), l[3],
+                    Double.parseDouble(l[4]), Double.parseDouble(l[5]), Double.parseDouble(l[6]),
+                    Double.parseDouble(l[7]), Double.parseDouble(l[8]), Double.parseDouble(l[9]),
+                    Integer.parseInt(l[10]), Double.parseDouble(l[11]), Integer.parseInt(l[12]),
+                    Double.parseDouble(l[13]), Integer.parseInt(l[14]), Double.parseDouble(l[15]),
+                    Double.parseDouble(l[16]), Double.parseDouble(l[17])));
+        }
+        return domains;
     }
 
     public static ArrayList<PaymentRule> parsePaymentRules(String json) {
@@ -155,13 +170,13 @@ public class ResponseParser {
         for (String[] l : csvData) {
             DailyPublisherData data = new DailyPublisherData();
             data.setDate(new DateTime(dtf.parseDateTime(l[0])));
-            data.setAvails(Integer.parseInt(l[3]));
-            data.setImps(Integer.parseInt(l[4]) + Integer.parseInt(l[5]));
-            data.setUnfilled(Integer.parseInt(l[6]) + Integer.parseInt(l[7]) + Integer.parseInt(l[8]));
-            data.setErrors(Integer.parseInt(l[9]) + Integer.parseInt(l[10]) + Integer.parseInt(l[11]));
-            data.seteCpm(Float.parseFloat(l[12]));
-            data.setPublisherRevenue(Float.parseFloat(l[13]));
-            data.setNetworkRevenue(Float.parseFloat(l[14]));
+            data.setImps(Integer.parseInt(l[3]));
+            data.setUnfilled(Integer.parseInt(l[4]) + Integer.parseInt(l[5]) + Integer.parseInt(l[6]));
+            data.setErrors(Integer.parseInt(l[7]) + Integer.parseInt(l[8]));
+            data.setAvails(data.getImps() + data.getUnfilled() + data.getErrors());
+            data.seteCpm(Float.parseFloat(l[9]));
+            data.setPublisherRevenue(Float.parseFloat(l[10]));
+            data.setNetworkRevenue(Float.parseFloat(l[11]));
             Boolean found = false;
             for (WeeklyPlacement p : placements) {
                 if (p.getId().equals(l[1])) {
@@ -186,9 +201,8 @@ public class ResponseParser {
                     Integer.parseInt(l[5]),
                     Integer.parseInt(l[6]),
                     Float.parseFloat(l[7]),
-                    Float.parseFloat(l[8]));
+                    Float.parseFloat(l[8]), Float.parseFloat(l[9]));
             boolean saved = false;
-            //FIXME
             for (BillingAdvertiser ad : ads) {
                if (l[0].equals(ad.getId())) {
                    ad.getCampaigns().add(camp);
