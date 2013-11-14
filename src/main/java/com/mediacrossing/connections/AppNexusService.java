@@ -5,6 +5,7 @@ import com.mediacrossing.dailycheckupsreport.JSONParse;
 import com.mediacrossing.monthlybillingreport.BillingAdvertiser;
 import com.mediacrossing.publishercheckup.*;
 import com.mediacrossing.publisherreporting.Publisher;
+import com.mediacrossing.weeklydomainreport.Domain;
 import com.mediacrossing.weeklypublisherreport.WeeklyPlacement;
 import com.mediacrossing.weeklypublisherreport.WeeklyPublisher;
 import org.slf4j.Logger;
@@ -109,7 +110,8 @@ public class AppNexusService {
                 "            \"clicks\",\n" +
                 "            \"total_convs\",\n" +
                 "            \"cost\",\n" +
-                "            \"revenue\"\n" +
+                "            \"revenue\",\n" +
+                "            \"cpm\"\n" +
                 "        ],\n" +
                 "        \"row_per\" :[\n" +
                 "            \"campaign_id\"\n" +
@@ -163,6 +165,47 @@ public class AppNexusService {
         return downloadReportWhenReady(json);
     }
 
+    public ArrayList<Domain> requestDomainReport () throws Exception {
+        String jsonPost = "{\n" +
+                "    \"report\":\n" +
+                "    {\n" +
+                "        \"report_type\": \"network_site_domain_performance\",\n" +
+                "        \"columns\": [\n" +
+                "            \"site_domain\",\n" +
+                "            \"booked_revenue\",\n" +
+                "            \"clicks\",\n" +
+                "            \"click_thru_pct\",\n" +
+                "            \"convs_per_mm\",\n" +
+                "\t    \"convs_rate\",\n" +
+                "\t    \"cost_ecpa\",\n" +
+                "\t    \"cost_ecpc\",\n" +
+                "\t    \"cpm\",\n" +
+                "\t    \"ctr\",\n" +
+                "        \"imps\",\n" +
+                "        \"media_cost\",\n" +
+                "        \"post_click_convs\",\n" +
+                "        \"post_click_convs_rate\",\n" +
+                "        \"post_view_convs\",\n" +
+                "        \"post_view_convs_rate\",\n" +
+                "        \"profit\",\n" +
+                "        \"profit_ecpm\"\n" +
+                "        ],\n" +
+                "        \"orders\": [\n" +
+                "            {\n" +
+                "            \"order_by\":\"imps\",\n" +
+                "            \"direction\":\"DESC\"\n" +
+                "            }\n" +
+                "        ],\n" +
+                "        \"report_interval\":\"last_7_days\",\n" +
+                "        \"emails\": [],\n" +
+                "        \"format\": \"csv\"\n" +
+                "    }\n" +
+                "}";
+
+        String json = requests.postRequest(url+"/report", jsonPost);
+        return ResponseParser.parseDomainReport(downloadReportWhenReady(json));
+    }
+
     public ArrayList<WeeklyPlacement> requestWeeklyPublisherReport (String pubId) throws Exception {
         String jsonPost = "{\n" +
                 "    \"report\":\n" +
@@ -173,15 +216,12 @@ public class AppNexusService {
                 "            \"placement_id\",\n" +
                 "            \"placement_name\",\n" +
                 "            \"imps_total\",\n" +
-                "            \"imps_kept\",\n" +
-                "            \"imps_resold\",\n" +
                 "            \"imps_default\",\n" +
                 "            \"imps_psa\",\n" +
                 "            \"imps_blank\",\n" +
                 "            \"imps_psa_error\",\n" +
                 "            \"imps_default_error\",\n" +
-                "            \"imps_default_bidder\",\n" +
-                "            \"publisher_rpm\",\n" +
+                "            \"network_rpm\",\n" +
                 "            \"publisher_revenue\",\n" +
                 "            \"network_revenue\"\n" +
                 "        ],\n" +
@@ -221,15 +261,12 @@ public class AppNexusService {
                 "            \"placement_id\",\n" +
                 "            \"placement_name\",\n" +
                 "            \"imps_total\",\n" +
-                "            \"imps_kept\",\n" +
-                "            \"imps_resold\",\n" +
                 "            \"imps_default\",\n" +
                 "            \"imps_psa\",\n" +
                 "            \"imps_blank\",\n" +
                 "            \"imps_psa_error\",\n" +
                 "            \"imps_default_error\",\n" +
-                "            \"imps_default_bidder\",\n" +
-                "            \"publisher_rpm\",\n" +
+                "            \"network_rpm\",\n" +
                 "            \"publisher_revenue\",\n" +
                 "            \"network_revenue\"\n" +
                 "        ],\n" +
@@ -254,7 +291,6 @@ public class AppNexusService {
                 "        \"timezone\": \"EST5EDT\""+
                 "    }\n" +
                 "}";
-
         String json = requests.postRequest(url+"/report?publisher_id="+pubId, jsonPost);
         return ResponseParser.parsePlacementReport(downloadReportWhenReady(json));
     }
