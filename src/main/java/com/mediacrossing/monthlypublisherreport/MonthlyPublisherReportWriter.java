@@ -8,7 +8,6 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.WorkbookUtil;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-import org.joda.time.Duration;
 import org.joda.time.LocalDate;
 
 import java.io.File;
@@ -27,37 +26,114 @@ public class MonthlyPublisherReportWriter {
         DataFormat df = wb.createDataFormat();
         CellStyle fullCurrency = wb.createCellStyle();
         fullCurrency.setDataFormat(df.getFormat("$#,##0.00"));
+        fullCurrency.setBorderTop(CellStyle.BORDER_THIN);
+        fullCurrency.setBorderBottom(CellStyle.BORDER_THIN);
+        fullCurrency.setBorderLeft(CellStyle.BORDER_THIN);
+        fullCurrency.setBorderRight(CellStyle.BORDER_THIN);
+
+        CellStyle fullCurrencyBottomRight = wb.createCellStyle();
+        fullCurrencyBottomRight.cloneStyleFrom(fullCurrency);
+        fullCurrencyBottomRight.setBorderBottom(CellStyle.BORDER_THICK);
+        fullCurrencyBottomRight.setBorderRight(CellStyle.BORDER_THICK);
+        fullCurrencyBottomRight.setBorderTop(CellStyle.BORDER_MEDIUM);
+
+        CellStyle fullCurrencyBottom = wb.createCellStyle();
+        fullCurrencyBottom.cloneStyleFrom(fullCurrencyBottomRight);
+        fullCurrencyBottom.setBorderRight(CellStyle.BORDER_THIN);
+        fullCurrencyBottom.setBorderTop(CellStyle.BORDER_MEDIUM);
+
+
+        CellStyle normal = wb.createCellStyle();
+        normal.setBorderBottom(CellStyle.BORDER_THIN);
+        normal.setBorderTop(CellStyle.BORDER_THIN);
+        normal.setBorderLeft(CellStyle.BORDER_THIN);
+        normal.setBorderRight(CellStyle.BORDER_THIN);
 
         CellStyle top = wb.createCellStyle();
         top.setBorderTop(CellStyle.BORDER_THICK);
+        top.setBorderLeft(CellStyle.BORDER_THIN);
+        top.setBorderRight(CellStyle.BORDER_THIN);
+        top.setBorderBottom(CellStyle.BORDER_MEDIUM);
         Font green = wb.createFont();
-        green.setBoldweight((short)1000);
-        green.setColor(IndexedColors.LIGHT_GREEN.getIndex());
+        green.setBoldweight((short)700);
+        green.setFontHeightInPoints((short)14);
+        green.setColor(IndexedColors.GREEN.getIndex());
+        top.setFont(green);
+        top.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
+        top.setFillPattern(CellStyle.SOLID_FOREGROUND);
 
         CellStyle topRight = wb.createCellStyle();
         topRight.setBorderTop(CellStyle.BORDER_THICK);
         topRight.setBorderRight(CellStyle.BORDER_THICK);
+        topRight.setBorderLeft(CellStyle.BORDER_THIN);
+        topRight.setBorderBottom(CellStyle.BORDER_MEDIUM);
+        topRight.setFont(green);
+        topRight.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
+        topRight.setFillPattern(CellStyle.SOLID_FOREGROUND);
 
         CellStyle right = wb.createCellStyle();
         right.setBorderRight(CellStyle.BORDER_THICK);
+        right.setBorderLeft(CellStyle.BORDER_THIN);
+        right.setBorderTop(CellStyle.BORDER_THIN);
+        right.setBorderBottom(CellStyle.BORDER_THIN);
+        right.setDataFormat(df.getFormat("$#,##0.00"));
 
         CellStyle bottomRight = wb.createCellStyle();
         bottomRight.setBorderBottom(CellStyle.BORDER_THICK);
         bottomRight.setBorderRight(CellStyle.BORDER_THICK);
+        bottomRight.setBorderTop(CellStyle.BORDER_MEDIUM);
+        bottomRight.setBorderLeft(CellStyle.BORDER_THIN);
 
         CellStyle bottom = wb.createCellStyle();
         bottom.setBorderBottom(CellStyle.BORDER_THICK);
+        bottom.setBorderTop(CellStyle.BORDER_MEDIUM);
+        bottom.setBorderLeft(CellStyle.BORDER_THIN);
+        bottom.setBorderRight(CellStyle.BORDER_THIN);
 
         CellStyle bottomLeft = wb.createCellStyle();
         bottomLeft.setBorderBottom(CellStyle.BORDER_THICK);
         bottomLeft.setBorderLeft(CellStyle.BORDER_THICK);
+        bottomLeft.setBorderTop(CellStyle.BORDER_MEDIUM);
+        bottomLeft.setBorderRight(CellStyle.BORDER_THIN);
+        Font bold = wb.createFont();
+        bold.setBoldweight((short)1000);
+        bottomLeft.setFont(bold);
 
         CellStyle left = wb.createCellStyle();
         left.setBorderLeft(CellStyle.BORDER_THICK);
+        left.setBorderRight(CellStyle.BORDER_THIN);
+        left.setBorderTop(CellStyle.BORDER_THIN);
+        left.setBorderBottom(CellStyle.BORDER_THIN);
 
         CellStyle topLeft = wb.createCellStyle();
         topLeft.setBorderTop(CellStyle.BORDER_THICK);
         topLeft.setBorderLeft(CellStyle.BORDER_THICK);
+        topLeft.setBorderBottom(CellStyle.BORDER_MEDIUM);
+        topLeft.setBorderRight(CellStyle.BORDER_THIN);
+        topLeft.setFont(green);
+        topLeft.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
+        topLeft.setFillPattern(CellStyle.SOLID_FOREGROUND);
+
+        CellStyle list = wb.createCellStyle();
+        list.setBorderTop(CellStyle.BORDER_THIN);
+        list.setBorderLeft(CellStyle.BORDER_THICK);
+        list.setBorderRight(CellStyle.BORDER_THICK);
+        list.setBorderBottom(CellStyle.BORDER_THIN);
+
+        CellStyle lastList = wb.createCellStyle();
+        lastList.setBorderTop(CellStyle.BORDER_THIN);
+        lastList.setBorderBottom(CellStyle.BORDER_THICK);
+        lastList.setBorderLeft(CellStyle.BORDER_THICK);
+        lastList.setBorderRight(CellStyle.BORDER_THICK);
+
+        CellStyle topList = wb.createCellStyle();
+        topList.setBorderTop(CellStyle.BORDER_THICK);
+        topList.setBorderLeft(CellStyle.BORDER_THICK);
+        topList.setBorderRight(CellStyle.BORDER_THICK);
+        topList.setBorderBottom(CellStyle.BORDER_MEDIUM);
+        topList.setFont(green);
+        topList.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
+        topList.setFillPattern(CellStyle.SOLID_FOREGROUND);
 
         //Write summary sheet
         Sheet summarySheet = wb.createSheet("Overview");
@@ -98,64 +174,87 @@ public class MonthlyPublisherReportWriter {
         }
 
         //Headers for summary sheet
-        Row header = summarySheet.createRow(0);
-        header.createCell(0).setCellValue("Day");
-        header.createCell(1).setCellValue("Avails");
-        header.createCell(2).setCellValue("Imps");
-        header.createCell(3).setCellValue("Unfilled");
-        header.createCell(4).setCellValue("Errors");
-        header.createCell(5).setCellValue("Avg eCPM");
-        header.createCell(6).setCellValue("Network Rev.");
-        header.createCell(7).setCellValue("Pub Rev.");
-        header.createCell(11).setCellValue("Top Brands");
+        Row header = summarySheet.createRow(1);
+        header.setHeightInPoints(2 * summarySheet.getDefaultRowHeightInPoints());
+        header.createCell(1).setCellValue("Day");
+        header.createCell(2).setCellValue("Avails");
+        header.createCell(3).setCellValue("Imps");
+        header.createCell(4).setCellValue("Unfilled");
+        header.createCell(5).setCellValue("Errors");
+        header.createCell(6).setCellValue("Avg eCPM");
+        header.createCell(7).setCellValue("Network Rev.");
+        header.createCell(8).setCellValue("Pub Rev.");
+        header.createCell(10).setCellValue("Top Brands");
         header.createCell(12).setCellValue("Top Buyers");
+
+
 
         int rowCount = 1;
         //list every total
         for (DailyPublisherData d : dailyTotals) {
             Row dataRow = summarySheet.createRow(++rowCount);
-            dataRow.createCell(0).setCellValue(d.getDate().getMonthOfYear() +
+            dataRow.createCell(1).setCellValue(d.getDate().getMonthOfYear() +
                     "/" + d.getDate().getDayOfMonth());
-            dataRow.createCell(1).setCellValue(d.getAvails());
-            dataRow.createCell(2).setCellValue(d.getImps());
-            dataRow.createCell(3).setCellValue(d.getUnfilled());
-            dataRow.createCell(4).setCellValue(d.getErrors());
-            dataRow.createCell(5).setCellValue(d.geteCpm());
-            dataRow.createCell(6).setCellValue(d.getNetworkRevenue());
-            dataRow.createCell(7).setCellValue(d.getPublisherRevenue());
+            dataRow.createCell(2).setCellValue(d.getAvails());
+            dataRow.createCell(3).setCellValue(d.getImps());
+            dataRow.createCell(4).setCellValue(d.getUnfilled());
+            dataRow.createCell(5).setCellValue(d.getErrors());
+            dataRow.createCell(6).setCellValue(d.geteCpm());
+            dataRow.createCell(7).setCellValue(d.getNetworkRevenue());
+            dataRow.createCell(8).setCellValue(d.getPublisherRevenue());
 
-            dataRow.getCell(5).setCellStyle(fullCurrency);
+            for (Cell c : dataRow) {
+                c.setCellStyle(normal);
+            }
+            dataRow.getCell(1).setCellStyle(left);
             dataRow.getCell(6).setCellStyle(fullCurrency);
             dataRow.getCell(7).setCellStyle(fullCurrency);
-
-
+            dataRow.getCell(8).setCellStyle(right);
 
             int topCount = rowCount - 2;
             if (topCount < p.getTopBrands().size()) {
-                dataRow.createCell(11).setCellValue(p.getTopBrands().get(topCount));
+                dataRow.createCell(10).setCellValue(p.getTopBrands().get(topCount));
+                dataRow.getCell(10).setCellStyle(list);
+                if (topCount+1 == p.getTopBrands().size()) dataRow.getCell(10).setCellStyle(lastList);
             }
             if (topCount < p.getTopBuyers().size()) {
                 dataRow.createCell(12).setCellValue(p.getTopBuyers().get(topCount));
+                dataRow.getCell(12).setCellStyle(list);
+                if (topCount+1 == p.getTopBuyers().size()) dataRow.getCell(12).setCellStyle(lastList);
             }
         }
         rowCount++;
+        Row blankRow = summarySheet.createRow(rowCount);
+        for (int x = 1; x < 9; x++) blankRow.createCell(x).setCellStyle(normal);
+        blankRow.getCell(1).setCellStyle(left);
+        blankRow.getCell(8).setCellStyle(right);
+
         Row totalRow = summarySheet.createRow(++rowCount);
-        totalRow.createCell(0).setCellValue("Grand Totals:");
-        totalRow.createCell(1).setCellValue(grandTotal.getAvails());
-        totalRow.createCell(2).setCellValue(grandTotal.getImps());
-        totalRow.createCell(3).setCellValue(grandTotal.getUnfilled());
-        totalRow.createCell(4).setCellValue(grandTotal.getErrors());
-        totalRow.createCell(6).setCellValue(grandTotal.getNetworkRevenue());
-        totalRow.createCell(7).setCellValue(grandTotal.getPublisherRevenue());
+        totalRow.createCell(1).setCellValue("Grand Totals:");
+        totalRow.createCell(2).setCellValue(grandTotal.getAvails());
+        totalRow.createCell(3).setCellValue(grandTotal.getImps());
+        totalRow.createCell(4).setCellValue(grandTotal.getUnfilled());
+        totalRow.createCell(5).setCellValue(grandTotal.getErrors());
+        totalRow.createCell(6);
+        totalRow.createCell(7).setCellValue(grandTotal.getNetworkRevenue());
+        totalRow.createCell(8).setCellValue(grandTotal.getPublisherRevenue());
 
-        totalRow.getCell(6).setCellStyle(fullCurrency);
-        totalRow.getCell(7).setCellStyle(fullCurrency);
+        for (Cell c : totalRow) c.setCellStyle(bottom);
 
+        totalRow.getCell(1).setCellStyle(bottomLeft);
+        totalRow.getCell(7).setCellStyle(fullCurrencyBottom);
+        totalRow.getCell(8).setCellStyle(fullCurrencyBottomRight);
 
-
+        for (Cell c : header) {
+            c.setCellStyle(top);
+        }
+        header.getCell(1).setCellStyle(topLeft);
+        header.getCell(8).setCellStyle(topRight);
+        header.getCell(10).setCellStyle(topList);
+        header.getCell(12).setCellStyle(topList);
 
         //auto-size each column
-        for (int x = 0; x < 13; x++) summarySheet.autoSizeColumn(x);
+        for (int x = 0; x < 14; x++) summarySheet.autoSizeColumn(x);
 
         //Write sheet for each placement
         for (WeeklyPlacement place : p.getPlacements()) {
@@ -168,36 +267,52 @@ public class MonthlyPublisherReportWriter {
                 placementSheet =
                         wb.createSheet(WorkbookUtil.createSafeSheetName("(" + place.getId() + ")" + place.getName()));
             }
-            Row headerRow = placementSheet.createRow(0);
-            headerRow.createCell(0).setCellValue("Day");
-            headerRow.createCell(1).setCellValue("Avails");
-            headerRow.createCell(2).setCellValue("Imps");
-            headerRow.createCell(3).setCellValue("Unfilled");
-            headerRow.createCell(4).setCellValue("Errors");
-            headerRow.createCell(5).setCellValue("eCPM");
-            headerRow.createCell(6).setCellValue("Publisher Rev.");
+            Row headerRow = placementSheet.createRow(1);
+            headerRow.createCell(1).setCellValue("Day");
+            headerRow.createCell(2).setCellValue("Avails");
+            headerRow.createCell(3).setCellValue("Imps");
+            headerRow.createCell(4).setCellValue("Unfilled");
+            headerRow.createCell(5).setCellValue("Errors");
+            headerRow.createCell(6).setCellValue("eCPM");
             headerRow.createCell(7).setCellValue("Network Rev.");
+            headerRow.createCell(8).setCellValue("Publisher Rev.");
+
+            for (Cell c : headerRow) c.setCellStyle(top);
+            headerRow.getCell(1).setCellStyle(topLeft);
+            headerRow.getCell(8).setCellStyle(topRight);
 
             rowCount = 1;
-
+            int datacount = 0;
             for (DailyPublisherData data : place.getDailyDataList()) {
                 Row dataRow = placementSheet.createRow(++rowCount);
-                dataRow.createCell(0).setCellValue(data.getDate().getMonthOfYear() +
+                dataRow.createCell(1).setCellValue(data.getDate().getMonthOfYear() +
                         "/" + data.getDate().getDayOfMonth());
-                dataRow.createCell(1).setCellValue(data.getAvails());
-                dataRow.createCell(2).setCellValue(data.getImps());
-                dataRow.createCell(3).setCellValue(data.getUnfilled());
-                dataRow.createCell(4).setCellValue(data.getErrors());
-                dataRow.createCell(5).setCellValue(data.geteCpm());
-                dataRow.createCell(6).setCellValue(data.getPublisherRevenue());
+                dataRow.createCell(2).setCellValue(data.getAvails());
+                dataRow.createCell(3).setCellValue(data.getImps());
+                dataRow.createCell(4).setCellValue(data.getUnfilled());
+                dataRow.createCell(5).setCellValue(data.getErrors());
+                dataRow.createCell(6).setCellValue(data.geteCpm());
                 dataRow.createCell(7).setCellValue(data.getNetworkRevenue());
+                dataRow.createCell(8).setCellValue(data.getPublisherRevenue());
 
-                dataRow.getCell(5).setCellStyle(fullCurrency);
+                for (Cell c : dataRow) c.setCellStyle(normal);
+                dataRow.getCell(1).setCellStyle(left);
                 dataRow.getCell(6).setCellStyle(fullCurrency);
                 dataRow.getCell(7).setCellStyle(fullCurrency);
+                dataRow.getCell(8).setCellStyle(right);
+
+                datacount++;
+                if (datacount == place.getDailyDataList().size()) {
+                    for (Cell c : dataRow) c.setCellStyle(bottom);
+                    dataRow.getCell(1).setCellStyle(bottomLeft);
+                    dataRow.getCell(6).setCellStyle(fullCurrencyBottom);
+                    dataRow.getCell(7).setCellStyle(fullCurrencyBottom);
+                    dataRow.getCell(8).setCellStyle(bottomRight);
+                }
             }
 
-            for (int x = 0; x < 8; x++) placementSheet.autoSizeColumn(x);
+
+            for (int x = 0; x < 9; x++) placementSheet.autoSizeColumn(x);
 
         }
 
