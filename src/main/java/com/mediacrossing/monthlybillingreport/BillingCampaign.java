@@ -19,8 +19,17 @@ public class BillingCampaign implements Serializable {
     private float briligTotal;
     private float evidonTotal;
     private float integralTotal;
+    private int briligImps = 0;
+    private float blueKaiFee;
+    private float blueKaiTotal;
+    private float alcFee;
+    private float alcTotal;
+    private float grapeshotFee;
+    private float grapeshotTotal;
+    private float cpm;
 
-    public BillingCampaign(String id, String name, int imps, int clicks, float convs, float mediaCost, float networkRevenue) {
+    public BillingCampaign(String id, String name, int imps, int clicks, float convs, float mediaCost,
+                           float networkRevenue, float cpm) {
         this.id = id;
         this.name = name;
         this.imps = imps;
@@ -28,9 +37,13 @@ public class BillingCampaign implements Serializable {
         this.convs = convs;
         this.mediaCost = mediaCost;
         this.networkRevenue = networkRevenue;
+        this.cpm = cpm;
         this.briligFee = 0;
         this.evidonFee = 0;
         this.integralFee = 0;
+        this.alcFee = 0;
+        this.blueKaiFee = 0;
+        this.grapeshotFee = 0;
     }
 
     public BillingCampaign() {
@@ -44,6 +57,18 @@ public class BillingCampaign implements Serializable {
         this.briligTotal = 0;
         this.evidonTotal = 0;
         this.integralTotal = 0;
+        this.briligImps = 0;
+        this.briligTotal = 0;
+        this.alcTotal = 0;
+        this.grapeshotTotal = 0;
+    }
+
+    public int getBriligImps() {
+        return briligImps;
+    }
+
+    public void setBriligImps(int briligImps) {
+        this.briligImps = briligImps;
     }
 
     public float getBriligTotal() {
@@ -157,5 +182,57 @@ public class BillingCampaign implements Serializable {
 
     public void setIntegralFee(float integralFee) {
         this.integralFee = integralFee;
+    }
+
+    public float getBlueKaiFee() {
+        return blueKaiFee;
+    }
+
+    public void setBlueKaiFee(float blueKaiFee) {
+        this.blueKaiFee = blueKaiFee;
+    }
+
+    public float getBlueKaiTotal() {
+        return blueKaiTotal;
+    }
+
+    public void setBlueKaiTotal(float blueKaiTotal) {
+        this.blueKaiTotal = blueKaiTotal;
+    }
+
+    public float getAlcFee() {
+        return alcFee;
+    }
+
+    public void setAlcFee(float alcFee) {
+        this.alcFee = alcFee;
+    }
+
+    public float getAlcTotal() {
+        return alcTotal;
+    }
+
+    public void setAlcTotal(float alcTotal) {
+        this.alcTotal = alcTotal;
+    }
+
+    public float getGrapeshotFee() {
+        return grapeshotFee;
+    }
+
+    public void setGrapeshotFee(float grapeshotFee) {
+        this.grapeshotFee = grapeshotFee;
+    }
+
+    public float getGrapeshotTotal() {
+        return grapeshotTotal;
+    }
+
+    public void setGrapeshotTotal(float grapeshotTotal) {
+        this.grapeshotTotal = grapeshotTotal;
+    }
+
+    public float getCpm() {
+        return cpm;
     }
 }
