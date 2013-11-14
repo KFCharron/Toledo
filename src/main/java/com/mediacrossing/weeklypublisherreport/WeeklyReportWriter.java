@@ -251,7 +251,7 @@ public class WeeklyReportWriter {
 
 
             rowCount = 1;
-            int datacount = 0;
+            DailyPublisherData placementTotal = new DailyPublisherData(today);
             for (DailyPublisherData data : place.getDailyDataList()) {
                 Row dataRow = placementSheet.createRow(++rowCount);
                 dataRow.createCell(1).setCellValue(data.getDate().getMonthOfYear() +
@@ -270,15 +270,33 @@ public class WeeklyReportWriter {
                 dataRow.getCell(7).setCellStyle(fullCurrency);
                 dataRow.getCell(8).setCellStyle(right);
 
-                datacount++;
-                if (datacount == place.getDailyDataList().size()) {
-                    for (Cell c : dataRow) c.setCellStyle(bottom);
-                    dataRow.getCell(1).setCellStyle(bottomLeft);
-                    dataRow.getCell(6).setCellStyle(fullCurrencyBottom);
-                    dataRow.getCell(7).setCellStyle(fullCurrencyBottom);
-                    dataRow.getCell(8).setCellStyle(fullCurrencyBottomRight);
-                }
+                placementTotal.setAvails(placementTotal.getAvails() + data.getAvails());
+                placementTotal.setImps(placementTotal.getImps() + data.getImps());
+                placementTotal.setErrors(placementTotal.getErrors() + data.getErrors());
+                placementTotal.setUnfilled(placementTotal.getUnfilled() + data.getUnfilled());
+                placementTotal.setPublisherRevenue(placementTotal.getPublisherRevenue() + data.getPublisherRevenue());
+                placementTotal.setNetworkRevenue(placementTotal.getNetworkRevenue() + data.getNetworkRevenue());
             }
+            rowCount++;
+            Row blank = placementSheet.createRow(rowCount);
+            for (int x = 1; x < 9; x++) blank.createCell(x).setCellStyle(normal);
+            blank.getCell(1).setCellStyle(left);
+            blank.getCell(8).setCellStyle(right);
+
+            Row total = placementSheet.createRow(++rowCount);
+            total.createCell(1).setCellValue("Totals:");
+            total.createCell(2).setCellValue(placementTotal.getAvails());
+            total.createCell(3).setCellValue(placementTotal.getImps());
+            total.createCell(4).setCellValue(placementTotal.getUnfilled());
+            total.createCell(5).setCellValue(placementTotal.getErrors());
+            total.createCell(6);
+            total.createCell(7).setCellValue(placementTotal.getNetworkRevenue());
+            total.createCell(8).setCellValue(placementTotal.getPublisherRevenue());
+
+            for (Cell c : total) c.setCellStyle(bottom);
+            total.getCell(1).setCellStyle(bottomLeft);
+            total.getCell(7).setCellStyle(fullCurrencyBottom);
+            total.getCell(8).setCellStyle(fullCurrencyBottomRight);
 
             for (int x = 0; x < 9; x++) placementSheet.autoSizeColumn(x);
 
