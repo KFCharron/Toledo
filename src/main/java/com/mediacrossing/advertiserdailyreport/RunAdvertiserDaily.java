@@ -64,6 +64,7 @@ public class RunAdvertiserDaily {
 
         //Parse and save to list of advertisers
         final List<Advertiser> advertiserList = mxConn.requestAllAdvertisers();
+        LOG.debug(advertiserList.size() + " advertisers received from MX.");
         final List<Advertiser> liveAdvertiserList = new ArrayList<Advertiser>();
 
         for(Advertiser ad : advertiserList) {
@@ -71,12 +72,15 @@ public class RunAdvertiserDaily {
                 liveAdvertiserList.add(ad);
             }
         }
+        LOG.debug(liveAdvertiserList.size() + " advertisers are live.");
 
         //For every advertiser, request report
         for (Advertiser advertiser : liveAdvertiserList) {
 
             //request yesterday line item report
+            LOG.debug("Requesting report for advertiser " + advertiser.getAdvertiserID());
             List<String[]> csvData = anConn.getLineItemReport("yesterday", advertiser.getAdvertiserID());
+            LOG.debug("Report Received AdId:" +advertiser.getAdvertiserID());
 
             //remove header string
             csvData.remove(0);
@@ -238,6 +242,8 @@ public class RunAdvertiserDaily {
 
 
         //Write report
+        LOG.debug("Calling ReportWriter.writeAdvertiserDailyReport");
         ReportWriter.writeAdvertiserDailyReport(liveAdvertiserList, outputPath);
+        LOG.debug("Back to Main, end of class.");
     }
 }

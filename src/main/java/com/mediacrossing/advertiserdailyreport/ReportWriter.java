@@ -6,6 +6,8 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
 import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -14,10 +16,13 @@ import java.util.List;
 
 public class ReportWriter {
 
+    private static final Logger LOG = LoggerFactory.getLogger(ReportWriter.class);
+
+
     public static void writeAdvertiserDailyReport(List<Advertiser> advertiserList, String outputPath)
             throws IOException {
-        
 
+        LOG.debug("ReportWriter Called");
 
         //init workbook, decimal formats
         Workbook wb = new HSSFWorkbook();
@@ -83,6 +88,7 @@ public class ReportWriter {
         subtitleRow.createCell(0).setCellValue("24 hours:");
 
         //create line item column names
+        LOG.debug("Starting Line Item Header");
         Row lineItemHeader = sheet.createRow(4);
         lineItemHeader.createCell(0).setCellValue("Line Item ID");
         lineItemHeader.createCell(1).setCellValue("Line Item Name");
@@ -99,6 +105,7 @@ public class ReportWriter {
         lineItemHeader.createCell(12).setCellValue("% Flight");
         lineItemHeader.createCell(13).setCellValue("Daily Budget");
         lineItemHeader.createCell(14).setCellValue("Total Budget");
+        LOG.debug("Finished Header.");
 
         //for every advertiser, add a data row for each line item
         int rowCount = 5;
@@ -111,6 +118,7 @@ public class ReportWriter {
         float dailyBudgetTotal = 0.0f;
         int lifetimeBudgetTotal = 0;
         for(Advertiser ad : advertiserList) {
+            LOG.debug("Starting Advertiser " + ad.getAdvertiserID());
             for(DailyData data : ad.getDailyLineItems()) {
                 Row dataRow = sheet.createRow(rowCount);
                 dataRow.createCell(0).setCellValue(data.getId());
@@ -178,9 +186,12 @@ public class ReportWriter {
                 dailyBudgetTotal += data.getDailyBudget();
                 lifetimeBudgetTotal += data.getLifetimeBudget();
             }
+            LOG.debug("Finished Advertiser " + ad.getAdvertiserID());
+
         }
         rowCount++;
         //populate total row
+        LOG.debug("Starting Total Row");
         Row totalRow = sheet.createRow(rowCount);
         totalRow.createCell(1).setCellValue("Totals:");
         totalRow.createCell(2).setCellValue(impTotal);
@@ -208,7 +219,8 @@ public class ReportWriter {
 
         sheet = wb.createSheet("24hr Campaigns");
         rowCount = 0;
-
+        LOG.debug("Finished Total Row.");
+        LOG.debug("Starting Campaign Header");
         Row campaignHeader = sheet.createRow(rowCount);
         campaignHeader.createCell(0).setCellValue("Campaign ID");
         campaignHeader.createCell(1).setCellValue("Campaign Name");
@@ -226,6 +238,7 @@ public class ReportWriter {
         campaignHeader.createCell(13).setCellValue("Daily Budget");
         campaignHeader.createCell(14).setCellValue("Lifetime Budget");
 
+        LOG.debug("Finished Campaign Header");
 
         rowCount++;
 
@@ -239,6 +252,7 @@ public class ReportWriter {
         dailyBudgetTotal = 0.0f;
         lifetimeBudgetTotal = 0;
         for(Advertiser ad : advertiserList) {
+            LOG.debug("Started Advertiser " + ad.getAdvertiserID());
             for(DailyData data : ad.getDailyCampaigns()) {
                 Row dataRow = sheet.createRow(rowCount);
                 dataRow.createCell(0).setCellValue(data.getId());
@@ -307,8 +321,11 @@ public class ReportWriter {
                 dailyBudgetTotal += data.getDailyBudget();
                 lifetimeBudgetTotal += data.getLifetimeBudget();
             }
+            LOG.debug("Finished Advertiser " + ad.getAdvertiserID());
         }
         rowCount++;
+
+        LOG.debug("Starting Total Row");
         //populate total row
         totalRow = sheet.createRow(rowCount);
         totalRow.createCell(1).setCellValue("Totals:");
@@ -332,6 +349,8 @@ public class ReportWriter {
         for (int x = 0; x < 15; x++) {
             sheet.autoSizeColumn(x);
         }
+
+        LOG.debug("Finished Total Row");
 
         sheet = wb.createSheet("Lifetime Line Items");
         rowCount = 0;
@@ -640,10 +659,16 @@ public class ReportWriter {
             sheet.autoSizeColumn(x);
         }
 
+        LOG.debug("About to Output File");
         //output file
         LocalDate today = new LocalDate(DateTimeZone.UTC);
         FileOutputStream fileOut = new FileOutputStream(new File(outputPath, "DailyReport_"+today.toString()+".xls"));
+        LOG.debug("Writing " + "DailyReport_"+today.toString()+".xls" + " to " + outputPath);
         wb.write(fileOut);
+        LOG.debug("Done");
+        LOG.debug("Closing File OutputStream");
         fileOut.close();
+        LOG.debug("Done");
+        LOG.debug("End of Class.");
     }
 }
