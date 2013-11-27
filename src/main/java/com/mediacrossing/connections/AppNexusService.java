@@ -463,7 +463,7 @@ public class AppNexusService {
                 "        \"format\": \"csv\",\n" +
                 "        \"timezone\": \"EST5EDT\""+
                 "    }\n" +
-                "}";;
+                "}";
 
         String json = requests.postRequest(url+"/report?advertiser_id="+adId,jsonPost);
         return downloadReportWhenReady(json);

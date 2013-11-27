@@ -41,7 +41,7 @@ public class RunMonthlyPublisherReport {
                 appNexusPassword, anPartitionSize, requestDelayInSeconds);
 
         //for faster debugging
-        boolean development = true;
+        boolean development = false;
         if (development) {
             try{
                 FileInputStream door = new FileInputStream("/Users/charronkyle/Desktop/ReportData/MonthlyPubList.ser");

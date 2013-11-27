@@ -204,10 +204,13 @@ public class ResponseParser {
                     Float.parseFloat(l[8]), Float.parseFloat(l[9]));
             boolean saved = false;
             for (BillingAdvertiser ad : ads) {
-               if (l[0].equals(ad.getId())) {
+                //If ad Id is zero, it's sell side, don't save it.
+                if (l[0].equals("0")) saved = true;
+
+                if (l[0].equals(ad.getId())) {
                    ad.getCampaigns().add(camp);
                    saved = true;
-               }
+                }
             }
             if (!saved) {
                 BillingAdvertiser ad = new BillingAdvertiser(l[1], l[0]);
