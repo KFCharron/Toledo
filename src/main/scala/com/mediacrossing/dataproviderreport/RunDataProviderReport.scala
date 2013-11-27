@@ -7,7 +7,6 @@ import scala.collection.JavaConversions._
 import org.joda.time.{DateTime, DateTimeZone, LocalDate}
 import java.io.{File, FileOutputStream}
 import org.joda.time.format.DateTimeFormat
-import scala.collection.mutable
 
 object RunDataProviderReport extends App {
 
@@ -43,7 +42,7 @@ object RunDataProviderReport extends App {
   //TODO: Separate report generation function out so it can be tested on it's own
   val currentTime = DateTime.now
   //for each campaign, if today is before end date, add the adId to Set, add serving fee names to set
-  val (advertiserIds: List[String], dpNames: List[mutable.Buffer[String]]) = campList.filter(camp => {
+  val (advertiserIds, dpNames) = campList.filter(camp => {
     !camp.getEndDate.toLowerCase.equals("null") && {
       val campEnd = campaignDateFormat.parseDateTime(camp.getEndDate)
       currentTime.isBefore(campEnd)
