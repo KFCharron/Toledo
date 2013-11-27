@@ -1,98 +1,84 @@
 package com.mediacrossing.dataproviderreport
 
-import org.slf4j.{LoggerFactory, Logger}
+import org.slf4j.LoggerFactory
 import com.mediacrossing.properties.ConfigurationProperties
 import com.mediacrossing.connections.{MxService, AppNexusService}
-import scala.collection.{mutable, JavaConversions}
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.lang.Float
-import org.joda.time.{DateTimeZone, LocalDate}
+import scala.collection.JavaConversions._
+import org.joda.time.{DateTime, DateTimeZone, LocalDate}
 import java.io.{File, FileOutputStream}
+import org.joda.time.format.DateTimeFormat
+import scala.collection.mutable
 
-object RunDataProviderReport {
+object RunDataProviderReport extends App {
 
   //setup logging
-  val LOG = LoggerFactory getLogger(RunDataProviderReport.getClass)
-  def registerLoggerWithUncaughtExceptions {
-    Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler {
-      def uncaughtException(t: Thread, e: Throwable) {
-        LOG.error(e.getMessage, e)
-      }
-    })
-  }
+  val LOG = LoggerFactory.getLogger(RunDataProviderReport.getClass)
 
-  def main(args: Array[String]) {
 
-    registerLoggerWithUncaughtExceptions
-
-    //init variables
-    val p = new ConfigurationProperties(args)
-    val outputPath = p.getOutputPath
-    val anConn = new AppNexusService(
-      p getAppNexusUrl,
-      p getAppNexusUsername,
-      p getAppNexusPassword,
-      p getPartitionSize,
-      p getRequestDelayInSeconds)
-    val mxConn = {
-      if (p.getMxUsername == null) new MxService(p getMxUrl)
-      else new MxService(p getMxUrl, p getMxUsername, p getMxPassword)
+  Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler {
+    def uncaughtException(t: Thread, e: Throwable) {
+      LOG.error(e.getMessage, e)
     }
+  })
 
-    //get campaign list, convert to scala list
-    val campList = JavaConversions.asScalaBuffer(mxConn requestAllCampaigns)
 
-    //create mutable set for unique adIds for report requests
-    val adIds = mutable.Set[String]()
-
-    //create set for unique dp names
-    val dpNames = mutable.Set[String] ()
-
-    //for each campaign, if today is before end date, add the adId to Set, add serving fee names to set
-    campList.foreach(camp => {
-      if(!camp.getEndDate.equals("null")) {
-        val campEnd = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").parse(camp.getEndDate)
-        if ((new Date).getTime < campEnd.getTime) {
-          adIds.add(camp.getAdvertiserID)
-          JavaConversions.asScalaBuffer(camp.getServingFeeList).foreach(sf => dpNames.add(sf.getBrokerName))
-        }
-      }
-    })
-
-    val dpList = mutable.Set[DataProvider]()
-    dpNames.foreach(f => dpList.add(new DataProvider(f)))
-
-    //for each adId, request report, and if line matches campaign in list, create the new campaign instance, and
-    //save it to the list of which dp it's a part of.
-    adIds.foreach(adId => {
-      val listResponse = JavaConversions.asScalaBuffer(anConn.getCampaignReport("last_7_days", adId))
-      listResponse.foreach(line => {
-        campList.foreach(c => {
-          if (line(0).equals(c.getId)) {
-            val newCamp = new CampaignDP(line(0), line(1), Integer.parseInt(line(2)),
-              Integer.parseInt(line(3)), Float.parseFloat(line(8)),
-              JavaConversions.asScalaBuffer(c.getServingFeeList))
-
-            dpList.foreach(d => {
-              newCamp.getServingFees.foreach(sf => {
-                if (sf.getBrokerName.equals(d.getName)) d.getCampaignList.append(newCamp)
-              })
-            })
-          }
-        })
-      })
-    })
-
-    //create workbook
-    val wb = new DataProviderReportWriter(dpList).writeReport
-    //today's date for file name
-    val today = new LocalDate(DateTimeZone.UTC)
-    //init file output stream
-    val fileOut = new FileOutputStream(new File(outputPath, "DataProviderReport_" + today.toString + ".xls"));
-    //write out file
-    wb.write(fileOut)
-    //close output stream
-    fileOut.close()
+  //init variables
+  val p = new ConfigurationProperties(args)
+  val anConn = new AppNexusService(
+    p.getAppNexusUrl,
+    p.getAppNexusUsername,
+    p.getAppNexusPassword,
+    p.getPartitionSize,
+    p.getRequestDelayInSeconds)
+  val mxConn = {
+    if (p.getMxUsername == null) new MxService(p.getMxUrl)
+    else new MxService(p.getMxUrl, p.getMxUsername, p.getMxPassword)
   }
+
+  //get campaign list, convert to scala list
+  val campList = mxConn.requestAllCampaigns.toList
+
+  val campaignDateFormat = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")
+
+  //TODO: Separate report generation function out so it can be tested on it's own
+  val currentTime = DateTime.now
+  //for each campaign, if today is before end date, add the adId to Set, add serving fee names to set
+  val (advertiserIds: List[String], dpNames: List[mutable.Buffer[String]]) = campList.filter(camp => {
+    !camp.getEndDate.toLowerCase.equals("null") && {
+      val campEnd = campaignDateFormat.parseDateTime(camp.getEndDate)
+      currentTime.isBefore(campEnd)
+    }
+  }).map(vc => (vc.getAdvertiserID, vc.getServingFeeList.map(_.getBrokerName))).unzip
+
+  val dpList = dpNames.flatten //.map(new DataProvider(_))
+
+//  for each adId, request report, and if line matches campaign in list, create the new campaign instance, and
+//  save it to the list of which dp it's a part of.
+  //TODO: This is overly complicated for what we want to do, should not need 5 nested loops...looks like a data structure issue.
+  //TODO: There should be validation logic embedded in the campaign creation constructors (scala either or scalaz \/)
+  val dataProviders = (for {
+    adId <- advertiserIds
+    line: Array[String] <- anConn.getCampaignReport("last_7_days", adId).toList
+    c <- campList if line(0) == c.getId
+    newCamp = new CampaignDP(line(0), line(1), Integer.parseInt(line(2)),
+      Integer.parseInt(line(3)), line(8).toDouble,
+      c.getServingFeeList.toList)
+    dp <- dpList
+    sf <- newCamp.servingFees if sf.getBrokerName == dp
+  } yield dp -> newCamp).groupBy(_._1).map {
+  case (k, v) => DataProvider(k, v.map(_._2))
+}.toList
+
+
+  //create workbook
+  val wb = new DataProviderReportWriter(dataProviders).writeReport
+  //today's date for file name
+  val today = new LocalDate(DateTimeZone.UTC)
+  //init file output stream
+  val fileOut = new FileOutputStream(new File(p.getOutputPath, "DataProviderReport_" + today.toString + ".xls"))
+  //write out file
+  wb.write(fileOut)
+  //close output stream
+  fileOut.close()
+
 }

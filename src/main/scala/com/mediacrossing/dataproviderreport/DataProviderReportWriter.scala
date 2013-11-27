@@ -1,11 +1,10 @@
 package com.mediacrossing.dataproviderreport
 
-import scala.collection.mutable
 import org.apache.poi.hssf.usermodel.HSSFWorkbook
 import org.apache.poi.ss.usermodel.Workbook
 
-class DataProviderReportWriter(dpList: mutable.Set[DataProvider]) {
-  def writeReport() : Workbook = {
+class DataProviderReportWriter(dataProviders: List[DataProvider]) {
+  def writeReport : Workbook = {
     //create new wb
     val wb = new HSSFWorkbook()
     val sheet = wb createSheet "Data Providers"
@@ -17,13 +16,13 @@ class DataProviderReportWriter(dpList: mutable.Set[DataProvider]) {
 
     rowCount += 1
 
-    dpList.foreach(dp => {
+    dataProviders.foreach(dp => {
       val dataRow = sheet createRow rowCount
-      dataRow createCell 0 setCellValue dp.getName
-      dataRow createCell 1 setCellValue dp.getCampaignList.size
-      dataRow createCell 2 setCellValue dp.getTotalImps
-      dataRow createCell 3 setCellValue dp.getTotalClicks
-      dataRow createCell 4 setCellValue dp.getAverageCpm
+      dataRow createCell 0 setCellValue dp.name
+      dataRow createCell 1 setCellValue dp.campaignList.size
+      dataRow createCell 2 setCellValue dp.totalImps
+      dataRow createCell 3 setCellValue dp.totalClicks
+      dataRow createCell 4 setCellValue dp.averageCpm
 
       rowCount += 1
     })
