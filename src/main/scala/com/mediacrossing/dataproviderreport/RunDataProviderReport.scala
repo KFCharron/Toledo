@@ -7,7 +7,6 @@ import scala.collection.JavaConversions._
 import org.joda.time.{DateTime, DateTimeZone, LocalDate}
 import java.io.{File, FileOutputStream}
 import org.joda.time.format.DateTimeFormat
-import scala.collection.mutable
 
 object RunDataProviderReport extends App {
 
@@ -56,7 +55,7 @@ object RunDataProviderReport extends App {
 //  save it to the list of which dp it's a part of.
   //TODO: There should be validation logic embedded in the campaign creation constructors (scala either or scalaz \/)
   val dataProviders = (for {
-    adId <- advertiserIds.toSet
+    adId: String <- advertiserIds.toSet
     line <- anConn.getCampaignReport("last_7_days", adId).toList
     c <- campList if line(0) == c.getId
     newCamp = new CampaignDP(line(0), line(1), Integer.parseInt(line(2)),
