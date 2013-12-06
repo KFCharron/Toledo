@@ -110,6 +110,11 @@ public class RunMonthlyBillingReport {
                                 bc.setAlcFee(Float.parseFloat(fee.getValue()));
                                 bc.setAlcTotal((imps/(float)1000)*bc.getAlcFee());
                             }
+                            if (fee.getBrokerName().equals("Spongecell")) {
+                                bc.setSpongecellFee(Float.parseFloat(fee.getValue()));
+                                bc.setSpongecellTotal((imps/(float)1000)*bc.getSpongecellFee());
+                            }
+
                         }
                     }
                 }
@@ -117,7 +122,7 @@ public class RunMonthlyBillingReport {
         }
 
         // Serialize data object to a file
-        try {
+        /*try {
             ObjectOutputStream out = new ObjectOutputStream
                     (new FileOutputStream("/Users/charronkyle/Desktop/ReportData/BillingList.ser"));
             out.writeObject(adList);
@@ -125,7 +130,7 @@ public class RunMonthlyBillingReport {
         } catch (IOException e) {
             LOG.error("Serialization Failed!");
             LOG.error(e.toString());
-        }
+        }*/
 
         MonthlyBillingReportWriter.writeReportToFile(adList, outputPath);
 

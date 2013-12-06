@@ -99,7 +99,7 @@ public class HTTPRequest implements Request {
         in.close();
 
         //Received JSON data
-        LOG.debug("Problem json: " + response.toString());
+        LOG.debug(response.toString());
         return response.toString();
     }
 

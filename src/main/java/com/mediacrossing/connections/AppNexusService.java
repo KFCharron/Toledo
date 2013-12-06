@@ -368,7 +368,8 @@ public class AppNexusService {
                 "            \"imps_rtb\",\n" +
                 "            \"imps_kept\",\n" +
                 "            \"imps_default\",\n" +
-                "            \"imps_psa\"\n" +
+                "            \"imps_psa\",\n" +
+                "            \"network_rpm\"\n" +
                 "        ],\n" +
                 "        \"row_per\":[\n" +
                 "            \"publisher_id\"\n" +
@@ -384,6 +385,38 @@ public class AppNexusService {
                 "                    }\n" +
                 "                    ],\n" +
                 "        \"timezone\": \"EST5EDT\""+
+                "    }\n" +
+                "}";
+
+        String json = requests.postRequest(url+"/report?publisher_id="+pubId, jsonPost);
+        return downloadReportWhenReady(json);
+    }
+
+    public List<String[]> getPublisherTrendReport(String pubId) throws Exception {
+        String jsonPost = "{\n" +
+                "    \"report\":\n" +
+                "    {\n" +
+                "        \"report_type\": \"network_publisher_analytics\",\n" +
+                "        \"columns\":[\n" +
+                "            \"day\",\n" +
+                "            \"imps_total\",\n" +
+                "            \"imps_default\",\n" +
+                "            \"network_rpm\",\n" +
+                "            \"network_revenue\"\n" +
+                "        ],\n" +
+                "        \"row_per\":[\n" +
+                "            \"day\"\n" +
+                "        ],\n" +
+                "        \"report_interval\":\"last_7_days\",\n" +
+                "        \"format\":\"csv\",\n" +
+                "        \"emails\":[\n" +
+                "        ],\n" +
+                "        \"orders\": [\n" +
+                "                    {\n" +
+                "                        \"order_by\":\"day\", \n" +
+                "                        \"direction\":\"DESC\"\n" +
+                "                    }\n" +
+                "                ]\n" +
                 "    }\n" +
                 "}";
 
@@ -408,7 +441,8 @@ public class AppNexusService {
                 "            \t \"imps_kept\",\n" +
                 "            \t \"imps_default\",\n" +
                 "            \t \"imps_psa\",\n" +
-                "\t\t\"network_revenue\"\n" +
+                "\t\t\"network_revenue\",\n" +
+                "   \"network_rpm\"" +
                 "        ],\n" +
                 "        \"row_per\":[\n" +
                 "            \"placement_id\"\n" +

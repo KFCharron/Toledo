@@ -256,11 +256,14 @@ public class JSONParse {
         JsonElement jelement = new JsonParser().parse(raw);
         JsonObject jobject = jelement.getAsJsonObject();
         jobject = jobject.getAsJsonObject("response");
-        String token = jobject.get("token").toString();
-        token = token.replace("\"", "");
-        if (token.isEmpty()) {
-            LOG.error("Token not received.");
+        String token = "";
+        try {
+            token = jobject.get("token").toString();
+        }catch (NullPointerException e) {
+            LOG.error("NO TOKEN RECEIVED");
         }
+        token = token.replace("\"", "");
+
         return token;
     }
 

@@ -1,13 +1,7 @@
 package com.mediacrossing.dataproviderreport
 
-import scala.collection.mutable
-
-class DataProvider (name: String) {
-  def getName = name
-
-  val campaignList = mutable.Buffer[CampaignDP]()
-  def getCampaignList = campaignList
-  def getTotalImps = campaignList.map(_.getImps).sum
-  def getTotalClicks = campaignList.map(_.getClicks).sum
-  def getAverageCpm = campaignList.map(_.getCpm).sum / campaignList.size
+case class DataProvider (name: String, campaignList: List[CampaignDP]) {
+  def totalImps = campaignList.map(_.imps).sum
+  def totalClicks = campaignList.map(_.clicks).sum
+  def averageCpm = campaignList.map(_.cpm).sum / campaignList.size
 }

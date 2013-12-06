@@ -2,6 +2,7 @@ package com.mediacrossing.publisherreporting;
 
 import java.io.Serializable;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 
 public class Publisher implements Serializable {
     private String id;
@@ -19,6 +20,8 @@ public class Publisher implements Serializable {
     private String psaPercentage;
     private String lastModified;
     private String status;
+    private ArrayList<TrendingData> trendList = new ArrayList<TrendingData>();
+    private float cpm;
 
     public Publisher(String id, String publisherName, String lastModified, String status) {
         this.id = id;
@@ -27,8 +30,11 @@ public class Publisher implements Serializable {
         this.status = status;
     }
 
+    public Publisher() {
+    }
+
     public Publisher(String id, String publisherName, float impsTotal, int impsSold,
-                     int clicks, float impsRtb, float impsKept, float impsDefault, float impsPsa) {
+                     int clicks, float impsRtb, float impsKept, float impsDefault, float impsPsa, float cpm) {
         this.id = id;
         this.publisherName = publisherName;
         this.impsTotal = impsTotal;
@@ -39,6 +45,7 @@ public class Publisher implements Serializable {
         this.impsDefault = impsDefault;
         this.impsPsa = impsPsa;
         DecimalFormat df = new DecimalFormat("#.00");
+        this.cpm = cpm;
         if (impsTotal != 0) {
             this.rtbPercentage = df.format(impsRtb / impsTotal * 100);
             this.keptPercentage = df.format(impsKept / impsTotal * 100);
@@ -52,6 +59,10 @@ public class Publisher implements Serializable {
             this.psaPercentage = "";
         }
 
+    }
+
+    public ArrayList<TrendingData> getTrendList() {
+        return trendList;
     }
 
     public String getLastModified() {
@@ -112,6 +123,10 @@ public class Publisher implements Serializable {
 
     public String getStatus() {
         return status;
+    }
+
+    public float getCpm() {
+        return cpm;
     }
 }
 

@@ -65,6 +65,9 @@ public class RunPublisherReporting {
         ArrayList<Publisher> newPl = new ArrayList<Publisher>();
 
         for(Publisher pub : dayPubList) {
+
+            Publisher newPub = new Publisher();
+
             List<String[]> csvData = anConn.getPublisherReport("yesterday", pub.getId());
 
             //remove header
@@ -72,9 +75,20 @@ public class RunPublisherReporting {
 
             //for every row in the file
             for (String[] line : csvData) {
-                newPl.add(new Publisher(line[0], pub.getPublisherName(), Float.parseFloat(line[1]),
+                newPub = new Publisher(line[0], pub.getPublisherName(), Float.parseFloat(line[1]),
                         Integer.parseInt(line[2]), Integer.parseInt(line[3]), Float.parseFloat(line[4]),
-                        Float.parseFloat(line[5]), Float.parseFloat(line[6]), Float.parseFloat(line[7])));
+                        Float.parseFloat(line[5]), Float.parseFloat(line[6]), Float.parseFloat(line[7]),
+                        Float.parseFloat(line[8]));
+                newPl.add(newPub);
+            }
+
+            csvData = anConn.getPublisherTrendReport(pub.getId());
+
+            csvData.remove(0);
+
+            //for every row, save to publisher
+            for (String[] l : csvData) {
+                newPub.getTrendList().add(new TrendingData(l[0],l[1], l[2], l[3], l[4]));
             }
         }
         dayPubList = newPl;
@@ -91,7 +105,8 @@ public class RunPublisherReporting {
             for (String[] line : csvData) {
                 newLtPubList.add(new Publisher(line[0], pub.getPublisherName(), Float.parseFloat(line[1]),
                         Integer.parseInt(line[2]), Integer.parseInt(line[3]), Float.parseFloat(line[4]),
-                        Float.parseFloat(line[5]), Float.parseFloat(line[6]), Float.parseFloat(line[7])));
+                        Float.parseFloat(line[5]), Float.parseFloat(line[6]), Float.parseFloat(line[7]),
+                        Float.parseFloat(line[8])));
             }
         }
         lifetimePubList = newLtPubList;
@@ -118,6 +133,7 @@ public class RunPublisherReporting {
                 p.setDefaultImps(Integer.parseInt(line[9]));
                 p.setPsaImps(Integer.parseInt(line[10]));
                 p.setNetworkRevenue(Float.parseFloat(line[11]));
+                p.setCpm(Float.parseFloat(line[12]));
                 dayPlacementList.add(p);
             }
         }
@@ -144,17 +160,19 @@ public class RunPublisherReporting {
                 p.setDefaultImps(Integer.parseInt(line[9]));
                 p.setPsaImps(Integer.parseInt(line[10]));
                 p.setNetworkRevenue(Float.parseFloat(line[11]));
+                p.setCpm(Float.parseFloat(line[12]));
                 lifetimePlacementList.add(p);
             }
         }
 
         // Serialize data object to a file
-        /*ArrayList<ArrayList> arrayLists = new ArrayList<ArrayList>();
+        ArrayList<ArrayList> arrayLists = new ArrayList<ArrayList>();
         arrayLists.add(dayPubList);
         arrayLists.add(lifetimePubList);
         arrayLists.add(dayPlacementList);
         arrayLists.add(lifetimePlacementList);
-        try {
+
+        /*try {
             ObjectOutputStream out = new ObjectOutputStream
                     (new FileOutputStream("/Users/charronkyle/Desktop/ReportData/PublisherLists.ser"));
             out.writeObject(arrayLists);
