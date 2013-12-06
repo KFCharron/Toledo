@@ -18,6 +18,15 @@ public class Placement implements Serializable{
     private int psaImps;
     private float networkRevenue;
     private DecimalFormat df = new DecimalFormat("#.00");
+    private float cpm;
+
+    public float getCpm() {
+        return cpm;
+    }
+
+    public void setCpm(float cpm) {
+        this.cpm = cpm;
+    }
 
     public String getRtbPercentage() {
         if (impsTotal == 0) {
