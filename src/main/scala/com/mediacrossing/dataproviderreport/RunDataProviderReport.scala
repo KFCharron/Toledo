@@ -20,7 +20,6 @@ object RunDataProviderReport extends App {
     }
   })
 
-
   //init variables
   val p = new ConfigurationProperties(args)
   val anConn = new AppNexusService(
@@ -78,5 +77,4 @@ object RunDataProviderReport extends App {
   wb.write(fileOut)
   //close output stream
   fileOut.close()
-
 }
