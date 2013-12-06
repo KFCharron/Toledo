@@ -110,6 +110,11 @@ public class RunMonthlyBillingReport {
                                 bc.setAlcFee(Float.parseFloat(fee.getValue()));
                                 bc.setAlcTotal((imps/(float)1000)*bc.getAlcFee());
                             }
+                            if (fee.getBrokerName().equals("Spongecell")) {
+                                bc.setSpongecellFee(Float.parseFloat(fee.getValue()));
+                                bc.setSpongecellTotal((imps/(float)1000)*bc.getSpongecellFee());
+                            }
+
                         }
                     }
                 }
