@@ -71,8 +71,8 @@ public class XlsWriter {
         headerRow.createCell(4).setCellValue("DMA Action");
         headerRow.createCell(5).setCellValue("Designated Market Areas");
         headerRow.createCell(6).setCellValue("Action");
-        headerRow.createCell(7).setCellValue("Zip Targets");
-        headerRow.createCell(8).setCellValue("Country");
+        headerRow.createCell(7).setCellValue("Country");
+        headerRow.createCell(8).setCellValue("Zip Targets");
 
         //Setting column widths
         segmentSheet.setColumnWidth(0, 3072);
@@ -94,6 +94,8 @@ public class XlsWriter {
         Font alert = WORKBOOK.createFont();
         alert.setBoldweight((short)1000);
         alert.setColor(IndexedColors.RED.getIndex());
+        Font normal = WORKBOOK.createFont();
+        normal.setColor(IndexedColors.BLACK.getIndex());
 
         CellStyle altRow = WORKBOOK.createCellStyle();
         altRow.setFillForegroundColor(HSSFColor.LIGHT_GREEN.index);
@@ -129,6 +131,7 @@ public class XlsWriter {
 
             stringBuilder = new StringBuilder();
             index = 1;
+            int cellNumber = 8;
             for(ZipTarget zip : camp.getGeographyTargets().getZipTargetList()) {
                 stringBuilder.append(zip.getFromZip());
                 stringBuilder.append("-");
@@ -138,8 +141,14 @@ public class XlsWriter {
                     stringBuilder.append("\n");
                 }
                 index++;
+                if (stringBuilder.toString().length() > 32000) {
+                    campaignRow.createCell(cellNumber).setCellValue(stringBuilder.toString());
+                    stringBuilder = new StringBuilder();
+                    cellNumber++;
+                }
             }
-            campaignRow.createCell(7).setCellValue(stringBuilder.toString());
+
+            campaignRow.createCell(cellNumber).setCellValue(stringBuilder.toString());
 
             campaignRow.createCell(6);
             if(camp.getGeographyTargets().getCountryTargetList().size() != 0)
@@ -155,7 +164,10 @@ public class XlsWriter {
                 stringBuilder.append(country.getName());
                 index++;
             }
-            campaignRow.createCell(8).setCellValue(stringBuilder.toString());
+            campaignRow.createCell(7).setCellValue(stringBuilder.toString());
+
+            altRow.setFont(normal);
+            whiteRow.setFont(normal);
 
             if(camp.getProfile().modifiedYesterday()) {
                 altRow.setFont(alert);
@@ -165,18 +177,16 @@ public class XlsWriter {
 
             //Pattern rows
             if((rowCounter % 2) == 1) {
-                for (int x = 0; x < 9; x++)
-                    campaignRow.getCell(x).setCellStyle(altRow);
+                for(Cell c: campaignRow) c.setCellStyle(whiteRow);
             }
             else {
-                for (int x = 0; x < 9; x++)
-                    campaignRow.getCell(x).setCellStyle(whiteRow);
+                for(Cell c: campaignRow) c.setCellStyle(altRow);
             }
 
             rowCounter++;
 
         }
-        for (int x = 3; x < 9; x++) {
+        for (int x = 3; x < 20; x++) {
             segmentSheet.autoSizeColumn(x);
         }
     }
