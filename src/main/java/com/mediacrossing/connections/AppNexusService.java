@@ -777,7 +777,8 @@ public class AppNexusService {
                 "            \"network_revenue\",\n" +
                 "            \"network_rpm\",\n" +
                 "            \"placement_id\",\n" +
-                "            \"placement_name\"\n" +
+                "            \"placement_name\",\n" +
+                "            \"imps_total\"\n" +
                 "        ],\n" +
                 "        \"row_per\":[\n" +
                 "            \"placement_id\",\n" +
@@ -790,19 +791,7 @@ public class AppNexusService {
                 "        ],\n" +
                 "        \"orders\": [\n" +
                 "                    {\n" +
-                "                        \"order_by\":\"brand_name\", \n" +
-                "                        \"direction\":\"DESC\"\n" +
-                "                    },\n" +
-                "                    {\n" +
-                "                        \"order_by\":\"day\", \n" +
-                "                        \"direction\":\"DESC\"\n" +
-                "                    },\n" +
-                "                    {\n" +
-                "                        \"order_by\":\"network_revenue\", \n" +
-                "                        \"direction\":\"DESC\"\n" +
-                "                    },\n" +
-                "                    {\n" +
-                "                        \"order_by\":\"placement_id\", \n" +
+                "                        \"order_by\":\"imps_total\", \n" +
                 "                        \"direction\":\"DESC\"\n" +
                 "                    }\n" +
                 "                ],\n" +
@@ -837,15 +826,7 @@ public class AppNexusService {
                 "        ],\n" +
                 "        \"orders\": [\n" +
                 "                    {\n" +
-                "                        \"order_by\":\"day\", \n" +
-                "                        \"direction\":\"DESC\"\n" +
-                "                    },\n" +
-                "                    {\n" +
-                "                        \"order_by\":\"network_revenue\", \n" +
-                "                        \"direction\":\"DESC\"\n" +
-                "                    },\n" +
-                "                    {\n" +
-                "                        \"order_by\":\"placement_id\",\n" +
+                "                        \"order_by\":\"imps_total\", \n" +
                 "                        \"direction\":\"DESC\"\n" +
                 "                    }\n" +
                 "                ],\n" +

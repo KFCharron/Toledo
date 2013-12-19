@@ -113,13 +113,13 @@ object RunBuyerBrandReport extends App{
   }
 
   //save pub lists to hdd
-  try {
+  /*try {
     val out = new ObjectOutputStream(new FileOutputStream("/Users/charronkyle/Desktop/ReportData/BrandBuyerPubs.ser"))
     out.writeObject(pubs)
     out.close()
   } catch {
     case ioe: IOException => LOG.error("Serialization Failed!")
-  }
+  }*/
   val today = new LocalDate(DateTimeZone.UTC)
   val pubBooks = for{p <- pubs} yield new PubWithWorkbooks(p.id, p.name, new BrandBuyerReportWriter(p).writeReports)
   pubBooks.foreach(pub => {
@@ -162,6 +162,7 @@ class BrandBuyerReportWriter(p: Publisher) {
     headRow.createCell(0).setCellValue("ID")
     headRow.createCell(1).setCellValue("Placement")
     headRow.createCell(2).setCellValue("Metric")
+    headRow.createCell(10).setCellValue("Total")
     var dateCount = 1
     var cellCount = 3
     val date = DateTime.now()
@@ -173,34 +174,45 @@ class BrandBuyerReportWriter(p: Publisher) {
     }
     var rows = 1
     for {place <- p.placements} yield {
-      val availRow = sumSheet.createRow(rows)
+      val impRow = sumSheet.createRow(rows)
+      impRow.createCell(0).setCellValue(place.id)
+      impRow.createCell(1).setCellValue(place.name)
+      impRow.createCell(2).setCellValue("Imps")
+      val availRow = sumSheet.createRow(rows+1)
       availRow.createCell(0).setCellValue(place.id)
       availRow.createCell(1).setCellValue(place.name)
       availRow.createCell(2).setCellValue("Avails")
-      val keptRow = sumSheet.createRow(rows+1)
+      val keptRow = sumSheet.createRow(rows+2)
       keptRow.createCell(0).setCellValue(place.id)
       keptRow.createCell(1).setCellValue(place.name)
       keptRow.createCell(2).setCellValue("Kept")
-      val resoldRow = sumSheet.createRow(rows+2)
+      val resoldRow = sumSheet.createRow(rows+3)
       resoldRow.createCell(0).setCellValue(place.id)
       resoldRow.createCell(1).setCellValue(place.name)
       resoldRow.createCell(2).setCellValue("Resold")
-      val revRow = sumSheet.createRow(rows+3)
+      val revRow = sumSheet.createRow(rows+4)
       revRow.createCell(0).setCellValue(place.id)
       revRow.createCell(1).setCellValue(place.name)
       revRow.createCell(2).setCellValue("Revenue")
-      val rpmRow = sumSheet.createRow(rows+4)
+      val rpmRow = sumSheet.createRow(rows+5)
       rpmRow.createCell(0).setCellValue(place.id)
       rpmRow.createCell(1).setCellValue(place.name)
       rpmRow.createCell(2).setCellValue("RPM")
       cellCount = 3
       dateCount = 1
+      var impTotal = 0
+      var availTotal = 0
+      var keptTotal = 0
+      var resoldTotal = 0
+      var revTotal: Double = 0
+      var rpmTotal: Double = 0
       while(dateCount <= 7) {
         keptRow.createCell(cellCount).setCellValue(0)
         resoldRow.createCell(cellCount).setCellValue(0)
         revRow.createCell(cellCount).setCellValue(0)
         rpmRow.createCell(cellCount).setCellValue(0)
         availRow.createCell(cellCount).setCellValue(0)
+        impRow.createCell(cellCount).setCellValue(0)
           p.totals.foreach(t => {
             if (t.placementId == place.id && date.minusDays(dateCount).getDayOfMonth == t.day.getDayOfMonth) {
               keptRow.createCell(cellCount).setCellValue(t.kept)
@@ -208,6 +220,13 @@ class BrandBuyerReportWriter(p: Publisher) {
               revRow.createCell(cellCount).setCellValue(t.revenue)
               rpmRow.createCell(cellCount).setCellValue(t.rpm)
               availRow.createCell(cellCount).setCellValue(t.avails)
+              impRow.createCell(cellCount).setCellValue(t.kept+t.resold)
+              impTotal += t.kept+t.resold
+              availTotal += t.avails
+              keptTotal += t.kept
+              resoldTotal += t.resold
+              revTotal += t.revenue
+              rpmTotal += t.rpm
               revRow.getCell(cellCount).setCellStyle(currency)
               rpmRow.getCell(cellCount).setCellStyle(currency)
             }
@@ -215,24 +234,19 @@ class BrandBuyerReportWriter(p: Publisher) {
         cellCount+=1
         dateCount+=1
       }
-      rows += 5
-    }
-    for(x <- 0 to 9) sumSheet.autoSizeColumn(x)
+      impRow.createCell(10).setCellValue(impTotal)
+      availRow.createCell(10).setCellValue(availTotal)
+      keptRow.createCell(10).setCellValue(keptTotal)
+      resoldRow.createCell(10).setCellValue(resoldTotal)
+      revRow.createCell(10).setCellValue(revTotal)
+      rpmRow.createCell(10).setCellValue(rpmTotal)
+      revRow.getCell(10).setCellStyle(currency)
+      rpmRow.getCell(10).setCellStyle(currency)
 
-    //Brand Summary
-    val brandSumSheet = wb.createSheet("Brand Summary")
-    val brandHead = brandSumSheet.createRow(0)
-    brandHead.createCell(0).setCellValue("ID")
-    brandHead.createCell(1).setCellValue("Brand")
-    brandHead.createCell(2).setCellValue("Metric")
-    dateCount = 1
-    cellCount = 3
-    while(dateCount <= 7) {
-      headRow.createCell(cellCount).setCellValue(date.minusDays(dateCount).getMonthOfYear + "/"
-        + date.minusDays(dateCount).getDayOfMonth)
-      dateCount += 1
-      cellCount += 1
+      rows += 6
     }
+    for(x <- 0 to 11) sumSheet.autoSizeColumn(x)
+
     //call placementSheets
     placementSheets()
 
@@ -251,11 +265,34 @@ class BrandBuyerReportWriter(p: Publisher) {
         dateCount += 1
         cellCount += 1
       }
+      headerRow.createCell(10).setCellValue("Total")
 
       var rowCount = 0
 
       //for each brand/buyer
       place.brands.foreach(b => {
+
+        //imp row
+        rowCount += 1
+        val impRow = placeSheet.createRow(rowCount)
+        impRow.createCell(0).setCellValue(b.id)
+        impRow.createCell(1).setCellValue(b.name)
+        impRow.createCell(2).setCellValue("Kept")
+        var total: Double = 0
+        cellCount = 3
+        dateCount = 1
+        while(dateCount <= 7) {
+          impRow.createCell(cellCount).setCellValue(0)
+          b.dataRows.foreach(d => {
+            if (date.minusDays(dateCount).getDayOfMonth == d.day.getDayOfMonth) {
+              impRow.createCell(cellCount).setCellValue(d.kept+d.resold)
+              total += d.kept+d.resold
+            }
+          })
+          cellCount += 1
+          dateCount += 1
+        }
+        impRow.createCell(10).setCellValue(total)
 
         //kept row
         rowCount += 1
@@ -263,6 +300,7 @@ class BrandBuyerReportWriter(p: Publisher) {
         keptRow.createCell(0).setCellValue(b.id)
         keptRow.createCell(1).setCellValue(b.name)
         keptRow.createCell(2).setCellValue("Kept")
+        total = 0
         cellCount = 3
         dateCount = 1
         while(dateCount <= 7) {
@@ -270,11 +308,13 @@ class BrandBuyerReportWriter(p: Publisher) {
           b.dataRows.foreach(d => {
             if (date.minusDays(dateCount).getDayOfMonth == d.day.getDayOfMonth) {
               keptRow.createCell(cellCount).setCellValue(d.kept)
+              total += d.kept
             }
           })
           cellCount += 1
           dateCount += 1
         }
+        keptRow.createCell(10).setCellValue(total)
         rowCount += 1
         //resold row
         val resoldRow = placeSheet.createRow(rowCount)
@@ -283,16 +323,19 @@ class BrandBuyerReportWriter(p: Publisher) {
         resoldRow.createCell(2).setCellValue("Resold")
         cellCount = 3
         dateCount = 1
+        total = 0
         while(dateCount <= 7) {
           resoldRow.createCell(cellCount).setCellValue(0)
           b.dataRows.foreach(d => {
             if (date.minusDays(dateCount).getDayOfMonth == d.day.getDayOfMonth) {
               resoldRow.createCell(cellCount).setCellValue(d.resold)
+              total += d.resold
             }
           })
           cellCount += 1
           dateCount += 1
         }
+        resoldRow.createCell(10).setCellValue(total)
         rowCount +=1
         //rev row
         val revRow = placeSheet.createRow(rowCount)
@@ -301,17 +344,21 @@ class BrandBuyerReportWriter(p: Publisher) {
         revRow.createCell(2).setCellValue("Revenue")
         cellCount = 3
         dateCount = 1
+        total=0
         while(dateCount <= 7) {
           revRow.createCell(cellCount).setCellValue(0)
           b.dataRows.foreach(d => {
             if (date.minusDays(dateCount).getDayOfMonth == d.day.getDayOfMonth) {
               revRow.createCell(cellCount).setCellValue(d.revenue)
               revRow.getCell(cellCount).setCellStyle(currency)
+              total += d.revenue
             }
           })
           cellCount += 1
           dateCount += 1
         }
+        revRow.createCell(10).setCellValue(total)
+        revRow.getCell(10).setCellStyle(currency)
         rowCount +=1
         //rpm row
         val rpmRow = placeSheet.createRow(rowCount)
@@ -320,19 +367,23 @@ class BrandBuyerReportWriter(p: Publisher) {
         rpmRow.createCell(2).setCellValue("RPM")
         cellCount = 3
         dateCount = 1
+        total = 0
         while(dateCount <= 7) {
           rpmRow.createCell(cellCount).setCellValue(0)
           b.dataRows.foreach(d => {
             if (date.minusDays(dateCount).getDayOfMonth == d.day.getDayOfMonth) {
               rpmRow.createCell(cellCount).setCellValue(d.rpm)
               rpmRow.getCell(cellCount).setCellStyle(currency)
+              total += d.rpm
             }
           })
           cellCount += 1
           dateCount += 1
         }
+        rpmRow.createCell(10).setCellValue(total)
+        rpmRow.getCell(10).setCellStyle(currency)
       })
-      for (x <- 0 to 9) placeSheet.autoSizeColumn(x)
+      for (x <- 0 to 11) placeSheet.autoSizeColumn(x)
     }
     wb
   }
@@ -351,6 +402,7 @@ class BrandBuyerReportWriter(p: Publisher) {
     headRow.createCell(0).setCellValue("ID")
     headRow.createCell(1).setCellValue("Placement")
     headRow.createCell(2).setCellValue("Metric")
+    headRow.createCell(10).setCellValue("Total")
     var dateCount = 1
     var cellCount = 3
     val date = DateTime.now()
@@ -362,35 +414,59 @@ class BrandBuyerReportWriter(p: Publisher) {
     }
     var rows = 1
     for {place <- p.placements} yield {
-      val keptRow = sumSheet.createRow(rows)
+      val impRow = sumSheet.createRow(rows)
+      impRow.createCell(0).setCellValue(place.id)
+      impRow.createCell(1).setCellValue(place.name)
+      impRow.createCell(2).setCellValue("Imps")
+      val availRow = sumSheet.createRow(rows+1)
+      availRow.createCell(0).setCellValue(place.id)
+      availRow.createCell(1).setCellValue(place.name)
+      availRow.createCell(2).setCellValue("Avails")
+      val keptRow = sumSheet.createRow(rows+2)
       keptRow.createCell(0).setCellValue(place.id)
       keptRow.createCell(1).setCellValue(place.name)
       keptRow.createCell(2).setCellValue("Kept")
-      val resoldRow = sumSheet.createRow(rows+1)
+      val resoldRow = sumSheet.createRow(rows+3)
       resoldRow.createCell(0).setCellValue(place.id)
       resoldRow.createCell(1).setCellValue(place.name)
       resoldRow.createCell(2).setCellValue("Resold")
-      val revRow = sumSheet.createRow(rows+2)
+      val revRow = sumSheet.createRow(rows+4)
       revRow.createCell(0).setCellValue(place.id)
       revRow.createCell(1).setCellValue(place.name)
       revRow.createCell(2).setCellValue("Revenue")
-      val rpmRow = sumSheet.createRow(rows+3)
+      val rpmRow = sumSheet.createRow(rows+5)
       rpmRow.createCell(0).setCellValue(place.id)
       rpmRow.createCell(1).setCellValue(place.name)
       rpmRow.createCell(2).setCellValue("RPM")
       cellCount = 3
       dateCount = 1
+      var impTotal = 0
+      var availTotal = 0
+      var keptTotal = 0
+      var resoldTotal = 0
+      var revTotal: Double = 0
+      var rpmTotal: Double = 0
       while(dateCount <= 7) {
         keptRow.createCell(cellCount).setCellValue(0)
         resoldRow.createCell(cellCount).setCellValue(0)
         revRow.createCell(cellCount).setCellValue(0)
         rpmRow.createCell(cellCount).setCellValue(0)
+        availRow.createCell(cellCount).setCellValue(0)
+        impRow.createCell(cellCount).setCellValue(0)
         p.totals.foreach(t => {
           if (t.placementId == place.id && date.minusDays(dateCount).getDayOfMonth == t.day.getDayOfMonth) {
             keptRow.createCell(cellCount).setCellValue(t.kept)
             resoldRow.createCell(cellCount).setCellValue(t.resold)
             revRow.createCell(cellCount).setCellValue(t.revenue)
             rpmRow.createCell(cellCount).setCellValue(t.rpm)
+            availRow.createCell(cellCount).setCellValue(t.avails)
+            impRow.createCell(cellCount).setCellValue(t.kept+t.resold)
+            impTotal += t.kept+t.resold
+            availTotal += t.avails
+            keptTotal += t.kept
+            resoldTotal += t.resold
+            revTotal += t.revenue
+            rpmTotal += t.rpm
             revRow.getCell(cellCount).setCellStyle(currency)
             rpmRow.getCell(cellCount).setCellStyle(currency)
           }
@@ -398,9 +474,19 @@ class BrandBuyerReportWriter(p: Publisher) {
         cellCount+=1
         dateCount+=1
       }
-      rows += 4
+      impRow.createCell(10).setCellValue(impTotal)
+      availRow.createCell(10).setCellValue(availTotal)
+      keptRow.createCell(10).setCellValue(keptTotal)
+      resoldRow.createCell(10).setCellValue(resoldTotal)
+      revRow.createCell(10).setCellValue(revTotal)
+      rpmRow.createCell(10).setCellValue(rpmTotal)
+      revRow.getCell(10).setCellStyle(currency)
+      rpmRow.getCell(10).setCellStyle(currency)
+
+      rows += 6
     }
-    for(x <- 0 to 9) sumSheet.autoSizeColumn(x)
+    for(x <- 0 to 11) sumSheet.autoSizeColumn(x)
+
     //call placementSheets
     placementSheets()
 
@@ -419,11 +505,34 @@ class BrandBuyerReportWriter(p: Publisher) {
         dateCount += 1
         cellCount += 1
       }
+      headerRow.createCell(10).setCellValue("Total")
 
       var rowCount = 0
 
       //for each brand/buyer
       place.buyers.foreach(b => {
+
+        //imp row
+        rowCount += 1
+        val impRow = placeSheet.createRow(rowCount)
+        impRow.createCell(0).setCellValue(b.id)
+        impRow.createCell(1).setCellValue(b.name)
+        impRow.createCell(2).setCellValue("Kept")
+        var total: Double = 0
+        cellCount = 3
+        dateCount = 1
+        while(dateCount <= 7) {
+          impRow.createCell(cellCount).setCellValue(0)
+          b.dataRows.foreach(d => {
+            if (date.minusDays(dateCount).getDayOfMonth == d.day.getDayOfMonth) {
+              impRow.createCell(cellCount).setCellValue(d.kept+d.resold)
+              total += d.kept+d.resold
+            }
+          })
+          cellCount += 1
+          dateCount += 1
+        }
+        impRow.createCell(10).setCellValue(total)
 
         //kept row
         rowCount += 1
@@ -431,6 +540,7 @@ class BrandBuyerReportWriter(p: Publisher) {
         keptRow.createCell(0).setCellValue(b.id)
         keptRow.createCell(1).setCellValue(b.name)
         keptRow.createCell(2).setCellValue("Kept")
+        total = 0
         cellCount = 3
         dateCount = 1
         while(dateCount <= 7) {
@@ -438,11 +548,13 @@ class BrandBuyerReportWriter(p: Publisher) {
           b.dataRows.foreach(d => {
             if (date.minusDays(dateCount).getDayOfMonth == d.day.getDayOfMonth) {
               keptRow.createCell(cellCount).setCellValue(d.kept)
+              total += d.kept
             }
           })
           cellCount += 1
           dateCount += 1
         }
+        keptRow.createCell(10).setCellValue(total)
         rowCount += 1
         //resold row
         val resoldRow = placeSheet.createRow(rowCount)
@@ -451,16 +563,19 @@ class BrandBuyerReportWriter(p: Publisher) {
         resoldRow.createCell(2).setCellValue("Resold")
         cellCount = 3
         dateCount = 1
+        total = 0
         while(dateCount <= 7) {
           resoldRow.createCell(cellCount).setCellValue(0)
           b.dataRows.foreach(d => {
             if (date.minusDays(dateCount).getDayOfMonth == d.day.getDayOfMonth) {
               resoldRow.createCell(cellCount).setCellValue(d.resold)
+              total += d.resold
             }
           })
           cellCount += 1
           dateCount += 1
         }
+        resoldRow.createCell(10).setCellValue(total)
         rowCount +=1
         //rev row
         val revRow = placeSheet.createRow(rowCount)
@@ -469,17 +584,21 @@ class BrandBuyerReportWriter(p: Publisher) {
         revRow.createCell(2).setCellValue("Revenue")
         cellCount = 3
         dateCount = 1
+        total=0
         while(dateCount <= 7) {
           revRow.createCell(cellCount).setCellValue(0)
           b.dataRows.foreach(d => {
             if (date.minusDays(dateCount).getDayOfMonth == d.day.getDayOfMonth) {
               revRow.createCell(cellCount).setCellValue(d.revenue)
               revRow.getCell(cellCount).setCellStyle(currency)
+              total += d.revenue
             }
           })
           cellCount += 1
           dateCount += 1
         }
+        revRow.createCell(10).setCellValue(total)
+        revRow.getCell(10).setCellStyle(currency)
         rowCount +=1
         //rpm row
         val rpmRow = placeSheet.createRow(rowCount)
@@ -488,19 +607,23 @@ class BrandBuyerReportWriter(p: Publisher) {
         rpmRow.createCell(2).setCellValue("RPM")
         cellCount = 3
         dateCount = 1
+        total = 0
         while(dateCount <= 7) {
           rpmRow.createCell(cellCount).setCellValue(0)
           b.dataRows.foreach(d => {
             if (date.minusDays(dateCount).getDayOfMonth == d.day.getDayOfMonth) {
               rpmRow.createCell(cellCount).setCellValue(d.rpm)
               rpmRow.getCell(cellCount).setCellStyle(currency)
+              total += d.rpm
             }
           })
           cellCount += 1
           dateCount += 1
         }
+        rpmRow.createCell(10).setCellValue(total)
+        rpmRow.getCell(10).setCellStyle(currency)
       })
-      for (x <- 0 to 9) placeSheet.autoSizeColumn(x)
+      for (x <- 0 to 11) placeSheet.autoSizeColumn(x)
     }
     wb
   }
