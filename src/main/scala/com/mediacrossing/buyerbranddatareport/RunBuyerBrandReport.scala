@@ -114,13 +114,13 @@ object RunBuyerBrandReport extends App{
   }
 
   //save pub lists to hdd
-  /*try {
+  try {
     val out = new ObjectOutputStream(new FileOutputStream("/Users/charronkyle/Desktop/ReportData/BrandBuyerPubs.ser"))
     out.writeObject(pubs)
     out.close()
   } catch {
     case ioe: IOException => LOG.error("Serialization Failed!")
-  }*/
+  }
   val today = new LocalDate(DateTimeZone.UTC)
   val pubBooks = for{p <- pubs} yield new PubWithWorkbooks(p.id, p.name, new BrandBuyerReportWriter(p).writeReports)
   pubBooks.foreach(pub => {
@@ -144,6 +144,7 @@ case class PubWithWorkbooks(id: String, name: String, workbooks: (HSSFWorkbook, 
 
 class BrandBuyerReportWriter(p: Publisher) {
   def writeReports = (writeBrandReport, writeBuyerReport)
+
   def writeBrandReport = {
     //create wb for every pub
       //brand wb
@@ -195,6 +196,7 @@ class BrandBuyerReportWriter(p: Publisher) {
         }
         rows += 4
       }
+      for(x <- 0 to 8) sumSheet.autoSizeColumn(x)
       //call placementSheets
       placementSheets()
 
@@ -287,6 +289,7 @@ class BrandBuyerReportWriter(p: Publisher) {
             dateCount += 1
           }
         })
+        for (x <- 0 to 8) placeSheet.autoSizeColumn(x)
       }
       wb
   }
