@@ -56,7 +56,7 @@ public class RunWeeklyDomainReport {
         final ArrayList<Domain> domains = anConn.requestDomainReport();
 
         // Serialize data object to a file
-        try {
+        /*try {
             ObjectOutputStream out = new ObjectOutputStream
                     (new FileOutputStream("/Users/charronkyle/Desktop/ReportData/DomainList.ser"));
             out.writeObject(domains);
@@ -64,7 +64,7 @@ public class RunWeeklyDomainReport {
         } catch (IOException e) {
             LOG.error("Serialization Failed!");
             LOG.error(e.toString());
-        }
+        }*/
 
         //Write report
         WeeklyDomainReportWriter.writeReportToFile(domains, outputPath);
