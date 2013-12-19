@@ -110,11 +110,11 @@ public class RunDailyCheckUps {
         //Write xls file for all target segment reports
         XlsWriter.writeAllReports(dataStore.getLiveCampaignArrayList(), fileOutputPath);
 
-       /*// Serialize data object to a file
-        try {
+       // Serialize data object to a file
+        /*try {
             ObjectOutputStream out = new ObjectOutputStream
                     (new FileOutputStream("/Users/charronkyle/Desktop/ReportData/TargetSegmentingData.ser"));
-            out.writeObject(newCampaignArrayList);
+            out.writeObject(dataStore.getLiveCampaignArrayList());
             out.close();
         } catch (IOException e) {
             LOG.error("Serialization Failed!");

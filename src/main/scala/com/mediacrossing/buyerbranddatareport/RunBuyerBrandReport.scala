@@ -113,8 +113,6 @@ object RunBuyerBrandReport extends App{
     })
   }
 
-  val totals =
-
   //save pub lists to hdd
   /*try {
     val out = new ObjectOutputStream(new FileOutputStream("/Users/charronkyle/Desktop/ReportData/BrandBuyerPubs.ser"))
