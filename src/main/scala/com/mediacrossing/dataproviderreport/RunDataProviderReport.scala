@@ -53,9 +53,9 @@ object RunDataProviderReport extends App {
 //  for each adId, request report, and if line matches campaign in list, create the new campaign instance, and
 //  save it to the list of which dp it's a part of.
   //TODO: There should be validation logic embedded in the campaign creation constructors (scala either or scalaz \/)
-  val dataProviders = (for {
+  val dataProviders: List[DataProvider] = (for {
     adId: String <- advertiserIds.toSet
-    line <- anConn.getCampaignReport("last_7_days", adId).toList
+    line: Array[String] <- anConn.getCampaignReport("last_7_days", adId).toList
     c <- campList if line(0) == c.getId
     newCamp = new CampaignDP(line(0), line(1), Integer.parseInt(line(2)),
       Integer.parseInt(line(3)), line(8).toDouble,
