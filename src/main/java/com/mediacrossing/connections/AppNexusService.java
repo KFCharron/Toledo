@@ -756,9 +756,9 @@ public class AppNexusService {
                 "                        \"order_by\":\"placement_id\",\n" +
                 "                        \"direction\":\"DESC\"\n" +
                 "                    }\n" +
-                "                ]\n" +
-                "    }\n" +
+                "                ],\n" +
                 "        \"timezone\": \"EST5EDT\""+
+                "    }\n" +
                 "}";
         return downloadReportWhenReady(requests.postRequest(url + "/report?publisher_id=" + pubId, jsonPost));
     }
@@ -805,7 +805,7 @@ public class AppNexusService {
                 "                        \"order_by\":\"placement_id\", \n" +
                 "                        \"direction\":\"DESC\"\n" +
                 "                    }\n" +
-                "                ]\n" +
+                "                ],\n" +
                 "        \"timezone\": \"EST5EDT\""+
                 "    }\n" +
                 "}";
@@ -847,7 +847,7 @@ public class AppNexusService {
                 "                        \"order_by\":\"placement_id\",\n" +
                 "                        \"direction\":\"DESC\"\n" +
                 "                    }\n" +
-                "                ]\n" +
+                "                ],\n" +
                 "        \"timezone\": \"EST5EDT\""+
                 "    }\n" +
                 "}";
