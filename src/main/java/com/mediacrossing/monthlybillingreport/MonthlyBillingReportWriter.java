@@ -43,6 +43,7 @@ public class MonthlyBillingReportWriter {
                 grandTotal.setBlueKaiTotal(grandTotal.getBlueKaiTotal() + c.getBlueKaiTotal());
                 grandTotal.setGrapeshotTotal(grandTotal.getGrapeshotTotal() + c.getGrapeshotTotal());
                 grandTotal.setSpongecellTotal(grandTotal.getSpongecellTotal() + c.getSpongecellTotal());
+                grandTotal.setVidibleTotal(grandTotal.getVidibleTotal() + c.getVidibleTotal());
             }
         }
 
@@ -64,12 +65,13 @@ public class MonthlyBillingReportWriter {
         summarySheet.createRow(16).createCell(0).setCellValue("Grapeshot:");
         summarySheet.createRow(17).createCell(0).setCellValue("Integral:");
         summarySheet.createRow(18).createCell(0).setCellValue("Spongecell:");
-        summarySheet.createRow(19).createCell(0).setCellValue("Amazon Cost:");
-        summarySheet.createRow(20).createCell(0).setCellValue("AdX Cost");
-        summarySheet.createRow(21).createCell(0).setCellValue("Brilig Cost");
-        summarySheet.createRow(22).createCell(0).setCellValue("Total Cost");
-        summarySheet.createRow(23).createCell(0).setCellValue("Gross Profit");
-        summarySheet.createRow(24).createCell(0).setCellValue("GP Margin");
+        summarySheet.createRow(19).createCell(0).setCellValue("Vidible:");
+        summarySheet.createRow(20).createCell(0).setCellValue("Amazon Cost:");
+        summarySheet.createRow(21).createCell(0).setCellValue("AdX Cost");
+        summarySheet.createRow(22).createCell(0).setCellValue("Brilig Cost");
+        summarySheet.createRow(23).createCell(0).setCellValue("Total Cost");
+        summarySheet.createRow(24).createCell(0).setCellValue("Gross Profit");
+        summarySheet.createRow(25).createCell(0).setCellValue("GP Margin");
 
         summarySheet.getRow(1).createCell(1).setCellValue(grandTotal.getImps());
         summarySheet.getRow(2).createCell(1).setCellValue(grandTotal.getClicks());
@@ -85,6 +87,7 @@ public class MonthlyBillingReportWriter {
         summarySheet.getRow(16).createCell(1).setCellValue(grandTotal.getGrapeshotTotal());
         summarySheet.getRow(17).createCell(1).setCellValue(grandTotal.getIntegralTotal());
         summarySheet.getRow(18).createCell(1).setCellValue(grandTotal.getSpongecellTotal());
+        summarySheet.getRow(19).createCell(1).setCellValue(grandTotal.getVidibleTotal());
 
         summarySheet.getRow(7).getCell(1).setCellStyle(fullCurrency);
         summarySheet.getRow(9).getCell(1).setCellStyle(fullCurrency);
@@ -94,6 +97,7 @@ public class MonthlyBillingReportWriter {
         summarySheet.getRow(16).getCell(1).setCellStyle(fullCurrency);
         summarySheet.getRow(17).getCell(1).setCellStyle(fullCurrency);
         summarySheet.getRow(18).getCell(1).setCellStyle(fullCurrency);
+        summarySheet.getRow(19).getCell(1).setCellStyle(fullCurrency);
 
         summarySheet.autoSizeColumn(0);
         summarySheet.autoSizeColumn(1);
@@ -128,12 +132,13 @@ public class MonthlyBillingReportWriter {
             headerRow.createCell(16).setCellValue("Grapeshot");
             headerRow.createCell(17).setCellValue("Integral");
             headerRow.createCell(18).setCellValue("Spongecell");
-            headerRow.createCell(19).setCellValue("Amazon Cost");
-            headerRow.createCell(20).setCellValue("AdX Cost");
-            headerRow.createCell(21).setCellValue("Brilig Cost");
-            headerRow.createCell(22).setCellValue("Total Cost");
-            headerRow.createCell(23).setCellValue("Gross Profit");
-            headerRow.createCell(24).setCellValue("GP Margin");
+            headerRow.createCell(19).setCellValue("Vidible");
+            headerRow.createCell(20).setCellValue("Amazon Cost");
+            headerRow.createCell(21).setCellValue("AdX Cost");
+            headerRow.createCell(22).setCellValue("Brilig Cost");
+            headerRow.createCell(23).setCellValue("Total Cost");
+            headerRow.createCell(24).setCellValue("Gross Profit");
+            headerRow.createCell(25).setCellValue("GP Margin");
 
             int rowCount = 0;
 
@@ -161,12 +166,13 @@ public class MonthlyBillingReportWriter {
                 dataRow.createCell(16).setCellValue(c.getGrapeshotTotal());
                 dataRow.createCell(17).setCellValue(c.getIntegralTotal());
                 dataRow.createCell(18).setCellValue(c.getSpongecellTotal());
-                dataRow.createCell(19);
+                dataRow.createCell(19).setCellValue(c.getVidibleTotal());
                 dataRow.createCell(20);
                 dataRow.createCell(21);
                 dataRow.createCell(22);
                 dataRow.createCell(23);
                 dataRow.createCell(24);
+                dataRow.createCell(25);
 
                 dataRow.getCell(7).setCellStyle(fullCurrency);
                 dataRow.getCell(9).setCellStyle(fullCurrency);
@@ -176,6 +182,7 @@ public class MonthlyBillingReportWriter {
                 dataRow.getCell(16).setCellStyle(fullCurrency);
                 dataRow.getCell(17).setCellStyle(fullCurrency);
                 dataRow.getCell(18).setCellStyle(fullCurrency);
+                dataRow.getCell(19).setCellStyle(fullCurrency);
 
                 adTotal.setImps(adTotal.getImps() + c.getImps());
                 adTotal.setClicks(adTotal.getClicks() + c.getClicks());
@@ -192,6 +199,7 @@ public class MonthlyBillingReportWriter {
                 adTotal.setBlueKaiTotal(adTotal.getBlueKaiTotal() + c.getBlueKaiTotal());
                 adTotal.setAlcTotal(adTotal.getAlcTotal() + c.getAlcTotal());
                 adTotal.setSpongecellTotal(adTotal.getSpongecellTotal() + c.getSpongecellTotal());
+                adTotal.setVidibleTotal(adTotal.getVidibleTotal() + c.getVidibleTotal());
                 
             }
 
@@ -220,6 +228,7 @@ public class MonthlyBillingReportWriter {
             totalRow.createCell(16).setCellValue(adTotal.getGrapeshotTotal());
             totalRow.createCell(17).setCellValue(adTotal.getIntegralTotal());
             totalRow.createCell(18).setCellValue(adTotal.getSpongecellTotal());
+            totalRow.createCell(19).setCellValue(adTotal.getVidibleTotal());
 
             totalRow.getCell(7).setCellStyle(fullCurrency);
             totalRow.getCell(9).setCellStyle(fullCurrency);
@@ -229,8 +238,9 @@ public class MonthlyBillingReportWriter {
             totalRow.getCell(16).setCellStyle(fullCurrency);
             totalRow.getCell(17).setCellStyle(fullCurrency);
             totalRow.getCell(18).setCellStyle(fullCurrency);
+            totalRow.getCell(19).setCellStyle(fullCurrency);
 
-            for (int x = 0; x < 25; x++) advertiserSheet.autoSizeColumn(x);
+            for (int x = 0; x <= 25; x++) advertiserSheet.autoSizeColumn(x);
         }
 
         //build advertiser summary page
@@ -254,12 +264,13 @@ public class MonthlyBillingReportWriter {
         summaryHeader.createCell(16).setCellValue("Grapeshot");
         summaryHeader.createCell(17).setCellValue("Integral");
         summaryHeader.createCell(18).setCellValue("Spongecell");
-        summaryHeader.createCell(19).setCellValue("Amazon Cost");
-        summaryHeader.createCell(20).setCellValue("AdX Cost");
-        summaryHeader.createCell(21).setCellValue("Brilig Cost");
-        summaryHeader.createCell(22).setCellValue("Total Cost");
-        summaryHeader.createCell(23).setCellValue("Gross Profit");
-        summaryHeader.createCell(24).setCellValue("GP Margin");
+        summaryHeader.createCell(19).setCellValue("Vidible");
+        summaryHeader.createCell(20).setCellValue("Amazon Cost");
+        summaryHeader.createCell(21).setCellValue("AdX Cost");
+        summaryHeader.createCell(22).setCellValue("Brilig Cost");
+        summaryHeader.createCell(23).setCellValue("Total Cost");
+        summaryHeader.createCell(24).setCellValue("Gross Profit");
+        summaryHeader.createCell(25).setCellValue("GP Margin");
         
         int rowCount = 1;
         for (BillingAdvertiser ad : adSummaryList) {
@@ -284,6 +295,7 @@ public class MonthlyBillingReportWriter {
                 adRow.createCell(16).setCellValue(c.getGrapeshotTotal());
                 adRow.createCell(17).setCellValue(c.getIntegralTotal());
                 adRow.createCell(18).setCellValue(c.getSpongecellTotal());
+                adRow.createCell(19).setCellValue(c.getVidibleTotal());
 
                 adRow.getCell(7).setCellStyle(fullCurrency);
                 adRow.getCell(9).setCellStyle(fullCurrency);
@@ -293,11 +305,12 @@ public class MonthlyBillingReportWriter {
                 adRow.getCell(16).setCellStyle(fullCurrency);
                 adRow.getCell(17).setCellStyle(fullCurrency);
                 adRow.getCell(18).setCellStyle(fullCurrency);
+                adRow.getCell(19).setCellStyle(fullCurrency);
 
                 rowCount++;
             }
         }
-        for (int x = 0; x < 25; x++) advertiserSummary.autoSizeColumn(x);
+        for (int x = 0; x <= 25; x++) advertiserSummary.autoSizeColumn(x);
 
 
         //Export file

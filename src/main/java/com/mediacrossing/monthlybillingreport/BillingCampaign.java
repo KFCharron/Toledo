@@ -28,6 +28,8 @@ public class BillingCampaign implements Serializable {
     private float grapeshotTotal;
     private float spongecellFee;
     private float spongecellTotal;
+    private float vidibleFee;
+    private float vidibleTotal;
     private float cpm;
 
     public BillingCampaign(String id, String name, int imps, int clicks, float convs, float mediaCost,
@@ -47,6 +49,7 @@ public class BillingCampaign implements Serializable {
         this.blueKaiFee = 0;
         this.grapeshotFee = 0;
         this.spongecellFee = 0;
+        this.vidibleFee = 0;
     }
 
     public BillingCampaign() {
@@ -65,6 +68,7 @@ public class BillingCampaign implements Serializable {
         this.alcTotal = 0;
         this.grapeshotTotal = 0;
         this.spongecellTotal = 0;
+        this.vidibleTotal = 0;
     }
 
     public void setName(String name) {
@@ -258,5 +262,21 @@ public class BillingCampaign implements Serializable {
 
     public void setSpongecellTotal(float spongecellTotal) {
         this.spongecellTotal = spongecellTotal;
+    }
+
+    public float getVidibleFee() {
+        return vidibleFee;
+    }
+
+    public void setVidibleFee(float vidibleFee) {
+        this.vidibleFee = vidibleFee;
+    }
+
+    public float getVidibleTotal() {
+        return vidibleTotal;
+    }
+
+    public void setVidibleTotal(float vidibleTotal) {
+        this.vidibleTotal = vidibleTotal;
     }
 }

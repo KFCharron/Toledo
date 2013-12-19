@@ -89,30 +89,34 @@ public class RunMonthlyBillingReport {
                                 bc.setIntegralFee(Float.parseFloat(fee.getValue()));
                                 bc.setIntegralTotal((imps/(float)1000)*bc.getIntegralFee());
                             }
-                            if (fee.getBrokerName().equals("Evidon")) {
+                            else if (fee.getBrokerName().equals("Evidon")) {
                                 bc.setEvidonFee(Float.parseFloat(fee.getValue()));
                                 bc.setEvidonTotal((imps/(float)1000)*bc.getEvidonFee());
                             }
-                            if (fee.getBrokerName().equals("Brilig")) {
+                            else if (fee.getBrokerName().equals("Brilig")) {
                                 bc.setBriligFee(Float.parseFloat(fee.getValue()));
                                 bc.setBriligTotal((imps/(float)1000)*bc.getBriligFee());
                                 bc.setBriligImps(bc.getImps());
                             }
-                            if (fee.getBrokerName().equals("BlueKai")) {
+                            else if (fee.getBrokerName().equals("BlueKai")) {
                                 bc.setBlueKaiFee(Float.parseFloat(fee.getValue()));
                                 bc.setBlueKaiTotal((imps/(float)1000)*bc.getBlueKaiFee());
                             }
-                            if (fee.getBrokerName().equals("Grapeshot")) {
+                            else if (fee.getBrokerName().equals("Grapeshot")) {
                                 bc.setGrapeshotFee(Float.parseFloat(fee.getValue()));
                                 bc.setGrapeshotTotal((imps/(float)1000)*bc.getGrapeshotFee());
                             }
-                            if (fee.getBrokerName().equals("ALC")) {
+                            else if (fee.getBrokerName().equals("ALC")) {
                                 bc.setAlcFee(Float.parseFloat(fee.getValue()));
                                 bc.setAlcTotal((imps/(float)1000)*bc.getAlcFee());
                             }
-                            if (fee.getBrokerName().equals("Spongecell")) {
+                            else if (fee.getBrokerName().equals("Spongecell")) {
                                 bc.setSpongecellFee(Float.parseFloat(fee.getValue()));
                                 bc.setSpongecellTotal((imps/(float)1000)*bc.getSpongecellFee());
+                            }
+                            else if (fee.getBrokerName().equals("Vidible")) {
+                                bc.setVidibleFee(Float.parseFloat(fee.getValue()));
+                                bc.setVidibleTotal((imps/(float)1000)*bc.getVidibleFee());
                             }
 
                         }
