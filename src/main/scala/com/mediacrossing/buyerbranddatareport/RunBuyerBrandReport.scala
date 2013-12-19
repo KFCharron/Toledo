@@ -108,18 +108,18 @@ object RunBuyerBrandReport extends App{
           buyerRows.filter(d => d.placementId == place._1 && d.id == b._1))})
     }, {
         for {line <- anConn.requestPlacementReport(p.id).toList.tail} yield TotalRow(dateFormat.parseDateTime(line(0)),
-          line(1).toInt, line(2).toInt, line(3).toDouble, line(4).toDouble, line(5), line(6))
+          line(1).toInt, line(2).toInt, line(3).toDouble, line(4).toDouble, line(5), line(6), line(7).toInt)
     })
   }
 
   //save pub lists to hdd
-  /*try {
+  try {
     val out = new ObjectOutputStream(new FileOutputStream("/Users/charronkyle/Desktop/ReportData/BrandBuyerPubs.ser"))
     out.writeObject(pubs)
     out.close()
   } catch {
     case ioe: IOException => LOG.error("Serialization Failed!")
-  }*/
+  }
   val today = new LocalDate(DateTimeZone.UTC)
   val pubBooks = for{p <- pubs} yield new PubWithWorkbooks(p.id, p.name, new BrandBuyerReportWriter(p).writeReports)
   pubBooks.foreach(pub => {
@@ -135,7 +135,7 @@ case class PubJson(id: String, name: String, status: String, siteIds: List[Strin
 case class DataRow (day: DateTime, name: String, id: String, kept: Int, resold: Int, revenue: Double, rpm: Double,
                        placementId: String, placementName: String) extends Serializable
 case class TotalRow (day: DateTime, kept: Int, resold: Int, revenue: Double,
-                     rpm: Double, placementId: String, placementName: String) extends Serializable
+                     rpm: Double, placementId: String, placementName: String, avails: Int) extends Serializable
 case class Publisher(id: String, name: String, placements: mutable.Set[Placement],
                      totals: List[TotalRow]) extends Serializable
 case class Placement(id: String, name: String, brands: mutable.Set[BuyerBrand],
@@ -159,10 +159,11 @@ class BrandBuyerReportWriter(p: Publisher) {
 
     val sumSheet = wb.createSheet("Summary")
     val headRow = sumSheet.createRow(0)
-    headRow.createCell(0).setCellValue("Placement")
-    headRow.createCell(1).setCellValue("Metric")
+    headRow.createCell(0).setCellValue("ID")
+    headRow.createCell(1).setCellValue("Placement")
+    headRow.createCell(2).setCellValue("Metric")
     var dateCount = 1
-    var cellCount = 2
+    var cellCount = 3
     val date = DateTime.now()
     while(dateCount <= 7) {
       headRow.createCell(cellCount).setCellValue(date.minusDays(dateCount).getMonthOfYear + "/"
@@ -172,31 +173,41 @@ class BrandBuyerReportWriter(p: Publisher) {
     }
     var rows = 1
     for {place <- p.placements} yield {
-      val keptRow = sumSheet.createRow(rows)
-      keptRow.createCell(0).setCellValue(place.name)
-      keptRow.createCell(1).setCellValue("Kept")
-      val resoldRow = sumSheet.createRow(rows+1)
-      resoldRow.createCell(0).setCellValue(place.name)
-      resoldRow.createCell(1).setCellValue("Resold")
-      val revRow = sumSheet.createRow(rows+2)
-      revRow.createCell(0).setCellValue(place.name)
-      revRow.createCell(1).setCellValue("Revenue")
-      val rpmRow = sumSheet.createRow(rows+3)
-      rpmRow.createCell(0).setCellValue(place.name)
-      rpmRow.createCell(1).setCellValue("RPM")
-      cellCount = 2
+      val availRow = sumSheet.createRow(rows)
+      availRow.createCell(0).setCellValue(place.id)
+      availRow.createCell(1).setCellValue(place.name)
+      availRow.createCell(2).setCellValue("Avails")
+      val keptRow = sumSheet.createRow(rows+1)
+      keptRow.createCell(0).setCellValue(place.id)
+      keptRow.createCell(1).setCellValue(place.name)
+      keptRow.createCell(2).setCellValue("Kept")
+      val resoldRow = sumSheet.createRow(rows+2)
+      resoldRow.createCell(0).setCellValue(place.id)
+      resoldRow.createCell(1).setCellValue(place.name)
+      resoldRow.createCell(2).setCellValue("Resold")
+      val revRow = sumSheet.createRow(rows+3)
+      revRow.createCell(0).setCellValue(place.id)
+      revRow.createCell(1).setCellValue(place.name)
+      revRow.createCell(2).setCellValue("Revenue")
+      val rpmRow = sumSheet.createRow(rows+4)
+      rpmRow.createCell(0).setCellValue(place.id)
+      rpmRow.createCell(1).setCellValue(place.name)
+      rpmRow.createCell(2).setCellValue("RPM")
+      cellCount = 3
       dateCount = 1
       while(dateCount <= 7) {
         keptRow.createCell(cellCount).setCellValue(0)
         resoldRow.createCell(cellCount).setCellValue(0)
         revRow.createCell(cellCount).setCellValue(0)
         rpmRow.createCell(cellCount).setCellValue(0)
+        availRow.createCell(cellCount).setCellValue(0)
           p.totals.foreach(t => {
             if (t.placementId == place.id && date.minusDays(dateCount).getDayOfMonth == t.day.getDayOfMonth) {
               keptRow.createCell(cellCount).setCellValue(t.kept)
               resoldRow.createCell(cellCount).setCellValue(t.resold)
               revRow.createCell(cellCount).setCellValue(t.revenue)
               rpmRow.createCell(cellCount).setCellValue(t.rpm)
+              availRow.createCell(cellCount).setCellValue(t.avails)
               revRow.getCell(cellCount).setCellStyle(currency)
               rpmRow.getCell(cellCount).setCellStyle(currency)
             }
@@ -204,9 +215,24 @@ class BrandBuyerReportWriter(p: Publisher) {
         cellCount+=1
         dateCount+=1
       }
-      rows += 4
+      rows += 5
     }
-    for(x <- 0 to 8) sumSheet.autoSizeColumn(x)
+    for(x <- 0 to 9) sumSheet.autoSizeColumn(x)
+
+    //Brand Summary
+    val brandSumSheet = wb.createSheet("Brand Summary")
+    val brandHead = brandSumSheet.createRow(0)
+    brandHead.createCell(0).setCellValue("ID")
+    brandHead.createCell(1).setCellValue("Brand")
+    brandHead.createCell(2).setCellValue("Metric")
+    dateCount = 1
+    cellCount = 3
+    while(dateCount <= 7) {
+      headRow.createCell(cellCount).setCellValue(date.minusDays(dateCount).getMonthOfYear + "/"
+        + date.minusDays(dateCount).getDayOfMonth)
+      dateCount += 1
+      cellCount += 1
+    }
     //call placementSheets
     placementSheets()
 
@@ -214,10 +240,11 @@ class BrandBuyerReportWriter(p: Publisher) {
     def placementSheets() = for {place <- p.placements} yield {
       val placeSheet = wb.createSheet(WorkbookUtil.createSafeSheetName("("+place.id+")"+place.name))
       val headerRow = placeSheet.createRow(0)
-      headerRow.createCell(0).setCellValue("Brands")
-      headerRow.createCell(1).setCellValue("Metric")
+      headerRow.createCell(0).setCellValue("ID")
+      headerRow.createCell(1).setCellValue("Brand")
+      headerRow.createCell(2).setCellValue("Metric")
       dateCount = 1
-      cellCount = 2
+      cellCount = 3
       while(dateCount <= 7) {
         headerRow.createCell(cellCount).setCellValue(date.minusDays(dateCount).getMonthOfYear + "/"
           + date.minusDays(dateCount).getDayOfMonth)
@@ -233,9 +260,10 @@ class BrandBuyerReportWriter(p: Publisher) {
         //kept row
         rowCount += 1
         val keptRow = placeSheet.createRow(rowCount)
-        keptRow.createCell(0).setCellValue(b.name)
-        keptRow.createCell(1).setCellValue("Kept")
-        cellCount = 2
+        keptRow.createCell(0).setCellValue(b.id)
+        keptRow.createCell(1).setCellValue(b.name)
+        keptRow.createCell(2).setCellValue("Kept")
+        cellCount = 3
         dateCount = 1
         while(dateCount <= 7) {
           keptRow.createCell(cellCount).setCellValue(0)
@@ -250,9 +278,10 @@ class BrandBuyerReportWriter(p: Publisher) {
         rowCount += 1
         //resold row
         val resoldRow = placeSheet.createRow(rowCount)
-        resoldRow.createCell(0).setCellValue(b.name)
-        resoldRow.createCell(1).setCellValue("Resold")
-        cellCount = 2
+        resoldRow.createCell(0).setCellValue(b.id)
+        resoldRow.createCell(1).setCellValue(b.name)
+        resoldRow.createCell(2).setCellValue("Resold")
+        cellCount = 3
         dateCount = 1
         while(dateCount <= 7) {
           resoldRow.createCell(cellCount).setCellValue(0)
@@ -267,9 +296,10 @@ class BrandBuyerReportWriter(p: Publisher) {
         rowCount +=1
         //rev row
         val revRow = placeSheet.createRow(rowCount)
-        revRow.createCell(0).setCellValue(b.name)
-        revRow.createCell(1).setCellValue("Revenue")
-        cellCount = 2
+        revRow.createCell(0).setCellValue(b.id)
+        revRow.createCell(1).setCellValue(b.name)
+        revRow.createCell(2).setCellValue("Revenue")
+        cellCount = 3
         dateCount = 1
         while(dateCount <= 7) {
           revRow.createCell(cellCount).setCellValue(0)
@@ -285,9 +315,10 @@ class BrandBuyerReportWriter(p: Publisher) {
         rowCount +=1
         //rpm row
         val rpmRow = placeSheet.createRow(rowCount)
-        rpmRow.createCell(0).setCellValue(b.name)
-        rpmRow.createCell(1).setCellValue("RPM")
-        cellCount = 2
+        rpmRow.createCell(0).setCellValue(b.id)
+        rpmRow.createCell(1).setCellValue(b.name)
+        rpmRow.createCell(2).setCellValue("RPM")
+        cellCount = 3
         dateCount = 1
         while(dateCount <= 7) {
           rpmRow.createCell(cellCount).setCellValue(0)
@@ -301,7 +332,7 @@ class BrandBuyerReportWriter(p: Publisher) {
           dateCount += 1
         }
       })
-      for (x <- 0 to 8) placeSheet.autoSizeColumn(x)
+      for (x <- 0 to 9) placeSheet.autoSizeColumn(x)
     }
     wb
   }
@@ -317,10 +348,11 @@ class BrandBuyerReportWriter(p: Publisher) {
 
     val sumSheet = wb.createSheet("Summary")
     val headRow = sumSheet.createRow(0)
-    headRow.createCell(0).setCellValue("Placement")
-    headRow.createCell(1).setCellValue("Metric")
+    headRow.createCell(0).setCellValue("ID")
+    headRow.createCell(1).setCellValue("Placement")
+    headRow.createCell(2).setCellValue("Metric")
     var dateCount = 1
-    var cellCount = 2
+    var cellCount = 3
     val date = DateTime.now()
     while(dateCount <= 7) {
       headRow.createCell(cellCount).setCellValue(date.minusDays(dateCount).getMonthOfYear + "/"
@@ -331,18 +363,22 @@ class BrandBuyerReportWriter(p: Publisher) {
     var rows = 1
     for {place <- p.placements} yield {
       val keptRow = sumSheet.createRow(rows)
-      keptRow.createCell(0).setCellValue(place.name)
-      keptRow.createCell(1).setCellValue("Kept")
+      keptRow.createCell(0).setCellValue(place.id)
+      keptRow.createCell(1).setCellValue(place.name)
+      keptRow.createCell(2).setCellValue("Kept")
       val resoldRow = sumSheet.createRow(rows+1)
-      resoldRow.createCell(0).setCellValue(place.name)
-      resoldRow.createCell(1).setCellValue("Resold")
+      resoldRow.createCell(0).setCellValue(place.id)
+      resoldRow.createCell(1).setCellValue(place.name)
+      resoldRow.createCell(2).setCellValue("Resold")
       val revRow = sumSheet.createRow(rows+2)
-      revRow.createCell(0).setCellValue(place.name)
-      revRow.createCell(1).setCellValue("Revenue")
+      revRow.createCell(0).setCellValue(place.id)
+      revRow.createCell(1).setCellValue(place.name)
+      revRow.createCell(2).setCellValue("Revenue")
       val rpmRow = sumSheet.createRow(rows+3)
-      rpmRow.createCell(0).setCellValue(place.name)
-      rpmRow.createCell(1).setCellValue("RPM")
-      cellCount = 2
+      rpmRow.createCell(0).setCellValue(place.id)
+      rpmRow.createCell(1).setCellValue(place.name)
+      rpmRow.createCell(2).setCellValue("RPM")
+      cellCount = 3
       dateCount = 1
       while(dateCount <= 7) {
         keptRow.createCell(cellCount).setCellValue(0)
@@ -364,7 +400,7 @@ class BrandBuyerReportWriter(p: Publisher) {
       }
       rows += 4
     }
-    for(x <- 0 to 8) sumSheet.autoSizeColumn(x)
+    for(x <- 0 to 9) sumSheet.autoSizeColumn(x)
     //call placementSheets
     placementSheets()
 
@@ -372,10 +408,11 @@ class BrandBuyerReportWriter(p: Publisher) {
     def placementSheets() = for {place <- p.placements} yield {
       val placeSheet = wb.createSheet(WorkbookUtil.createSafeSheetName("("+place.id+")"+place.name))
       val headerRow = placeSheet.createRow(0)
-      headerRow.createCell(0).setCellValue("Buyers")
-      headerRow.createCell(1).setCellValue("Metric")
+      headerRow.createCell(0).setCellValue("ID")
+      headerRow.createCell(1).setCellValue("Buyer")
+      headerRow.createCell(2).setCellValue("Metric")
       dateCount = 1
-      cellCount = 2
+      cellCount = 3
       while(dateCount <= 7) {
         headerRow.createCell(cellCount).setCellValue(date.minusDays(dateCount).getMonthOfYear + "/"
           + date.minusDays(dateCount).getDayOfMonth)
@@ -391,9 +428,10 @@ class BrandBuyerReportWriter(p: Publisher) {
         //kept row
         rowCount += 1
         val keptRow = placeSheet.createRow(rowCount)
-        keptRow.createCell(0).setCellValue(b.name)
-        keptRow.createCell(1).setCellValue("Kept")
-        cellCount = 2
+        keptRow.createCell(0).setCellValue(b.id)
+        keptRow.createCell(1).setCellValue(b.name)
+        keptRow.createCell(2).setCellValue("Kept")
+        cellCount = 3
         dateCount = 1
         while(dateCount <= 7) {
           keptRow.createCell(cellCount).setCellValue(0)
@@ -408,9 +446,10 @@ class BrandBuyerReportWriter(p: Publisher) {
         rowCount += 1
         //resold row
         val resoldRow = placeSheet.createRow(rowCount)
-        resoldRow.createCell(0).setCellValue(b.name)
-        resoldRow.createCell(1).setCellValue("Resold")
-        cellCount = 2
+        resoldRow.createCell(0).setCellValue(b.id)
+        resoldRow.createCell(1).setCellValue(b.name)
+        resoldRow.createCell(2).setCellValue("Resold")
+        cellCount = 3
         dateCount = 1
         while(dateCount <= 7) {
           resoldRow.createCell(cellCount).setCellValue(0)
@@ -425,9 +464,10 @@ class BrandBuyerReportWriter(p: Publisher) {
         rowCount +=1
         //rev row
         val revRow = placeSheet.createRow(rowCount)
-        revRow.createCell(0).setCellValue(b.name)
-        revRow.createCell(1).setCellValue("Revenue")
-        cellCount = 2
+        revRow.createCell(0).setCellValue(b.id)
+        revRow.createCell(1).setCellValue(b.name)
+        revRow.createCell(2).setCellValue("Revenue")
+        cellCount = 3
         dateCount = 1
         while(dateCount <= 7) {
           revRow.createCell(cellCount).setCellValue(0)
@@ -443,9 +483,10 @@ class BrandBuyerReportWriter(p: Publisher) {
         rowCount +=1
         //rpm row
         val rpmRow = placeSheet.createRow(rowCount)
-        rpmRow.createCell(0).setCellValue(b.name)
-        rpmRow.createCell(1).setCellValue("RPM")
-        cellCount = 2
+        rpmRow.createCell(0).setCellValue(b.id)
+        rpmRow.createCell(1).setCellValue(b.name)
+        rpmRow.createCell(2).setCellValue("RPM")
+        cellCount = 3
         dateCount = 1
         while(dateCount <= 7) {
           rpmRow.createCell(cellCount).setCellValue(0)
@@ -459,7 +500,7 @@ class BrandBuyerReportWriter(p: Publisher) {
           dateCount += 1
         }
       })
-      for (x <- 0 to 8) placeSheet.autoSizeColumn(x)
+      for (x <- 0 to 9) placeSheet.autoSizeColumn(x)
     }
     wb
   }

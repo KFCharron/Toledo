@@ -824,7 +824,8 @@ public class AppNexusService {
                 "            \"network_revenue\",\n" +
                 "            \"network_rpm\",\n" +
                 "            \"placement_id\",\n" +
-                "            \"placement_name\"\n" +
+                "            \"placement_name\",\n" +
+                "            \"imps_total\"\n" +
                 "        ],\n" +
                 "        \"row_per\":[\n" +
                 "            \"placement_id\",\n" +
