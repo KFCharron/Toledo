@@ -55,9 +55,9 @@ object RunBuyerBrandReport extends App{
       val today = new LocalDate(DateTimeZone.UTC)
       val pubBooks = for{p <- pubs} yield new PubWithWorkbooks(p.id, p.name, new BrandBuyerReportWriter(p).writeReports)
       pubBooks.foreach(pub => {
-        var fileOut = new FileOutputStream(new File(p.getOutputPath, pub.name + "_Brand_Report"+ today.toString + ".xls"))
+        var fileOut = new FileOutputStream(new File(p.getOutputPath, pub.name + "_Brand_Report_"+ today.toString + ".xls"))
         pub.workbooks._1.write(fileOut)
-        fileOut = new FileOutputStream(new File(p.getOutputPath, pub.name + "_Buyer_Report"+ today.toString + ".xls"))
+        fileOut = new FileOutputStream(new File(p.getOutputPath, pub.name + "_Buyer_Report_"+ today.toString + ".xls"))
         pub.workbooks._2.write(fileOut)
         fileOut.close()
       })
@@ -138,8 +138,8 @@ case class TotalRow (day: DateTime, kept: Int, resold: Int, revenue: Double,
                      rpm: Double, placementId: String, placementName: String) extends Serializable
 case class Publisher(id: String, name: String, placements: mutable.Set[Placement],
                      totals: List[TotalRow]) extends Serializable
-case class Placement(id: String, name: String, buyers: mutable.Set[BuyerBrand],
-                     brands: mutable.Set[BuyerBrand]) extends Serializable
+case class Placement(id: String, name: String, brands: mutable.Set[BuyerBrand],
+                     buyers: mutable.Set[BuyerBrand]) extends Serializable
 case class BuyerBrand(id:String, name: String, dataRows: List[DataRow]) extends Serializable
 case class PubWithWorkbooks(id: String, name: String, workbooks: (HSSFWorkbook, HSSFWorkbook))
 
