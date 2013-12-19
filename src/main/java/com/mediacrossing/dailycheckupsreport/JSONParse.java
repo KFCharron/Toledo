@@ -253,6 +253,7 @@ public class JSONParse {
     }
 
     public static String obtainToken (String raw) {
+        LOG.debug(raw);
         JsonElement jelement = new JsonParser().parse(raw);
         JsonObject jobject = jelement.getAsJsonObject();
         jobject = jobject.getAsJsonObject("response");

@@ -714,6 +714,146 @@ public class AppNexusService {
         return downloadReportWhenReady(json);
     }
 
+    public List<String[]> requestBuyerReport(String pubId) throws Exception {
+        String jsonPost = "{\n" +
+                "    \"report\":\n" +
+                "    {\n" +
+                "        \"report_type\": \"network_publisher_analytics\",\n" +
+                "        \"columns\":[\n" +
+                "            \"day\",\n" +
+                "            \"buyer_member_name\",\n" +
+                "            \"buyer_member_id\",\n" +
+                "            \"imps_kept\",\n" +
+                "            \"imps_resold\",\n" +
+                "            \"network_revenue\",\n" +
+                "            \"network_rpm\",\n" +
+                "            \"placement_id\",\n" +
+                "            \"placement_name\"\n" +
+                "        ],\n" +
+                "        \"row_per\":[\n" +
+                "            \"placement_id\",\n" +
+                "            \"brand_name\",\n" +
+                "            \"day\"\n" +
+                "        ],\n" +
+                "        \"report_interval\":\"last_7_days\",\n" +
+                "        \"format\":\"csv\",\n" +
+                "        \"emails\":[\n" +
+                "        ],\n" +
+                "        \"orders\": [\n" +
+                "                    {\n" +
+                "                        \"order_by\":\"buyer_member_name\", \n" +
+                "                        \"direction\":\"DESC\"\n" +
+                "                    },\n" +
+                "                    {\n" +
+                "                        \"order_by\":\"day\", \n" +
+                "                        \"direction\":\"DESC\"\n" +
+                "                    },\n" +
+                "                    {\n" +
+                "                        \"order_by\":\"network_revenue\", \n" +
+                "                        \"direction\":\"DESC\"\n" +
+                "                    },\n" +
+                "                    {\n" +
+                "                        \"order_by\":\"placement_id\",\n" +
+                "                        \"direction\":\"DESC\"\n" +
+                "                    }\n" +
+                "                ]\n" +
+                "    }\n" +
+                "        \"timezone\": \"EST5EDT\""+
+                "}";
+        return downloadReportWhenReady(requests.postRequest(url + "/report?publisher_id=" + pubId, jsonPost));
+    }
+
+    public List<String[]> requestBrandReport(String pubId) throws Exception {
+        String jsonPost = "{\n" +
+                "    \"report\":\n" +
+                "    {\n" +
+                "        \"report_type\": \"network_publisher_analytics\",\n" +
+                "        \"columns\":[\n" +
+                "            \"day\",\n" +
+                "            \"brand_name\",\n" +
+                "            \"brand_id\",\n" +
+                "            \"imps_kept\",\n" +
+                "            \"imps_resold\",\n" +
+                "            \"network_revenue\",\n" +
+                "            \"network_rpm\",\n" +
+                "            \"placement_id\",\n" +
+                "            \"placement_name\"\n" +
+                "        ],\n" +
+                "        \"row_per\":[\n" +
+                "            \"placement_id\",\n" +
+                "            \"brand_name\",\n" +
+                "            \"day\"\n" +
+                "        ],\n" +
+                "        \"report_interval\":\"last_7_days\",\n" +
+                "        \"format\":\"csv\",\n" +
+                "        \"emails\":[\n" +
+                "        ],\n" +
+                "        \"orders\": [\n" +
+                "                    {\n" +
+                "                        \"order_by\":\"brand_name\", \n" +
+                "                        \"direction\":\"DESC\"\n" +
+                "                    },\n" +
+                "                    {\n" +
+                "                        \"order_by\":\"day\", \n" +
+                "                        \"direction\":\"DESC\"\n" +
+                "                    },\n" +
+                "                    {\n" +
+                "                        \"order_by\":\"network_revenue\", \n" +
+                "                        \"direction\":\"DESC\"\n" +
+                "                    },\n" +
+                "                    {\n" +
+                "                        \"order_by\":\"placement_id\", \n" +
+                "                        \"direction\":\"DESC\"\n" +
+                "                    }\n" +
+                "                ]\n" +
+                "        \"timezone\": \"EST5EDT\""+
+                "    }\n" +
+                "}";
+        return downloadReportWhenReady(requests.postRequest(url + "/report?publisher_id=" + pubId, jsonPost));
+    }
+
+    public List<String[]> requestPlacementReport(String pubId) throws Exception {
+        String jsonPost = "{\n" +
+                "    \"report\":\n" +
+                "    {\n" +
+                "        \"report_type\": \"network_publisher_analytics\",\n" +
+                "        \"columns\":[\n" +
+                "            \"day\",\n" +
+                "            \"imps_kept\",\n" +
+                "            \"imps_resold\",\n" +
+                "            \"network_revenue\",\n" +
+                "            \"network_rpm\",\n" +
+                "            \"placement_id\",\n" +
+                "            \"placement_name\"\n" +
+                "        ],\n" +
+                "        \"row_per\":[\n" +
+                "            \"placement_id\",\n" +
+                "            \"day\"\n" +
+                "        ],\n" +
+                "        \"report_interval\":\"last_7_days\",\n" +
+                "        \"format\":\"csv\",\n" +
+                "        \"emails\":[\n" +
+                "        ],\n" +
+                "        \"orders\": [\n" +
+                "                    {\n" +
+                "                        \"order_by\":\"day\", \n" +
+                "                        \"direction\":\"DESC\"\n" +
+                "                    },\n" +
+                "                    {\n" +
+                "                        \"order_by\":\"network_revenue\", \n" +
+                "                        \"direction\":\"DESC\"\n" +
+                "                    },\n" +
+                "                    {\n" +
+                "                        \"order_by\":\"placement_id\",\n" +
+                "                        \"direction\":\"DESC\"\n" +
+                "                    }\n" +
+                "                ]\n" +
+                "        \"timezone\": \"EST5EDT\""+
+                "    }\n" +
+                "}";
+        return downloadReportWhenReady(requests.postRequest(url + "/report?publisher_id=" + pubId, jsonPost));
+    }
+
     private List<String[]> downloadReportWhenReady(String json) throws Exception {
 
         String reportId = JSONParse.obtainReportId(json);
