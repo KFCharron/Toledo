@@ -16,7 +16,7 @@ import scala.collection.mutable
 import org.apache.poi.ss.util.WorkbookUtil
 import scala.Serializable
 
-object RunBuyerBrandReport extends App{
+object RunBuyerBrandReport extends App {
 
   //logging
   val LOG = LoggerFactory.getLogger(RunBuyerBrandReport.getClass)
@@ -42,8 +42,8 @@ object RunBuyerBrandReport extends App{
   //for faster debugging
   val development = false
   if (development) {
-    try{
-      def ReadObjectFromFile[A](filename: String)(implicit m:scala.reflect.Manifest[A]) = {
+    try {
+      def ReadObjectFromFile[A](filename: String)(implicit m: scala.reflect.Manifest[A]) = {
         val input = new ObjectInputStream(new FileInputStream(filename))
         val obj = input.readObject()
         obj match {
@@ -53,18 +53,18 @@ object RunBuyerBrandReport extends App{
       }
       val pubs = ReadObjectFromFile[List[Publisher]]("/Users/charronkyle/Desktop/ReportData/BrandBuyerPubs.ser")
       val today = new LocalDate(DateTimeZone.UTC)
-      val pubBooks = for{p <- pubs} yield new PubWithWorkbooks(p.id, p.name, new BrandBuyerReportWriter(p).writeReports)
+      val pubBooks = for {p <- pubs} yield new PubWithWorkbooks(p.id, p.name, new BrandBuyerReportWriter(p).writeReports)
       pubBooks.foreach(pub => {
-        var fileOut = new FileOutputStream(new File(p.getOutputPath, pub.name + "_Brand_Report_"+ today.toString + ".xls"))
+        var fileOut = new FileOutputStream(new File(p.getOutputPath, pub.name + "_Brand_Report_" + today.toString + ".xls"))
         pub.workbooks._1.write(fileOut)
-        fileOut = new FileOutputStream(new File(p.getOutputPath, pub.name + "_Buyer_Report_"+ today.toString + ".xls"))
+        fileOut = new FileOutputStream(new File(p.getOutputPath, pub.name + "_Buyer_Report_" + today.toString + ".xls"))
         pub.workbooks._2.write(fileOut)
         fileOut.close()
       })
       System.exit(0)
     } catch {
       case ioe: IOException => ioe.printStackTrace()
-      System.exit(1)
+        System.exit(1)
     }
   }
 
@@ -77,38 +77,94 @@ object RunBuyerBrandReport extends App{
       (__ \ "placementIds").read(list[String])
     ).apply(PubJson.apply _)
 
-  //list of active publishers 
-  val pubList = Json.parse(mxConn.requestAllPublisherJson).validate(list(pubR)).get.filter(p => p.status == "active")
-  
+  //list of active publishers
+  // val pubs publishers
+  val pubList =
+    Json
+      .parse(mxConn.requestAllPublisherJson)
+      .validate(list(pubR))
+      .get
+      .filter(p => p.status == "active")
+
+  val pubList2 =
+    Json
+      .parse(mxConn.requestAllPublisherJson)
+      .validate(list(pubR)) match {
+      case JsSuccess(publishers, _) =>
+        publishers
+
+      case JsError(e) =>
+        sys.error("Unable to parse publishers due to " + e)
+    }
+
   //date format 
   val dateFormat = DateTimeFormat.forPattern("yyyy-MM-dd")
 
   //create a list of publishers
   val pubs = for {p <- pubList} yield {
     //request rows
-    val brandRows = for { line <- anConn.requestBrandReport(p.id).toList.tail
-    } yield DataRow(dateFormat.parseDateTime(line(0)), line(1), line(2), line(3).toInt,
-        line(4).toInt, line(5).toDouble, line(6).toDouble, line(7), line(8))
-    val buyerRows = for { line <- anConn.requestBuyerReport(p.id).toList.tail
-    } yield DataRow(dateFormat.parseDateTime(line(0)), line(1), line(2), line(3).toInt,
-        line(4).toInt, line(5).toDouble, line(6).toDouble, line(7), line(8))
+    val brandRows =
+      for {
+        line <- anConn
+          .requestBrandReport(p.id)
+          .toList
+          .tail
+      } yield
+        DataRow(
+          day = dateFormat.parseDateTime(line(0)),
+          name = line(1),
+          id = line(2),
+          kept = line(4).toInt,
+          resold = line(3).toInt,
+          line(5).toDouble,
+          line(6).toDouble,
+          line(7),
+          line(8))
 
-    new Publisher(p.id, p.name, {
+    val buyerRows =
+      for {
+        line <- anConn.requestBuyerReport(p.id).toList.tail
+      } yield
+        DataRow(dateFormat.parseDateTime(line(0)), line(1), line(2), line(3).toInt,
+          line(4).toInt, line(5).toDouble, line(6).toDouble, line(7), line(8))
+
+    new Publisher(
+    p.id,
+    p.name,
+    placements = {
       val placements = mutable.Set[(String, String)]()
-      brandRows.foreach(r =>placements.add(r.placementId, r.placementName))
-      buyerRows.foreach(r =>placements.add(r.placementId, r.placementName))
-      for {place <- placements} yield new Placement(place._1, place._2, {
-        val brands = mutable.Set[(String, String)]()
-        brandRows.foreach(b => brands.add(b.id, b.name))
-        for {b <- brands} yield new BuyerBrand(b._1, b._2,
-          brandRows.filter(d => d.placementId == place._1 && d.id == b._1))}, {
-        val buyers = mutable.Set[(String, String)]()
-        buyerRows.foreach(b => buyers.add(b.id, b.name))
-        for {b <- buyers} yield new BuyerBrand(b._1, b._2,
-          buyerRows.filter(d => d.placementId == place._1 && d.id == b._1))})
+
+      val allRows =
+        (
+          brandRows.map(r => (r.placementId, r.placementName)) ++
+            buyerRows.map(r => (r.placementId, r.placementName)))
+          .toSet
+
+
+      //===========
+      brandRows.foreach(r => placements.add(r.placementId, r.placementName))
+      buyerRows.foreach(r => placements.add(r.placementId, r.placementName))
+      //=============
+
+      for {
+        (id, name) <- placements
+      } yield
+        new Placement(
+        id,
+        name, {
+          val brands = mutable.Set[(String, String)]()
+          brandRows.foreach(b => brands.add(b.id, b.name))
+          for {b <- brands} yield new BuyerBrand(b._1, b._2,
+            brandRows.filter(d => d.placementId == place._1 && d.id == b._1))
+        }, {
+          val buyers = mutable.Set[(String, String)]()
+          buyerRows.foreach(b => buyers.add(b.id, b.name))
+          for {b <- buyers} yield new BuyerBrand(b._1, b._2,
+            buyerRows.filter(d => d.placementId == place._1 && d.id == b._1))
+        })
     }, {
-        for {line <- anConn.requestPlacementReport(p.id).toList.tail} yield TotalRow(dateFormat.parseDateTime(line(0)),
-          line(1).toInt, line(2).toInt, line(3).toDouble, line(4).toDouble, line(5), line(6), line(7).toInt)
+      for {line <- anConn.requestPlacementReport(p.id).toList.tail} yield TotalRow(dateFormat.parseDateTime(line(0)),
+        line(1).toInt, line(2).toInt, line(3).toDouble, line(4).toDouble, line(5), line(6), line(7).toInt)
     })
   }
 
@@ -121,30 +177,70 @@ object RunBuyerBrandReport extends App{
     case ioe: IOException => LOG.error("Serialization Failed!")
   }*/
   val today = new LocalDate(DateTimeZone.UTC)
-  val pubBooks = for{p <- pubs} yield new PubWithWorkbooks(p.id, p.name, new BrandBuyerReportWriter(p).writeReports)
+  val pubBooks = for {p <- pubs} yield new PubWithWorkbooks(p.id, p.name, new BrandBuyerReportWriter(p).writeReports)
   pubBooks.foreach(pub => {
-      var fileOut = new FileOutputStream(new File(p.getOutputPath, pub.name + "_Brand_Report"+ today.toString + ".xls"))
-      pub.workbooks._1.write(fileOut)
-      fileOut = new FileOutputStream(new File(p.getOutputPath, pub.name + "_Buyer_Report"+ today.toString + ".xls"))
-      pub.workbooks._2.write(fileOut)
-      fileOut.close()
+    var fileOut = new FileOutputStream(new File(p.getOutputPath, pub.name + "_Brand_Report" + today.toString + ".xls"))
+    pub.workbooks._1.write(fileOut)
+    fileOut = new FileOutputStream(new File(p.getOutputPath, pub.name + "_Buyer_Report" + today.toString + ".xls"))
+    pub.workbooks._2.write(fileOut)
+    fileOut.close()
   })
 
 }
+
 case class PubJson(id: String, name: String, status: String, siteIds: List[String], placementIds: List[String])
-case class DataRow (day: DateTime, name: String, id: String, kept: Int, resold: Int, revenue: Double, rpm: Double,
-                       placementId: String, placementName: String) extends Serializable
-case class TotalRow (day: DateTime, kept: Int, resold: Int, revenue: Double,
-                     rpm: Double, placementId: String, placementName: String, avails: Int) extends Serializable
+
+case class DataRow(day: DateTime, name: String, id: String, kept: Int, resold: Int, revenue: Double, rpm: Double,
+                   placementId: String, placementName: String) extends Serializable
+
+case class TotalRow(day: DateTime, kept: Int, resold: Int, revenue: Double,
+                    rpm: Double, placementId: String, placementName: String, avails: Int) extends Serializable
+
 case class Publisher(id: String, name: String, placements: mutable.Set[Placement],
                      totals: List[TotalRow]) extends Serializable
+
 case class Placement(id: String, name: String, brands: mutable.Set[BuyerBrand],
                      buyers: mutable.Set[BuyerBrand]) extends Serializable
-case class BuyerBrand(id:String, name: String, dataRows: List[DataRow]) extends Serializable
-case class PubWithWorkbooks(id: String, name: String, workbooks: (HSSFWorkbook, HSSFWorkbook))
+
+case class BuyerBrand(id: String, name: String, dataRows: List[DataRow]) extends Serializable
+
+case class Brand()
+
+// AppNexus related package
+//======
+case class BrandPerformance()
+
+case class BuyerPerformance()
+//========
+
+
+// Something else package
+//=========
+case class PlacementIdentity(id: String, name: String)
+
+case class PlacementPerformance(identity: PlacementIdentity, day: LocalDate, kept: Int)
+
+object PlacementPerformance {
+
+  def performanceFor(bp: BrandPerformance): PlacementPerformance =
+    null
+
+  def performanceFor(bp: BuyerPerformance): PlacementPerformance =
+    null
+}
+//=========
+
+case class Buyer(brands: List[Brand])
+
+case class PubWithWorkbooks(id: String,
+                            name: String,
+                            reports: PublisherReports)
+
+case class PublisherReports(brandReport: HSSFWorkbook,
+                            buyerReport: HSSFWorkbook)
 
 class BrandBuyerReportWriter(p: Publisher) {
-  def writeReports = (writeBrandReport, writeBuyerReport)
+  def writeReports = PublisherReports(writeBrandReport, writeBuyerReport)
 
 
   def writeBrandReport = {
@@ -166,7 +262,7 @@ class BrandBuyerReportWriter(p: Publisher) {
     var dateCount = 1
     var cellCount = 3
     val date = DateTime.now()
-    while(dateCount <= 7) {
+    while (dateCount <= 7) {
       headRow.createCell(cellCount).setCellValue(date.minusDays(dateCount).getMonthOfYear + "/"
         + date.minusDays(dateCount).getDayOfMonth)
       dateCount += 1
@@ -178,23 +274,23 @@ class BrandBuyerReportWriter(p: Publisher) {
       impRow.createCell(0).setCellValue(place.id)
       impRow.createCell(1).setCellValue(place.name)
       impRow.createCell(2).setCellValue("Imps")
-      val availRow = sumSheet.createRow(rows+1)
+      val availRow = sumSheet.createRow(rows + 1)
       availRow.createCell(0).setCellValue(place.id)
       availRow.createCell(1).setCellValue(place.name)
       availRow.createCell(2).setCellValue("Avails")
-      val keptRow = sumSheet.createRow(rows+2)
+      val keptRow = sumSheet.createRow(rows + 2)
       keptRow.createCell(0).setCellValue(place.id)
       keptRow.createCell(1).setCellValue(place.name)
       keptRow.createCell(2).setCellValue("Kept")
-      val resoldRow = sumSheet.createRow(rows+3)
+      val resoldRow = sumSheet.createRow(rows + 3)
       resoldRow.createCell(0).setCellValue(place.id)
       resoldRow.createCell(1).setCellValue(place.name)
       resoldRow.createCell(2).setCellValue("Resold")
-      val revRow = sumSheet.createRow(rows+4)
+      val revRow = sumSheet.createRow(rows + 4)
       revRow.createCell(0).setCellValue(place.id)
       revRow.createCell(1).setCellValue(place.name)
       revRow.createCell(2).setCellValue("Revenue")
-      val rpmRow = sumSheet.createRow(rows+5)
+      val rpmRow = sumSheet.createRow(rows + 5)
       rpmRow.createCell(0).setCellValue(place.id)
       rpmRow.createCell(1).setCellValue(place.name)
       rpmRow.createCell(2).setCellValue("RPM")
@@ -206,33 +302,33 @@ class BrandBuyerReportWriter(p: Publisher) {
       var resoldTotal = 0
       var revTotal: Double = 0
       var rpmTotal: Double = 0
-      while(dateCount <= 7) {
+      while (dateCount <= 7) {
         keptRow.createCell(cellCount).setCellValue(0)
         resoldRow.createCell(cellCount).setCellValue(0)
         revRow.createCell(cellCount).setCellValue(0)
         rpmRow.createCell(cellCount).setCellValue(0)
         availRow.createCell(cellCount).setCellValue(0)
         impRow.createCell(cellCount).setCellValue(0)
-          p.totals.foreach(t => {
-            if (t.placementId == place.id && date.minusDays(dateCount).getDayOfMonth == t.day.getDayOfMonth) {
-              keptRow.createCell(cellCount).setCellValue(t.kept)
-              resoldRow.createCell(cellCount).setCellValue(t.resold)
-              revRow.createCell(cellCount).setCellValue(t.revenue)
-              rpmRow.createCell(cellCount).setCellValue(t.rpm)
-              availRow.createCell(cellCount).setCellValue(t.avails)
-              impRow.createCell(cellCount).setCellValue(t.kept+t.resold)
-              impTotal += t.kept+t.resold
-              availTotal += t.avails
-              keptTotal += t.kept
-              resoldTotal += t.resold
-              revTotal += t.revenue
-              rpmTotal += t.rpm
-              revRow.getCell(cellCount).setCellStyle(currency)
-              rpmRow.getCell(cellCount).setCellStyle(currency)
-            }
-          })
-        cellCount+=1
-        dateCount+=1
+        p.totals.foreach(t => {
+          if (t.placementId == place.id && date.minusDays(dateCount).getDayOfMonth == t.day.getDayOfMonth) {
+            keptRow.createCell(cellCount).setCellValue(t.kept)
+            resoldRow.createCell(cellCount).setCellValue(t.resold)
+            revRow.createCell(cellCount).setCellValue(t.revenue)
+            rpmRow.createCell(cellCount).setCellValue(t.rpm)
+            availRow.createCell(cellCount).setCellValue(t.avails)
+            impRow.createCell(cellCount).setCellValue(t.kept + t.resold)
+            impTotal += t.kept + t.resold
+            availTotal += t.avails
+            keptTotal += t.kept
+            resoldTotal += t.resold
+            revTotal += t.revenue
+            rpmTotal += t.rpm
+            revRow.getCell(cellCount).setCellStyle(currency)
+            rpmRow.getCell(cellCount).setCellStyle(currency)
+          }
+        })
+        cellCount += 1
+        dateCount += 1
       }
       impRow.createCell(10).setCellValue(impTotal)
       availRow.createCell(10).setCellValue(availTotal)
@@ -245,21 +341,21 @@ class BrandBuyerReportWriter(p: Publisher) {
 
       rows += 6
     }
-    for(x <- 0 to 11) sumSheet.autoSizeColumn(x)
+    for (x <- 0 to 11) sumSheet.autoSizeColumn(x)
 
     //call placementSheets
     placementSheets()
 
     //create sheet for every placement
     def placementSheets() = for {place <- p.placements} yield {
-      val placeSheet = wb.createSheet(WorkbookUtil.createSafeSheetName("("+place.id+")"+place.name))
+      val placeSheet = wb.createSheet(WorkbookUtil.createSafeSheetName("(" + place.id + ")" + place.name))
       val headerRow = placeSheet.createRow(0)
       headerRow.createCell(0).setCellValue("ID")
       headerRow.createCell(1).setCellValue("Brand")
       headerRow.createCell(2).setCellValue("Metric")
       dateCount = 1
       cellCount = 3
-      while(dateCount <= 7) {
+      while (dateCount <= 7) {
         headerRow.createCell(cellCount).setCellValue(date.minusDays(dateCount).getMonthOfYear + "/"
           + date.minusDays(dateCount).getDayOfMonth)
         dateCount += 1
@@ -281,12 +377,12 @@ class BrandBuyerReportWriter(p: Publisher) {
         var total: Double = 0
         cellCount = 3
         dateCount = 1
-        while(dateCount <= 7) {
+        while (dateCount <= 7) {
           impRow.createCell(cellCount).setCellValue(0)
           b.dataRows.foreach(d => {
             if (date.minusDays(dateCount).getDayOfMonth == d.day.getDayOfMonth) {
-              impRow.createCell(cellCount).setCellValue(d.kept+d.resold)
-              total += d.kept+d.resold
+              impRow.createCell(cellCount).setCellValue(d.kept + d.resold)
+              total += d.kept + d.resold
             }
           })
           cellCount += 1
@@ -303,7 +399,7 @@ class BrandBuyerReportWriter(p: Publisher) {
         total = 0
         cellCount = 3
         dateCount = 1
-        while(dateCount <= 7) {
+        while (dateCount <= 7) {
           keptRow.createCell(cellCount).setCellValue(0)
           b.dataRows.foreach(d => {
             if (date.minusDays(dateCount).getDayOfMonth == d.day.getDayOfMonth) {
@@ -324,7 +420,7 @@ class BrandBuyerReportWriter(p: Publisher) {
         cellCount = 3
         dateCount = 1
         total = 0
-        while(dateCount <= 7) {
+        while (dateCount <= 7) {
           resoldRow.createCell(cellCount).setCellValue(0)
           b.dataRows.foreach(d => {
             if (date.minusDays(dateCount).getDayOfMonth == d.day.getDayOfMonth) {
@@ -336,7 +432,7 @@ class BrandBuyerReportWriter(p: Publisher) {
           dateCount += 1
         }
         resoldRow.createCell(10).setCellValue(total)
-        rowCount +=1
+        rowCount += 1
         //rev row
         val revRow = placeSheet.createRow(rowCount)
         revRow.createCell(0).setCellValue(b.id)
@@ -344,8 +440,8 @@ class BrandBuyerReportWriter(p: Publisher) {
         revRow.createCell(2).setCellValue("Revenue")
         cellCount = 3
         dateCount = 1
-        total=0
-        while(dateCount <= 7) {
+        total = 0
+        while (dateCount <= 7) {
           revRow.createCell(cellCount).setCellValue(0)
           b.dataRows.foreach(d => {
             if (date.minusDays(dateCount).getDayOfMonth == d.day.getDayOfMonth) {
@@ -359,7 +455,7 @@ class BrandBuyerReportWriter(p: Publisher) {
         }
         revRow.createCell(10).setCellValue(total)
         revRow.getCell(10).setCellStyle(currency)
-        rowCount +=1
+        rowCount += 1
         //rpm row
         val rpmRow = placeSheet.createRow(rowCount)
         rpmRow.createCell(0).setCellValue(b.id)
@@ -368,7 +464,7 @@ class BrandBuyerReportWriter(p: Publisher) {
         cellCount = 3
         dateCount = 1
         total = 0
-        while(dateCount <= 7) {
+        while (dateCount <= 7) {
           rpmRow.createCell(cellCount).setCellValue(0)
           b.dataRows.foreach(d => {
             if (date.minusDays(dateCount).getDayOfMonth == d.day.getDayOfMonth) {
@@ -387,6 +483,7 @@ class BrandBuyerReportWriter(p: Publisher) {
     }
     wb
   }
+
   def writeBuyerReport = {
     //create wb for every pub
     //brand wb
@@ -406,7 +503,7 @@ class BrandBuyerReportWriter(p: Publisher) {
     var dateCount = 1
     var cellCount = 3
     val date = DateTime.now()
-    while(dateCount <= 7) {
+    while (dateCount <= 7) {
       headRow.createCell(cellCount).setCellValue(date.minusDays(dateCount).getMonthOfYear + "/"
         + date.minusDays(dateCount).getDayOfMonth)
       dateCount += 1
@@ -418,23 +515,23 @@ class BrandBuyerReportWriter(p: Publisher) {
       impRow.createCell(0).setCellValue(place.id)
       impRow.createCell(1).setCellValue(place.name)
       impRow.createCell(2).setCellValue("Imps")
-      val availRow = sumSheet.createRow(rows+1)
+      val availRow = sumSheet.createRow(rows + 1)
       availRow.createCell(0).setCellValue(place.id)
       availRow.createCell(1).setCellValue(place.name)
       availRow.createCell(2).setCellValue("Avails")
-      val keptRow = sumSheet.createRow(rows+2)
+      val keptRow = sumSheet.createRow(rows + 2)
       keptRow.createCell(0).setCellValue(place.id)
       keptRow.createCell(1).setCellValue(place.name)
       keptRow.createCell(2).setCellValue("Kept")
-      val resoldRow = sumSheet.createRow(rows+3)
+      val resoldRow = sumSheet.createRow(rows + 3)
       resoldRow.createCell(0).setCellValue(place.id)
       resoldRow.createCell(1).setCellValue(place.name)
       resoldRow.createCell(2).setCellValue("Resold")
-      val revRow = sumSheet.createRow(rows+4)
+      val revRow = sumSheet.createRow(rows + 4)
       revRow.createCell(0).setCellValue(place.id)
       revRow.createCell(1).setCellValue(place.name)
       revRow.createCell(2).setCellValue("Revenue")
-      val rpmRow = sumSheet.createRow(rows+5)
+      val rpmRow = sumSheet.createRow(rows + 5)
       rpmRow.createCell(0).setCellValue(place.id)
       rpmRow.createCell(1).setCellValue(place.name)
       rpmRow.createCell(2).setCellValue("RPM")
@@ -446,7 +543,7 @@ class BrandBuyerReportWriter(p: Publisher) {
       var resoldTotal = 0
       var revTotal: Double = 0
       var rpmTotal: Double = 0
-      while(dateCount <= 7) {
+      while (dateCount <= 7) {
         keptRow.createCell(cellCount).setCellValue(0)
         resoldRow.createCell(cellCount).setCellValue(0)
         revRow.createCell(cellCount).setCellValue(0)
@@ -460,8 +557,8 @@ class BrandBuyerReportWriter(p: Publisher) {
             revRow.createCell(cellCount).setCellValue(t.revenue)
             rpmRow.createCell(cellCount).setCellValue(t.rpm)
             availRow.createCell(cellCount).setCellValue(t.avails)
-            impRow.createCell(cellCount).setCellValue(t.kept+t.resold)
-            impTotal += t.kept+t.resold
+            impRow.createCell(cellCount).setCellValue(t.kept + t.resold)
+            impTotal += t.kept + t.resold
             availTotal += t.avails
             keptTotal += t.kept
             resoldTotal += t.resold
@@ -471,8 +568,8 @@ class BrandBuyerReportWriter(p: Publisher) {
             rpmRow.getCell(cellCount).setCellStyle(currency)
           }
         })
-        cellCount+=1
-        dateCount+=1
+        cellCount += 1
+        dateCount += 1
       }
       impRow.createCell(10).setCellValue(impTotal)
       availRow.createCell(10).setCellValue(availTotal)
@@ -485,21 +582,21 @@ class BrandBuyerReportWriter(p: Publisher) {
 
       rows += 6
     }
-    for(x <- 0 to 11) sumSheet.autoSizeColumn(x)
+    for (x <- 0 to 11) sumSheet.autoSizeColumn(x)
 
     //call placementSheets
     placementSheets()
 
     //create sheet for every placement
     def placementSheets() = for {place <- p.placements} yield {
-      val placeSheet = wb.createSheet(WorkbookUtil.createSafeSheetName("("+place.id+")"+place.name))
+      val placeSheet = wb.createSheet(WorkbookUtil.createSafeSheetName("(" + place.id + ")" + place.name))
       val headerRow = placeSheet.createRow(0)
       headerRow.createCell(0).setCellValue("ID")
       headerRow.createCell(1).setCellValue("Buyer")
       headerRow.createCell(2).setCellValue("Metric")
       dateCount = 1
       cellCount = 3
-      while(dateCount <= 7) {
+      while (dateCount <= 7) {
         headerRow.createCell(cellCount).setCellValue(date.minusDays(dateCount).getMonthOfYear + "/"
           + date.minusDays(dateCount).getDayOfMonth)
         dateCount += 1
@@ -521,12 +618,12 @@ class BrandBuyerReportWriter(p: Publisher) {
         var total: Double = 0
         cellCount = 3
         dateCount = 1
-        while(dateCount <= 7) {
+        while (dateCount <= 7) {
           impRow.createCell(cellCount).setCellValue(0)
           b.dataRows.foreach(d => {
             if (date.minusDays(dateCount).getDayOfMonth == d.day.getDayOfMonth) {
-              impRow.createCell(cellCount).setCellValue(d.kept+d.resold)
-              total += d.kept+d.resold
+              impRow.createCell(cellCount).setCellValue(d.kept + d.resold)
+              total += d.kept + d.resold
             }
           })
           cellCount += 1
@@ -543,7 +640,7 @@ class BrandBuyerReportWriter(p: Publisher) {
         total = 0
         cellCount = 3
         dateCount = 1
-        while(dateCount <= 7) {
+        while (dateCount <= 7) {
           keptRow.createCell(cellCount).setCellValue(0)
           b.dataRows.foreach(d => {
             if (date.minusDays(dateCount).getDayOfMonth == d.day.getDayOfMonth) {
@@ -564,7 +661,7 @@ class BrandBuyerReportWriter(p: Publisher) {
         cellCount = 3
         dateCount = 1
         total = 0
-        while(dateCount <= 7) {
+        while (dateCount <= 7) {
           resoldRow.createCell(cellCount).setCellValue(0)
           b.dataRows.foreach(d => {
             if (date.minusDays(dateCount).getDayOfMonth == d.day.getDayOfMonth) {
@@ -576,7 +673,7 @@ class BrandBuyerReportWriter(p: Publisher) {
           dateCount += 1
         }
         resoldRow.createCell(10).setCellValue(total)
-        rowCount +=1
+        rowCount += 1
         //rev row
         val revRow = placeSheet.createRow(rowCount)
         revRow.createCell(0).setCellValue(b.id)
@@ -584,8 +681,8 @@ class BrandBuyerReportWriter(p: Publisher) {
         revRow.createCell(2).setCellValue("Revenue")
         cellCount = 3
         dateCount = 1
-        total=0
-        while(dateCount <= 7) {
+        total = 0
+        while (dateCount <= 7) {
           revRow.createCell(cellCount).setCellValue(0)
           b.dataRows.foreach(d => {
             if (date.minusDays(dateCount).getDayOfMonth == d.day.getDayOfMonth) {
@@ -599,7 +696,7 @@ class BrandBuyerReportWriter(p: Publisher) {
         }
         revRow.createCell(10).setCellValue(total)
         revRow.getCell(10).setCellStyle(currency)
-        rowCount +=1
+        rowCount += 1
         //rpm row
         val rpmRow = placeSheet.createRow(rowCount)
         rpmRow.createCell(0).setCellValue(b.id)
@@ -608,7 +705,7 @@ class BrandBuyerReportWriter(p: Publisher) {
         cellCount = 3
         dateCount = 1
         total = 0
-        while(dateCount <= 7) {
+        while (dateCount <= 7) {
           rpmRow.createCell(cellCount).setCellValue(0)
           b.dataRows.foreach(d => {
             if (date.minusDays(dateCount).getDayOfMonth == d.day.getDayOfMonth) {
