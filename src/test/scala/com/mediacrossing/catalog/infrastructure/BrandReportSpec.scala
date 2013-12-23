@@ -3,7 +3,7 @@ package com.mediacrossing.catalog.infrastructure
 import org.specs2.mutable.Specification
 import play.api.libs.json.{JsResult, Reads, JsSuccess, Json}
 import Reads._
-import com.mediacrossing.buyerbranddatareport.{PubJson, RunBuyerBrandReport}
+import com.mediacrossing.buyerbranddatareport.{AppNexusReads, PubJson, RunBuyerBrandReport}
 
 class BrandReportSpec extends Specification{
 
@@ -13,7 +13,7 @@ class BrandReportSpec extends Specification{
   "Publisher reads" should {
     "deserialize single valid publisher" >> {
       val pub: JsResult[PubJson] = Json.parse(single)
-        .validate(RunBuyerBrandReport.pubR)
+        .validate(AppNexusReads.pubR)
       pub must beEqualTo {
             JsSuccess(
               PubJson(
@@ -29,7 +29,7 @@ class BrandReportSpec extends Specification{
   }
 
   "Deserialize list of valid publishers" >> {
-    val pubs = Json.parse(rawJson).validate(list(RunBuyerBrandReport.pubR))
+    val pubs = Json.parse(rawJson).validate(list(AppNexusReads.pubR))
 
     pubs must beLike {
       case JsSuccess(publishers, _) =>

@@ -5,7 +5,7 @@ import com.mediacrossing.properties.ConfigurationProperties
 import com.mediacrossing.connections.{MxService, AppNexusService}
 import play.api.libs._
 import json._
-import Reads._
+import AppNexusReads._
 import functional.syntax._
 import scala.collection.JavaConversions._
 import org.joda.time.{DateTimeZone, LocalDate, DateTime}
@@ -68,17 +68,17 @@ object RunBuyerBrandReport extends App{
     }
   }
 
-  //parses json
-  val pubR = (
-    (__ \ "id").read[String] ~
-      (__ \ "name").read[String] ~
-      (__ \ "status").read[String] ~
-      (__ \ "siteIds").read(list[String]) ~
-      (__ \ "placementIds").read(list[String])
-    ).apply(PubJson.apply _)
+  //list of active publishers
+  val pubList = {
+    import play.api.libs.json._
+    import play.api.libs.json.Reads._
 
-  //list of active publishers 
-  val pubList = Json.parse(mxConn.requestAllPublisherJson).validate(list(pubR)).get.filter(p => p.status == "active")
+    Json
+      .parse(mxConn.requestAllPublisherJson)
+      .validate(list(pubR))
+      .get
+      .filter(p => p.status == "active")
+  }
   
   //date format 
   val dateFormat = DateTimeFormat.forPattern("yyyy-MM-dd")
