@@ -251,6 +251,45 @@ public class AppNexusService {
         return ResponseParser.parsePlacementReport(downloadReportWhenReady(json));
     }
 
+    public List<String[]> requestPublisherWeekly(String id) throws Exception {
+        String j = "{\n" +
+                "    \"report\":\n" +
+                "    {\n" +
+                "        \"report_type\": \"network_publisher_analytics\",\n" +
+                "        \"columns\":[\n" +
+                "            \"day\",\n" +
+                "            \"publisher_id\",\n" +
+                "            \"placement_id\",\n" +
+                "            \"placement_name\",\n" +
+                "            \"imps_total\",\n" +
+                "            \"imps_sold\",\n" +
+                "            \"imps_default\",\n" +
+                "            \"network_revenue\",\n" +
+                "            \"publisher_revenue\",\n" +
+                "            \"network_rpm\"\n" +
+                "        ],\n" +
+                "        \"row_per\":[\n" +
+                "            \"placement_id\",\n" +
+                "            \"day\"\n" +
+                "        ],\n" +
+                "        \"report_interval\":\"lifetime\",\n" +
+                "        \"emails\":[\n" +
+                "        ],\n" +
+                "        \"orders\": [\n" +
+                "            {\n" +
+                "            \"order_by\" : \"day\",\n" +
+                "            \"direction\": \"DESC\"\n" +
+                "            },\n" +
+                "            {\n" +
+                "            \"order_by\" : \"placement_name\",\n" +
+                "            \"direction\": \"DESC\"\n" +
+                "            }\n" +
+                "        ]\n" +
+                "    }\n" +
+                "}";
+        return downloadReportWhenReady(j);
+    }
+
     public ArrayList<WeeklyPlacement> requestMonthlyPublisherReport (String pubId) throws Exception {
         String jsonPost = "{\n" +
                 "    \"report\":\n" +

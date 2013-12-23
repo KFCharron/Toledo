@@ -170,10 +170,9 @@ public class ResponseParser {
         for (String[] l : csvData) {
             DailyPublisherData data = new DailyPublisherData();
             data.setDate(new DateTime(dtf.parseDateTime(l[0])));
-            data.setImps(Integer.parseInt(l[3]));
-            data.setUnfilled(Integer.parseInt(l[4]) + Integer.parseInt(l[5]) + Integer.parseInt(l[6]));
-            data.setErrors(Integer.parseInt(l[7]) + Integer.parseInt(l[8]));
-            data.setAvails(data.getImps() + data.getUnfilled() + data.getErrors());
+            data.setAvails(Integer.parseInt(l[3]));
+            data.setUnfilled(Integer.parseInt(l[4]));
+            data.setErrors(Integer.parseInt(l[8]));
             data.seteCpm(Float.parseFloat(l[9]));
             data.setPublisherRevenue(Float.parseFloat(l[10]));
             data.setNetworkRevenue(Float.parseFloat(l[11]));
