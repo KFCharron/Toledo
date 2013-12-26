@@ -287,7 +287,8 @@ public class AppNexusService {
                 "        ]\n" +
                 "    }\n" +
                 "}";
-        return downloadReportWhenReady(j);
+        String json = requests.postRequest(url+"/report?publisher_id="+id, j);
+        return downloadReportWhenReady(json);
     }
 
     public ArrayList<WeeklyPlacement> requestMonthlyPublisherReport (String pubId) throws Exception {
@@ -873,6 +874,26 @@ public class AppNexusService {
                 "    }\n" +
                 "}";
         return downloadReportWhenReady(requests.postRequest(url + "/report?publisher_id=" + pubId, jsonPost));
+    }
+
+    public List<String[]> requestCreativeReport(String interval) throws Exception {
+        String j = "{\n" +
+                "    \"report\":\n" +
+                "    {\n" +
+                "        \"report_type\": \"network_advertiser_analytics\",\n" +
+                "        \"columns\":[\n" +
+                "            \"creative\",\n" +
+                "            \"imps\",\n" +
+                "            \"clicks\"\n" +
+                "        ],\n" +
+                "        \"row_per\":[\n" +
+                "            \"creative\"\n" +
+                "        ],\n" +
+                "        \"report_interval\":\""+interval+"\",\n" +
+                "        \"timezone\":\"EST\"\n" +
+                "    }\n" +
+                "}";
+        return downloadReportWhenReady(requests.postRequest(url + "/report?advertiser_id=229827", j));
     }
 
     private List<String[]> downloadReportWhenReady(String json) throws Exception {
