@@ -40,6 +40,39 @@ public class ExcelWriter {
         CellStyle ctrPercentage = WORKBOOK.createCellStyle();
         ctrPercentage.setDataFormat(df.getFormat("0.0000%"));
 
+        CellStyle solidBlack = WORKBOOK.createCellStyle();
+        solidBlack.setFillForegroundColor(IndexedColors.BLACK.index);
+        solidBlack.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+
+        Font italics = WORKBOOK.createFont();
+        italics.setItalic(true);
+        italics.setColor(IndexedColors.GREY_25_PERCENT.getIndex());
+        CellStyle style = WORKBOOK.createCellStyle();
+        style.setFont(italics);
+
+        Font bottomItalics = WORKBOOK.createFont();
+        bottomItalics.setItalic(true);
+        bottomItalics.setColor(IndexedColors.GREY_25_PERCENT.getIndex());
+        CellStyle itStyle = WORKBOOK.createCellStyle();
+        itStyle.setBorderTop(CellStyle.BORDER_NONE);
+        itStyle.setBorderBottom(CellStyle.BORDER_THICK);
+        itStyle.setFont(italics);
+
+        Font font = WORKBOOK.createFont();
+        font.setFontHeightInPoints((short) 14);
+        font.setBoldweight((short) 700);
+        CellStyle bold = WORKBOOK.createCellStyle();
+        bold.setFont(font);
+
+        CellStyle yellowStyle = WORKBOOK.createCellStyle();
+        yellowStyle.setFillForegroundColor(IndexedColors.LIGHT_YELLOW.index);
+        yellowStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+        yellowStyle.setDataFormat(df.getFormat("$#,##0.00"));
+
+        CellStyle redStyle = WORKBOOK.createCellStyle();
+        redStyle.setFillForegroundColor(IndexedColors.RED.index);
+        redStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+        redStyle.setDataFormat(df.getFormat("$#,##0.00"));
 
         int rowCount = 0;
         //setup totals for entire advertiser
@@ -74,12 +107,7 @@ public class ExcelWriter {
             lineItemHeader.createCell(9).setCellValue("Flight");
             lineItemHeader.createCell(11).setCellValue("Pacing");
 
-            //style header
-            Font font = WORKBOOK.createFont();
-            font.setFontHeightInPoints((short) 14);
-            font.setBoldweight((short) 700);
-            CellStyle bold = WORKBOOK.createCellStyle();
-            bold.setFont(font);
+
 
             //bold each cell in header
             for(Cell cell : lineItemHeader) {
@@ -87,9 +115,6 @@ public class ExcelWriter {
             }
 
             //create solid black cell to distinguish new line items
-            CellStyle solidBlack = WORKBOOK.createCellStyle();
-            solidBlack.setFillForegroundColor(IndexedColors.BLACK.index);
-            solidBlack.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
             lineItemHeader.getCell(0).setCellStyle(solidBlack);
 
             rowCount++;
@@ -171,11 +196,6 @@ public class ExcelWriter {
 
                 //if inactive, italic camp name
                 if (campaign.getStatus().equals("inactive")) {
-                    Font italics = WORKBOOK.createFont();
-                    italics.setItalic(true);
-                    italics.setColor(IndexedColors.GREY_25_PERCENT.getIndex());
-                    CellStyle style = WORKBOOK.createCellStyle();
-                    style.setFont(italics);
                     campaignRow.getCell(1).setCellStyle(style);
                 }
 
@@ -199,18 +219,11 @@ public class ExcelWriter {
                 campaignRow.getCell(8).setCellStyle(fullCurrency);
 
                 //add yellow if total delivery within 2 daily budgets of lifetime budget
-                CellStyle yellowStyle = WORKBOOK.createCellStyle();
-                yellowStyle.setFillForegroundColor(IndexedColors.LIGHT_YELLOW.index);
-                yellowStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
-                yellowStyle.setDataFormat(df.getFormat("$#,##0.00"));
+
                 if (campaign.getTotalDelivery() >= campaign.getLifetimeBudget() - (campaign.getDailyBudget()*2)) {
                     campaignRow.getCell(8).setCellStyle(yellowStyle);
                 }
                 //add red if total delivery equals or exceeds lifetime budget
-                CellStyle redStyle = WORKBOOK.createCellStyle();
-                redStyle.setFillForegroundColor(IndexedColors.RED.index);
-                redStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
-                redStyle.setDataFormat(df.getFormat("$#,##0.00"));
                 if (campaign.getTotalDelivery() >= campaign.getLifetimeBudget()) {
                     campaignRow.getCell(8).setCellStyle(redStyle);
                 }
@@ -401,14 +414,7 @@ public class ExcelWriter {
                 }
 
                 if (camp.getStatus().equals("inactive")) {
-                    Font italics = WORKBOOK.createFont();
-                    italics.setItalic(true);
-                    italics.setColor(IndexedColors.GREY_25_PERCENT.getIndex());
-                    CellStyle style = WORKBOOK.createCellStyle();
-                    style.setBorderTop(CellStyle.BORDER_NONE);
-                    style.setBorderBottom(CellStyle.BORDER_THICK);
-                    style.setFont(italics);
-                    campRow.getCell(1).setCellStyle(style);
+                    campRow.getCell(1).setCellStyle(itStyle);
                 }
                 campRow.getCell(5).setCellStyle(bottomBorderCtr);
 
