@@ -113,13 +113,13 @@ object RunBuyerBrandReport extends App{
   }
 
   //save pub lists to hdd
-  /*try {
+  try {
     val out = new ObjectOutputStream(new FileOutputStream("/Users/charronkyle/Desktop/ReportData/BrandBuyerPubs.ser"))
     out.writeObject(pubs)
     out.close()
   } catch {
     case ioe: IOException => LOG.error("Serialization Failed!")
-  }*/
+  }
   val today = new LocalDate(DateTimeZone.UTC)
   val pubBooks = for{p <- pubs} yield new PubWithWorkbooks(p.id, p.name, new BrandBuyerReportWriter(p).writeReports)
   pubBooks.foreach(pub => {
@@ -157,8 +157,8 @@ class BrandBuyerReportWriter(p: Publisher) {
     val currency = wb.createCellStyle
     currency.setDataFormat(df.getFormat("$#,##0.00"))
 
-    val sumSheet = wb.createSheet("Summary")
-    val headRow = sumSheet.createRow(0)
+    val summarySheet = wb.createSheet("Placement Summary")
+    val headRow = summarySheet.createRow(0)
     headRow.createCell(0).setCellValue("ID")
     headRow.createCell(1).setCellValue("Placement")
     headRow.createCell(2).setCellValue("Metric")
@@ -174,27 +174,27 @@ class BrandBuyerReportWriter(p: Publisher) {
     }
     var rows = 1
     for {place <- p.placements} yield {
-      val impRow = sumSheet.createRow(rows)
+      val impRow = summarySheet.createRow(rows+1)
       impRow.createCell(0).setCellValue(place.id)
       impRow.createCell(1).setCellValue(place.name)
       impRow.createCell(2).setCellValue("Imps")
-      val availRow = sumSheet.createRow(rows+1)
+      val availRow = summarySheet.createRow(rows)
       availRow.createCell(0).setCellValue(place.id)
       availRow.createCell(1).setCellValue(place.name)
       availRow.createCell(2).setCellValue("Avails")
-      val keptRow = sumSheet.createRow(rows+2)
+      val keptRow = summarySheet.createRow(rows+2)
       keptRow.createCell(0).setCellValue(place.id)
       keptRow.createCell(1).setCellValue(place.name)
       keptRow.createCell(2).setCellValue("Kept")
-      val resoldRow = sumSheet.createRow(rows+3)
+      val resoldRow = summarySheet.createRow(rows+3)
       resoldRow.createCell(0).setCellValue(place.id)
       resoldRow.createCell(1).setCellValue(place.name)
       resoldRow.createCell(2).setCellValue("Resold")
-      val revRow = sumSheet.createRow(rows+4)
+      val revRow = summarySheet.createRow(rows+4)
       revRow.createCell(0).setCellValue(place.id)
       revRow.createCell(1).setCellValue(place.name)
       revRow.createCell(2).setCellValue("Revenue")
-      val rpmRow = sumSheet.createRow(rows+5)
+      val rpmRow = summarySheet.createRow(rows+5)
       rpmRow.createCell(0).setCellValue(place.id)
       rpmRow.createCell(1).setCellValue(place.name)
       rpmRow.createCell(2).setCellValue("RPM")
@@ -205,7 +205,6 @@ class BrandBuyerReportWriter(p: Publisher) {
       var keptTotal = 0
       var resoldTotal = 0
       var revTotal: Double = 0
-      var rpmTotal: Double = 0
       while(dateCount <= 7) {
         keptRow.createCell(cellCount).setCellValue(0)
         resoldRow.createCell(cellCount).setCellValue(0)
@@ -226,7 +225,6 @@ class BrandBuyerReportWriter(p: Publisher) {
               keptTotal += t.kept
               resoldTotal += t.resold
               revTotal += t.revenue
-              rpmTotal += t.rpm
               revRow.getCell(cellCount).setCellStyle(currency)
               rpmRow.getCell(cellCount).setCellStyle(currency)
             }
@@ -239,13 +237,101 @@ class BrandBuyerReportWriter(p: Publisher) {
       keptRow.createCell(10).setCellValue(keptTotal)
       resoldRow.createCell(10).setCellValue(resoldTotal)
       revRow.createCell(10).setCellValue(revTotal)
-      rpmRow.createCell(10).setCellValue(rpmTotal)
+      rpmRow.createCell(10)
       revRow.getCell(10).setCellStyle(currency)
-      rpmRow.getCell(10).setCellStyle(currency)
 
       rows += 6
     }
-    for(x <- 0 to 11) sumSheet.autoSizeColumn(x)
+//    for(x <- 0 to 11) summarySheet.autoSizeColumn(x)
+
+//    val test = Seq(p.placements.foreach(pl => pl.brands.toSeq))
+//    val hi: Seq[Seq[BuyerBrand]] = {for {place <- p.placements} yield place.brands.toSeq}
+
+
+//    //TODO brand sum sheet
+//    val brandSumSheet = wb.createSheet("Brand Summary")
+//    val hRow = brandSumSheet.createRow(0)
+//    hRow.createCell(0).setCellValue("ID")
+//    hRow.createCell(1).setCellValue("Brand")
+//    hRow.createCell(2).setCellValue("Metric")
+//    dateCount = 1
+//    cellCount = 3
+//    while(dateCount <= 7) {
+//      headRow.createCell(cellCount).setCellValue(date.minusDays(dateCount).getMonthOfYear + "/"
+//        + date.minusDays(dateCount).getDayOfMonth)
+//      dateCount += 1
+//      cellCount += 1
+//    }
+//    rows = 1
+//    for {brand <- p.placements.head.brands} yield {
+//      val impRow = brandSumSheet.createRow(rows+1)
+//      impRow.createCell(0).setCellValue(brand.id)
+//      impRow.createCell(1).setCellValue(brand.name)
+//      impRow.createCell(2).setCellValue("Imps")
+//      val availRow = brandSumSheet.createRow(rows)
+//      availRow.createCell(0).setCellValue(brand.id)
+//      availRow.createCell(1).setCellValue(brand.name)
+//      availRow.createCell(2).setCellValue("Avails")
+//      val keptRow = brandSumSheet.createRow(rows+2)
+//      keptRow.createCell(0).setCellValue(brand.id)
+//      keptRow.createCell(1).setCellValue(brand.name)
+//      keptRow.createCell(2).setCellValue("Kept")
+//      val resoldRow = brandSumSheet.createRow(rows+3)
+//      resoldRow.createCell(0).setCellValue(brand.id)
+//      resoldRow.createCell(1).setCellValue(brand.name)
+//      resoldRow.createCell(2).setCellValue("Resold")
+//      val revRow = brandSumSheet.createRow(rows+4)
+//      revRow.createCell(0).setCellValue(brand.id)
+//      revRow.createCell(1).setCellValue(brand.name)
+//      revRow.createCell(2).setCellValue("Revenue")
+//      val rpmRow = brandSumSheet.createRow(rows+5)
+//      rpmRow.createCell(0).setCellValue(brand.id)
+//      rpmRow.createCell(1).setCellValue(brand.name)
+//      rpmRow.createCell(2).setCellValue("RPM")
+//      cellCount = 3
+//      dateCount = 1
+//      var impTotal = 0
+//      var availTotal = 0
+//      var keptTotal = 0
+//      var resoldTotal = 0
+//      var revTotal: Double = 0
+//      while(dateCount <= 7) {
+//        keptRow.createCell(cellCount).setCellValue(0)
+//        resoldRow.createCell(cellCount).setCellValue(0)
+//        revRow.createCell(cellCount).setCellValue(0)
+//        rpmRow.createCell(cellCount).setCellValue(0)
+//        availRow.createCell(cellCount).setCellValue(0)
+//        impRow.createCell(cellCount).setCellValue(0)
+//        p.totals.foreach(t => {
+//          if (t.placementId == brand.id && date.minusDays(dateCount).getDayOfMonth == t.day.getDayOfMonth) {
+//            keptRow.createCell(cellCount).setCellValue(t.kept)
+//            resoldRow.createCell(cellCount).setCellValue(t.resold)
+//            revRow.createCell(cellCount).setCellValue(t.revenue)
+//            rpmRow.createCell(cellCount).setCellValue(t.rpm)
+//            availRow.createCell(cellCount).setCellValue(t.avails)
+//            impRow.createCell(cellCount).setCellValue(t.kept+t.resold)
+//            impTotal += t.kept+t.resold
+//            availTotal += t.avails
+//            keptTotal += t.kept
+//            resoldTotal += t.resold
+//            revTotal += t.revenue
+//            revRow.getCell(cellCount).setCellStyle(currency)
+//            rpmRow.getCell(cellCount).setCellStyle(currency)
+//          }
+//        })
+//        cellCount+=1
+//        dateCount+=1
+//      }
+//      impRow.createCell(10).setCellValue(impTotal)
+//      availRow.createCell(10).setCellValue(availTotal)
+//      keptRow.createCell(10).setCellValue(keptTotal)
+//      resoldRow.createCell(10).setCellValue(resoldTotal)
+//      revRow.createCell(10).setCellValue(revTotal)
+//      rpmRow.createCell(10)
+//      revRow.getCell(10).setCellStyle(currency)
+//
+//      rows += 6
+//    }
 
     //call placementSheets
     placementSheets()
@@ -268,6 +354,7 @@ class BrandBuyerReportWriter(p: Publisher) {
       headerRow.createCell(10).setCellValue("Total")
 
       var rowCount = 0
+      
 
       //for each brand/buyer
       place.brands.foreach(b => {
@@ -277,7 +364,7 @@ class BrandBuyerReportWriter(p: Publisher) {
         val impRow = placeSheet.createRow(rowCount)
         impRow.createCell(0).setCellValue(b.id)
         impRow.createCell(1).setCellValue(b.name)
-        impRow.createCell(2).setCellValue("Kept")
+        impRow.createCell(2).setCellValue("Imps")
         var total: Double = 0
         cellCount = 3
         dateCount = 1
@@ -380,13 +467,13 @@ class BrandBuyerReportWriter(p: Publisher) {
           cellCount += 1
           dateCount += 1
         }
-        rpmRow.createCell(10).setCellValue(total)
-        rpmRow.getCell(10).setCellStyle(currency)
+        rpmRow.createCell(10)
       })
       for (x <- 0 to 11) placeSheet.autoSizeColumn(x)
     }
     wb
   }
+  
   def writeBuyerReport = {
     //create wb for every pub
     //brand wb
@@ -414,11 +501,11 @@ class BrandBuyerReportWriter(p: Publisher) {
     }
     var rows = 1
     for {place <- p.placements} yield {
-      val impRow = sumSheet.createRow(rows)
+      val impRow = sumSheet.createRow(rows+1)
       impRow.createCell(0).setCellValue(place.id)
       impRow.createCell(1).setCellValue(place.name)
       impRow.createCell(2).setCellValue("Imps")
-      val availRow = sumSheet.createRow(rows+1)
+      val availRow = sumSheet.createRow(rows)
       availRow.createCell(0).setCellValue(place.id)
       availRow.createCell(1).setCellValue(place.name)
       availRow.createCell(2).setCellValue("Avails")
@@ -445,7 +532,6 @@ class BrandBuyerReportWriter(p: Publisher) {
       var keptTotal = 0
       var resoldTotal = 0
       var revTotal: Double = 0
-      var rpmTotal: Double = 0
       while(dateCount <= 7) {
         keptRow.createCell(cellCount).setCellValue(0)
         resoldRow.createCell(cellCount).setCellValue(0)
@@ -466,7 +552,6 @@ class BrandBuyerReportWriter(p: Publisher) {
             keptTotal += t.kept
             resoldTotal += t.resold
             revTotal += t.revenue
-            rpmTotal += t.rpm
             revRow.getCell(cellCount).setCellStyle(currency)
             rpmRow.getCell(cellCount).setCellStyle(currency)
           }
@@ -479,9 +564,8 @@ class BrandBuyerReportWriter(p: Publisher) {
       keptRow.createCell(10).setCellValue(keptTotal)
       resoldRow.createCell(10).setCellValue(resoldTotal)
       revRow.createCell(10).setCellValue(revTotal)
-      rpmRow.createCell(10).setCellValue(rpmTotal)
+      rpmRow.createCell(10)
       revRow.getCell(10).setCellStyle(currency)
-      rpmRow.getCell(10).setCellStyle(currency)
 
       rows += 6
     }
@@ -517,7 +601,7 @@ class BrandBuyerReportWriter(p: Publisher) {
         val impRow = placeSheet.createRow(rowCount)
         impRow.createCell(0).setCellValue(b.id)
         impRow.createCell(1).setCellValue(b.name)
-        impRow.createCell(2).setCellValue("Kept")
+        impRow.createCell(2).setCellValue("Imps")
         var total: Double = 0
         cellCount = 3
         dateCount = 1
@@ -620,8 +704,7 @@ class BrandBuyerReportWriter(p: Publisher) {
           cellCount += 1
           dateCount += 1
         }
-        rpmRow.createCell(10).setCellValue(total)
-        rpmRow.getCell(10).setCellStyle(currency)
+        rpmRow.createCell(10)
       })
       for (x <- 0 to 11) placeSheet.autoSizeColumn(x)
     }
