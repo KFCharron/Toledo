@@ -175,7 +175,7 @@ public class RunCreativeFrequencyReport {
         for (int x = 0; x < 8; x++) s.autoSizeColumn(x);
 
         LocalDate today = new LocalDate(DateTimeZone.UTC);
-        FileOutputStream out = new FileOutputStream(new File(outputPath, "Tag Heuer Creative Report " +
+        FileOutputStream out = new FileOutputStream(new File(outputPath, "Tag_Heuer_Creative_Report_" +
                 today.toString()+".xls"));
         wb.write(out);
         out.close();
