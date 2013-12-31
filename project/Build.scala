@@ -2,10 +2,15 @@ import sbt._
 import sbtassembly.Plugin._
 import AssemblyKeys._
 import Keys._
+import sbtrelease._
+import sbtrelease.ReleasePlugin.ReleaseKeys
 
 object BuildSettings {
+  lazy val releaseSettings = ReleasePlugin.releaseSettings ++ Seq(
+    ReleaseKeys.versionBump := Version.Bump.Minor
+  )
 
-  val buildSettings210 = settings(_scalaVersion = "2.10.3", Seq("-unchecked", "-deprecation", "-feature"))
+  lazy val buildSettings210 = settings(_scalaVersion = "2.10.3", Seq("-unchecked", "-deprecation", "-feature"))
 
   private def settings(_scalaVersion: String, _scalacOptions: Seq[String]) =
     Defaults.defaultSettings ++
@@ -14,6 +19,8 @@ object BuildSettings {
         scalaVersion := _scalaVersion,
         scalacOptions ++= _scalacOptions,
         testOptions in Test := Seq(Tests.Filter(s => s.endsWith("Spec"))))
+
+  lazy val standardSettings = buildSettings210 ++ releaseSettings
 
   lazy val customAssemblySettings = assemblySettings ++ Seq(
     mergeStrategy in assembly <<= (mergeStrategy in assembly) {
@@ -56,7 +63,7 @@ object TargetSegmentingBuild extends Build {
     id = "toledo",
     base = file("."),
     settings =
-      buildSettings210 ++
+      standardSettings ++
         Seq(
           libraryDependencies ++=
             Seq(
