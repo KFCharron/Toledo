@@ -5,7 +5,7 @@ import Keys._
 
 object BuildSettings {
 
-  val buildSettings210 = settings(_scalaVersion = "2.10.1", Seq("-unchecked", "-deprecation", "-feature"))
+  val buildSettings210 = settings(_scalaVersion = "2.10.3", Seq("-unchecked", "-deprecation", "-feature"))
 
   private def settings(_scalaVersion: String, _scalacOptions: Seq[String]) =
     Defaults.defaultSettings ++
@@ -53,7 +53,7 @@ object TargetSegmentingBuild extends Build {
   import Dependencies._
 
   val root = Project(
-    id = "target-segmenting",
+    id = "toledo",
     base = file("."),
     settings =
       buildSettings210 ++
@@ -67,8 +67,7 @@ object TargetSegmentingBuild extends Build {
               opencsv,
               commonsCodec,
               specs2)) ++
-        customAssemblySettings ++
-        Seq(resolvers += "Typesafe repository" at "http://repo.typesafe.com/typesafe/releases/")
+        customAssemblySettings
   )
 }
 
