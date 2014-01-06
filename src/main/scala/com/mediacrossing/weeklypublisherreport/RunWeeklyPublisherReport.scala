@@ -11,6 +11,7 @@ import org.joda.time.format.DateTimeFormat
 import scala.collection.JavaConversions._
 import java.io.{File, FileOutputStream}
 import org.apache.poi.hssf.usermodel.HSSFWorkbook
+import org.apache.poi.ss.usermodel.IndexedColors
 
 
 object RunWeeklyPubReport extends App {
@@ -47,10 +48,10 @@ object RunWeeklyPubReport extends App {
     //check for jsSuccess
     .get.filter(p => p.status == "active")
 
-  val dateFormat = DateTimeFormat.forPattern("yyyy-MM-dd")
+  val dateFormat = DateTimeFormat.forPattern("YYYY-MM-dd")
 
   val pubs = for {p <- pubList} yield {
-    val data = for {line <- anConn.requestPublisherWeekly(p.id).toList} yield {
+    val data = for {line <- anConn.requestPublisherWeekly(p.id).tail.toList} yield {
       DataRow(
         day = dateFormat.parseDateTime(line(0)),
         pubId = line(1),
@@ -68,17 +69,23 @@ object RunWeeklyPubReport extends App {
     val pub = Publisher(
       id = p.id,
       name = p.name,
-      week1 = data.filter(d => d.day.getWeekOfWeekyear.equals(today.getWeekOfWeekyear)),
-      week2 = data.filter(d => d.day.getWeekOfWeekyear.equals(today.getWeekOfWeekyear-1)),
-      week3 = data.filter(d => d.day.getWeekOfWeekyear.equals(today.getWeekOfWeekyear-2)),
-      week4 = data.filter(d => d.day.getWeekOfWeekyear.equals(today.getWeekOfWeekyear-3))
+      //FIXME
+      week = data.filter(d => d.day.getDayOfMonth <= 23 && d.day.getDayOfMonth >= 17)
     )
     val wb = writeReport(pub)
-//    val out = new FileOutputStream(new File(props.getOutputPath, pub.name + "_Weekly_Report_" + today.toString + ".xls"))
-
+    val out = new FileOutputStream(new File(props.getOutputPath, pub.name + "_Weekly_Report.xls"))
+    wb.write(out)
+    out.close()
   }
   def writeReport(p: Publisher) = {
+
     val wb = new HSSFWorkbook()
+
+    val font = wb.createFont()
+    font.setColor(IndexedColors.WHITE.getIndex)
+    val headerStyle = wb.createCellStyle()
+    headerStyle.setFont(font)
+    headerStyle.setFillForegroundColor(IndexedColors.GREEN.getIndex)
 
     val df = wb.createDataFormat
     val currency = wb.createCellStyle
@@ -87,25 +94,68 @@ object RunWeeklyPubReport extends App {
     val sheet = wb.createSheet("Weekly Report")
     val sumHeadRow = sheet.createRow(0)
     sumHeadRow.createCell(0).setCellValue("Summary")
-    if (p.week1.length > 0) sumHeadRow.createCell(1).setCellValue("Week 1")
-    if (p.week2.length > 0) sumHeadRow.createCell(2).setCellValue("Week 2")
-    if (p.week3.length > 0) sumHeadRow.createCell(3).setCellValue("Week 3")
-    if (p.week4.length > 0) sumHeadRow.createCell(4).setCellValue("Week 4")
-    val fromRow = sheet.createRow(1).createCell(0).setCellValue("From")
-    val toRow = sheet.createRow(2).createCell(0).setCellValue("To")
-    val impRow = sheet.createRow(3).createCell(0).setCellValue("Imps")
-    val soldRow = sheet.createRow(4).createCell(0).setCellValue("Sold")
-    val defaultRow = sheet.createRow(5).createCell(0).setCellValue("Default")
-    val netRevRow = sheet.createRow(6).createCell(0).setCellValue("Network Rev.")
-    val pubRevRow = sheet.createRow(7).createCell(0).setCellValue("Publisher Rev.")
-    //TODO
+
+    val fromRow = sheet.createRow(1);
+    fromRow.createCell(0).setCellValue("From")
+    val toRow = sheet.createRow(2)
+    toRow.createCell(0).setCellValue("To")
+    val impRow = sheet.createRow(3)
+    impRow.createCell(0).setCellValue("Imps")
+    val soldRow = sheet.createRow(4)
+    soldRow.createCell(0).setCellValue("Sold")
+    val defaultRow = sheet.createRow(5)
+    defaultRow.createCell(0).setCellValue("Default")
+    val netRevRow = sheet.createRow(6)
+    netRevRow.createCell(0).setCellValue("Network Rev.")
+    val pubRevRow = sheet.createRow(7)
+    pubRevRow.createCell(0).setCellValue("Publisher Rev.")
+
+    var rowCount = 10
+    if (p.week.length > 0) {
+      sumHeadRow.createCell(1).setCellValue("Week 1")
+      fromRow.createCell(1).setCellValue(p.week.last.day.getMonthOfYear + "/" + p.week.last.day.getDayOfMonth)
+      toRow.createCell(1).setCellValue(p.week.head.day.getMonthOfYear + "/" + p.week.head.day.getDayOfMonth)
+      impRow.createCell(1).setCellValue(p.week.foldLeft(0)(_ + _.totalImps))
+      soldRow.createCell(1).setCellValue(p.week.foldLeft(0)(_ + _.soldImps))
+      defaultRow.createCell(1).setCellValue(p.week.foldLeft(0)(_ + _.defaultImps))
+      netRevRow.createCell(1).setCellValue(p.week.foldLeft(0.0)(_ + _.networkRevenue))
+      pubRevRow.createCell(1).setCellValue(p.week.foldLeft(0.0)(_ + _.publisherRevenue))
+
+      //Create a section for list of it's dataRows
+      val week1Title = sheet.createRow(rowCount)
+      week1Title.createCell(0).setCellValue("Week 1")
+      rowCount+=1
+      val headers = sheet.createRow(rowCount)
+      headers.createCell(0).setCellValue("Date")
+      headers.createCell(1).setCellValue("ID")
+      headers.createCell(2).setCellValue("Placement")
+      headers.createCell(3).setCellValue("Total Imps")
+      headers.createCell(4).setCellValue("Sold")
+      headers.createCell(5).setCellValue("Default")
+      headers.createCell(6).setCellValue("Network Rev.")
+      headers.createCell(7).setCellValue("Pub. Rev.")
+      headers.createCell(8).setCellValue("eCPM")
+      rowCount+=1
+      p.week.foreach(d => {
+        val dataRow = sheet.createRow(rowCount)
+        dataRow.createCell(0).setCellValue(d.day.getMonthOfYear + "/" + d.day.getDayOfMonth)
+        dataRow.createCell(1).setCellValue(d.placeId)
+        dataRow.createCell(2).setCellValue(d.placeName)
+        dataRow.createCell(3).setCellValue(d.totalImps)
+        dataRow.createCell(4).setCellValue(d.soldImps)
+        dataRow.createCell(5).setCellValue(d.defaultImps)
+        dataRow.createCell(6).setCellValue(d.networkRevenue)
+        dataRow.createCell(7).setCellValue(d.publisherRevenue)
+        dataRow.createCell(8).setCellValue(d.eCPM)
+        rowCount+=1
+      })
+    }
+
+    for (x <- 0 to 9) sheet.autoSizeColumn(x)
+    wb
   }
-
-
-
 }
 case class PubJson(id: String, name: String, status: String, siteIds: List[String], placementIds: List[String])
-case class Publisher(id: String, name: String, week1: List[DataRow], week2: List[DataRow], week3: List[DataRow],
-                     week4: List[DataRow])
+case class Publisher(id: String, name: String, week: List[DataRow])
 case class DataRow(day: DateTime, pubId: String, placeId: String, placeName: String, totalImps: Int, soldImps: Int,
                     defaultImps: Int, networkRevenue: Double, publisherRevenue: Double, eCPM: Double)
