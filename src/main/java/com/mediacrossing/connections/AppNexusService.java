@@ -272,7 +272,7 @@ public class AppNexusService {
                 "            \"placement_id\",\n" +
                 "            \"day\"\n" +
                 "        ],\n" +
-                "        \"report_interval\":\"lifetime\",\n" +
+                "        \"report_interval\":\"month_to_yesterday\",\n" +
                 "        \"emails\":[\n" +
                 "        ],\n" +
                 "        \"orders\": [\n" +
