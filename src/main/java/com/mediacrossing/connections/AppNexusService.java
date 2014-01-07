@@ -259,14 +259,16 @@ public class AppNexusService {
                 "        \"columns\":[\n" +
                 "            \"day\",\n" +
                 "            \"publisher_id\",\n" +
-                "            \"placement_id\",\n" +
+                "            \"payment_type\",\n" +
                 "            \"placement_name\",\n" +
                 "            \"imps_total\",\n" +
                 "            \"imps_sold\",\n" +
                 "            \"imps_default\",\n" +
                 "            \"network_revenue\",\n" +
                 "            \"publisher_revenue\",\n" +
-                "            \"network_rpm\"\n" +
+                "            \"network_rpm\",\n" +
+                "            \"serving_fees\",\n" +
+                "            \"size\"\n" +
                 "        ],\n" +
                 "        \"row_per\":[\n" +
                 "            \"placement_id\",\n" +

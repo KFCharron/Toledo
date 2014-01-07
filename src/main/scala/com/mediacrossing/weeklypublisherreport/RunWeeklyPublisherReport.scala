@@ -55,14 +55,16 @@ object RunWeeklyPubReport extends App {
       DataRow(
         day = dateFormat.parseDateTime(line(0)),
         pubId = line(1),
-        placeId = line(2),
+        paymentType = line(2),
         placeName = line(3),
         totalImps = line(4).toInt,
         soldImps = line(5).toInt,
         defaultImps = line(6).toInt,
         networkRevenue = line(7).toDouble,
         publisherRevenue = line(8).toDouble,
-        eCPM = line(9).toDouble
+        eCPM = line(9).toDouble,
+        servingFees = line(10).toDouble,
+        placementSize = line(11)
       )
     }
     val today = DateTime.now()
@@ -127,28 +129,36 @@ object RunWeeklyPubReport extends App {
       rowCount+=1
       val headers = sheet.createRow(rowCount)
       headers.createCell(0).setCellValue("Date")
-      headers.createCell(1).setCellValue("ID")
-      headers.createCell(2).setCellValue("Placement")
+      headers.createCell(1).setCellValue("Placement")
+      headers.createCell(2).setCellValue("Size")
       headers.createCell(3).setCellValue("Total Imps")
       headers.createCell(4).setCellValue("Sold")
       headers.createCell(5).setCellValue("Default")
-      headers.createCell(6).setCellValue("Network Rev.")
-      headers.createCell(7).setCellValue("Pub. Rev.")
-      headers.createCell(8).setCellValue("eCPM")
+      headers.createCell(6).setCellValue("Fill Rate")
+      headers.createCell(7).setCellValue("Network Rev.")
+      headers.createCell(8).setCellValue("Pub. Rev.")
+      headers.createCell(9).setCellValue("eCPM")
       rowCount+=1
       p.week.foreach(d => {
         val dataRow = sheet.createRow(rowCount)
         dataRow.createCell(0).setCellValue(d.day.getMonthOfYear + "/" + d.day.getDayOfMonth)
-        dataRow.createCell(1).setCellValue(d.placeId)
-        dataRow.createCell(2).setCellValue(d.placeName)
+        dataRow.createCell(1).setCellValue(d.placeName)
+        dataRow.createCell(2).setCellValue(d.placementSize)
         dataRow.createCell(3).setCellValue(d.totalImps)
         dataRow.createCell(4).setCellValue(d.soldImps)
         dataRow.createCell(5).setCellValue(d.defaultImps)
-        dataRow.createCell(6).setCellValue(d.networkRevenue)
-        dataRow.createCell(7).setCellValue(d.publisherRevenue)
-        dataRow.createCell(8).setCellValue(d.eCPM)
+        //TODO format as perc.
+        dataRow.createCell(6).setCellValue(d.fillRate)
+        dataRow.createCell(7).setCellValue(d.networkRevenue)
+        dataRow.createCell(8)
+        if (d.paymentType.equals("revshare")) {
+          headers.getCell(8).setCellValue("Gross Rev.")
+          dataRow.getCell(8).setCellValue(d.grossRevenue)
+        } else dataRow.getCell(8).setCellValue(d.publisherRevenue)
+        dataRow.createCell(9).setCellValue(d.eCPM)
         rowCount+=1
-      })
+      }
+      )
     }
 
     for (x <- 0 to 9) sheet.autoSizeColumn(x)
@@ -157,5 +167,9 @@ object RunWeeklyPubReport extends App {
 }
 case class PubJson(id: String, name: String, status: String, siteIds: List[String], placementIds: List[String])
 case class Publisher(id: String, name: String, week: List[DataRow])
-case class DataRow(day: DateTime, pubId: String, placeId: String, placeName: String, totalImps: Int, soldImps: Int,
-                    defaultImps: Int, networkRevenue: Double, publisherRevenue: Double, eCPM: Double)
+case class DataRow(day: DateTime, pubId: String, paymentType: String, placeName: String, totalImps: Int,
+                   soldImps: Int, defaultImps: Int, networkRevenue: Double, publisherRevenue: Double,
+                   eCPM: Double, servingFees: Double, placementSize: String) {
+  val fillRate = Int.int2float(soldImps) / Int.int2float(totalImps)
+  val grossRevenue = servingFees + publisherRevenue
+}
