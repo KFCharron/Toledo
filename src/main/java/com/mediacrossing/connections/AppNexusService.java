@@ -268,8 +268,7 @@ public class AppNexusService {
                 "            \"publisher_revenue\",\n" +
                 "            \"network_rpm\",\n" +
                 "            \"serving_fees\",\n" +
-                "            \"size\",\n" +
-                "            \"geo_country\"\n" +
+                "            \"size\"\n" +
                 "        ],\n" +
                 "        \"row_per\":[\n" +
                 "            \"placement_id\",\n" +
