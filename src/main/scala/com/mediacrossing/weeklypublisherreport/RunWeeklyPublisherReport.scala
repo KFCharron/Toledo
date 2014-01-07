@@ -11,7 +11,7 @@ import org.joda.time.format.DateTimeFormat
 import scala.collection.JavaConversions._
 import java.io.{File, FileOutputStream}
 import org.apache.poi.hssf.usermodel.HSSFWorkbook
-import org.apache.poi.ss.usermodel.IndexedColors
+import org.apache.poi.ss.usermodel.{DataFormatter, CellStyle, Cell, IndexedColors}
 
 
 object RunWeeklyPubReport extends App {
@@ -84,19 +84,26 @@ object RunWeeklyPubReport extends App {
 
     val wb = new HSSFWorkbook()
 
-    val font = wb.createFont()
-    font.setColor(IndexedColors.WHITE.getIndex)
-    val headerStyle = wb.createCellStyle()
-    headerStyle.setFont(font)
-    headerStyle.setFillForegroundColor(IndexedColors.GREEN.getIndex)
+    val headFont = wb.createFont()
+    headFont.setColor(IndexedColors.WHITE.getIndex)
+    val headStyle = wb.createCellStyle()
+    headStyle.setFont(headFont)
+    headStyle.setFillForegroundColor(IndexedColors.SEA_GREEN.getIndex)
 
-    val df = wb.createDataFormat
-    val currency = wb.createCellStyle
+    val df = wb.createDataFormat()
+    val numbers = wb.createCellStyle()
+    numbers.setDataFormat(df.getFormat("#,###,###"))
+    val currency = wb.createCellStyle()
     currency.setDataFormat(df.getFormat("$#,##0.00"))
+    val percentage = wb.createCellStyle()
+    percentage.setDataFormat(df.getFormat("0.00%"))
+
+
 
     val sheet = wb.createSheet("Weekly Report")
     val sumHeadRow = sheet.createRow(0)
     sumHeadRow.createCell(0).setCellValue("Summary")
+    sumHeadRow.getCell(0).setCellStyle(headStyle)
 
     val fromRow = sheet.createRow(1);
     fromRow.createCell(0).setCellValue("From")
@@ -127,6 +134,7 @@ object RunWeeklyPubReport extends App {
       //Create a section for list of it's dataRows
       val week1Title = sheet.createRow(rowCount)
       week1Title.createCell(0).setCellValue("Week 1")
+      week1Title.getCell(0).setCellStyle(headStyle)
       rowCount+=1
       val headers = sheet.createRow(rowCount)
       headers.createCell(0).setCellValue("Date")
@@ -140,6 +148,7 @@ object RunWeeklyPubReport extends App {
       headers.createCell(8).setCellValue("Network Rev.")
       headers.createCell(9).setCellValue("Pub. Rev.")
       headers.createCell(10).setCellValue("eCPM")
+      for(c <- headers) c.setCellStyle(headStyle)
       rowCount+=1
       p.week.foreach(d => {
         val dataRow = sheet.createRow(rowCount)
@@ -150,7 +159,6 @@ object RunWeeklyPubReport extends App {
         dataRow.createCell(4).setCellValue(d.totalImps)
         dataRow.createCell(5).setCellValue(d.soldImps)
         dataRow.createCell(6).setCellValue(d.defaultImps)
-        //TODO format as perc.
         dataRow.createCell(7).setCellValue(d.fillRate)
         dataRow.createCell(8).setCellValue(d.networkRevenue)
         dataRow.createCell(9)
@@ -159,12 +167,21 @@ object RunWeeklyPubReport extends App {
           dataRow.getCell(9).setCellValue(d.grossRevenue)
         } else dataRow.getCell(9).setCellValue(d.publisherRevenue)
         dataRow.createCell(10).setCellValue(d.eCPM)
+
+        dataRow.getCell(4).setCellStyle(numbers)
+        dataRow.getCell(5).setCellStyle(numbers)
+        dataRow.getCell(6).setCellStyle(numbers)
+        dataRow.getCell(7).setCellStyle(percentage)
+        dataRow.getCell(8).setCellStyle(currency)
+        dataRow.getCell(9).setCellStyle(currency)
+        dataRow.getCell(10).setCellStyle(currency)
+
         rowCount+=1
       }
       )
     }
 
-    for (x <- 0 to 9) sheet.autoSizeColumn(x)
+    for (x <- 0 to 11) sheet.autoSizeColumn(x)
     wb
   }
 }
