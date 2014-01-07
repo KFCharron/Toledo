@@ -287,7 +287,8 @@ public class AppNexusService {
                 "            \"order_by\" : \"placement_name\",\n" +
                 "            \"direction\": \"DESC\"\n" +
                 "            }\n" +
-                "        ]\n" +
+                "        ],\n" +
+                "        \"timezone\": \"EST5EDT\""+
                 "    }\n" +
                 "}";
         String json = requests.postRequest(url+"/report?publisher_id="+id, j);
