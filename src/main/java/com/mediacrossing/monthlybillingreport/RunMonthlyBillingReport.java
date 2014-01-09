@@ -75,6 +75,16 @@ public class RunMonthlyBillingReport {
                     }
                 }
             }
+            String mxImpId = "1770";
+            if (l[0].equals(mxImpId)) {
+                for (BillingAdvertiser ad : adList) {
+                    for (BillingCampaign camp : ad.getCampaigns()) {
+                        if (camp.getId().equals(l[2])) {
+                            camp.setMxImps(Integer.parseInt(l[3]));
+                        }
+                    }
+                }
+            }
         }
         //call on campaigns from mx
         //parse broker fees

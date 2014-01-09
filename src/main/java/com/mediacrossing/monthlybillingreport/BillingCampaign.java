@@ -12,6 +12,7 @@ public class BillingCampaign implements Serializable {
     private float mediaCost;
     private float networkRevenue;
     private int adExImps;
+    private int mxImps;
     private int appNexusImps;
     private float briligFee;
     private float evidonFee;
@@ -59,6 +60,7 @@ public class BillingCampaign implements Serializable {
         this.mediaCost = 0;
         this.networkRevenue = 0;
         this.adExImps = 0;
+        this.mxImps = 0;
         this.appNexusImps = 0;
         this.briligTotal = 0;
         this.evidonTotal = 0;
@@ -133,7 +135,10 @@ public class BillingCampaign implements Serializable {
 
     public void setAdExImps(int adExImps) {
         this.adExImps = adExImps;
-        this.appNexusImps = imps-this.adExImps;
+    }
+
+    public void setMxImps(int mxImps) {
+        this.mxImps = mxImps;
     }
 
     public String getId() {
@@ -168,8 +173,10 @@ public class BillingCampaign implements Serializable {
         return adExImps;
     }
 
+    public int getMxImps() { return mxImps; }
+
     public int getAppNexusImps() {
-        return appNexusImps;
+        return imps - mxImps - adExImps;
     }
 
     public float getBriligFee() {
