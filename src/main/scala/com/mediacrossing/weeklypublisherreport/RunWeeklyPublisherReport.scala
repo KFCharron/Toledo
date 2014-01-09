@@ -6,13 +6,12 @@ import com.mediacrossing.connections.{MxService, AppNexusService}
 import play.api.libs.json._
 import play.api.libs.json.Reads._
 import play.api.libs.functional.syntax._
-import org.joda.time.DateTime
+import org.joda.time.{DateTimeConstants, DateTime}
 import org.joda.time.format.DateTimeFormat
 import scala.collection.JavaConversions._
 import java.io.{File, FileOutputStream}
 import org.apache.poi.hssf.usermodel.HSSFWorkbook
 import org.apache.poi.ss.usermodel.{CellStyle, IndexedColors}
-
 
 object RunWeeklyPubReport extends App {
 
@@ -51,7 +50,7 @@ object RunWeeklyPubReport extends App {
   val dateFormat = DateTimeFormat.forPattern("YYYY-MM-dd")
 
   val pubs = for {p <- pubList} yield {
-    val data = for {line <- anConn.requestPublisherWeekly(p.id).tail.toList} yield {
+    val data = for {line <- anConn.requestPublisherReport(p.id).tail.toList} yield {
       DataRow(
         day = dateFormat.parseDateTime(line(0)),
         pubId = line(1),
@@ -67,14 +66,18 @@ object RunWeeklyPubReport extends App {
         placementSize = line(11)
       )
     }
-    val today = DateTime.now().withTimeAtStartOfDay()
+
+    var brands = anConn.requestTopBrandReport(p.id).toList
+
+    val monday = DateTime.now().withTimeAtStartOfDay().withDayOfWeek(DateTimeConstants.MONDAY)
     val pub = Publisher(
       id = p.id,
       name = p.name,
-      week1 = data.filter(d => d.day.isAfter(today.minusDays(7))),
-      week2 = data.filter(d => d.day.isAfter(today.minusDays(14)) && d.day.isBefore(today.minusDays(7))),
-      week3 = data.filter(d => d.day.isAfter(today.minusDays(21)) && d.day.isBefore(today.minusDays(14))),
-      week4 = data.filter(d => d.day.isAfter(today.minusDays(31)) && d.day.isBefore(today.minusDays(21)))
+      week4 = data.filter(d => d.day.isBefore(monday) && d.day.isAfter(monday.minusDays(8))),
+      week3 = data.filter(d => d.day.isBefore(monday.minusDays(7)) && d.day.isAfter(monday.minusDays(15))),
+      week2 = data.filter(d => d.day.isBefore(monday.minusDays(14)) && d.day.isAfter(monday.minusDays(22))),
+      week1 = data.filter(d => d.day.isBefore(monday.minusDays(21)) && d.day.isAfter(monday.minusDays(29))),
+      brands = brands
     )
     val wb = writeReport(pub)
     val out = new FileOutputStream(new File(props.getOutputPath, pub.name + "_Weekly_Report.xls"))
@@ -100,8 +103,6 @@ object RunWeeklyPubReport extends App {
     val percentage = wb.createCellStyle()
     percentage.setDataFormat(df.getFormat("0.00%"))
 
-
-
     val sheet = wb.createSheet("Weekly Report")
     val sumHeadRow = sheet.createRow(0)
     sumHeadRow.createCell(0).setCellValue("Summary")
@@ -121,12 +122,15 @@ object RunWeeklyPubReport extends App {
     netRevRow.createCell(0).setCellValue("Network Rev.")
     val pubRevRow = sheet.createRow(7)
     pubRevRow.createCell(0).setCellValue("Publisher Rev.")
+    val bRow1 = sheet.createRow(8)
+    val bRow2 = sheet.createRow(9)
+    val bRow3 = sheet.createRow(10)
 
-    var rowCount = 10
-    var latestWeek = p.week1
+    var rowCount = 12
+    val latestWeek = p.week4
 
     if (p.week4.length > 0) {
-      sumHeadRow.createCell(5).setCellValue("Week 4")
+      sumHeadRow.createCell(5).setCellValue("Last Week")
       fromRow.createCell(5).setCellValue(p.week4.last.day.getMonthOfYear + "/" + p.week4.last.day.getDayOfMonth)
       toRow.createCell(5).setCellValue(p.week4.head.day.getMonthOfYear + "/" + p.week4.head.day.getDayOfMonth)
       impRow.createCell(5).setCellValue(p.week4.foldLeft(0)(_ + _.totalImps))
@@ -139,11 +143,31 @@ object RunWeeklyPubReport extends App {
       defaultRow.getCell(5).setCellStyle(numbers)
       netRevRow.getCell(5).setCellStyle(currency)
       pubRevRow.getCell(5).setCellStyle(currency)
-      latestWeek = p.week4
+
+      try {
+        //Top Brands List
+        sumHeadRow.createCell(7).setCellValue("Top Brands")
+        sumHeadRow.getCell(7).setCellStyle(headStyle)
+        fromRow.createCell(7).setCellValue(p.brands(1))
+        toRow.createCell(7).setCellValue(p.brands(2))
+        impRow.createCell(7).setCellValue(p.brands(3))
+        soldRow.createCell(7).setCellValue(p.brands(4))
+        defaultRow.createCell(7).setCellValue(p.brands(5))
+        netRevRow.createCell(7).setCellValue(p.brands(6))
+        pubRevRow.createCell(7).setCellValue(p.brands(7))
+        bRow1.createCell(7).setCellValue(p.brands(8))
+        bRow2.createCell(7).setCellValue(p.brands(9))
+        bRow3.createCell(7).setCellValue(p.brands(10))
+      } catch {
+        case ioobe: IndexOutOfBoundsException => {
+          println("Index out")
+        }
+      }
+
     }
 
     if (p.week3.length > 0) {
-      sumHeadRow.createCell(4).setCellValue("Week 3")
+      sumHeadRow.createCell(4).setCellValue("2 Weeks Ago")
       fromRow.createCell(4).setCellValue(p.week3.last.day.getMonthOfYear + "/" + p.week3.last.day.getDayOfMonth)
       toRow.createCell(4).setCellValue(p.week3.head.day.getMonthOfYear + "/" + p.week3.head.day.getDayOfMonth)
       impRow.createCell(4).setCellValue(p.week3.foldLeft(0)(_ + _.totalImps))
@@ -156,11 +180,10 @@ object RunWeeklyPubReport extends App {
       defaultRow.getCell(4).setCellStyle(numbers)
       netRevRow.getCell(4).setCellStyle(currency)
       pubRevRow.getCell(4).setCellStyle(currency)
-      latestWeek = p.week3
     }
 
     if (p.week2.length > 0) {
-      sumHeadRow.createCell(3).setCellValue("Week 2")
+      sumHeadRow.createCell(3).setCellValue("3 Weeks Ago")
       fromRow.createCell(3).setCellValue(p.week2.last.day.getMonthOfYear + "/" + p.week2.last.day.getDayOfMonth)
       toRow.createCell(3).setCellValue(p.week2.head.day.getMonthOfYear + "/" + p.week2.head.day.getDayOfMonth)
       impRow.createCell(3).setCellValue(p.week2.foldLeft(0)(_ + _.totalImps))
@@ -173,11 +196,10 @@ object RunWeeklyPubReport extends App {
       defaultRow.getCell(3).setCellStyle(numbers)
       netRevRow.getCell(3).setCellStyle(currency)
       pubRevRow.getCell(3).setCellStyle(currency)
-      latestWeek = p.week2
     }
 
     if (p.week1.length > 0) {
-      sumHeadRow.createCell(2).setCellValue("Week 1")
+      sumHeadRow.createCell(2).setCellValue("4 Weeks Ago")
       fromRow.createCell(2).setCellValue(p.week1.last.day.getMonthOfYear + "/" + p.week1.last.day.getDayOfMonth)
       toRow.createCell(2).setCellValue(p.week1.head.day.getMonthOfYear + "/" + p.week1.head.day.getDayOfMonth)
       impRow.createCell(2).setCellValue(p.week1.foldLeft(0)(_ + _.totalImps))
@@ -190,7 +212,6 @@ object RunWeeklyPubReport extends App {
       defaultRow.getCell(2).setCellStyle(numbers)
       netRevRow.getCell(2).setCellStyle(currency)
       pubRevRow.getCell(2).setCellStyle(currency)
-
     }
 
     //Create a section for list of it's dataRows
@@ -222,7 +243,7 @@ object RunWeeklyPubReport extends App {
       dataRow.createCell(6).setCellValue(d.fillRate)
       dataRow.createCell(7).setCellValue(d.networkRevenue)
       dataRow.createCell(8)
-      if (d.paymentType.equals("revshare")) {
+      if (d.paymentType.equals("Owner Revshare")) {
         headers.getCell(8).setCellValue("Gross Rev.")
         dataRow.getCell(8).setCellValue(d.grossRevenue)
       } else dataRow.getCell(8).setCellValue(d.publisherRevenue)
@@ -246,7 +267,7 @@ object RunWeeklyPubReport extends App {
 }
 case class PubJson(id: String, name: String, status: String, siteIds: List[String], placementIds: List[String])
 case class Publisher(id: String, name: String, week1: List[DataRow], week2: List[DataRow], week3: List[DataRow],
-                     week4: List[DataRow])
+                     week4: List[DataRow], brands: List[String])
 case class DataRow(day: DateTime, pubId: String, paymentType: String, placeName: String, totalImps: Int,
                    soldImps: Int, defaultImps: Int, networkRevenue: Double, publisherRevenue: Double,
                    eCPM: Double, servingFees: Double, placementSize: String) {
