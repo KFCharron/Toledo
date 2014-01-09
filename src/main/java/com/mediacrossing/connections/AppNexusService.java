@@ -117,6 +117,7 @@ public class AppNexusService {
                 "            \"campaign_id\"\n" +
                 "        ],\n" +
                 "        \"report_interval\": \"last_month\",\n" +
+                //"           \"start_date\": \"2013-11-01\", \"end_date\": \"2013-12-01\","+
                 "        \"format\": \"csv\",\n" +
                 "        \"emails\":[],\n" +
                 "        \"orders\": [\n" +
@@ -149,6 +150,7 @@ public class AppNexusService {
                 "            \"seller_member_id\"\n" +
                 "        ],\n" +
                 "        \"report_interval\": \"last_month\",\n" +
+                //"           \"start_date\": \"2013-11-01\", \"end_date\": \"2013-12-01\","+
                 "        \"format\": \"csv\",\n" +
                 "        \"emails\":[],\n" +
                 "        \"orders\": [\n" +
@@ -251,7 +253,7 @@ public class AppNexusService {
         return ResponseParser.parsePlacementReport(downloadReportWhenReady(json));
     }
 
-    public List<String[]> requestPublisherWeekly(String id) throws Exception {
+    public List<String[]> requestPublisherReport(String id) throws Exception {
         String j = "{\n" +
                 "    \"report\":\n" +
                 "    {\n" +
@@ -274,13 +276,13 @@ public class AppNexusService {
                 "            \"placement_id\",\n" +
                 "            \"day\"\n" +
                 "        ],\n" +
-                "        \"report_interval\":\"month_to_yesterday\",\n" +
+                "        \"report_interval\":\"lifetime\",\n" +
                 "        \"emails\":[\n" +
                 "        ],\n" +
                 "        \"orders\": [\n" +
                 "            {\n" +
                 "            \"order_by\" : \"day\",\n" +
-                "            \"direction\": \"DESC\"\n" +
+                "            \"direction\": \"ASC\"\n" +
                 "            },\n" +
                 "            {\n" +
                 "            \"order_by\" : \"placement_name\",\n" +
