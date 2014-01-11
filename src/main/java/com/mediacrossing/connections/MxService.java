@@ -73,6 +73,6 @@ public class MxService {
     }
 
     public String requestAllPublisherJson() throws Exception {
-        return requests.getRequest(url+"api/catalog/publishers");
+        return requests.getRequest(url+"/api/catalog/publishers");
     }
 }
