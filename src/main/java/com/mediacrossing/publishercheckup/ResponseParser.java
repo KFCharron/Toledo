@@ -7,11 +7,7 @@ import com.google.gson.JsonParser;
 import com.mediacrossing.monthlybillingreport.BillingAdvertiser;
 import com.mediacrossing.monthlybillingreport.BillingCampaign;
 import com.mediacrossing.weeklydomainreport.Domain;
-import com.mediacrossing.weeklypublisherreport.DailyPublisherData;
-import com.mediacrossing.weeklypublisherreport.WeeklyPlacement;
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
+import scala.Tuple2;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +15,7 @@ import java.util.List;
 public class ResponseParser {
 
     public static ArrayList<Placement> parsePlacements(String json) {
-        ArrayList<Placement> placements = new ArrayList<Placement>();
+        ArrayList<Placement> placements = new ArrayList<>();
         JsonElement jelement = new JsonParser().parse(json);
         JsonObject jobject = jelement.getAsJsonObject();
         jobject = jobject.getAsJsonObject("response");
@@ -31,7 +27,7 @@ public class ResponseParser {
                 String name = jo.get("name").toString().replace("\"", "");
                 String state = jo.get("state").toString().replace("\"", "");
                 String lastModified = jo.get("last_modified").toString().replace("\"", "");
-                ArrayList<IdName> filteredAdvertisers = new ArrayList<IdName>();
+                ArrayList<IdName> filteredAdvertisers = new ArrayList<>();
                 if(!jo.get("filtered_advertisers").isJsonNull()) {
                     JsonArray ja = jo.getAsJsonArray("filtered_advertisers");
                     for (JsonElement el : ja) {
@@ -40,7 +36,7 @@ public class ResponseParser {
                                 job.get("name").toString().replace("\"", "")));
                     }
                 }
-                ArrayList<IdName> contentCategories = new ArrayList<IdName>();
+                ArrayList<IdName> contentCategories = new ArrayList<>();
                 if(!jo.get("content_categories").isJsonNull()) {
                     JsonArray jarr = jo.getAsJsonArray("content_categories");
                     for (JsonElement el : jarr) {
@@ -57,7 +53,7 @@ public class ResponseParser {
     }
 
     public static ArrayList<Domain> parseDomainReport (List<String[]> csvData) {
-        ArrayList<Domain> domains = new ArrayList<Domain>();
+        ArrayList<Domain> domains = new ArrayList<>();
         csvData.remove(0);
         for (String[] l : csvData) {
             domains.add(new Domain(l[0], Double.parseDouble(l[1]), Integer.parseInt(l[2]), l[3],
@@ -71,7 +67,7 @@ public class ResponseParser {
     }
 
     public static ArrayList<PaymentRule> parsePaymentRules(String json) {
-        ArrayList<PaymentRule> paymentRules = new ArrayList<PaymentRule>();
+        ArrayList<PaymentRule> paymentRules = new ArrayList<>();
         JsonElement jelement = new JsonParser().parse(json);
         JsonObject jobject = jelement.getAsJsonObject();
         jobject = jobject.getAsJsonObject("response");
@@ -96,7 +92,7 @@ public class ResponseParser {
     }
 
     public static ArrayList<YMProfile> parseYmProfiles(String json) {
-        ArrayList<YMProfile> ymProfiles = new ArrayList<YMProfile>();
+        ArrayList<YMProfile> ymProfiles = new ArrayList<>();
         JsonElement jelement = new JsonParser().parse(json);
         JsonObject jobject = jelement.getAsJsonObject();
         jobject = jobject.getAsJsonObject("response");
@@ -108,7 +104,7 @@ public class ResponseParser {
                 String name = jo.get("name").toString().replace("\"", "");
                 String description = jo.get("description").toString().replace("\"", "");
                 String lastModified = jo.get("last_modified").toString().replace("\"", "");
-                ArrayList<FloorRule> floorRules = new ArrayList<FloorRule>();
+                ArrayList<FloorRule> floorRules = new ArrayList<>();
                 if (!jo.get("floors").isJsonNull()) {
                     JsonArray jsArray = jo.getAsJsonArray("floors");
                     for (JsonElement je : jsArray) {
@@ -124,7 +120,7 @@ public class ResponseParser {
                         if (job.get("soft_floor").isJsonNull()) softFloor = 0f;
                         else softFloor = Float.parseFloat(job.get("soft_floor").toString());
                         String priority = job.get("priority").toString().replace("\"", "");
-                        ArrayList<IdName> audienceList = new ArrayList<IdName>();
+                        ArrayList<IdName> audienceList = new ArrayList<>();
                         if (!job.get("members").isJsonNull()) {
                             JsonArray jArray1 = job.getAsJsonArray("members");
                             for (JsonElement j1 : jArray1) {
@@ -133,7 +129,7 @@ public class ResponseParser {
                                         object.get("name").getAsString().replace("\"", "")));
                             }
                         }
-                        ArrayList<IdName> supplyList = new ArrayList<IdName>();
+                        ArrayList<IdName> supplyList = new ArrayList<>();
                         if (!job.get("brands").isJsonNull()) {
                             JsonArray jArray1 = job.getAsJsonArray("brands");
                             for (JsonElement j1 : jArray1) {
@@ -142,7 +138,7 @@ public class ResponseParser {
                                         object.get("name").getAsString().replace("\"", "")));
                             }
                         }
-                        ArrayList<IdName> demandList = new ArrayList<IdName>();
+                        ArrayList<IdName> demandList = new ArrayList<>();
                         if (!job.get("categories").isJsonNull()) {
                             JsonArray jArray1 = job.getAsJsonArray("categories");
                             for (JsonElement j1 : jArray1) {
@@ -161,46 +157,15 @@ public class ResponseParser {
         return ymProfiles;
     }
 
-    public static ArrayList<WeeklyPlacement> parsePlacementReport (List<String[]> csvData) {
-
-        csvData.remove(0);
-        ArrayList<WeeklyPlacement> placements = new ArrayList<WeeklyPlacement>();
-        DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyy-MM-dd");
-
-        for (String[] l : csvData) {
-            DailyPublisherData data = new DailyPublisherData();
-            data.setDate(new DateTime(dtf.parseDateTime(l[0])));
-            data.setAvails(Integer.parseInt(l[3]));
-            data.setUnfilled(Integer.parseInt(l[4]));
-            data.setErrors(Integer.parseInt(l[8]));
-            data.seteCpm(Float.parseFloat(l[9]));
-            data.setPublisherRevenue(Float.parseFloat(l[10]));
-            data.setNetworkRevenue(Float.parseFloat(l[11]));
-            Boolean found = false;
-            for (WeeklyPlacement p : placements) {
-                if (p.getId().equals(l[1])) {
-                    p.getDailyDataList().add(data);
-                    found = true;
-                }
-            }
-            if (!found) {
-                WeeklyPlacement p = new WeeklyPlacement(l[1], l[2]);
-                p.getDailyDataList().add(data);
-                placements.add(p);
-            }
-        }
-        return placements;
-    }
-
     public static ArrayList<BillingAdvertiser> parseBillingReport (List<String[]> csvData) {
         csvData.remove(0);
-        ArrayList<BillingAdvertiser> ads = new ArrayList<BillingAdvertiser>();
+        ArrayList<BillingAdvertiser> ads = new ArrayList<>();
         for (String[] l : csvData) {
             BillingCampaign camp = new BillingCampaign(l[2], l[3], Integer.parseInt(l[4]),
                     Integer.parseInt(l[5]),
                     Integer.parseInt(l[6]),
                     Float.parseFloat(l[7]),
-                    Float.parseFloat(l[8]), Float.parseFloat(l[9])/*Fixme*/);
+                    Float.parseFloat(l[8]), Float.parseFloat(l[9]));
             boolean saved = false;
             for (BillingAdvertiser ad : ads) {
                 //If ad Id is zero, it's sell side, don't save it.
@@ -225,7 +190,7 @@ public class ResponseParser {
 
     public static ArrayList<BillingAdvertiser> parseCreativeBillingReport (List<String[]> csvData) {
         csvData.remove(0);
-        ArrayList<BillingAdvertiser> ads = new ArrayList<BillingAdvertiser>();
+        ArrayList<BillingAdvertiser> ads = new ArrayList<>();
         for (String[] l : csvData) {
             BillingCampaign camp = new BillingCampaign(l[2], l[3], Integer.parseInt(l[4]),
                     Integer.parseInt(l[5]),
@@ -254,20 +219,21 @@ public class ResponseParser {
         return ads;
     }
 
-    public static ArrayList<String> parseTopBrandsOrBuyers(List<String[]> csvData) {
+    public static ArrayList<Tuple2<String, String>> parseTopBrandsOrBuyers(List<String[]> csvData) {
 
         csvData.remove(0);
-        ArrayList<String> brandNames = new ArrayList<String>();
+        ArrayList<Tuple2<String, String>> brands = new ArrayList<>();
 
         int count = 0;
         for (String[] l : csvData) {
            if (count < 10) {
-               brandNames.add(l[0]);
+               brands.add(new Tuple2(l[0], l[1]));
                count++;
            }
         }
+        for (int x = count; x < 10; x++) brands.add(new Tuple2("",""));
 
-        return brandNames;
+        return brands;
     }
 
 

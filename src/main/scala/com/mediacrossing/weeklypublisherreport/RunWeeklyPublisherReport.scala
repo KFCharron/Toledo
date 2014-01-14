@@ -67,7 +67,7 @@ object RunWeeklyPubReport extends App {
       )
     }
 
-    var brands = anConn.requestTopBrandReport(p.id).toList
+    val brands = anConn.requestTopBrandReport(p.id).toList
 
     val monday = DateTime.now().withTimeAtStartOfDay().withDayOfWeek(DateTimeConstants.MONDAY)
     val pub = Publisher(
@@ -108,7 +108,7 @@ object RunWeeklyPubReport extends App {
     sumHeadRow.createCell(0).setCellValue("Summary")
     sumHeadRow.getCell(0).setCellStyle(headStyle)
     sumHeadRow.createCell(1).setCellStyle(headStyle)
-    val fromRow = sheet.createRow(1);
+    val fromRow = sheet.createRow(1)
     fromRow.createCell(0).setCellValue("From")
     val toRow = sheet.createRow(2)
     toRow.createCell(0).setCellValue("To")
@@ -144,25 +144,20 @@ object RunWeeklyPubReport extends App {
       netRevRow.getCell(5).setCellStyle(currency)
       pubRevRow.getCell(5).setCellStyle(currency)
 
-      try {
-        //Top Brands List
-        sumHeadRow.createCell(7).setCellValue("Top Brands")
-        sumHeadRow.getCell(7).setCellStyle(headStyle)
-        fromRow.createCell(7).setCellValue(p.brands(1))
-        toRow.createCell(7).setCellValue(p.brands(2))
-        impRow.createCell(7).setCellValue(p.brands(3))
-        soldRow.createCell(7).setCellValue(p.brands(4))
-        defaultRow.createCell(7).setCellValue(p.brands(5))
-        netRevRow.createCell(7).setCellValue(p.brands(6))
-        pubRevRow.createCell(7).setCellValue(p.brands(7))
-        bRow1.createCell(7).setCellValue(p.brands(8))
-        bRow2.createCell(7).setCellValue(p.brands(9))
-        bRow3.createCell(7).setCellValue(p.brands(10))
-      } catch {
-        case ioobe: IndexOutOfBoundsException => {
-          println("Index out")
-        }
-      }
+      //Top Brands List
+      sumHeadRow.createCell(7).setCellValue("Top Brands")
+      sumHeadRow.getCell(7).setCellStyle(headStyle)
+      fromRow.createCell(7).setCellValue(p.brands(0)._1); fromRow.createCell(8).setCellValue(p.brands(0)._2.toInt)
+      toRow.createCell(7).setCellValue(p.brands(1)._1); toRow.createCell(8).setCellValue(p.brands(1)._2.toInt)
+      impRow.createCell(7).setCellValue(p.brands(2)._1); impRow.createCell(8).setCellValue(p.brands(2)._2.toInt)
+      soldRow.createCell(7).setCellValue(p.brands(3)._1); soldRow.createCell(8).setCellValue(p.brands(3)._2.toInt)
+      defaultRow.createCell(7).setCellValue(p.brands(4)._1); defaultRow.createCell(8).setCellValue(p.brands(4)._2.toInt)
+      netRevRow.createCell(7).setCellValue(p.brands(5)._1); netRevRow.createCell(8).setCellValue(p.brands(5)._2.toInt)
+      pubRevRow.createCell(7).setCellValue(p.brands(6)._1); pubRevRow.createCell(8).setCellValue(p.brands(6)._2.toInt)
+      bRow1.createCell(7).setCellValue(p.brands(7)._1); bRow1.createCell(8).setCellValue(p.brands(7)._2.toInt)
+      bRow2.createCell(7).setCellValue(p.brands(8)._1); bRow2.createCell(8).setCellValue(p.brands(8)._2.toInt)
+      bRow3.createCell(7).setCellValue(p.brands(9)._1); bRow3.createCell(8).setCellValue(p.brands(9)._2.toInt)
+
 
     }
 
@@ -226,10 +221,11 @@ object RunWeeklyPubReport extends App {
     headers.createCell(3).setCellValue("Total Imps")
     headers.createCell(4).setCellValue("Sold")
     headers.createCell(5).setCellValue("Default")
-    headers.createCell(6).setCellValue("Fill Rate")
-    headers.createCell(7).setCellValue("Network Rev.")
-    headers.createCell(8).setCellValue("Pub. Rev.")
-    headers.createCell(9).setCellValue("eCPM")
+    headers.createCell(6).setCellValue("Network Rev.")
+    headers.createCell(7).setCellValue("Pub. Rev.")
+    headers.createCell(8).setCellValue("eCPM")
+    headers.createCell(9).setCellValue("Fill Rate")
+
     for(c <- headers) c.setCellStyle(headStyle)
     rowCount+=1
     latestWeek.foreach(d => {
@@ -240,22 +236,22 @@ object RunWeeklyPubReport extends App {
       dataRow.createCell(3).setCellValue(d.totalImps)
       dataRow.createCell(4).setCellValue(d.soldImps)
       dataRow.createCell(5).setCellValue(d.defaultImps)
-      dataRow.createCell(6).setCellValue(d.fillRate)
-      dataRow.createCell(7).setCellValue(d.networkRevenue)
-      dataRow.createCell(8)
+      dataRow.createCell(6).setCellValue(d.networkRevenue)
+      dataRow.createCell(7)
       if (d.paymentType.equals("Owner Revshare")) {
-        headers.getCell(8).setCellValue("Gross Rev.")
-        dataRow.getCell(8).setCellValue(d.grossRevenue)
-      } else dataRow.getCell(8).setCellValue(d.publisherRevenue)
-      dataRow.createCell(9).setCellValue(d.eCPM)
+        headers.getCell(7).setCellValue("Gross Rev.")
+        dataRow.getCell(7).setCellValue(d.grossRevenue)
+      } else dataRow.getCell(7).setCellValue(d.publisherRevenue)
+      dataRow.createCell(8).setCellValue(d.eCPM)
+      dataRow.createCell(9).setCellValue(d.fillRate)
 
       dataRow.getCell(3).setCellStyle(numbers)
       dataRow.getCell(4).setCellStyle(numbers)
       dataRow.getCell(5).setCellStyle(numbers)
-      dataRow.getCell(6).setCellStyle(percentage)
+      dataRow.getCell(6).setCellStyle(currency)
       dataRow.getCell(7).setCellStyle(currency)
       dataRow.getCell(8).setCellStyle(currency)
-      dataRow.getCell(9).setCellStyle(currency)
+      dataRow.getCell(9).setCellStyle(percentage)
 
       rowCount+=1
     }
@@ -267,7 +263,7 @@ object RunWeeklyPubReport extends App {
 }
 case class PubJson(id: String, name: String, status: String, siteIds: List[String], placementIds: List[String])
 case class Publisher(id: String, name: String, week1: List[DataRow], week2: List[DataRow], week3: List[DataRow],
-                     week4: List[DataRow], brands: List[String])
+                     week4: List[DataRow], brands: List[(String, String)])
 case class DataRow(day: DateTime, pubId: String, paymentType: String, placeName: String, totalImps: Int,
                    soldImps: Int, defaultImps: Int, networkRevenue: Double, publisherRevenue: Double,
                    eCPM: Double, servingFees: Double, placementSize: String) {
