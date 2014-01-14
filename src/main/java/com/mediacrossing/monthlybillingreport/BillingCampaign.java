@@ -6,6 +6,8 @@ public class BillingCampaign implements Serializable {
 
     private String id;
     private String name;
+    private String creativeId;
+    private String creativeName;
     private int imps;
     private int clicks;
     private float convs;
@@ -31,7 +33,32 @@ public class BillingCampaign implements Serializable {
     private float spongecellTotal;
     private float vidibleFee;
     private float vidibleTotal;
+    private float peer39Fee;
+    private float peer39Total;
     private float cpm;
+
+    public BillingCampaign(String id, String name, int imps, int clicks, float convs, float mediaCost,
+                           float networkRevenue, float cpm, String creativeId, String creativeName) {
+        this.id = id;
+        this.name = name;
+        this.creativeId = creativeId;
+        this.creativeName = creativeName;
+        this.imps = imps;
+        this.clicks = clicks;
+        this.convs = convs;
+        this.mediaCost = mediaCost;
+        this.networkRevenue = networkRevenue;
+        this.cpm = cpm;
+        this.briligFee = 0;
+        this.evidonFee = 0;
+        this.integralFee = 0;
+        this.alcFee = 0;
+        this.blueKaiFee = 0;
+        this.grapeshotFee = 0;
+        this.spongecellFee = 0;
+        this.vidibleFee = 0;
+        this.peer39Fee = 0;
+    }
 
     public BillingCampaign(String id, String name, int imps, int clicks, float convs, float mediaCost,
                            float networkRevenue, float cpm) {
@@ -51,6 +78,7 @@ public class BillingCampaign implements Serializable {
         this.grapeshotFee = 0;
         this.spongecellFee = 0;
         this.vidibleFee = 0;
+        this.peer39Fee = 0;
     }
 
     public BillingCampaign() {
@@ -71,6 +99,31 @@ public class BillingCampaign implements Serializable {
         this.grapeshotTotal = 0;
         this.spongecellTotal = 0;
         this.vidibleTotal = 0;
+        this.peer39Total = 0;
+    }
+
+    public float getPeer39Fee() {
+        return peer39Fee;
+    }
+
+    public void setPeer39Fee(float peer39Fee) {
+        this.peer39Fee = peer39Fee;
+    }
+
+    public float getPeer39Total() {
+        return this.peer39Total;
+    }
+
+    public void setPeer39Total(float peer39Total) {
+        this.peer39Total = peer39Total;
+    }
+
+    public String getCreativeId() {
+        return creativeId;
+    }
+
+    public String getCreativeName() {
+        return creativeName;
     }
 
     public void setName(String name) {

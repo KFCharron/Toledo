@@ -2,6 +2,7 @@ package com.mediacrossing.monthlybillingreport;
 
 import com.mediacrossing.connections.AppNexusService;
 import com.mediacrossing.connections.MxService;
+import com.mediacrossing.creativebillingreport.BillingCreative;
 import com.mediacrossing.dailycheckupsreport.Campaign;
 import com.mediacrossing.dailycheckupsreport.ServingFee;
 import com.mediacrossing.properties.ConfigurationProperties;
@@ -128,6 +129,10 @@ public class RunMonthlyBillingReport {
                                 bc.setVidibleFee(Float.parseFloat(fee.getValue()));
                                 bc.setVidibleTotal((imps/(float)1000)*bc.getVidibleFee());
                             }
+                            else if (fee.getBrokerName().equals("Peer39")) {
+                                bc.setPeer39Fee(Float.parseFloat(fee.getValue()));
+                                bc.setPeer39Total((bc.getMediaCost() * 0.15f));
+                            }
 
                         }
                     }
@@ -135,18 +140,10 @@ public class RunMonthlyBillingReport {
             }
         }
 
-        // Serialize data object to a file
-        /*try {
-            ObjectOutputStream out = new ObjectOutputStream
-                    (new FileOutputStream("/Users/charronkyle/Desktop/ReportData/BillingList.ser"));
-            out.writeObject(adList);
-            out.close();
-        } catch (IOException e) {
-            LOG.error("Serialization Failed!");
-            LOG.error(e.toString());
-        }*/
+        //Create empty creative list
+        ArrayList<BillingCreative> bc = new ArrayList<>();
+        boolean saved;
 
         MonthlyBillingReportWriter.writeReportToFile(adList, outputPath);
-
     }
 }

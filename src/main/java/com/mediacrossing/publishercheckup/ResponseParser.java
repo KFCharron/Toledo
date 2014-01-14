@@ -200,7 +200,38 @@ public class ResponseParser {
                     Integer.parseInt(l[5]),
                     Integer.parseInt(l[6]),
                     Float.parseFloat(l[7]),
-                    Float.parseFloat(l[8]), Float.parseFloat(l[9]));
+                    Float.parseFloat(l[8]), Float.parseFloat(l[9])/*Fixme*/);
+            boolean saved = false;
+            for (BillingAdvertiser ad : ads) {
+                //If ad Id is zero, it's sell side, don't save it.
+                if (l[0].equals(ad.getId())) {
+                    if (l[2].equals("0")) saved = true;
+                    else {
+                        ad.getCampaigns().add(camp);
+                        saved = true;
+                    }
+                }
+            }
+            if (!saved) {
+                if(!l[0].equals("0")){
+                    BillingAdvertiser ad = new BillingAdvertiser(l[1], l[0]);
+                    ad.getCampaigns().add(camp);
+                    ads.add(ad);
+                }
+            }
+        }
+        return ads;
+    }
+
+    public static ArrayList<BillingAdvertiser> parseCreativeBillingReport (List<String[]> csvData) {
+        csvData.remove(0);
+        ArrayList<BillingAdvertiser> ads = new ArrayList<BillingAdvertiser>();
+        for (String[] l : csvData) {
+            BillingCampaign camp = new BillingCampaign(l[2], l[3], Integer.parseInt(l[4]),
+                    Integer.parseInt(l[5]),
+                    Integer.parseInt(l[6]),
+                    Float.parseFloat(l[7]),
+                    Float.parseFloat(l[8]), Float.parseFloat(l[9]), l[10], l[11]);
             boolean saved = false;
             for (BillingAdvertiser ad : ads) {
                 //If ad Id is zero, it's sell side, don't save it.

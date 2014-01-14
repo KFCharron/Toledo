@@ -100,7 +100,7 @@ public class AppNexusService {
         String jsonPost = "{\n" +
                 "    \"report\":\n" +
                 "    {\n" +
-                "        \"report_type\": \"network_analytics\",\n" +
+                "        \"report_type\": \"network_billing\",\n" +
                 "        \"columns\": [\n" +
                 "            \"advertiser_id\",\n" +
                 "            \"advertiser_name\",\n" +
@@ -108,10 +108,10 @@ public class AppNexusService {
                 "            \"campaign_name\",\n" +
                 "            \"imps\",\n" +
                 "            \"clicks\",\n" +
-                "            \"total_convs\",\n" +
-                "            \"cost\",\n" +
-                "            \"revenue\",\n" +
-                "            \"cpm\"\n" +
+                "            \"convs\",\n" +
+                "            \"media_cost\",\n" +
+                "            \"network_revenue\",\n" +
+                "            \"ecpm\"\n" +
                 "        ],\n" +
                 "        \"row_per\" :[\n" +
                 "            \"campaign_id\"\n" +
@@ -134,6 +134,46 @@ public class AppNexusService {
         return ResponseParser.parseBillingReport(downloadReportWhenReady(json));
     }
 
+    public ArrayList<BillingAdvertiser> requestCreativeBillingReport () throws Exception {
+        String jsonPost = "{\n" +
+                "    \"report\":\n" +
+                "    {\n" +
+                "        \"report_type\": \"network_billing\",\n" +
+                "        \"columns\": [\n" +
+                "            \"advertiser_id\",\n" +
+                "            \"advertiser_name\",\n" +
+                "            \"campaign_id\",\n" +
+                "            \"campaign_name\",\n" +
+                "            \"imps\",\n" +
+                "            \"clicks\",\n" +
+                "            \"convs\",\n" +
+                "            \"media_cost\",\n" +
+                "            \"network_revenue\",\n" +
+                "            \"ecpm\",\n" +
+                "            \"creative_id\",\n" +
+                "            \"creative_name\"\n" +
+                "        ],\n" +
+                "        \"row_per\" :[\n" +
+                "            \"campaign_id\"\n" +
+                "        ],\n" +
+                "        \"report_interval\": \"last_month\",\n" +
+                //"           \"start_date\": \"2013-11-01\", \"end_date\": \"2013-12-01\","+
+                "        \"format\": \"csv\",\n" +
+                "        \"emails\":[],\n" +
+                "        \"orders\": [\n" +
+                "            {\n" +
+                "            \"order_by\" : \"campaign_id\",\n" +
+                "            \"direction\": \"DESC\"\n" +
+                "            }\n" +
+                "        ],\n" +
+                "        \"timezone\": \"EST5EDT\"\n" +
+                "    }\n" +
+                "}";
+
+        String json = requests.postRequest(url+"/report", jsonPost);
+        return ResponseParser.parseCreativeBillingReport(downloadReportWhenReady(json));
+    }
+
     public List<String[]> requestSellerReport () throws Exception {
         String jsonPost = "{\n" +
                 "    \"report\":\n" +
@@ -147,6 +187,39 @@ public class AppNexusService {
                 "        ],\n" +
                 "        \"row_per\" :[\n" +
                 "            \"campaign_id\",\n" +
+                "            \"seller_member_id\"\n" +
+                "        ],\n" +
+                "        \"report_interval\": \"last_month\",\n" +
+                //"           \"start_date\": \"2013-11-01\", \"end_date\": \"2013-12-01\","+
+                "        \"format\": \"csv\",\n" +
+                "        \"emails\":[],\n" +
+                "        \"orders\": [\n" +
+                "            {\n" +
+                "            \"order_by\" : \"seller_member_id\",\n" +
+                "            \"direction\": \"DESC\"\n" +
+                "            }\n" +
+                "        ],\n" +
+                "        \"timezone\": \"EST5EDT\"\n" +
+                "    }\n" +
+                "}";
+
+        String json = requests.postRequest(url+"/report", jsonPost);
+        return downloadReportWhenReady(json);
+    }
+
+    public List<String[]> requestCreativeSellerReport () throws Exception {
+        String jsonPost = "{\n" +
+                "    \"report\":\n" +
+                "    {\n" +
+                "        \"report_type\": \"network_billing\",\n" +
+                "        \"columns\": [\n" +
+                "            \"seller_member_id\",\n" +
+                "            \"seller_member_name\",\n" +
+                "            \"creative_id\",\n" +
+                "            \"imps\"\n" +
+                "        ],\n" +
+                "        \"row_per\" :[\n" +
+                "            \"creative_id\",\n" +
                 "            \"seller_member_id\"\n" +
                 "        ],\n" +
                 "        \"report_interval\": \"last_month\",\n" +
