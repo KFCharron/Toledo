@@ -112,14 +112,6 @@ object RunBuyerBrandReport extends App{
     })
   }
 
-  //save pub lists to hdd
-  /*try {
-    val out = new ObjectOutputStream(new FileOutputStream("/Users/charronkyle/Desktop/ReportData/BrandBuyerPubs.ser"))
-    out.writeObject(pubs)
-    out.close()
-  } catch {
-    case ioe: IOException => LOG.error("Serialization Failed!")
-  }*/
   val today = new LocalDate(DateTimeZone.UTC)
   val pubBooks = for{p <- pubs} yield new PubWithWorkbooks(p.id, p.name, new BrandBuyerReportWriter(p).writeReports)
   pubBooks.foreach(pub => {
