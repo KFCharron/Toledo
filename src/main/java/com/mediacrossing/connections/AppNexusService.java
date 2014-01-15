@@ -296,7 +296,7 @@ public class AppNexusService {
                 "            \"day\"\n" +
                 "        ],\n" +
                 "        \"report_interval\":\"lifetime\",\n" +
-                "        \"emails\":[ \"kyle.charron@mediacrossing.com\"\n" +
+                "        \"emails\":[\n" +
                 "        ],\n" +
                 "        \"orders\": [\n" +
                 "            {\n" +
