@@ -50,7 +50,7 @@ object RunWeeklyPubReport extends App {
   val dateFormat = DateTimeFormat.forPattern("YYYY-MM-dd")
 
   val pubs = for {p <- pubList} yield {
-    val data = for {line <- anConn.requestPublisherReport(p.id).tail.toList} yield {
+    val data = for {line <- anConn.requestPublisherReport(p.id).tail.toList.filterNot(l => l(2).equals("CPM"))} yield {
       DataRow(
         day = dateFormat.parseDateTime(line(0)),
         pubId = line(1),
@@ -118,10 +118,10 @@ object RunWeeklyPubReport extends App {
     soldRow.createCell(0).setCellValue("Sold")
     val defaultRow = sheet.createRow(5)
     defaultRow.createCell(0).setCellValue("Default")
-    val netRevRow = sheet.createRow(6)
-    netRevRow.createCell(0).setCellValue("Network Rev.")
-    val pubRevRow = sheet.createRow(7)
+    val pubRevRow = sheet.createRow(6)
     pubRevRow.createCell(0).setCellValue("Publisher Rev.")
+    val netRevRow = sheet.createRow(7)
+    netRevRow.createCell(0).setCellValue("Network Rev.")
     val bRow1 = sheet.createRow(8)
     val bRow2 = sheet.createRow(9)
     val bRow3 = sheet.createRow(10)
@@ -147,6 +147,8 @@ object RunWeeklyPubReport extends App {
       //Top Brands List
       sumHeadRow.createCell(7).setCellValue("Top Brands")
       sumHeadRow.getCell(7).setCellStyle(headStyle)
+      sumHeadRow.createCell(8).setCellValue("Imps")
+      sumHeadRow.getCell(8).setCellStyle(headStyle)
       fromRow.createCell(7).setCellValue(p.brands(0)._1); fromRow.createCell(8).setCellValue(p.brands(0)._2.toInt)
       toRow.createCell(7).setCellValue(p.brands(1)._1); toRow.createCell(8).setCellValue(p.brands(1)._2.toInt)
       impRow.createCell(7).setCellValue(p.brands(2)._1); impRow.createCell(8).setCellValue(p.brands(2)._2.toInt)
@@ -256,6 +258,22 @@ object RunWeeklyPubReport extends App {
       rowCount+=1
     }
     )
+    val totalRow = sheet.createRow(rowCount+1)
+    totalRow.createCell(0).setCellValue("Totals:")
+    totalRow.createCell(3).setCellValue(latestWeek.foldLeft(0)(_ + _.totalImps))
+    totalRow.createCell(4).setCellValue(latestWeek.foldLeft(0)(_ + _.soldImps))
+    totalRow.createCell(5).setCellValue(latestWeek.foldLeft(0)(_ + _.defaultImps))
+    totalRow.createCell(6).setCellValue(latestWeek.foldLeft(0.0)(_ + _.networkRevenue))
+    totalRow.createCell(7).setCellValue(latestWeek.foldLeft(0.0)(_ + _.publisherRevenue))
+    totalRow.createCell(9).setCellValue(totalRow.getCell(4).getNumericCellValue /
+      totalRow.getCell(3).getNumericCellValue)
+
+    totalRow.getCell(3).setCellStyle(numbers)
+    totalRow.getCell(4).setCellStyle(numbers)
+    totalRow.getCell(5).setCellStyle(numbers)
+    totalRow.getCell(6).setCellStyle(currency)
+    totalRow.getCell(7).setCellStyle(currency)
+    totalRow.getCell(9).setCellStyle(percentage)
 
     for (x <- 0 to 11) sheet.autoSizeColumn(x)
     wb

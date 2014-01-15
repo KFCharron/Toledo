@@ -30,6 +30,7 @@ object RunMonthlyPubReport extends App {
     props.getAppNexusPassword,
     props.getPartitionSize,
     props.getRequestDelayInSeconds)
+
   val mxConn = {
     if (props.getMxUsername == null) new MxService(props.getMxUrl)
     else new MxService(props.getMxUrl, props.getMxUsername, props.getMxPassword)
@@ -51,7 +52,7 @@ object RunMonthlyPubReport extends App {
   val dateFormat = DateTimeFormat.forPattern("YYYY-MM-dd")
 
   val pubs = for {p <- pubList} yield {
-    val data = for {line <- anConn.requestPublisherReport(p.id).tail.toList} yield {
+    val data = for {line <- anConn.requestPublisherReport(p.id).tail.toList.filterNot(l => l(2).equals("CPM"))} yield {
       DataRow(
         day = dateFormat.parseDateTime(line(0)),
         pubId = line(1),
@@ -111,9 +112,9 @@ object RunMonthlyPubReport extends App {
     sumTotals.createCell(3).setCellValue("Total Imps")
     sumTotals.createCell(4).setCellValue("Sold")
     sumTotals.createCell(5).setCellValue("Default")
-    sumTotals.createCell(6)
-    sumTotals.createCell(7).setCellValue("Network Rev.")
-    sumTotals.createCell(8).setCellValue("Publisher Rev.")
+    sumTotals.createCell(6).setCellValue("Network Rev.")
+    sumTotals.createCell(7).setCellValue("Publisher Rev.")
+    sumTotals.createCell(8)
     sumTotals.createCell(9)
     for (c <- sumTotals) c.setCellStyle(headStyle)
 
@@ -121,13 +122,13 @@ object RunMonthlyPubReport extends App {
     sums.createCell(3).setCellValue(p.daily.foldLeft(0)(_ + _.totalImps))
     sums.createCell(4).setCellValue(p.daily.foldLeft(0)(_ + _.soldImps))
     sums.createCell(5).setCellValue(p.daily.foldLeft(0)(_ + _.defaultImps))
-    sums.createCell(7).setCellValue(p.daily.foldLeft(0.0)(_ + _.networkRevenue))
-    sums.createCell(8).setCellValue(p.daily.foldLeft(0.0)(_ + _.publisherRevenue))
+    sums.createCell(6).setCellValue(p.daily.foldLeft(0.0)(_ + _.networkRevenue))
+    sums.createCell(7).setCellValue(p.daily.foldLeft(0.0)(_ + _.publisherRevenue))
     sums.getCell(3).setCellStyle(numbers)
     sums.getCell(4).setCellStyle(numbers)
     sums.getCell(5).setCellStyle(numbers)
+    sums.getCell(6).setCellStyle(currency)
     sums.getCell(7).setCellStyle(currency)
-    sums.getCell(8).setCellStyle(currency)
 
 
     var rowCount = 4
@@ -145,10 +146,11 @@ object RunMonthlyPubReport extends App {
     headers.createCell(3).setCellValue("Total Imps")
     headers.createCell(4).setCellValue("Sold")
     headers.createCell(5).setCellValue("Default")
-    headers.createCell(6).setCellValue("Fill Rate")
-    headers.createCell(7).setCellValue("Network Rev.")
-    headers.createCell(8).setCellValue("Pub. Rev.")
-    headers.createCell(9).setCellValue("eCPM")
+    headers.createCell(6).setCellValue("Network Rev.")
+    headers.createCell(7).setCellValue("Pub. Rev.")
+    headers.createCell(8).setCellValue("eCPM")
+    headers.createCell(9).setCellValue("Fill Rate")
+
     for(c <- headers) c.setCellStyle(headStyle)
     rowCount+=1
     p.daily.foreach(d => {
@@ -159,27 +161,43 @@ object RunMonthlyPubReport extends App {
       dataRow.createCell(3).setCellValue(d.totalImps)
       dataRow.createCell(4).setCellValue(d.soldImps)
       dataRow.createCell(5).setCellValue(d.defaultImps)
-      dataRow.createCell(6).setCellValue(d.fillRate)
-      dataRow.createCell(7).setCellValue(d.networkRevenue)
-      dataRow.createCell(8)
-      println(d.pubId + " - " + d.placeName + " - " + d.paymentType)
+      dataRow.createCell(6).setCellValue(d.networkRevenue)
+      dataRow.createCell(7)
       if (d.paymentType.equals("Owner Revshare")) {
-        headers.getCell(8).setCellValue("Gross Rev.")
-        dataRow.getCell(8).setCellValue(d.grossRevenue)
-      } else dataRow.getCell(8).setCellValue(d.publisherRevenue)
-      dataRow.createCell(9).setCellValue(d.eCPM)
+        headers.getCell(7).setCellValue("Gross Rev.")
+        dataRow.getCell(7).setCellValue(d.grossRevenue)
+      } else dataRow.getCell(7).setCellValue(d.publisherRevenue)
+      dataRow.createCell(8).setCellValue(d.eCPM)
+      dataRow.createCell(9).setCellValue(d.fillRate)
 
       dataRow.getCell(3).setCellStyle(numbers)
       dataRow.getCell(4).setCellStyle(numbers)
       dataRow.getCell(5).setCellStyle(numbers)
-      dataRow.getCell(6).setCellStyle(percentage)
+      dataRow.getCell(6).setCellStyle(currency)
       dataRow.getCell(7).setCellStyle(currency)
       dataRow.getCell(8).setCellStyle(currency)
-      dataRow.getCell(9).setCellStyle(currency)
+      dataRow.getCell(9).setCellStyle(percentage)
 
       rowCount+=1
     }
     )
+
+    val totalRow = sheet.createRow(rowCount+1)
+    totalRow.createCell(0).setCellValue("Totals:")
+    totalRow.createCell(3).setCellValue(p.daily.foldLeft(0)(_ + _.totalImps))
+    totalRow.createCell(4).setCellValue(p.daily.foldLeft(0)(_ + _.soldImps))
+    totalRow.createCell(5).setCellValue(p.daily.foldLeft(0)(_ + _.defaultImps))
+    totalRow.createCell(6).setCellValue(p.daily.foldLeft(0.0)(_ + _.networkRevenue))
+    totalRow.createCell(7).setCellValue(p.daily.foldLeft(0.0)(_ + _.publisherRevenue))
+    totalRow.createCell(9).setCellValue(totalRow.getCell(4).getNumericCellValue /
+      totalRow.getCell(3).getNumericCellValue)
+
+    totalRow.getCell(3).setCellStyle(numbers)
+    totalRow.getCell(4).setCellStyle(numbers)
+    totalRow.getCell(5).setCellStyle(numbers)
+    totalRow.getCell(6).setCellStyle(currency)
+    totalRow.getCell(7).setCellStyle(currency)
+    totalRow.getCell(9).setCellStyle(percentage)
 
     for (x <- 0 to 11) sheet.autoSizeColumn(x)
     wb
