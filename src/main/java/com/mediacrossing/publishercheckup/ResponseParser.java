@@ -231,7 +231,7 @@ public class ResponseParser {
                count++;
            }
         }
-        for (int x = count; x < 10; x++) brands.add(new Tuple2("",""));
+        for (int x = count; x < 10; x++) brands.add(new Tuple2("","0"));
 
         return brands;
     }
