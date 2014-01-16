@@ -229,9 +229,9 @@ public class ExcelWriter {
                 }
 
                 int cellCount = 9;
-
                 //list daily deliveries
                 for (long x = startToNow.getStandardDays()-1; x >= 0; x--) {
+                    if (x > 255) x = 255;
                     //add header cell with date
                     campaignHeaderRow.createCell(cellCount)
                             .setCellValue(lineItem.getStartDateTime().plusDays((int)x).monthOfYear().getAsString() +
