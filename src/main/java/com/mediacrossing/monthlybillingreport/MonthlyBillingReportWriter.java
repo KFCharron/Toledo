@@ -376,21 +376,20 @@ public class MonthlyBillingReportWriter {
         head.createCell(12).setCellValue("MX Imps");
         head.createCell(13).setCellValue("AppNexus Imps");
         head.createCell(14).setCellValue("Brilig Imps");
-        head.createCell(15).setCellValue("Brilig Total");
-        head.createCell(16).setCellValue("ALC");
-        head.createCell(17).setCellValue("Evidon");
-        head.createCell(18).setCellValue("BlueKai");
-        head.createCell(19).setCellValue("Grapeshot");
-        head.createCell(20).setCellValue("Integral");
-        head.createCell(21).setCellValue("Peer39");
-        head.createCell(22).setCellValue("Spongecell");
-        head.createCell(23).setCellValue("Vidible");
-        head.createCell(24).setCellValue("Amazon Cost");
-        head.createCell(25).setCellValue("AdX Cost");
-        head.createCell(26).setCellValue("Brilig Cost");
-        head.createCell(27).setCellValue("Total Cost");
-        head.createCell(28).setCellValue("Gross Profit");
-        head.createCell(29).setCellValue("GP Margin");
+        head.createCell(15).setCellValue("ALC");
+        head.createCell(16).setCellValue("Evidon");
+        head.createCell(17).setCellValue("BlueKai");
+        head.createCell(18).setCellValue("Grapeshot");
+        head.createCell(19).setCellValue("Integral");
+        head.createCell(20).setCellValue("Peer39");
+        head.createCell(21).setCellValue("Spongecell");
+        head.createCell(22).setCellValue("Vidible");
+        head.createCell(23).setCellValue("Amazon Cost");
+        head.createCell(24).setCellValue("AdX Cost");
+        head.createCell(25).setCellValue("Brilig Cost");
+        head.createCell(26).setCellValue("Total Cost");
+        head.createCell(27).setCellValue("Gross Profit");
+        head.createCell(28).setCellValue("GP Margin");
 
         BillingCreative total = new BillingCreative();
         int rowCount = 1;
@@ -407,15 +406,14 @@ public class MonthlyBillingReportWriter {
             dataRow.createCell(12).setCellValue(b.getMxImps());
             dataRow.createCell(13).setCellValue(b.getAppNexusImps());
             dataRow.createCell(14).setCellValue(b.getBriligImps());
-            dataRow.createCell(15).setCellValue(b.getBriligTotal());
-            dataRow.createCell(16).setCellValue(b.getAlcTotal());
-            dataRow.createCell(17).setCellValue(b.getEvidonTotal());
-            dataRow.createCell(18).setCellValue(b.getBlueKaiTotal());
-            dataRow.createCell(19).setCellValue(b.getGrapeshotTotal());
-            dataRow.createCell(20).setCellValue(b.getIntegralTotal());
-            dataRow.createCell(21).setCellValue(b.getPeer39Total());
-            dataRow.createCell(22).setCellValue(b.getSpongecellTotal());
-            dataRow.createCell(23).setCellValue(b.getVidibleTotal());
+            dataRow.createCell(15).setCellValue(b.getAlcTotal());
+            dataRow.createCell(16).setCellValue(b.getEvidonTotal());
+            dataRow.createCell(17).setCellValue(b.getBlueKaiTotal());
+            dataRow.createCell(18).setCellValue(b.getGrapeshotTotal());
+            dataRow.createCell(19).setCellValue(b.getIntegralTotal());
+            dataRow.createCell(20).setCellValue(b.getPeer39Total());
+            dataRow.createCell(21).setCellValue(b.getSpongecellTotal());
+            dataRow.createCell(22).setCellValue(b.getVidibleTotal());
             
             dataRow.getCell(2).setCellStyle(number);
             dataRow.getCell(3).setCellStyle(number);
@@ -434,7 +432,6 @@ public class MonthlyBillingReportWriter {
             dataRow.getCell(20).setCellStyle(fullCurrency);
             dataRow.getCell(21).setCellStyle(fullCurrency);
             dataRow.getCell(22).setCellStyle(fullCurrency);
-            dataRow.getCell(23).setCellStyle(fullCurrency);
 
             total.setImps(total.getImps() + b.getImps());
             total.setClicks(total.getClicks() + b.getClicks());
@@ -468,15 +465,14 @@ public class MonthlyBillingReportWriter {
         totalRow.createCell(12).setCellValue(total.getMxImps());
         totalRow.createCell(13).setCellValue(total.getAppNexusImps());
         totalRow.createCell(14).setCellValue(total.getBriligImps());
-        totalRow.createCell(15).setCellValue(total.getBriligTotal());
-        totalRow.createCell(16).setCellValue(total.getAlcTotal());
-        totalRow.createCell(17).setCellValue(total.getEvidonTotal());
-        totalRow.createCell(18).setCellValue(total.getBlueKaiTotal());
-        totalRow.createCell(19).setCellValue(total.getGrapeshotTotal());
-        totalRow.createCell(20).setCellValue(total.getIntegralTotal());
-        totalRow.createCell(21).setCellValue(total.getPeer39Total());
-        totalRow.createCell(22).setCellValue(total.getSpongecellTotal());
-        totalRow.createCell(23).setCellValue(total.getVidibleTotal());
+        totalRow.createCell(15).setCellValue(total.getAlcTotal());
+        totalRow.createCell(16).setCellValue(total.getEvidonTotal());
+        totalRow.createCell(17).setCellValue(total.getBlueKaiTotal());
+        totalRow.createCell(18).setCellValue(total.getGrapeshotTotal());
+        totalRow.createCell(19).setCellValue(total.getIntegralTotal());
+        totalRow.createCell(20).setCellValue(total.getPeer39Total());
+        totalRow.createCell(21).setCellValue(total.getSpongecellTotal());
+        totalRow.createCell(22).setCellValue(total.getVidibleTotal());
 
         totalRow.getCell(2).setCellStyle(number);
         totalRow.getCell(3).setCellStyle(number);
@@ -495,7 +491,6 @@ public class MonthlyBillingReportWriter {
         totalRow.getCell(20).setCellStyle(fullCurrency);
         totalRow.getCell(21).setCellStyle(fullCurrency);
         totalRow.getCell(22).setCellStyle(fullCurrency);
-        totalRow.getCell(23).setCellStyle(fullCurrency);
 
         for (Cell c : head) sheet.autoSizeColumn(c.getColumnIndex());
 
@@ -517,21 +512,20 @@ public class MonthlyBillingReportWriter {
             header.createCell(12).setCellValue("MX Imps");
             header.createCell(13).setCellValue("AppNexus Imps");
             header.createCell(14).setCellValue("Brilig Imps");
-            header.createCell(15).setCellValue("Brilig Total");
-            header.createCell(16).setCellValue("ALC");
-            header.createCell(17).setCellValue("Evidon");
-            header.createCell(18).setCellValue("BlueKai");
-            header.createCell(19).setCellValue("Grapeshot");
-            header.createCell(20).setCellValue("Integral");
-            header.createCell(21).setCellValue("Peer39");
-            header.createCell(22).setCellValue("Spongecell");
-            header.createCell(23).setCellValue("Vidible");
-            header.createCell(24).setCellValue("Amazon Cost");
-            header.createCell(25).setCellValue("AdX Cost");
-            header.createCell(26).setCellValue("Brilig Cost");
-            header.createCell(27).setCellValue("Total Cost");
-            header.createCell(28).setCellValue("Gross Profit");
-            header.createCell(29).setCellValue("GP Margin");
+            header.createCell(15).setCellValue("ALC");
+            header.createCell(16).setCellValue("Evidon");
+            header.createCell(17).setCellValue("BlueKai");
+            header.createCell(18).setCellValue("Grapeshot");
+            header.createCell(19).setCellValue("Integral");
+            header.createCell(20).setCellValue("Peer39");
+            header.createCell(21).setCellValue("Spongecell");
+            header.createCell(22).setCellValue("Vidible");
+            header.createCell(23).setCellValue("Amazon Cost");
+            header.createCell(24).setCellValue("AdX Cost");
+            header.createCell(25).setCellValue("Brilig Cost");
+            header.createCell(26).setCellValue("Total Cost");
+            header.createCell(27).setCellValue("Gross Profit");
+            header.createCell(28).setCellValue("GP Margin");
             
             BillingCreative adTotal = new BillingCreative();
             int count = 1;
@@ -549,15 +543,14 @@ public class MonthlyBillingReportWriter {
                     d.createCell(12).setCellValue(c.getMxImps());
                     d.createCell(13).setCellValue(c.getAppNexusImps());
                     d.createCell(14).setCellValue(c.getBriligImps());
-                    d.createCell(15).setCellValue(c.getBriligTotal());
-                    d.createCell(16).setCellValue(c.getAlcTotal());
-                    d.createCell(17).setCellValue(c.getEvidonTotal());
-                    d.createCell(18).setCellValue(c.getBlueKaiTotal());
-                    d.createCell(19).setCellValue(c.getGrapeshotTotal());
-                    d.createCell(20).setCellValue(c.getIntegralTotal());
-                    d.createCell(21).setCellValue(c.getPeer39Total());
-                    d.createCell(22).setCellValue(c.getSpongecellTotal());
-                    d.createCell(23).setCellValue(c.getVidibleTotal());
+                    d.createCell(15).setCellValue(c.getAlcTotal());
+                    d.createCell(16).setCellValue(c.getEvidonTotal());
+                    d.createCell(17).setCellValue(c.getBlueKaiTotal());
+                    d.createCell(18).setCellValue(c.getGrapeshotTotal());
+                    d.createCell(19).setCellValue(c.getIntegralTotal());
+                    d.createCell(20).setCellValue(c.getPeer39Total());
+                    d.createCell(21).setCellValue(c.getSpongecellTotal());
+                    d.createCell(22).setCellValue(c.getVidibleTotal());
 
                     d.getCell(2).setCellStyle(number);
                     d.getCell(3).setCellStyle(number);
@@ -576,7 +569,6 @@ public class MonthlyBillingReportWriter {
                     d.getCell(20).setCellStyle(fullCurrency);
                     d.getCell(21).setCellStyle(fullCurrency);
                     d.getCell(22).setCellStyle(fullCurrency);
-                    d.getCell(23).setCellStyle(fullCurrency);
 
                     adTotal.setImps(adTotal.getImps() + c.getImps());
                     adTotal.setClicks(adTotal.getClicks() + c.getClicks());
@@ -611,15 +603,14 @@ public class MonthlyBillingReportWriter {
             adTotalRow.createCell(12).setCellValue(adTotal.getMxImps());
             adTotalRow.createCell(13).setCellValue(adTotal.getAppNexusImps());
             adTotalRow.createCell(14).setCellValue(adTotal.getBriligImps());
-            adTotalRow.createCell(15).setCellValue(adTotal.getBriligTotal());
-            adTotalRow.createCell(16).setCellValue(adTotal.getAlcTotal());
-            adTotalRow.createCell(17).setCellValue(adTotal.getEvidonTotal());
-            adTotalRow.createCell(18).setCellValue(adTotal.getBlueKaiTotal());
-            adTotalRow.createCell(19).setCellValue(adTotal.getGrapeshotTotal());
-            adTotalRow.createCell(20).setCellValue(adTotal.getIntegralTotal());
-            adTotalRow.createCell(21).setCellValue(adTotal.getPeer39Total());
-            adTotalRow.createCell(22).setCellValue(adTotal.getSpongecellTotal());
-            adTotalRow.createCell(23).setCellValue(adTotal.getVidibleTotal());
+            adTotalRow.createCell(15).setCellValue(adTotal.getAlcTotal());
+            adTotalRow.createCell(16).setCellValue(adTotal.getEvidonTotal());
+            adTotalRow.createCell(17).setCellValue(adTotal.getBlueKaiTotal());
+            adTotalRow.createCell(18).setCellValue(adTotal.getGrapeshotTotal());
+            adTotalRow.createCell(19).setCellValue(adTotal.getIntegralTotal());
+            adTotalRow.createCell(20).setCellValue(adTotal.getPeer39Total());
+            adTotalRow.createCell(21).setCellValue(adTotal.getSpongecellTotal());
+            adTotalRow.createCell(22).setCellValue(adTotal.getVidibleTotal());
 
             adTotalRow.getCell(2).setCellStyle(number);
             adTotalRow.getCell(3).setCellStyle(number);
@@ -638,7 +629,6 @@ public class MonthlyBillingReportWriter {
             adTotalRow.getCell(20).setCellStyle(fullCurrency);
             adTotalRow.getCell(21).setCellStyle(fullCurrency);
             adTotalRow.getCell(22).setCellStyle(fullCurrency);
-            adTotalRow.getCell(23).setCellStyle(fullCurrency);
 
             for (Cell c : header) adSheet.autoSizeColumn(c.getColumnIndex());
         }
