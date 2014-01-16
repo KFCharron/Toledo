@@ -3,11 +3,14 @@ package com.mediacrossing.creativebillingreport;
 import com.mediacrossing.monthlybillingreport.BillingCampaign;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 public class BillingCreative implements Serializable {
 
     private String creativeId;
     private String creativeName;
+    private String adId;
+    private String adName;
     private int imps;
     private int clicks;
     private float convs;
@@ -26,10 +29,13 @@ public class BillingCreative implements Serializable {
     private float spongecellTotal;
     private float vidibleTotal;
     private float peer39Total;
+    private ArrayList<BillingCampaign> campaigns = new ArrayList<>();
 
-    public BillingCreative(BillingCampaign c) {
+    public BillingCreative(BillingCampaign c, String adId, String adName) {
         this.creativeId = c.getCreativeId();
         this.creativeName = c.getCreativeName();
+        this.adId = adId;
+        this.adName = adName;
         this.imps = c.getImps();
         this.clicks = c.getClicks();
         this.convs = c.getConvs();
@@ -69,6 +75,26 @@ public class BillingCreative implements Serializable {
         this.spongecellTotal = 0;
         this.vidibleTotal = 0;
         this.peer39Total = 0;
+    }
+
+    public String getAdId() {
+        return adId;
+    }
+
+    public void setAdId(String adId) {
+        this.adId = adId;
+    }
+
+    public String getAdName() {
+        return adName;
+    }
+
+    public void setAdName(String adName) {
+        this.adName = adName;
+    }
+
+    public ArrayList<BillingCampaign> getCampaigns() {
+        return campaigns;
     }
 
     public float getPeer39Total() {

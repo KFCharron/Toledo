@@ -110,6 +110,8 @@ public class RunCreativeBillingReport {
                 saved = false;
                 for (BillingCreative b : bc) {
                     if (c.getCreativeId().equals(b.getCreativeId())) {
+                        b.setAdId(a.getId());
+                        b.setAdName(a.getName());
                         b.setImps(b.getImps() + c.getImps());
                         b.setClicks(b.getClicks() + c.getClicks());
                         b.setConvs(b.getConvs() + c.getConvs());
@@ -128,10 +130,11 @@ public class RunCreativeBillingReport {
                         b.setSpongecellTotal(b.getSpongecellTotal() + c.getSpongecellTotal());
                         b.setVidibleTotal(b.getVidibleTotal() + c.getVidibleTotal());
                         b.setPeer39Total(b.getPeer39Total() + c.getPeer39Total());
+                        b.getCampaigns().add(c);
                         saved = true;
                     }
                 }
-                if(!saved) bc.add(new BillingCreative(c));
+                if(!saved) bc.add(new BillingCreative(c, a.getId(), a.getName()));
             }
         }
 
@@ -143,6 +146,9 @@ public class RunCreativeBillingReport {
                 for (BillingCreative b : bc) {
                     if (b.getCreativeId().equals(l[2])) {
                         b.setAdExImps(Integer.parseInt(l[3]));
+                        for (BillingCampaign c : b.getCampaigns()) {
+                            c.setAdExImps(Integer.parseInt(l[3]));
+                        }
                     }
                 }
             }
@@ -150,10 +156,13 @@ public class RunCreativeBillingReport {
                 for (BillingCreative b : bc) {
                     if (b.getCreativeId().equals(l[2])) {
                         b.setMxImps(Integer.parseInt(l[3]));
+                        for (BillingCampaign c : b.getCampaigns()) {
+                            c.setAdExImps(Integer.parseInt(l[3]));
+                        }
                     }
                 }
             }
         }
-        MonthlyBillingReportWriter.writeCreativeReport(bc, outputPath);
+        MonthlyBillingReportWriter.writeCreativeReport(bc, adList, outputPath);
     }
 }
