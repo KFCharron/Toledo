@@ -50,20 +50,21 @@ object RunInternalPublisherReport extends App {
   val dateFormat = DateTimeFormat.forPattern("YYYY-MM-dd")
 
   val pubs = for {p <- pubList} yield {
-    val data = for {line <- anConn.requestPublisherReport(p.id).tail.toList.filterNot(l => l(2).equals("CPM"))} yield {
+    val data = for {line <- anConn.requestInternalPublisherReport(p.id).tail.toList.filterNot(l => l(2).equals("CPM"))} yield {
       DataRow(
         day = dateFormat.parseDateTime(line(0)),
         pubId = line(1),
         paymentType = line(2),
         placeName = line(3),
         totalImps = line(4).toInt,
-        soldImps = line(5).toInt,
-        defaultImps = line(6).toInt,
-        networkRevenue = line(7).toDouble,
-        publisherRevenue = line(8).toDouble,
-        eCPM = line(9).toDouble,
-        servingFees = line(10).toDouble,
-        placementSize = line(11)
+        keptImps = line(5).toInt,
+        resoldImps = line(6).toInt,
+        defaultImps = line(7).toInt,
+        networkRevenue = line(8).toDouble,
+        publisherRevenue = line(9).toDouble,
+        eCPM = line(10).toDouble,
+        servingFees = line(11).toDouble,
+        placementSize = line(12)
       )
     }
 
@@ -80,7 +81,7 @@ object RunInternalPublisherReport extends App {
       brands = brands
     )
     val wb = writeReport(pub)
-    val out = new FileOutputStream(new File(props.getOutputPath, pub.name + "_Weekly_Report.xls"))
+    val out = new FileOutputStream(new File(props.getOutputPath, "Internal_" + pub.name + "_Weekly_Report.xls"))
     wb.write(out)
     out.close()
   }
@@ -114,32 +115,35 @@ object RunInternalPublisherReport extends App {
     toRow.createCell(0).setCellValue("To")
     val impRow = sheet.createRow(3)
     impRow.createCell(0).setCellValue("Imps")
-    val soldRow = sheet.createRow(4)
-    soldRow.createCell(0).setCellValue("Sold")
-    val defaultRow = sheet.createRow(5)
+    val keptRow = sheet.createRow(4)
+    keptRow.createCell(0).setCellValue("Kept")
+    val resoldRow = sheet.createRow(5)
+    resoldRow.createCell(0).setCellValue("Resold")
+    val defaultRow = sheet.createRow(6)
     defaultRow.createCell(0).setCellValue("Default")
-    val pubRevRow = sheet.createRow(6)
+    val pubRevRow = sheet.createRow(7)
     pubRevRow.createCell(0).setCellValue("Publisher Rev.")
-    val netRevRow = sheet.createRow(7)
+    val netRevRow = sheet.createRow(8)
     netRevRow.createCell(0).setCellValue("Network Rev.")
-    val bRow1 = sheet.createRow(8)
-    val bRow2 = sheet.createRow(9)
-    val bRow3 = sheet.createRow(10)
+    val bRow1 = sheet.createRow(9)
+    val bRow2 = sheet.createRow(10)
 
     var rowCount = 12
     val latestWeek = p.week4
 
     if (p.week4.length > 0) {
       sumHeadRow.createCell(5).setCellValue("Last Week")
-      fromRow.createCell(5).setCellValue(p.week4.last.day.getMonthOfYear + "/" + p.week4.last.day.getDayOfMonth)
-      toRow.createCell(5).setCellValue(p.week4.head.day.getMonthOfYear + "/" + p.week4.head.day.getDayOfMonth)
+      fromRow.createCell(5).setCellValue(p.week4.head.day.getMonthOfYear + "/" + p.week4.head.day.getDayOfMonth)
+      toRow.createCell(5).setCellValue(p.week4.last.day.getMonthOfYear + "/" + p.week4.last.day.getDayOfMonth)
       impRow.createCell(5).setCellValue(p.week4.foldLeft(0)(_ + _.totalImps))
-      soldRow.createCell(5).setCellValue(p.week4.foldLeft(0)(_ + _.soldImps))
+      keptRow.createCell(5).setCellValue(p.week4.foldLeft(0)(_ + _.keptImps))
+      resoldRow.createCell(5).setCellValue(p.week4.foldLeft(0)(_ + _.resoldImps))
       defaultRow.createCell(5).setCellValue(p.week4.foldLeft(0)(_ + _.defaultImps))
       netRevRow.createCell(5).setCellValue(p.week4.foldLeft(0.0)(_ + _.networkRevenue))
       pubRevRow.createCell(5).setCellValue(p.week4.foldLeft(0.0)(_ + _.publisherRevenue))
       impRow.getCell(5).setCellStyle(numbers)
-      soldRow.getCell(5).setCellStyle(numbers)
+      keptRow.getCell(5).setCellStyle(numbers)
+      resoldRow.getCell(5).setCellStyle(numbers)
       defaultRow.getCell(5).setCellStyle(numbers)
       netRevRow.getCell(5).setCellStyle(currency)
       pubRevRow.getCell(5).setCellStyle(currency)
@@ -152,28 +156,28 @@ object RunInternalPublisherReport extends App {
       fromRow.createCell(7).setCellValue(p.brands(0)._1); fromRow.createCell(8).setCellValue(p.brands(0)._2.toInt)
       toRow.createCell(7).setCellValue(p.brands(1)._1); toRow.createCell(8).setCellValue(p.brands(1)._2.toInt)
       impRow.createCell(7).setCellValue(p.brands(2)._1); impRow.createCell(8).setCellValue(p.brands(2)._2.toInt)
-      soldRow.createCell(7).setCellValue(p.brands(3)._1); soldRow.createCell(8).setCellValue(p.brands(3)._2.toInt)
-      defaultRow.createCell(7).setCellValue(p.brands(4)._1); defaultRow.createCell(8).setCellValue(p.brands(4)._2.toInt)
-      netRevRow.createCell(7).setCellValue(p.brands(5)._1); netRevRow.createCell(8).setCellValue(p.brands(5)._2.toInt)
+      keptRow.createCell(7).setCellValue(p.brands(3)._1); keptRow.createCell(8).setCellValue(p.brands(3)._2.toInt)
+      resoldRow.createCell(7).setCellValue(p.brands(4)._1); resoldRow.createCell(8).setCellValue(p.brands(4)._2.toInt)
+      defaultRow.createCell(7).setCellValue(p.brands(5)._1); defaultRow.createCell(8).setCellValue(p.brands(5)._2.toInt)
       pubRevRow.createCell(7).setCellValue(p.brands(6)._1); pubRevRow.createCell(8).setCellValue(p.brands(6)._2.toInt)
-      bRow1.createCell(7).setCellValue(p.brands(7)._1); bRow1.createCell(8).setCellValue(p.brands(7)._2.toInt)
-      bRow2.createCell(7).setCellValue(p.brands(8)._1); bRow2.createCell(8).setCellValue(p.brands(8)._2.toInt)
-      bRow3.createCell(7).setCellValue(p.brands(9)._1); bRow3.createCell(8).setCellValue(p.brands(9)._2.toInt)
-
-
+      netRevRow.createCell(7).setCellValue(p.brands(7)._1); netRevRow.createCell(8).setCellValue(p.brands(7)._2.toInt)
+      bRow1.createCell(7).setCellValue(p.brands(8)._1); bRow1.createCell(8).setCellValue(p.brands(8)._2.toInt)
+      bRow2.createCell(7).setCellValue(p.brands(9)._1); bRow2.createCell(8).setCellValue(p.brands(9)._2.toInt)
     }
 
     if (p.week3.length > 0) {
       sumHeadRow.createCell(4).setCellValue("2 Weeks Ago")
-      fromRow.createCell(4).setCellValue(p.week3.last.day.getMonthOfYear + "/" + p.week3.last.day.getDayOfMonth)
-      toRow.createCell(4).setCellValue(p.week3.head.day.getMonthOfYear + "/" + p.week3.head.day.getDayOfMonth)
+      fromRow.createCell(4).setCellValue(p.week3.head.day.getMonthOfYear + "/" + p.week3.head.day.getDayOfMonth)
+      toRow.createCell(4).setCellValue(p.week3.last.day.getMonthOfYear + "/" + p.week3.last.day.getDayOfMonth)
       impRow.createCell(4).setCellValue(p.week3.foldLeft(0)(_ + _.totalImps))
-      soldRow.createCell(4).setCellValue(p.week3.foldLeft(0)(_ + _.soldImps))
+      keptRow.createCell(4).setCellValue(p.week3.foldLeft(0)(_ + _.keptImps))
+      resoldRow.createCell(4).setCellValue(p.week3.foldLeft(0)(_ + _.resoldImps))
       defaultRow.createCell(4).setCellValue(p.week3.foldLeft(0)(_ + _.defaultImps))
       netRevRow.createCell(4).setCellValue(p.week3.foldLeft(0.0)(_ + _.networkRevenue))
       pubRevRow.createCell(4).setCellValue(p.week3.foldLeft(0.0)(_ + _.publisherRevenue))
       impRow.getCell(4).setCellStyle(numbers)
-      soldRow.getCell(4).setCellStyle(numbers)
+      keptRow.getCell(4).setCellStyle(numbers)
+      resoldRow.getCell(4).setCellStyle(numbers)
       defaultRow.getCell(4).setCellStyle(numbers)
       netRevRow.getCell(4).setCellStyle(currency)
       pubRevRow.getCell(4).setCellStyle(currency)
@@ -181,15 +185,17 @@ object RunInternalPublisherReport extends App {
 
     if (p.week2.length > 0) {
       sumHeadRow.createCell(3).setCellValue("3 Weeks Ago")
-      fromRow.createCell(3).setCellValue(p.week2.last.day.getMonthOfYear + "/" + p.week2.last.day.getDayOfMonth)
-      toRow.createCell(3).setCellValue(p.week2.head.day.getMonthOfYear + "/" + p.week2.head.day.getDayOfMonth)
+      fromRow.createCell(3).setCellValue(p.week2.head.day.getMonthOfYear + "/" + p.week2.head.day.getDayOfMonth)
+      toRow.createCell(3).setCellValue(p.week2.last.day.getMonthOfYear + "/" + p.week2.last.day.getDayOfMonth)
       impRow.createCell(3).setCellValue(p.week2.foldLeft(0)(_ + _.totalImps))
-      soldRow.createCell(3).setCellValue(p.week2.foldLeft(0)(_ + _.soldImps))
+      keptRow.createCell(3).setCellValue(p.week2.foldLeft(0)(_ + _.keptImps))
+      resoldRow.createCell(3).setCellValue(p.week2.foldLeft(0)(_ + _.resoldImps))
       defaultRow.createCell(3).setCellValue(p.week2.foldLeft(0)(_ + _.defaultImps))
       netRevRow.createCell(3).setCellValue(p.week2.foldLeft(0.0)(_ + _.networkRevenue))
       pubRevRow.createCell(3).setCellValue(p.week2.foldLeft(0.0)(_ + _.publisherRevenue))
       impRow.getCell(3).setCellStyle(numbers)
-      soldRow.getCell(3).setCellStyle(numbers)
+      keptRow.getCell(3).setCellStyle(numbers)
+      resoldRow.getCell(3).setCellStyle(numbers)
       defaultRow.getCell(3).setCellStyle(numbers)
       netRevRow.getCell(3).setCellStyle(currency)
       pubRevRow.getCell(3).setCellStyle(currency)
@@ -197,15 +203,17 @@ object RunInternalPublisherReport extends App {
 
     if (p.week1.length > 0) {
       sumHeadRow.createCell(2).setCellValue("4 Weeks Ago")
-      fromRow.createCell(2).setCellValue(p.week1.last.day.getMonthOfYear + "/" + p.week1.last.day.getDayOfMonth)
-      toRow.createCell(2).setCellValue(p.week1.head.day.getMonthOfYear + "/" + p.week1.head.day.getDayOfMonth)
+      fromRow.createCell(2).setCellValue(p.week1.head.day.getMonthOfYear + "/" + p.week1.head.day.getDayOfMonth)
+      toRow.createCell(2).setCellValue(p.week1.last.day.getMonthOfYear + "/" + p.week1.last.day.getDayOfMonth)
       impRow.createCell(2).setCellValue(p.week1.foldLeft(0)(_ + _.totalImps))
-      soldRow.createCell(2).setCellValue(p.week1.foldLeft(0)(_ + _.soldImps))
+      keptRow.createCell(2).setCellValue(p.week1.foldLeft(0)(_ + _.keptImps))
+      resoldRow.createCell(2).setCellValue(p.week1.foldLeft(0)(_ + _.resoldImps))
       defaultRow.createCell(2).setCellValue(p.week1.foldLeft(0)(_ + _.defaultImps))
       netRevRow.createCell(2).setCellValue(p.week1.foldLeft(0.0)(_ + _.networkRevenue))
       pubRevRow.createCell(2).setCellValue(p.week1.foldLeft(0.0)(_ + _.publisherRevenue))
       impRow.getCell(2).setCellStyle(numbers)
-      soldRow.getCell(2).setCellStyle(numbers)
+      keptRow.getCell(2).setCellStyle(numbers)
+      resoldRow.getCell(2).setCellStyle(numbers)
       defaultRow.getCell(2).setCellStyle(numbers)
       netRevRow.getCell(2).setCellStyle(currency)
       pubRevRow.getCell(2).setCellStyle(currency)
@@ -221,12 +229,14 @@ object RunInternalPublisherReport extends App {
     headers.createCell(1).setCellValue("Placement")
     headers.createCell(2).setCellValue("Size")
     headers.createCell(3).setCellValue("Total Imps")
-    headers.createCell(4).setCellValue("Sold")
-    headers.createCell(5).setCellValue("Default")
-    headers.createCell(6).setCellValue("Network Rev.")
-    headers.createCell(7).setCellValue("Pub. Rev.")
-    headers.createCell(8).setCellValue("eCPM")
-    headers.createCell(9).setCellValue("Fill Rate")
+    headers.createCell(4).setCellValue("Kept")
+    headers.createCell(5).setCellValue("Resold")
+    headers.createCell(6).setCellValue("Default")
+    headers.createCell(7).setCellValue("Network Rev.")
+    headers.createCell(8).setCellValue("Pub. Rev.")
+    headers.createCell(9).setCellValue("eCPM")
+    headers.createCell(10).setCellValue("Fill Rate")
+    headers.createCell(11).setCellValue("Serving Fees")
 
     for(c <- headers) c.setCellStyle(headStyle)
     rowCount+=1
@@ -236,24 +246,28 @@ object RunInternalPublisherReport extends App {
       dataRow.createCell(1).setCellValue(d.placeName)
       dataRow.createCell(2).setCellValue(d.placementSize)
       dataRow.createCell(3).setCellValue(d.totalImps)
-      dataRow.createCell(4).setCellValue(d.soldImps)
-      dataRow.createCell(5).setCellValue(d.defaultImps)
-      dataRow.createCell(6).setCellValue(d.networkRevenue)
-      dataRow.createCell(7)
+      dataRow.createCell(4).setCellValue(d.keptImps)
+      dataRow.createCell(5).setCellValue(d.resoldImps)
+      dataRow.createCell(6).setCellValue(d.defaultImps)
+      dataRow.createCell(7).setCellValue(d.networkRevenue)
+      dataRow.createCell(8)
       if (d.paymentType.equals("Owner Revshare")) {
-        headers.getCell(7).setCellValue("Gross Rev.")
-        dataRow.getCell(7).setCellValue(d.grossRevenue)
-      } else dataRow.getCell(7).setCellValue(d.publisherRevenue)
-      dataRow.createCell(8).setCellValue(d.eCPM)
-      dataRow.createCell(9).setCellValue(d.fillRate)
+        headers.getCell(8).setCellValue("Gross Rev.")
+        dataRow.getCell(8).setCellValue(d.grossRevenue)
+      } else dataRow.getCell(8).setCellValue(d.publisherRevenue)
+      dataRow.createCell(9).setCellValue(d.eCPM)
+      dataRow.createCell(10).setCellValue(d.fillRate)
+      dataRow.createCell(11).setCellValue(d.servingFees)
 
       dataRow.getCell(3).setCellStyle(numbers)
       dataRow.getCell(4).setCellStyle(numbers)
       dataRow.getCell(5).setCellStyle(numbers)
-      dataRow.getCell(6).setCellStyle(currency)
+      dataRow.getCell(6).setCellStyle(numbers)
       dataRow.getCell(7).setCellStyle(currency)
       dataRow.getCell(8).setCellStyle(currency)
-      dataRow.getCell(9).setCellStyle(percentage)
+      dataRow.getCell(9).setCellStyle(currency)
+      dataRow.getCell(10).setCellStyle(percentage)
+      dataRow.getCell(11).setCellStyle(currency)
 
       rowCount+=1
     }
@@ -261,21 +275,27 @@ object RunInternalPublisherReport extends App {
     val totalRow = sheet.createRow(rowCount+1)
     totalRow.createCell(0).setCellValue("Totals:")
     totalRow.createCell(3).setCellValue(latestWeek.foldLeft(0)(_ + _.totalImps))
-    totalRow.createCell(4).setCellValue(latestWeek.foldLeft(0)(_ + _.soldImps))
-    totalRow.createCell(5).setCellValue(latestWeek.foldLeft(0)(_ + _.defaultImps))
-    totalRow.createCell(6).setCellValue(latestWeek.foldLeft(0.0)(_ + _.networkRevenue))
-    totalRow.createCell(7).setCellValue(latestWeek.foldLeft(0.0)(_ + _.publisherRevenue))
-    totalRow.createCell(9).setCellValue(totalRow.getCell(4).getNumericCellValue /
-      totalRow.getCell(3).getNumericCellValue)
+    totalRow.createCell(4).setCellValue(latestWeek.foldLeft(0)(_ + _.keptImps))
+    totalRow.createCell(5).setCellValue(latestWeek.foldLeft(0)(_ + _.resoldImps))
+    totalRow.createCell(6).setCellValue(latestWeek.foldLeft(0)(_ + _.defaultImps))
+    totalRow.createCell(7).setCellValue(latestWeek.foldLeft(0.0)(_ + _.networkRevenue))
+    totalRow.createCell(8).setCellValue(latestWeek.foldLeft(0.0)(_ + _.publisherRevenue))
+    totalRow.createCell(10).setCellValue(
+      (totalRow.getCell(4).getNumericCellValue + totalRow.getCell(5).getNumericCellValue) /
+      totalRow.getCell(3).getNumericCellValue
+    )
+    totalRow.createCell(11).setCellValue(latestWeek.foldLeft(0.0)(_ + _.servingFees))
 
     totalRow.getCell(3).setCellStyle(numbers)
     totalRow.getCell(4).setCellStyle(numbers)
     totalRow.getCell(5).setCellStyle(numbers)
-    totalRow.getCell(6).setCellStyle(currency)
+    totalRow.getCell(6).setCellStyle(numbers)
     totalRow.getCell(7).setCellStyle(currency)
-    totalRow.getCell(9).setCellStyle(percentage)
+    totalRow.getCell(8).setCellStyle(currency)
+    totalRow.getCell(10).setCellStyle(percentage)
+    totalRow.getCell(11).setCellStyle(currency)
 
-    for (x <- 0 to 11) sheet.autoSizeColumn(x)
+    for (x <- 0 to 12) sheet.autoSizeColumn(x)
     wb
   }
 }
@@ -283,8 +303,8 @@ case class PubJson(id: String, name: String, status: String, siteIds: List[Strin
 case class Publisher(id: String, name: String, week1: List[DataRow], week2: List[DataRow], week3: List[DataRow],
                      week4: List[DataRow], brands: List[(String, String)])
 case class DataRow(day: DateTime, pubId: String, paymentType: String, placeName: String, totalImps: Int,
-                   soldImps: Int, defaultImps: Int, networkRevenue: Double, publisherRevenue: Double,
+                   keptImps: Int, resoldImps: Int, defaultImps: Int, networkRevenue: Double, publisherRevenue: Double,
                    eCPM: Double, servingFees: Double, placementSize: String) {
-  val fillRate = Int.int2float(soldImps) / Int.int2float(totalImps)
+  val fillRate = Int.int2float(keptImps + resoldImps) / Int.int2float(totalImps)
   val grossRevenue = servingFees + publisherRevenue
 }

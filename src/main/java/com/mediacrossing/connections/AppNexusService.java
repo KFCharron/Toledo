@@ -315,6 +315,50 @@ public class AppNexusService {
         return downloadReportWhenReady(json);
     }
 
+    public List<String[]> requestInternalPublisherReport(String id) throws Exception {
+        String j = "{\n" +
+                "    \"report\":\n" +
+                "    {\n" +
+                "        \"report_type\": \"network_publisher_analytics\",\n" +
+                "        \"columns\":[\n" +
+                "            \"day\",\n" +
+                "            \"publisher_id\",\n" +
+                "            \"payment_type\",\n" +
+                "            \"placement_name\",\n" +
+                "            \"imps_total\",\n" +
+                "            \"imps_kept\",\n" +
+                "            \"imps_resold\",\n" +
+                "            \"imps_default\",\n" +
+                "            \"network_revenue\",\n" +
+                "            \"publisher_revenue\",\n" +
+                "            \"network_rpm\",\n" +
+                "            \"serving_fees\",\n" +
+                "            \"size\"\n" +
+                "        ],\n" +
+                "        \"row_per\":[\n" +
+                "            \"placement_id\",\n" +
+                "            \"day\"\n" +
+                "        ],\n" +
+                "        \"report_interval\":\"lifetime\",\n" +
+                "        \"emails\":[\n" +
+                "        ],\n" +
+                "        \"orders\": [\n" +
+                "            {\n" +
+                "            \"order_by\" : \"day\",\n" +
+                "            \"direction\": \"ASC\"\n" +
+                "            },\n" +
+                "            {\n" +
+                "            \"order_by\" : \"placement_name\",\n" +
+                "            \"direction\": \"DESC\"\n" +
+                "            }\n" +
+                "        ],\n" +
+                "        \"timezone\": \"EST5EDT\""+
+                "    }\n" +
+                "}";
+        String json = requests.postRequest(url+"/report?publisher_id="+id, j);
+        return downloadReportWhenReady(json);
+    }
+
     public ArrayList<Tuple2<String, String>> requestTopBrandReport (String pubId) throws Exception {
         String jsonPost = "{\n" +
                 "    \"report\":\n" +
