@@ -131,8 +131,8 @@ object RunWeeklyPubReport extends App {
 
     if (p.week4.length > 0) {
       sumHeadRow.createCell(5).setCellValue("Last Week")
-      fromRow.createCell(5).setCellValue(p.week4.last.day.getMonthOfYear + "/" + p.week4.last.day.getDayOfMonth)
-      toRow.createCell(5).setCellValue(p.week4.head.day.getMonthOfYear + "/" + p.week4.head.day.getDayOfMonth)
+      fromRow.createCell(5).setCellValue(p.week4.head.day.getMonthOfYear + "/" + p.week4.head.day.getDayOfMonth)
+      toRow.createCell(5).setCellValue(p.week4.last.day.getMonthOfYear + "/" + p.week4.last.day.getDayOfMonth)
       impRow.createCell(5).setCellValue(p.week4.foldLeft(0)(_ + _.totalImps))
       soldRow.createCell(5).setCellValue(p.week4.foldLeft(0)(_ + _.soldImps))
       defaultRow.createCell(5).setCellValue(p.week4.foldLeft(0)(_ + _.defaultImps))
@@ -154,8 +154,8 @@ object RunWeeklyPubReport extends App {
       impRow.createCell(7).setCellValue(p.brands(2)._1); impRow.createCell(8).setCellValue(p.brands(2)._2.toInt)
       soldRow.createCell(7).setCellValue(p.brands(3)._1); soldRow.createCell(8).setCellValue(p.brands(3)._2.toInt)
       defaultRow.createCell(7).setCellValue(p.brands(4)._1); defaultRow.createCell(8).setCellValue(p.brands(4)._2.toInt)
-      netRevRow.createCell(7).setCellValue(p.brands(5)._1); netRevRow.createCell(8).setCellValue(p.brands(5)._2.toInt)
-      pubRevRow.createCell(7).setCellValue(p.brands(6)._1); pubRevRow.createCell(8).setCellValue(p.brands(6)._2.toInt)
+      pubRevRow.createCell(7).setCellValue(p.brands(5)._1); pubRevRow.createCell(8).setCellValue(p.brands(5)._2.toInt)
+      netRevRow.createCell(7).setCellValue(p.brands(6)._1); netRevRow.createCell(8).setCellValue(p.brands(6)._2.toInt)
       bRow1.createCell(7).setCellValue(p.brands(7)._1); bRow1.createCell(8).setCellValue(p.brands(7)._2.toInt)
       bRow2.createCell(7).setCellValue(p.brands(8)._1); bRow2.createCell(8).setCellValue(p.brands(8)._2.toInt)
       bRow3.createCell(7).setCellValue(p.brands(9)._1); bRow3.createCell(8).setCellValue(p.brands(9)._2.toInt)
@@ -165,8 +165,8 @@ object RunWeeklyPubReport extends App {
 
     if (p.week3.length > 0) {
       sumHeadRow.createCell(4).setCellValue("2 Weeks Ago")
-      fromRow.createCell(4).setCellValue(p.week3.last.day.getMonthOfYear + "/" + p.week3.last.day.getDayOfMonth)
-      toRow.createCell(4).setCellValue(p.week3.head.day.getMonthOfYear + "/" + p.week3.head.day.getDayOfMonth)
+      fromRow.createCell(4).setCellValue(p.week3.head.day.getMonthOfYear + "/" + p.week3.head.day.getDayOfMonth)
+      toRow.createCell(4).setCellValue(p.week3.last.day.getMonthOfYear + "/" + p.week3.last.day.getDayOfMonth)
       impRow.createCell(4).setCellValue(p.week3.foldLeft(0)(_ + _.totalImps))
       soldRow.createCell(4).setCellValue(p.week3.foldLeft(0)(_ + _.soldImps))
       defaultRow.createCell(4).setCellValue(p.week3.foldLeft(0)(_ + _.defaultImps))
@@ -181,8 +181,8 @@ object RunWeeklyPubReport extends App {
 
     if (p.week2.length > 0) {
       sumHeadRow.createCell(3).setCellValue("3 Weeks Ago")
-      fromRow.createCell(3).setCellValue(p.week2.last.day.getMonthOfYear + "/" + p.week2.last.day.getDayOfMonth)
-      toRow.createCell(3).setCellValue(p.week2.head.day.getMonthOfYear + "/" + p.week2.head.day.getDayOfMonth)
+      fromRow.createCell(3).setCellValue(p.week2.head.day.getMonthOfYear + "/" + p.week2.head.day.getDayOfMonth)
+      toRow.createCell(3).setCellValue(p.week2.last.day.getMonthOfYear + "/" + p.week2.last.day.getDayOfMonth)
       impRow.createCell(3).setCellValue(p.week2.foldLeft(0)(_ + _.totalImps))
       soldRow.createCell(3).setCellValue(p.week2.foldLeft(0)(_ + _.soldImps))
       defaultRow.createCell(3).setCellValue(p.week2.foldLeft(0)(_ + _.defaultImps))
@@ -197,8 +197,8 @@ object RunWeeklyPubReport extends App {
 
     if (p.week1.length > 0) {
       sumHeadRow.createCell(2).setCellValue("4 Weeks Ago")
-      fromRow.createCell(2).setCellValue(p.week1.last.day.getMonthOfYear + "/" + p.week1.last.day.getDayOfMonth)
-      toRow.createCell(2).setCellValue(p.week1.head.day.getMonthOfYear + "/" + p.week1.head.day.getDayOfMonth)
+      fromRow.createCell(2).setCellValue(p.week1.head.day.getMonthOfYear + "/" + p.week1.head.day.getDayOfMonth)
+      toRow.createCell(2).setCellValue(p.week1.last.day.getMonthOfYear + "/" + p.week1.last.day.getDayOfMonth)
       impRow.createCell(2).setCellValue(p.week1.foldLeft(0)(_ + _.totalImps))
       soldRow.createCell(2).setCellValue(p.week1.foldLeft(0)(_ + _.soldImps))
       defaultRow.createCell(2).setCellValue(p.week1.foldLeft(0)(_ + _.defaultImps))
