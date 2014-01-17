@@ -8,7 +8,6 @@ import org.joda.time.format.DateTimeFormatter;
 
 import java.io.Serializable;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 

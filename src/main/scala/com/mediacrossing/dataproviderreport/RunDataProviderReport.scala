@@ -38,7 +38,6 @@ object RunDataProviderReport extends App {
 
   val campaignDateFormat = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")
 
-  //TODO: Separate report generation function out so it can be tested on it's own
   val currentTime = DateTime.now
   //for each campaign, if today is before end date, add the adId to Set, add serving fee names to set
   val (advertiserIds, dpNames) = campList.filter(camp => {

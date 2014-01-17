@@ -13,13 +13,13 @@ public class ConnectionRequestProperties {
 
         final String encoded = new Base64().encodeToString(loginPassword.getBytes("UTF-8"));
 
-        return new Tuple2<String, String>("Authorization", "Basic " + encoded);
+        return new Tuple2<>("Authorization", "Basic " + encoded);
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }
     }
 
     public static Tuple2<String, String> authorization(String token) {
-        return new Tuple2<String, String>("Authorization", token);
+        return new Tuple2<>("Authorization", token);
     }
 }

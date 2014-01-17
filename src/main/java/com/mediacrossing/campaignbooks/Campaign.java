@@ -19,7 +19,7 @@ public class Campaign implements Serializable {
     private float dailyBudget;
     private float totalDelivery;
     private long daysActive;
-    private ArrayList<Delivery> deliveries = new ArrayList<Delivery>();
+    private ArrayList<Delivery> deliveries = new ArrayList<>();
     private long daysRemaining;
     private int lifetimeImps;
     private int lifetimeClicks;

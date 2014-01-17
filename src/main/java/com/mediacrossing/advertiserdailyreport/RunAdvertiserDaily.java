@@ -6,8 +6,6 @@ import com.mediacrossing.connections.MxService;
 import com.mediacrossing.properties.ConfigurationProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.*;
 import java.util.*;
 
 public class RunAdvertiserDaily {
@@ -46,26 +44,10 @@ public class RunAdvertiserDaily {
         AppNexusService anConn = new AppNexusService(appNexusUrl, properties.getAppNexusUsername(),
                 properties.getAppNexusPassword());
 
-        //for faster debugging
-        boolean development = false;
-        if (development) {
-            try{
-                FileInputStream door = new FileInputStream("/Users/charronkyle/Desktop/ReportData/AdvertiserList.ser");
-                ObjectInputStream reader = new ObjectInputStream(door);
-                List<Advertiser> adList = (List<Advertiser>) reader.readObject();
-                ReportWriter.writeAdvertiserDailyReport(adList, outputPath);
-                System.exit(0);
-
-            }catch (IOException e){
-                e.printStackTrace();
-                System.exit(1);
-            }
-        }
-
         //Parse and save to list of advertisers
         final List<Advertiser> advertiserList = mxConn.requestAllAdvertisers();
         LOG.debug(advertiserList.size() + " advertisers received from MX.");
-        final List<Advertiser> liveAdvertiserList = new ArrayList<Advertiser>();
+        final List<Advertiser> liveAdvertiserList = new ArrayList<>();
 
         for(Advertiser ad : advertiserList) {
             if(ad.isLive()) {
@@ -86,7 +68,7 @@ public class RunAdvertiserDaily {
             csvData.remove(0);
 
             //add yesterday stats to line item
-            ArrayList<DailyData> dailyLineItems = new ArrayList<DailyData>();
+            ArrayList<DailyData> dailyLineItems = new ArrayList<>();
             for (String[] line : csvData) {
                 DailyData data = new DailyData();
                 data.setId(line[0]);
@@ -110,7 +92,7 @@ public class RunAdvertiserDaily {
             csvData.remove(0);
 
             //add lifetime stats to line item
-            ArrayList<DailyData> lifetimeLineItems = new ArrayList<DailyData>();
+            ArrayList<DailyData> lifetimeLineItems = new ArrayList<>();
             for (String[] line : csvData) {
                 DailyData data = new DailyData();
                 data.setId(line[0]);
@@ -134,7 +116,7 @@ public class RunAdvertiserDaily {
             csvData.remove(0);
 
             //add yesterday stats to campaign
-            ArrayList<DailyData> dailyCampaigns = new ArrayList<DailyData>();
+            ArrayList<DailyData> dailyCampaigns = new ArrayList<>();
             for (String[] line : csvData) {
                 DailyData data = new DailyData();
                 data.setId(line[0]);
@@ -158,7 +140,7 @@ public class RunAdvertiserDaily {
             csvData.remove(0);
 
             //add yesterday stats to line item
-            ArrayList<DailyData> lifetimeCampaigns = new ArrayList<DailyData>();
+            ArrayList<DailyData> lifetimeCampaigns = new ArrayList<>();
             for (String[] line : csvData) {
                 DailyData data = new DailyData();
                 data.setId(line[0]);
@@ -226,20 +208,6 @@ public class RunAdvertiserDaily {
                 }
             }
         }
-
-        // Serialize data object to a file
-        /*try {
-            ObjectOutputStream out = new ObjectOutputStream
-                    (new FileOutputStream("/Users/charronkyle/Desktop/ReportData/AdvertiserList.ser"));
-            out.writeObject(liveAdvertiserList);
-            out.close();
-        } catch (IOException e) {
-            LOG.error("Serialization Failed!");
-            LOG.error(e.toString());
-        }*/
-
-
-
 
         //Write report
         LOG.debug("Calling ReportWriter.writeAdvertiserDailyReport");

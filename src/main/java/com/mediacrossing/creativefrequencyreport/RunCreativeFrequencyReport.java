@@ -47,7 +47,7 @@ public class RunCreativeFrequencyReport {
                 appNexusPassword, anPartitionSize, requestDelayInSeconds);
 
         //request lifetime numbers
-        List<Creative> creatives = new ArrayList<Creative>();
+        List<Creative> creatives = new ArrayList<>();
         List<String[]> data = anConn.requestCreativeReport("lifetime");
         data.remove(0);
         String delim = "[_]";

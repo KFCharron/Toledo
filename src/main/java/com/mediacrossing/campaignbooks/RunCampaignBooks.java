@@ -3,8 +3,6 @@ package com.mediacrossing.campaignbooks;
 import com.mediacrossing.connections.AppNexusService;
 import com.mediacrossing.connections.MxService;
 import com.mediacrossing.properties.ConfigurationProperties;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,25 +49,6 @@ public class RunCampaignBooks {
         AppNexusService anConn = new AppNexusService(appNexusUrl, appNexusUsername,
                 appNexusPassword);
 
-        //for faster debugging
-        boolean development = false;
-        if (development) {
-            try{
-                FileInputStream door = new FileInputStream("/Users/charronkyle/Desktop/ReportData/CampaignBookData.ser");
-                ObjectInputStream reader = new ObjectInputStream(door);
-                List<Advertiser> adList = (List<Advertiser>) reader.readObject();
-                for (Advertiser advertiser : adList) {
-                    ExcelWriter.writeAdvertiserSheetToWorkbook(advertiser);
-                }
-                ExcelWriter.writeWorkbookToFileWithOutputPath(outputPath);
-                System.exit(0);
-
-            }catch (IOException e){
-                e.printStackTrace();
-                System.exit(1);
-            }
-        }
-
         //Parse and save to list of advertisers
         final List<Advertiser> advertiserList = mxConn.requestAllAdvertisers();
 
@@ -104,7 +83,7 @@ public class RunCampaignBooks {
         }
 
         //Create new list with only live advertisers
-        final ArrayList<Advertiser> liveAdvertiserList = new ArrayList<Advertiser>();
+        final ArrayList<Advertiser> liveAdvertiserList = new ArrayList<>();
         for (Advertiser ad : advertiserList) {
             if (ad.isLive()) {
                 liveAdvertiserList.add(ad);
@@ -153,18 +132,6 @@ public class RunCampaignBooks {
                 }
             }
         }
-
-
-        // Serialize data object to a file
-        /*try {
-            ObjectOutputStream out = new ObjectOutputStream
-                    (new FileOutputStream("/Users/charronkyle/Desktop/ReportData/CampaignBookData.ser"));
-            out.writeObject(liveAdvertiserList);
-            out.close();
-        } catch (IOException e) {
-            LOG.error("Serialization Failed!");
-            LOG.error(e.toString());
-        }*/
 
         //Build and save excel book, each sheet being its own advertiser
         for (Advertiser advertiser : liveAdvertiserList) {

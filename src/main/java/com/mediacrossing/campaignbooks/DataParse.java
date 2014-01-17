@@ -19,7 +19,7 @@ public class DataParse {
     }
 
     public static List<Advertiser> populateAdvertiserList (String rawData) {
-        List<Advertiser> advertiserList = new ArrayList<Advertiser>();
+        List<Advertiser> advertiserList = new ArrayList<>();
         JsonElement jsonElement = new JsonParser().parse(rawData);
         JsonArray advertiserJsonArray = jsonElement.getAsJsonArray();
         for (JsonElement advertiser : advertiserJsonArray) {
@@ -33,7 +33,7 @@ public class DataParse {
     }
 
     public static ArrayList<LineItem> populateLineItemList(String rawData) throws ParseException {
-        ArrayList<LineItem> lineItemList = new ArrayList<LineItem>();
+        ArrayList<LineItem> lineItemList = new ArrayList<>();
         JsonElement jsonElement = new JsonParser().parse(rawData);
         for (JsonElement lineItem : jsonElement.getAsJsonArray()) {
             JsonObject jsonObject = lineItem.getAsJsonObject();
@@ -51,7 +51,7 @@ public class DataParse {
     }
 
     public static ArrayList<Campaign> populateCampaignList(String rawData) throws ParseException {
-        ArrayList<Campaign> campaignList = new ArrayList<Campaign>();
+        ArrayList<Campaign> campaignList = new ArrayList<>();
         JsonElement jsonElement = new JsonParser().parse(rawData);
         JsonArray campaignJsonArray = jsonElement.getAsJsonArray();
         for (JsonElement campaign : campaignJsonArray) {
@@ -89,7 +89,7 @@ public class DataParse {
     }
 
     public static ArrayList<Publisher> parsePublisherIdAndName(String rawData) {
-        ArrayList<Publisher> pl = new ArrayList<Publisher>();
+        ArrayList<Publisher> pl = new ArrayList<>();
         JsonElement je = new JsonParser().parse(rawData);
         JsonObject jo = je.getAsJsonObject().getAsJsonObject("response");
         JsonArray ja = jo.getAsJsonArray("publishers");

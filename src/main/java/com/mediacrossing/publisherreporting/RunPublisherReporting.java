@@ -6,8 +6,6 @@ import com.mediacrossing.dailycheckupsreport.XlsWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scala.concurrent.duration.Duration;
-
-import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,23 +39,6 @@ public class RunPublisherReporting {
         Duration requestDelayInSeconds = properties.getRequestDelayInSeconds();
         AppNexusService anConn = new AppNexusService(appNexusUrl, appNexusUsername,
                 appNexusPassword, anPartitionSize, requestDelayInSeconds);
-
-        //for faster debugging
-        boolean development = false;
-        if (development) {
-            try{
-                FileInputStream door = new FileInputStream("/Users/charronkyle/Desktop/ReportData/PublisherLists.ser");
-                ObjectInputStream reader = new ObjectInputStream(door);
-                ArrayList<ArrayList> arrayLists = (ArrayList<ArrayList>) reader.readObject();
-                XlsWriter.writePublisherReport(arrayLists.get(0), arrayLists.get(1),
-                        arrayLists.get(2), arrayLists.get(3), outputPath);
-                System.exit(0);
-
-            }catch (IOException e){
-                e.printStackTrace();
-                System.exit(1);
-            }
-        }
 
         //get yesterday publisher report
         ArrayList<Publisher> commonData = anConn.requestPublishers();
@@ -171,16 +152,6 @@ public class RunPublisherReporting {
         arrayLists.add(lifetimePubList);
         arrayLists.add(dayPlacementList);
         arrayLists.add(lifetimePlacementList);
-
-        /*try {
-            ObjectOutputStream out = new ObjectOutputStream
-                    (new FileOutputStream("/Users/charronkyle/Desktop/ReportData/PublisherLists.ser"));
-            out.writeObject(arrayLists);
-            out.close();
-        } catch (IOException e) {
-            LOG.error("Serialization Failed!");
-            LOG.error(e.toString());
-        }*/
 
         XlsWriter.writePublisherReport(dayPubList, lifetimePubList, dayPlacementList, lifetimePlacementList, outputPath);
     }
