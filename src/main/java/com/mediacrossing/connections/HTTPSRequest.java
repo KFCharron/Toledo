@@ -83,6 +83,11 @@ public class HTTPSRequest implements Request {
 
         //Send GET request
         int responseCode = con.getResponseCode();
+        if (responseCode != 200) {
+            LOG.error("Received Response Code " + responseCode + " from " + url);
+            LOG.error("Exiting Program");
+            System.exit(1);
+        }
         LOG.debug("\nSending 'GET' request to URL : " + url);
         LOG.debug("Response Code : " + responseCode);
         //Input Reader
@@ -127,6 +132,11 @@ public class HTTPSRequest implements Request {
         wr.close();
 
         int responseCode = con.getResponseCode();
+        if (responseCode != 200) {
+            LOG.error("Received Response Code " + responseCode + " from " + url);
+            LOG.error("Exiting Program");
+            System.exit(1);
+        }
         LOG.debug("\nSending 'POST' request to URL : " + url);
         LOG.debug("Response Code : " + responseCode);
 
