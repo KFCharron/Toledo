@@ -62,6 +62,12 @@ public class AppNexusService {
         return DataParse.parsePublisherIdAndName(json);
     }
 
+    public boolean checkForSegment(String code) throws Exception {
+        String json = requests.getRequest(url + "/segment?code=" + code);
+        throttleCheck();
+        return DataParse.parseSegment(json);
+    }
+
     public ArrayList<PublisherConfig> requestPublisherConfigs() throws Exception {
         ArrayList<Publisher> temp = requestPublishers();
         ArrayList<PublisherConfig> pubConfigs = new ArrayList<>();
@@ -174,7 +180,9 @@ public class AppNexusService {
                 "            \"seller_member_id\",\n" +
                 "            \"seller_member_name\",\n" +
                 "            \"campaign_id\",\n" +
-                "            \"imps\"\n" +
+                "            \"imps\",\n" +
+                //TODO
+                "            \"media_cost\"\n" +
                 "        ],\n" +
                 "        \"row_per\" :[\n" +
                 "            \"campaign_id\",\n" +

@@ -18,6 +18,12 @@ public class DataParse {
         return reportUrl;
     }
 
+    public static boolean parseSegment(String rawData) {
+        JsonElement je = new JsonParser().parse(rawData);
+        JsonObject jsonObject = je.getAsJsonObject().getAsJsonObject("response");
+        if(!jsonObject.get("count").toString().equals("0")) return true; else return false;
+    }
+
     public static List<Advertiser> populateAdvertiserList (String rawData) {
         List<Advertiser> advertiserList = new ArrayList<>();
         JsonElement jsonElement = new JsonParser().parse(rawData);
