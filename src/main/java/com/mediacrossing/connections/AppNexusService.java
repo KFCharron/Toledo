@@ -131,6 +131,53 @@ public class AppNexusService {
         return ResponseParser.parseBillingReport(downloadReportWhenReady(json));
     }
 
+    public List<String[]> getPnlReport(String pubId, String interval) throws Exception {
+        String jsonPost = "{\n" +
+                "    \"report\":\n" +
+                "    {\n" +
+                "        \"report_type\":\"network_publisher_analytics\",\n" +
+                "        \"columns\":[\n" +
+                "            \"publisher_id\",\n" +
+                "            \"network_profit\",\n" +
+                "            \"imps_total\",\n" +
+                "            \"imps_resold\",\n" +
+                "            \"serving_fees\"\n" +
+                "        ],\n" +
+                "        \"row_per\":[\n" +
+                "            \"publisher_id\"\n" +
+                "        ],\n" +
+                "        \"report_interval\":\"" + interval + "\",\n" +
+                "        \"format\":\"csv\",\n" +
+                "        \"timezone\":\"EST5EDT\"\n" +
+                "    }\n" +
+                "}";
+
+        String json = requests.postRequest(url+"/report?publisher_id="+pubId, jsonPost);
+        return downloadReportWhenReady(json);
+    }
+
+    public float getResoldRevenue(String pubId, String interval) throws Exception {
+        String jsonPost = "{\n" +
+                "    \"report\":\n" +
+                "    {\n" +
+                "        \"report_type\":\"network_publisher_analytics\",\n" +
+                "        \"columns\":[\n" +
+                "            \"imp_type_id\",\n" +
+                "            \"network_revenue\"\n" +
+                "        ],\n" +
+                "        \"row_per\":[\n" +
+                "            \"imp_type_id\"\n" +
+                "        ],\n" +
+                "        \"report_interval\":\"" + interval + "\",\n" +
+                "        \"format\":\"csv\",\n" +
+                "        \"timezone\":\"EST5EDT\"\n" +
+                "    }\n" +
+                "}";
+
+        String json = requests.postRequest(url+"/report?publisher_id="+pubId, jsonPost);
+        return ResponseParser.parseResoldRevenue(downloadReportWhenReady(json));
+    }
+
     public ArrayList<BillingAdvertiser> requestCreativeBillingReport () throws Exception {
         String jsonPost = "{\n" +
                 "    \"report\":\n" +
@@ -180,9 +227,9 @@ public class AppNexusService {
                 "            \"seller_member_id\",\n" +
                 "            \"seller_member_name\",\n" +
                 "            \"campaign_id\",\n" +
-                "            \"imps\",\n" +
+                "            \"imps\"\n" +
                 //TODO
-                "            \"media_cost\"\n" +
+                //"            \"media_cost\"\n" +
                 "        ],\n" +
                 "        \"row_per\" :[\n" +
                 "            \"campaign_id\",\n" +

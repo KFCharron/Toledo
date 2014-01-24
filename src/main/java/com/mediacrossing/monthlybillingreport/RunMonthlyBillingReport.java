@@ -2,7 +2,6 @@ package com.mediacrossing.monthlybillingreport;
 
 import com.mediacrossing.connections.AppNexusService;
 import com.mediacrossing.connections.MxService;
-import com.mediacrossing.creativebillingreport.BillingCreative;
 import com.mediacrossing.dailycheckupsreport.Campaign;
 import com.mediacrossing.dailycheckupsreport.ServingFee;
 import com.mediacrossing.properties.ConfigurationProperties;
@@ -10,9 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scala.concurrent.duration.Duration;
 
-import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class RunMonthlyBillingReport {
 
@@ -48,21 +45,6 @@ public class RunMonthlyBillingReport {
         String mxUrl = properties.getMxUrl();
         MxService mxConn = new MxService(mxUrl, mxUsername, mxPass);
 
-        //for faster debugging
-        boolean development = false;
-        if (development) {
-            try{
-                FileInputStream door = new FileInputStream("/Users/charronkyle/Desktop/ReportData/BillingList.ser");
-                ObjectInputStream reader = new ObjectInputStream(door);
-                ArrayList<BillingAdvertiser> adList = (ArrayList<BillingAdvertiser>) reader.readObject();
-                MonthlyBillingReportWriter.writeReportToFile(adList, outputPath);
-                System.exit(0);
-            }catch (IOException e){
-                e.printStackTrace();
-                System.exit(1);
-            }
-        }
-
         ArrayList<BillingAdvertiser> adList = anConn.requestBillingReport();
         List<String[]> adExData = anConn.requestSellerReport();
         for (String[] l : adExData) {
@@ -90,60 +72,30 @@ public class RunMonthlyBillingReport {
         //call on campaigns from mx
         //parse broker fees
         ArrayList<Campaign> feeCampaigns = mxConn.requestAllCampaigns();
+        Set<String> feeNames = new HashSet<>();
         for (Campaign c : feeCampaigns) {
             for (BillingAdvertiser a : adList) {
                 for (BillingCampaign bc : a.getCampaigns()) {
                     if (bc.getId().equals(c.getId())) {
                         for (ServingFee fee : c.getServingFeeList()) {
-                            Float imps = (float)bc.getImps();
-                            if (fee.getBrokerName().equals("Integral Ad Science")) {
-                                bc.setIntegralFee(Float.parseFloat(fee.getValue()));
-                                bc.setIntegralTotal((imps/(float)1000)*bc.getIntegralFee());
+                            fee.setTotalFee(bc.getImps() * (Float.parseFloat(fee.getValue()) / 1000));
+                            bc.getServingFees().add(fee);
+                            if (!fee.getBrokerName().equals("MediaCrossing")) {
+                                feeNames.add(fee.getBrokerName());
                             }
-                            else if (fee.getBrokerName().equals("Evidon")) {
-                                bc.setEvidonFee(Float.parseFloat(fee.getValue()));
-                                bc.setEvidonTotal((imps/(float)1000)*bc.getEvidonFee());
-                            }
-                            else if (fee.getBrokerName().equals("Brilig")) {
-                                bc.setBriligFee(Float.parseFloat(fee.getValue()));
-                                bc.setBriligTotal((imps/(float)1000)*bc.getBriligFee());
+                            if (fee.getBrokerName().equals("Brilig")) {
                                 bc.setBriligImps(bc.getImps());
                             }
-                            else if (fee.getBrokerName().equals("BlueKai")) {
-                                bc.setBlueKaiFee(Float.parseFloat(fee.getValue()));
-                                bc.setBlueKaiTotal((imps/(float)1000)*bc.getBlueKaiFee());
-                            }
-                            else if (fee.getBrokerName().equals("Grapeshot")) {
-                                bc.setGrapeshotFee(Float.parseFloat(fee.getValue()));
-                                bc.setGrapeshotTotal((imps/(float)1000)*bc.getGrapeshotFee());
-                            }
-                            else if (fee.getBrokerName().equals("ALC")) {
-                                bc.setAlcFee(Float.parseFloat(fee.getValue()));
-                                bc.setAlcTotal((imps/(float)1000)*bc.getAlcFee());
-                            }
-                            else if (fee.getBrokerName().equals("Spongecell")) {
-                                bc.setSpongecellFee(Float.parseFloat(fee.getValue()));
-                                bc.setSpongecellTotal((imps/(float)1000)*bc.getSpongecellFee());
-                            }
-                            else if (fee.getBrokerName().equals("Vidible")) {
-                                bc.setVidibleFee(Float.parseFloat(fee.getValue()));
-                                bc.setVidibleTotal((imps/(float)1000)*bc.getVidibleFee());
-                            }
-                            else if (fee.getBrokerName().equals("Peer39")) {
-                                bc.setPeer39Fee(Float.parseFloat(fee.getValue()));
-                                bc.setPeer39Total((bc.getMediaCost() * 0.15f));
-                            }
-
                         }
                     }
                 }
             }
         }
 
-        //Create empty creative list
-        ArrayList<BillingCreative> bc = new ArrayList<>();
-        boolean saved;
+        List<String> sortedFees = new ArrayList<>(feeNames);
+        Collections.sort(sortedFees);
+        sortedFees.remove("Brilig");
 
-        MonthlyBillingReportWriter.writeReportToFile(adList, outputPath);
+        MonthlyBillingReportWriter.writeReportToFile(adList, sortedFees, outputPath);
     }
 }

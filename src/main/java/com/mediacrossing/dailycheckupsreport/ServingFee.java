@@ -7,6 +7,7 @@ public class ServingFee implements Serializable{
     private String paymentType;
     private String value;
     private String description;
+    private float totalFee;
 
     public ServingFee(String brokerName, String paymentType, String value, String description) {
         this.brokerName = brokerName;
@@ -29,5 +30,13 @@ public class ServingFee implements Serializable{
 
     public String getDescription() {
         return description;
+    }
+
+    public float getTotalFee() {
+        return totalFee;
+    }
+
+    public void setTotalFee(float totalFee) {
+        this.totalFee = totalFee;
     }
 }
