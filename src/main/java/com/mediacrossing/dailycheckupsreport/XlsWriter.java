@@ -641,6 +641,7 @@ public class XlsWriter {
         headerRow.createCell(7).setCellValue("Default Imps");
         headerRow.createCell(8).setCellValue("PSA Imps");
         headerRow.createCell(9).setCellValue("eCPM");
+        headerRow.createCell(10).setCellValue("PnL");
 
 
         //Style header
@@ -668,10 +669,12 @@ public class XlsWriter {
             dataRow.createCell(8).setCellValue(pub.getPsaPercentage() + "% (" + pub.getImpsPsa() + ")");
             dataRow.createCell(9).setCellValue(pub.getCpm());
             dataRow.getCell(9).setCellStyle(fullCurrency);
+            dataRow.createCell(10).setCellValue(pub.getPnl());
+            dataRow.getCell(10).setCellStyle(fullCurrency);
             rowCounter++;
         }
 
-        for(int x = 0; x<= 9; x++) {
+        for(int x = 0; x<= 10; x++) {
             publisherSheet.autoSizeColumn(x);
         }
 
@@ -691,6 +694,7 @@ public class XlsWriter {
         headerRow.createCell(7).setCellValue("Default Imps");
         headerRow.createCell(8).setCellValue("PSA Imps");
         headerRow.createCell(9).setCellValue("eCPM");
+        headerRow.createCell(10).setCellValue("PnL");
 
         for(Cell c : headerRow)
             c.setCellStyle(bold);
@@ -711,10 +715,12 @@ public class XlsWriter {
             dataRow.createCell(8).setCellValue(pub.getPsaPercentage() + "% (" + pub.getImpsPsa() + ")");
             dataRow.createCell(9).setCellValue(pub.getCpm());
             dataRow.getCell(9).setCellStyle(fullCurrency);
+            dataRow.createCell(10).setCellValue(pub.getPnl());
+            dataRow.getCell(10).setCellStyle(fullCurrency);
             rowCounter++;
         }
 
-        for(int x = 0; x<= 9; x++) {
+        for(int x = 0; x<= 10; x++) {
             publisherSheet.autoSizeColumn(x);
         }
 

@@ -22,6 +22,7 @@ public class Publisher implements Serializable {
     private String status;
     private ArrayList<TrendingData> trendList = new ArrayList<TrendingData>();
     private float cpm;
+    private double pnl;
 
     public Publisher(String id, String publisherName, String lastModified, String status) {
         this.id = id;
@@ -127,6 +128,14 @@ public class Publisher implements Serializable {
 
     public float getCpm() {
         return cpm;
+    }
+
+    public double getPnl() {
+        return pnl;
+    }
+
+    public void setPnl(double pnl) {
+        this.pnl = pnl;
     }
 }
 

@@ -188,6 +188,16 @@ public class ResponseParser {
         return ads;
     }
 
+    public static float parseResoldRevenue (List<String[]> csvData) {
+        csvData.remove(0);
+        for (String[] l : csvData) {
+            if(l[0].equals("6")) {
+                return Float.parseFloat(l[1]);
+            }
+        }
+        return 0;
+    }
+
     public static ArrayList<BillingAdvertiser> parseCreativeBillingReport (List<String[]> csvData) {
         csvData.remove(0);
         ArrayList<BillingAdvertiser> ads = new ArrayList<>();

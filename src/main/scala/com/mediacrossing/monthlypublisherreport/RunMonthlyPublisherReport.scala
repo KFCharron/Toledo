@@ -74,7 +74,8 @@ object RunMonthlyPubReport extends App {
       name = p.name,
       daily = data.filter(d => d.day.isBefore(firstOfMonth) && d.day.isAfter(firstOfMonth
         .minusMonths(1)
-        .minusDays(1)))
+        .minusDays(1))),
+      pnl = getPublisherPnl(p.id)
     )
 
     val wb = writeReport(pub)
@@ -82,6 +83,20 @@ object RunMonthlyPubReport extends App {
     wb.write(out)
     out.close()
   }
+
+  def getPublisherPnl(id: String) = {
+     val csv = anConn.getPnlReport(id, "last_month")
+     if (csv.size() > 1) {
+       val l = csv.get(1)
+       val netProfit = l(1).toFloat
+       val impsTotal = l(2).toFloat
+       val impsResold = l(3).toFloat
+       val servingFees = l(4).toFloat
+       val resold = anConn.getResoldRevenue(id, "last_month")
+       netProfit - (resold * .135) - ((impsTotal - impsResold) * .001 * .017) - servingFees
+     } else 0.0
+  }
+
   def writeReport(p: Publisher) = {
 
     val wb = new HSSFWorkbook()
@@ -116,6 +131,7 @@ object RunMonthlyPubReport extends App {
     sumTotals.createCell(7).setCellValue("Publisher Rev.")
     sumTotals.createCell(8)
     sumTotals.createCell(9)
+    sumTotals.createCell(10).setCellValue("PnL")
     for (c <- sumTotals) c.setCellStyle(headStyle)
 
     val sums = sheet.createRow(2)
@@ -124,11 +140,13 @@ object RunMonthlyPubReport extends App {
     sums.createCell(5).setCellValue(p.daily.foldLeft(0)(_ + _.defaultImps))
     sums.createCell(6).setCellValue(p.daily.foldLeft(0.0)(_ + _.networkRevenue))
     sums.createCell(7).setCellValue(p.daily.foldLeft(0.0)(_ + _.publisherRevenue))
+    sums.createCell(10).setCellValue(p.pnl)
     sums.getCell(3).setCellStyle(numbers)
     sums.getCell(4).setCellStyle(numbers)
     sums.getCell(5).setCellStyle(numbers)
     sums.getCell(6).setCellStyle(currency)
     sums.getCell(7).setCellStyle(currency)
+    sums.getCell(10).setCellStyle(currency)
 
 
     var rowCount = 4
@@ -203,6 +221,6 @@ object RunMonthlyPubReport extends App {
     wb
   }
 }
-case class Publisher(id: String, name: String, daily: List[DataRow])
+case class Publisher(id: String, name: String, daily: List[DataRow], pnl: Double)
 
 

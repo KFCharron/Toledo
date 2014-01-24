@@ -63,6 +63,21 @@ public class RunPublisherReporting {
                 newPl.add(newPub);
             }
 
+            csvData = anConn.getPnlReport(pub.getId(), "yesterday");
+
+            //parse pnl
+            if (csvData.size() > 1) {
+                String[] line = csvData.get(1);
+                float networkProfit = Float.parseFloat(line[1]);
+                float impsTotal = Float.parseFloat(line[2]);
+                float impsResold = Float.parseFloat(line[3]);
+                float servingFees = Float.parseFloat(line[4]);
+                float resoldRev = anConn.getResoldRevenue(pub.getId(), "yesterday");
+                newPub.setPnl(networkProfit - (resoldRev * .135) - ((impsTotal - impsResold) * .001 * .017) - servingFees);
+            }
+            else newPub.setPnl(0);
+
+
             csvData = anConn.getPublisherTrendReport(pub.getId());
 
             csvData.remove(0);
@@ -84,10 +99,26 @@ public class RunPublisherReporting {
 
             //for every row in the file
             for (String[] line : csvData) {
-                newLtPubList.add(new Publisher(line[0], pub.getPublisherName(), Float.parseFloat(line[1]),
+                Publisher p = new Publisher(line[0], pub.getPublisherName(), Float.parseFloat(line[1]),
                         Integer.parseInt(line[2]), Integer.parseInt(line[3]), Float.parseFloat(line[4]),
                         Float.parseFloat(line[5]), Float.parseFloat(line[6]), Float.parseFloat(line[7]),
-                        Float.parseFloat(line[8])));
+                        Float.parseFloat(line[8]));
+
+                csvData = anConn.getPnlReport(pub.getId(), "yesterday");
+
+                //parse pnl
+                if (csvData.size() > 1) {
+                    String[] l = csvData.get(1);
+                    float networkProfit = Float.parseFloat(l[1]);
+                    float impsTotal = Float.parseFloat(l[2]);
+                    float impsResold = Float.parseFloat(l[3]);
+                    float servingFees = Float.parseFloat(l[4]);
+                    float resoldRev = anConn.getResoldRevenue(pub.getId(), "yesterday");
+                    p.setPnl(networkProfit - (resoldRev * .135) - ((impsTotal - impsResold) * .001 * .017) - servingFees);
+                } else p.setPnl(0);
+
+
+                newLtPubList.add(p);
             }
         }
         lifetimePubList = newLtPubList;
@@ -145,13 +176,6 @@ public class RunPublisherReporting {
                 lifetimePlacementList.add(p);
             }
         }
-
-        // Serialize data object to a file
-        ArrayList<ArrayList> arrayLists = new ArrayList<ArrayList>();
-        arrayLists.add(dayPubList);
-        arrayLists.add(lifetimePubList);
-        arrayLists.add(dayPlacementList);
-        arrayLists.add(lifetimePlacementList);
 
         XlsWriter.writePublisherReport(dayPubList, lifetimePubList, dayPlacementList, lifetimePlacementList, outputPath);
     }
