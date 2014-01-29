@@ -75,4 +75,8 @@ public class MxService {
     public String requestAllPublisherJson() throws Exception {
         return requests.getRequest(url+"/api/catalog/publishers");
     }
+
+    public String requestAllLineItemJson() throws Exception {
+        return requests.getRequest(url+"/api/catalog/line-items");
+    }
 }
