@@ -10,6 +10,7 @@ import play.api.libs.functional.syntax._
 import org.joda.time.format.DateTimeFormat
 import org.apache.poi.hssf.usermodel.HSSFWorkbook
 import java.io.{File, FileOutputStream}
+import org.apache.poi.ss.usermodel.IndexedColors
 
 object RunActiveLineItemReport extends App {
 
@@ -46,7 +47,7 @@ object RunActiveLineItemReport extends App {
     case JsSuccess(v, _) => v.filter(p => {
       val end = form.parseDateTime(p.endDate.getOrElse("2970-01-01T01:00:00Z"))
       end.isAfter(new DateTime()) && end.getYear != 2970
-    })
+    }).sortWith(_.advertiserId < _.advertiserId)
   }
 
   val wb = new HSSFWorkbook()
@@ -59,7 +60,11 @@ object RunActiveLineItemReport extends App {
   headRow.createCell(3).setCellValue("Status")
   headRow.createCell(4).setCellValue("Start Date")
   headRow.createCell(5).setCellValue("End Date")
-
+  val red = wb.createCellStyle()
+  val font = wb.createFont()
+  font.setColor(IndexedColors.RED.getIndex)
+  font.setBoldweight(1000)
+  red.setFont(font)
   var rowCount = 1
   lis.foreach(l => {
     val start = form.parseDateTime(l.startDate)
@@ -71,6 +76,7 @@ object RunActiveLineItemReport extends App {
     d.createCell(3).setCellValue(l.status)
     d.createCell(4).setCellValue(start.getMonthOfYear + "/" + start.getDayOfMonth + "/" + start.getYear)
     d.createCell(5).setCellValue(end.getMonthOfYear + "/" + end.getDayOfMonth + "/" + end.getYear)
+    if (end.isBefore(new DateTime().plusWeeks(1))) d.getCell(5).setCellStyle(red)
     rowCount += 1
   })
 
