@@ -22,6 +22,9 @@ public class BillingCampaign implements Serializable {
     private int briligImps = 0;
     private float cpm;
     private ArrayList<ServingFee> servingFees = new ArrayList<>();
+    private float mxMediaCost;
+    private float adXMediaCost;
+    private float appNexusMediaCost;
 
     public BillingCampaign(String id, String name, int imps, int clicks, float convs, float mediaCost,
                            float networkRevenue, float cpm, String creativeId, String creativeName) {
@@ -59,6 +62,9 @@ public class BillingCampaign implements Serializable {
         this.mxImps = 0;
         this.appNexusImps = 0;
         this.briligImps = 0;
+        this.mxMediaCost = 0;
+        this.adXMediaCost = 0;
+        this.appNexusMediaCost = 0;
     }
 
     public ArrayList<ServingFee> getServingFees() {
@@ -153,5 +159,29 @@ public class BillingCampaign implements Serializable {
 
     public int getAppNexusImps() {
         return imps - mxImps - adExImps;
+    }
+
+    public float getMxMediaCost() {
+        return mxMediaCost;
+    }
+
+    public void setMxMediaCost(float mxMediaCost) {
+        this.mxMediaCost = mxMediaCost;
+    }
+
+    public float getAdXMediaCost() {
+        return adXMediaCost;
+    }
+
+    public void setAdXMediaCost(float adXMediaCost) {
+        this.adXMediaCost = adXMediaCost;
+    }
+
+    public float getAppNexusMediaCost() {
+        return appNexusMediaCost;
+    }
+
+    public void setAppNexusMediaCost(float appNexusMediaCost) {
+        this.appNexusMediaCost = appNexusMediaCost;
     }
 }

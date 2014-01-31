@@ -108,7 +108,8 @@ public class AppNexusService {
                 "            \"convs\",\n" +
                 "            \"media_cost\",\n" +
                 "            \"network_revenue\",\n" +
-                "            \"ecpm\"\n" +
+                "            \"ecpm\",\n" +
+                "            \"seller_member_id\"\n" +
                 "        ],\n" +
                 "        \"row_per\" :[\n" +
                 "            \"campaign_id\"\n" +

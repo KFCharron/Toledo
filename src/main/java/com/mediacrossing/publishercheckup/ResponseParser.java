@@ -170,16 +170,35 @@ public class ResponseParser {
             for (BillingAdvertiser ad : ads) {
                 //If ad Id is zero, it's sell side, don't save it.
                 if (l[0].equals(ad.getId())) {
-                    if (l[2].equals("0")) saved = true;
-                    else {
-                        ad.getCampaigns().add(camp);
-                        saved = true;
+                    boolean campSaved = false;
+                    for (BillingCampaign c : ad.getCampaigns()) {
+                        if (c.getId().equals(camp.getId()) && !camp.getId().equals("0")) {
+                            campSaved = true;
+                            c.setImps(c.getImps() + camp.getImps());
+                            c.setClicks(c.getClicks() + camp.getClicks());
+                            c.setConvs(c.getConvs() + camp.getConvs());
+                            c.setMediaCost(c.getMediaCost() + camp.getMediaCost());
+                            c.setNetworkRevenue(c.getNetworkRevenue() + camp.getNetworkRevenue());
+                            if (l[10].equals("181")) c.setAdXMediaCost(camp.getMediaCost());
+                            else if (l[10].equals("1770")) c.setMxMediaCost(camp.getMediaCost());
+                            else c.setAppNexusMediaCost(c.getAppNexusMediaCost() + camp.getMediaCost());
+                        }
                     }
+                    if (!campSaved && !camp.getId().equals("0")) {
+                        if (l[10].equals("181")) camp.setAdXMediaCost(camp.getMediaCost());
+                        else if (l[10].equals("1770")) camp.setMxMediaCost(camp.getMediaCost());
+                        else camp.setAppNexusMediaCost(camp.getMediaCost());
+                        ad.getCampaigns().add(camp);
+                    }
+                    saved = true;
                 }
             }
             if (!saved) {
                 if(!l[0].equals("0")){
                     BillingAdvertiser ad = new BillingAdvertiser(l[1], l[0]);
+                    if (l[10].equals("181")) camp.setAdXMediaCost(camp.getMediaCost());
+                    else if (l[10].equals("1770")) camp.setMxMediaCost(camp.getMediaCost());
+                    else camp.setAppNexusMediaCost(camp.getMediaCost());
                     ad.getCampaigns().add(camp);
                     ads.add(ad);
                 }
