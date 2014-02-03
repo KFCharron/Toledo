@@ -3,7 +3,7 @@ package com.mediacrossing.activelineitemreport
 import org.slf4j.LoggerFactory
 import com.mediacrossing.properties.ConfigurationProperties
 import com.mediacrossing.connections.MxService
-import org.joda.time.DateTime
+import org.joda.time.{LocalDate, DateTimeZone, DateTime}
 import play.api.libs.json._
 import play.api.libs.json.Reads._
 import play.api.libs.functional.syntax._
@@ -82,8 +82,8 @@ object RunActiveLineItemReport extends App {
   })
 
   for(x <- 0 to 6) sheet.autoSizeColumn(x)
-  val today = new DateTime
-  val out = new FileOutputStream(new File(props.getOutputPath, "Active_Line_Item_Report.xls"))
+  val today = new LocalDate(DateTimeZone.UTC)
+  val out = new FileOutputStream(new File(props.getOutputPath, "ActiveLineItemReport_" + today.toString+ ".xls"))
   wb.write(out)
   out.close()
 
