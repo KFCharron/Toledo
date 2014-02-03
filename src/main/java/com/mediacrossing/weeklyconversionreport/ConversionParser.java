@@ -16,13 +16,11 @@ public class ConversionParser {
         JsonArray advertiserJsonArray = jsonElement.getAsJsonArray();
         for (JsonElement advertiser : advertiserJsonArray) {
             JsonObject jsonObject = advertiser.getAsJsonObject();
-            if(jsonObject.get("status").toString().equals("\"active\"")) {
-                JsonArray ja = jsonObject.get("lineItemIds").getAsJsonArray();
-                if (ja.size() > 0) {
-                    advertiserList.add(new ConversionAdvertiser(jsonObject.get("name").toString().replace("\"",""),
-                            jsonObject.get("id").toString().replace("\"", ""),
-                            jsonObject.get("status").toString().replace("\"", "")));
-                }
+            JsonArray ja = jsonObject.get("lineItemIds").getAsJsonArray();
+            if (ja.size() > 0) {
+                advertiserList.add(new ConversionAdvertiser(jsonObject.get("name").toString().replace("\"",""),
+                        jsonObject.get("id").toString().replace("\"", ""),
+                        jsonObject.get("status").toString().replace("\"", "")));
             }
         }
         return advertiserList;

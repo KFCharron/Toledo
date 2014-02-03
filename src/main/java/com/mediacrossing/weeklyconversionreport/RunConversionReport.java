@@ -64,10 +64,10 @@ public class RunConversionReport {
         }
 
         //Parse and save to list of advertisers
-        final ArrayList<ConversionAdvertiser> liveAdvertiserList = mxConn.requestAllConversionAdvertisers();
+        final ArrayList<ConversionAdvertiser> adList = mxConn.requestAllConversionAdvertisers();
 
         //request report for each advertiser
-        for (ConversionAdvertiser ad : liveAdvertiserList) {
+        for (ConversionAdvertiser ad : adList) {
 
             //request yesterday line item report
             List<String[]> csvData = anConn.getConversionReport(ad.getAdvertiserId());
@@ -99,20 +99,7 @@ public class RunConversionReport {
 
         }
 
-        // Serialize data object to a file
-        /*try {
-            ObjectOutputStream out = new ObjectOutputStream
-                    (new FileOutputStream("/Users/charronkyle/Desktop/ReportData/ConvAdvertiserList.ser"));
-            out.writeObject(liveAdvertiserList);
-            out.close();
-        } catch (IOException e) {
-            LOG.error("Serialization Failed!");
-            LOG.error(e.toString());
-        }*/
-
-
         //Write report
-        ConversionReportWriter.writeReportToFile(liveAdvertiserList, outputPath);
-
+        ConversionReportWriter.writeReportToFile(adList, outputPath);
     }
 }
