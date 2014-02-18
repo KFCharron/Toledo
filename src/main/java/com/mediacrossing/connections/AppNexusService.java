@@ -273,8 +273,6 @@ public class AppNexusService {
                 "            \"seller_member_name\",\n" +
                 "            \"campaign_id\",\n" +
                 "            \"imps\"\n" +
-                //TODO
-                //"            \"media_cost\"\n" +
                 "        ],\n" +
                 "        \"row_per\" :[\n" +
                 "            \"campaign_id\",\n" +
