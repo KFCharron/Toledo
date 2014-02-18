@@ -25,6 +25,7 @@ public class BillingCampaign implements Serializable {
     private float mxMediaCost;
     private float adXMediaCost;
     private float appNexusMediaCost;
+    private int lotameImps = 0;
 
     public BillingCampaign(String id, String name, int imps, int clicks, float convs, float mediaCost,
                            float networkRevenue, float cpm, String creativeId, String creativeName) {
@@ -65,6 +66,45 @@ public class BillingCampaign implements Serializable {
         this.mxMediaCost = 0;
         this.adXMediaCost = 0;
         this.appNexusMediaCost = 0;
+        this.lotameImps = 0;
+    }
+
+    public float getAnCommission() {
+        return .115f * this.appNexusMediaCost;
+    }
+
+    public float getAdXCommission() {
+        return .1f * this.adXMediaCost;
+    }
+
+    public float getMxCommission() {
+        return (float)this.mxImps / 1000f * .017f;
+    }
+
+    public float getAnCpm() {
+        if (this.appNexusImps != 0) {
+            return (this.appNexusMediaCost + this.getAnCommission()) / (float)this.appNexusImps * 1000f;
+        } else return 0;
+    }
+
+    public float getAdXCpm() {
+        if (this.adExImps != 0) {
+            return (this.adXMediaCost + this.getAdXCommission()) / (float)this.adExImps * 1000f;
+        } else return 0;
+    }
+
+    public float getMxCpm() {
+        if (this.mxImps != 0) {
+            return (this.mxMediaCost + this.getMxCommission()) / (float)this.mxImps * 1000f;
+        } else return 0;
+    }
+
+    public int getLotameImps() {
+        return lotameImps;
+    }
+
+    public void setLotameImps(int lotameImps) {
+        this.lotameImps = lotameImps;
     }
 
     public ArrayList<ServingFee> getServingFees() {
