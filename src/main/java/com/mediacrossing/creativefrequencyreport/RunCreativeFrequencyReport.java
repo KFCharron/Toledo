@@ -55,7 +55,7 @@ public class RunCreativeFrequencyReport {
             String[] tokens = l[0].split(delim);
             String name;
             try {
-                name = tokens[1];
+                name = tokens[3];
                 boolean saved = false;
                 for (Creative c : creatives) {
                     if (name.equals(c.getName())) {
@@ -78,7 +78,7 @@ public class RunCreativeFrequencyReport {
             String[] tokens = l[0].split(delim);
             String name;
             try {
-                name = tokens[1];
+                name = tokens[3];
                 for (Creative c : creatives) {
                     if (c.getName().equals(name)) {
                         c.setYesterdayImps(c.getYesterdayImps() + Integer.parseInt(l[1]));
@@ -91,16 +91,15 @@ public class RunCreativeFrequencyReport {
         }
 
         Workbook wb = new HSSFWorkbook();
-        Sheet s = wb.createSheet("Tag Heuer");
+        Sheet s = wb.createSheet("Chase");
         Row head = s.createRow(0);
         head.createCell(0).setCellValue("Creative");
         head.createCell(1).setCellValue("Rate");
         head.createCell(2).setCellValue("Imps Yesterday");
         head.createCell(3).setCellValue("Imps Lifetime");
-        head.createCell(4).setCellValue("Imps V1");
-        head.createCell(5).setCellValue("Imps V2");
-        head.createCell(6).setCellValue("Clicks Yesterday");
-        head.createCell(7).setCellValue("Clicks Lifetime");
+        head.createCell(4).setCellValue("Imp Goal");
+        head.createCell(5).setCellValue("Clicks Yesterday");
+        head.createCell(6).setCellValue("Clicks Lifetime");
 
         //Style header
         Font font = wb.createFont();
@@ -118,64 +117,31 @@ public class RunCreativeFrequencyReport {
             row.createCell(0).setCellValue(c.getName());
             row.createCell(2).setCellValue(c.getYesterdayImps());
             row.createCell(3).setCellValue(c.getLifetimeImps());
-            row.createCell(6).setCellValue(c.getYesterdayClicks());
-            row.createCell(7).setCellValue(c.getLifetimeClicks());
-            if (c.getName().equals("Business Leaders")) {
-                row.createCell(1).setCellValue(2.96);
-                row.createCell(4).setCellValue(900000);
-                row.createCell(5).setCellValue(1206000);
-            } else if (c.getName().equals("Business Travelers")) {
-                row.createCell(1).setCellValue(2.21);
-                row.createCell(4).setCellValue(1900000);
-                row.createCell(5).setCellValue(2546000);
-            } else if (c.getName().equals("College Educated")) {
-                row.createCell(1).setCellValue(2.21);
-                row.createCell(4).setCellValue(1500000);
-                row.createCell(5).setCellValue(2020000);
-            } else if (c.getName().equals("Business Traveler Interest")) {
-                row.createCell(1).setCellValue(3.12);
-                row.createCell(4).setCellValue(1800000);
-                row.createCell(5).setCellValue(2412000);
-            } else if (c.getName().equals("Contextual/Keyword  Targeting")) {
-                row.createCell(1).setCellValue(1.89);
-                row.createCell(4).setCellValue(9200000);
-                row.createCell(5).setCellValue(12328000);
-            } else if (c.getName().equals("High Income / Net Worth 1")) {
-                row.createCell(1).setCellValue(2.21);
-                row.createCell(4).setCellValue(2500000);
-                row.createCell(5).setCellValue(3400000);
-            } else if (c.getName().equals("High Income / Net Worth 2")) {
-                row.createCell(1).setCellValue(2.42);
-                row.createCell(4).setCellValue(5800000);
-                row.createCell(5).setCellValue(7772000);
-            } else if (c.getName().equals("In-Market for Watches")) {
-                row.createCell(1).setCellValue(2.91);
-                row.createCell(4).setCellValue(3600000);
-                row.createCell(5).setCellValue(4824000);
-            } else if (c.getName().equals("Luxury Auto")) {
-                row.createCell(1).setCellValue(3.39);
-                row.createCell(4).setCellValue(4000000);
-                row.createCell(5).setCellValue(5360000);
-            } else if (c.getName().equals("Luxury Goods Interest")) {
-                row.createCell(1).setCellValue(3.12);
-                row.createCell(4).setCellValue(5800000);
-                row.createCell(5).setCellValue(7772000);
-            } else if (c.getName().equals("Men's Apparel 1")) {
-                row.createCell(1).setCellValue(2.21);
-                row.createCell(4).setCellValue(1700000);
-                row.createCell(5).setCellValue(2278000);
-            } else if (c.getName().equals("Re-targeting")) {
-                row.createCell(1).setCellValue(3.1);
-                row.createCell(4);
-                row.createCell(5).setCellValue(549000);
+            row.createCell(5).setCellValue(c.getYesterdayClicks());
+            row.createCell(6).setCellValue(c.getLifetimeClicks());
+            if (c.getName().equals("HHI75K+")) {
+                row.createCell(1).setCellValue(3.07);
+                row.createCell(4).setCellValue(1153420);
+            } else if (c.getName().equals("FrequentHotelGuest")) {
+                row.createCell(1).setCellValue(4.25);
+                row.createCell(4).setCellValue(825647);
+            } else if (c.getName().equals("Contextual")) {
+                row.createCell(1).setCellValue(2.75);
+                row.createCell(4).setCellValue(1238909);
+            } else if (c.getName().equals("AudienceModelingProspecting")) {
+                row.createCell(1).setCellValue(2.57);
+                row.createCell(4).setCellValue(308171);
+            } else if (c.getName().equals("Retargeting")) {
+                row.createCell(1).setCellValue(6.05);
+                row.createCell(4).setCellValue(124132);
             }
             rowCount++;
         }
 
-        for (int x = 0; x < 8; x++) s.autoSizeColumn(x);
+        for (int x = 0; x < 7; x++) s.autoSizeColumn(x);
 
         LocalDate today = new LocalDate(DateTimeZone.UTC);
-        FileOutputStream out = new FileOutputStream(new File(outputPath, "Tag_Heuer_Creative_Report_" +
+        FileOutputStream out = new FileOutputStream(new File(outputPath, "Chase_Hyatt_Creative_Report_" +
                 today.toString()+".xls"));
         wb.write(out);
         out.close();
