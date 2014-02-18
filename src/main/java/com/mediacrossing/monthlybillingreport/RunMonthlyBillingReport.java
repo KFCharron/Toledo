@@ -79,12 +79,16 @@ public class RunMonthlyBillingReport {
                     if (bc.getId().equals(c.getId())) {
                         for (ServingFee fee : c.getServingFeeList()) {
                             fee.setTotalFee(bc.getImps() * (Float.parseFloat(fee.getValue()) / 1000));
+                            if (fee.getBrokerName().equals("Peer39")) fee.setTotalFee(bc.getMediaCost() * 0.15f);
                             bc.getServingFees().add(fee);
                             if (!fee.getBrokerName().equals("MediaCrossing")) {
                                 feeNames.add(fee.getBrokerName());
                             }
                             if (fee.getBrokerName().equals("Brilig")) {
                                 bc.setBriligImps(bc.getImps());
+                            }
+                            if (fee.getBrokerName().equals("Lotame")) {
+                                bc.setLotameImps(bc.getImps());
                             }
                         }
                     }
