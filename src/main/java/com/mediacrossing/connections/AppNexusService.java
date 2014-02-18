@@ -1,10 +1,14 @@
 package com.mediacrossing.connections;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.mediacrossing.campaignbooks.DataParse;
 import com.mediacrossing.dailycheckupsreport.JSONParse;
 import com.mediacrossing.monthlybillingreport.BillingAdvertiser;
 import com.mediacrossing.publishercheckup.*;
 import com.mediacrossing.publisherreporting.Publisher;
+import com.mediacrossing.sellerList.Seller;
 import com.mediacrossing.weeklydomainreport.Domain;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,6 +64,46 @@ public class AppNexusService {
         String json = requests.getRequest(url + "/publisher");
         throttleCheck();
         return DataParse.parsePublisherIdAndName(json);
+    }
+
+
+    public List<Seller> getSellers() throws Exception {
+        List<Seller> s = new ArrayList<>();
+        int elementCount = 1;
+        int startElement = 0;
+        while (startElement < elementCount) {
+            String json = requests.getRequest(url +
+                    "/platform-member?active=1&primary_type=network&start_element="
+                    + startElement + "&num_elements=100");
+
+            JsonElement je = new JsonParser().parse(json);
+            JsonObject jo = je.getAsJsonObject().getAsJsonObject("response");
+            elementCount = jo.get("count").getAsInt();
+            startElement = jo.get("start_element").getAsInt() + 100;
+            for (JsonElement e : jo.getAsJsonArray("platform-members")) {
+                JsonObject o = e.getAsJsonObject();
+                s.add(new Seller(o.get("id").getAsString(),
+                        o.get("name").getAsString(), o.get("primary_type").getAsString()));
+            }
+        }
+        elementCount = 1;
+        startElement = 0;
+        while (startElement < elementCount) {
+            String json = requests.getRequest(url +
+                    "/platform-member?active=1&primary_type=seller&start_element="
+                    + startElement + "&num_elements=100");
+
+            JsonElement je = new JsonParser().parse(json);
+            JsonObject jo = je.getAsJsonObject().getAsJsonObject("response");
+            elementCount = jo.get("count").getAsInt();
+            startElement = jo.get("start_element").getAsInt() + 100;
+            for (JsonElement e : jo.getAsJsonArray("platform-members")) {
+                JsonObject o = e.getAsJsonObject();
+                s.add(new Seller(o.get("id").getAsString(),
+                        o.get("name").getAsString(), o.get("primary_type").getAsString()));
+            }
+        }
+        return s;
     }
 
     public boolean checkForSegment(String code) throws Exception {
@@ -963,5 +1007,4 @@ public class AppNexusService {
 
         return requests.reportRequest(downloadUrl);
     }
-
 }
