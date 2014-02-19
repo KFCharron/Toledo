@@ -7,6 +7,7 @@ public class Creative {
     private int lifetimeClicks = 0;
     private int yesterdayClicks = 0;
     private String name;
+    private String size;
 
     public int getLifetimeImps() {
         return lifetimeImps;
@@ -48,9 +49,21 @@ public class Creative {
         this.name = name;
     }
 
-    public Creative(String name, int lifetimeImps, int lifetimeClicks) {
+    public String getSize() {
+        return size;
+    }
+
+    public void setSize(String size) {
+        this.size = size;
+    }
+
+    public Creative(String name, int lifetimeImps, int lifetimeClicks, String size) {
         this.lifetimeImps = lifetimeImps;
         this.lifetimeClicks = lifetimeClicks;
         this.name = name;
+        this.size = size;
+    }
+
+    public Creative() {
     }
 }
