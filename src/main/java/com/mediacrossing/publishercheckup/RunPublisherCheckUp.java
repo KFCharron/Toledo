@@ -43,28 +43,6 @@ public class RunPublisherCheckUp {
         String outPath = configProps.getOutputPath();
         Workbook wb = new HSSFWorkbook();
 
-        //for faster debugging
-        boolean development = false;
-        if (development) {
-            try{
-                FileInputStream door =
-                        new FileInputStream("/Users/charronkyle/Desktop/ReportData/PublisherCheckUpData.ser");
-                ObjectInputStream reader = new ObjectInputStream(door);
-                ArrayList<PublisherConfig> pubList = (ArrayList<PublisherConfig>) reader.readObject();
-                wb = ReportGenerator.writePublisherCheckUpReport(pubList);
-                LocalDate today = new LocalDate(DateTimeZone.UTC);
-                FileOutputStream fileOut =
-                        new FileOutputStream(new File(outPath, "PublisherCheckUps_"+today.toString()+".xls"));
-                wb.write(fileOut);
-                fileOut.close();
-                System.exit(0);
-
-            }catch (IOException e){
-                e.printStackTrace();
-                System.exit(1);
-            }
-        }
-
         //Request publishers from AN
         ArrayList<PublisherConfig> pubs = anService.requestPublisherConfigs();
 

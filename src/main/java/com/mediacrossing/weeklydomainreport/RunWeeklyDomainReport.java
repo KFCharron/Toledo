@@ -36,22 +36,6 @@ public class RunWeeklyDomainReport {
         AppNexusService anConn = new AppNexusService(appNexusUrl, appNexusUsername,
                 appNexusPassword);
 
-        //for faster debugging
-        boolean development = false;
-        if (development) {
-            try{
-                FileInputStream door = new FileInputStream("/Users/charronkyle/Desktop/ReportData/DomainList.ser");
-                ObjectInputStream reader = new ObjectInputStream(door);
-                ArrayList<Domain> domainList = (ArrayList<Domain>) reader.readObject();
-                WeeklyDomainReportWriter.writeReportToFile(domainList, outputPath);
-                System.exit(0);
-
-            }catch (IOException e){
-                e.printStackTrace();
-                System.exit(1);
-            }
-        }
-
         //Parse and save to list of advertisers
         final ArrayList<Domain> domains = anConn.requestDomainReport();
 
