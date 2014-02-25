@@ -47,7 +47,7 @@ public class RunCampaignBooks {
             mxConn = new MxService(mxUrl, mxUsername, mxPassword);
         }
         AppNexusService anConn = new AppNexusService(appNexusUrl, appNexusUsername,
-                appNexusPassword);
+                appNexusPassword, properties.getPartitionSize(), properties.getRequestDelayInSeconds());
 
         //Parse and save to list of advertisers
         final List<Advertiser> advertiserList = mxConn.requestAllAdvertisers();
@@ -56,11 +56,11 @@ public class RunCampaignBooks {
         int count = 0;
         for (Advertiser ad : advertiserList) {
             try {
-                ArrayList<LineItem> lineItemList = mxConn.requestLineItemsForAdvertiser(ad.getAdvertiserID());
+                ArrayList<LineItem> lineItemList = anConn.requestLineItems(ad.getAdvertiserID());
                 for (LineItem lineItem : lineItemList) {
 
                     ArrayList<Campaign> campaignList =
-                            mxConn.requestCampaignsForLineItem(ad.getAdvertiserID(), lineItem.getLineItemID());
+                            anConn.requestCampaigns(ad.getAdvertiserID(), lineItem.getLineItemID());
                     lineItem.setCampaignList(campaignList);
                 }
                 ad = new Advertiser(ad.getAdvertiserID(), ad.getAdvertiserName(), lineItemList);

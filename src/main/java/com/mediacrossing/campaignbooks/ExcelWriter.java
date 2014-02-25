@@ -86,7 +86,7 @@ public class ExcelWriter {
             if (startToNow.getStandardDays()-1 > maxDays) maxDays = (int)startToNow.getStandardDays()-1;
         }
         ArrayList<Float> grandTots =
-                new ArrayList<Float>(Collections.nCopies(maxDays+10, 0f));
+                new ArrayList<>(Collections.nCopies(maxDays+10, 0f));
 
         for (int a = ad.getLineItemList().size()-1; a >= 0; a--) {
 
@@ -123,11 +123,17 @@ public class ExcelWriter {
             Row lineItemRow = lineItemSheet.createRow(rowCount);
             lineItemRow.createCell(0);
             lineItemRow.createCell(1).setCellValue(lineItem.getLineItemName());
-            lineItemRow.createCell(2).setCellValue(lineItem.getLifetimeBudget());
+            if (lineItem.getLifetimeBudget() > 0) {
+                lineItemRow.createCell(2).setCellValue(lineItem.getLifetimeBudget());
+                lineItemRow.getCell(2).setCellStyle(fullCurrency);
+            }else lineItemRow.createCell(2).setCellValue(lineItem.getLifetimeImpBudget());
             lineItemRow.createCell(3).setCellValue(lineItem.getStartDateString());
             lineItemRow.createCell(4).setCellValue(lineItem.getEndDateString());
             lineItemRow.createCell(5).setCellValue(lineItem.getDaysActive());
-            lineItemRow.createCell(6).setCellValue(lineItem.getDailyBudget());
+            if (lineItem.getDailyBudget() > 0) {
+                lineItemRow.createCell(6).setCellValue(lineItem.getDailyBudget());
+                lineItemRow.getCell(6).setCellStyle(fullCurrency);
+            }else lineItemRow.createCell(6).setCellValue(lineItem.getDailyImpBudget());
             lineItemRow.createCell(7); //set after obtaining all pacing numbers
             lineItemRow.createCell(8); //same here
             lineItemRow.createCell(10).setCellValue(lineItem.getDaysRemaining());
@@ -145,8 +151,6 @@ public class ExcelWriter {
             lineItemRow.createCell(9).setCellValue(flightPer);
 
             //set styles
-            lineItemRow.getCell(2).setCellStyle(halfCurrency);
-            lineItemRow.getCell(6).setCellStyle(fullCurrency);
             lineItemRow.getCell(7).setCellStyle(fullCurrency);
             lineItemRow.getCell(8).setCellStyle(fullCurrency);
             lineItemRow.getCell(9).setCellStyle(percentage);
@@ -183,8 +187,9 @@ public class ExcelWriter {
             Float totalDailyBudget = 0.0f;
             Float totalActualDailyBudget = 0.0f;
             Float totalCumulativeDelivery = 0.0f;
+            int totalCumulativeImpDelivery = 0;
             ArrayList<Float> tots =
-                    new ArrayList<Float>(Collections.nCopies((int)(startToNow.getStandardDays()+9), 0f));
+                    new ArrayList<>(Collections.nCopies((int)(startToNow.getStandardDays()+9), 0f));
 
             int cellTrack = 0;
 
@@ -199,7 +204,11 @@ public class ExcelWriter {
                     campaignRow.getCell(1).setCellStyle(style);
                 }
 
-                campaignRow.createCell(2).setCellValue(campaign.getLifetimeBudget());
+                if (campaign.getLifetimeBudget() > 0) {
+                    campaignRow.createCell(2).setCellValue(campaign.getLifetimeBudget());
+                    campaignRow.getCell(2).setCellStyle(halfCurrency);
+                } else campaignRow.createCell(2).setCellValue(campaign.getLifetimeImpBudget());
+
                 //only add date if they're not null
                 if (campaign.getStartDate() != null && campaign.getEndDate() != null) {
                     campaignRow.createCell(3).setCellValue(campaign.getStartDate().getMonthOfYear() +
@@ -213,7 +222,6 @@ public class ExcelWriter {
                 campaignRow.createCell(8).setCellValue(campaign.getTotalDelivery());
 
                 //set styles
-                campaignRow.getCell(2).setCellStyle(halfCurrency);
                 campaignRow.getCell(6).setCellStyle(fullCurrency);
                 campaignRow.getCell(7).setCellStyle(fullCurrency);
                 campaignRow.getCell(8).setCellStyle(fullCurrency);
@@ -268,6 +276,7 @@ public class ExcelWriter {
                 totalDailyBudget += campaign.getDailyBudget();
                 totalActualDailyBudget += campaign.getActualDailyBudget();
                 totalCumulativeDelivery += campaign.getTotalDelivery();
+                totalCumulativeImpDelivery += campaign.getLifetimeImps();
             }
             rowCount++;
 
@@ -297,10 +306,12 @@ public class ExcelWriter {
             }
 
             //set total pacing
-            lineItemRow.getCell(7).setCellValue(((lineItem.getLifetimeBudget()-totalCumulativeDelivery)
+            if (lineItem.getLifetimeBudget() > 0) {
+                lineItemRow.getCell(7).setCellValue(((lineItem.getLifetimeBudget()-totalCumulativeDelivery)
+                        /lineItem.getDaysRemaining()));
+                lineItemRow.getCell(7).setCellStyle(fullCurrency);
+            } else lineItemRow.getCell(7).setCellValue(((lineItem.getLifetimeImpBudget()-totalCumulativeImpDelivery)
                     /lineItem.getDaysRemaining()));
-            //set style
-            lineItemRow.getCell(7).setCellStyle(fullCurrency);
 
             //set % lt budget used
             double perLTBudget = totalCumulativeDelivery/lineItem.getLifetimeBudget();
@@ -310,6 +321,9 @@ public class ExcelWriter {
 
             long daysPassed = lineItem.getDaysActive()-lineItem.getDaysRemaining();
             float pacing = totalCumulativeDelivery / (lineItem.getDailyBudget() * daysPassed);
+            if (Float.isInfinite(pacing) || Float.isNaN(pacing)) {
+                pacing = totalCumulativeImpDelivery / (lineItem.getDailyImpBudget() * daysPassed);
+            }
             lineItemRow.createCell(11).setCellValue(pacing);
             lineItemRow.getCell(11).setCellStyle(percentage);
 

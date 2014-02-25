@@ -1,8 +1,7 @@
 package com.mediacrossing.connections;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.mediacrossing.campaignbooks.Campaign;
+import com.mediacrossing.campaignbooks.LineItem;
 import com.mediacrossing.campaignbooks.DataParse;
 import com.mediacrossing.dailycheckupsreport.JSONParse;
 import com.mediacrossing.monthlybillingreport.BillingAdvertiser;
@@ -65,6 +64,18 @@ public class AppNexusService {
         return DataParse.parsePublisherIdAndName(json);
     }
 
+    public ArrayList<LineItem> requestLineItems(String adId) throws Exception {
+        String json = requests.getRequest(url + "/line-item?advertiser_id=" + adId);
+        throttleCheck();
+        return DataParse.parseLineItems(json);
+    }
+
+    public ArrayList<Campaign> requestCampaigns(String adId, String liId) throws Exception {
+        String json = requests.getRequest(url + "/campaign?advertiser_id=" + adId);
+        throttleCheck();
+        return DataParse.parseCampaigns(json, liId);
+    }
+
     public boolean checkForSegment(String code) throws Exception {
         String json = requests.getRequest(url + "/segment?code=" + code);
         throttleCheck();
@@ -96,7 +107,7 @@ public class AppNexusService {
         return ResponseParser.parseYmProfiles(json);
     }
 
-    public ArrayList<BillingAdvertiser> requestBillingReport () throws Exception {
+    public ArrayList<BillingAdvertiser> requestBillingReport (String interval) throws Exception {
         String jsonPost = "{\n" +
                 "    \"report\":\n" +
                 "    {\n" +
@@ -117,7 +128,7 @@ public class AppNexusService {
                 "        \"row_per\" :[\n" +
                 "            \"campaign_id\"\n" +
                 "        ],\n" +
-                "        \"report_interval\": \"last_month\",\n" +
+                "        \"report_interval\": \"" + interval + "\",\n" +
                 //"           \"start_date\": \"2013-11-01\", \"end_date\": \"2013-12-01\","+
                 "        \"format\": \"csv\",\n" +
                 "        \"emails\":[],\n" +
@@ -222,7 +233,7 @@ public class AppNexusService {
         return ResponseParser.parseCreativeBillingReport(downloadReportWhenReady(json));
     }
 
-    public List<String[]> requestSellerReport () throws Exception {
+    public List<String[]> requestSellerReport (String interval) throws Exception {
         String jsonPost = "{\n" +
                 "    \"report\":\n" +
                 "    {\n" +
@@ -237,7 +248,7 @@ public class AppNexusService {
                 "            \"campaign_id\",\n" +
                 "            \"seller_member_id\"\n" +
                 "        ],\n" +
-                "        \"report_interval\": \"last_month\",\n" +
+                "        \"report_interval\": \"" + interval + "\",\n" +
                 //"           \"start_date\": \"2013-11-01\", \"end_date\": \"2013-12-01\","+
                 "        \"format\": \"csv\",\n" +
                 "        \"emails\":[],\n" +
@@ -475,6 +486,35 @@ public class AppNexusService {
                 "                        \"direction\":\"DESC\"\n" +
                 "                    }\n" +
                 "                    ],\n" +
+                "        \"timezone\": \"EST5EDT\""+
+                "    }\n" +
+                "}";
+
+        String json = requests.postRequest(url+"/report?publisher_id="+pubId, jsonPost);
+        return downloadReportWhenReady(json);
+    }
+
+    public List<String[]> getPublisherSummary(String interval, String pubId) throws Exception {
+        String jsonPost = "{\n" +
+                "    \"report\":\n" +
+                "    {\n" +
+                "        \"report_type\":\"network_publisher_analytics\",\n" +
+                "        \"columns\":[\n" +
+                "            \"publisher_name\",\n" +
+                "            \"publisher_id\",\n" +
+                "            \"imp_type\",\n" +
+                "            \"imps_total\",\n" +
+                "            \"network_revenue\",\n" +
+                "            \"network_rpm\",\n" +
+                "            \"network_profit\"\n" +
+
+                "        ],\n" +
+                "        \"row_per\":[\n" +
+                "            \"imp_type\"\n" +
+                "        ],\n" +
+                "        \"report_interval\":\""+ interval +"\",\n" +
+                "        \"emails\":[\n" +
+                "        ],\n" +
                 "        \"timezone\": \"EST5EDT\""+
                 "    }\n" +
                 "}";

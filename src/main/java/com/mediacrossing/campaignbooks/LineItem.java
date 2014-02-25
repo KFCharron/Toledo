@@ -23,15 +23,18 @@ public class LineItem implements Serializable {
     private DateTime startDateTime;
     private DateTime endDateTime;
     private String status;
+    private float lifetimeImpBudget;
+    private float dailyImpBudget;
 
 
 
     public LineItem(String lineItemID, String lineItemName, String startDate,
-                    String endDate, String lifetimeBudget, String dailyBudget, String status) throws ParseException {
+                    String endDate, String lifetimeBudget, String dailyBudget, String status, String ltImpBudget,
+                    String dImpBudget) throws ParseException {
         this.lineItemID = lineItemID;
         this.lineItemName = lineItemName;
         this.status = status;
-        DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
 
         if(!startDate.equals("null") && !endDate.equals("null")) {
             this.startDateTime = new DateTime(formatter.parseDateTime(startDate), DateTimeZone.UTC);
@@ -50,7 +53,21 @@ public class LineItem implements Serializable {
         if(!dailyBudget.equals("null")) {
             this.dailyBudget = Float.parseFloat(dailyBudget);
         }
+        if (!ltImpBudget.equals("null")) {
+            this.lifetimeImpBudget = Float.parseFloat(ltImpBudget);
+        }
+        if (!dImpBudget.equals("null")) {
+            this.dailyImpBudget = Float.parseFloat(dImpBudget);
+        }
         this.daysRemaining = nowToEnd.getStandardDays() + 1L;
+    }
+
+    public float getLifetimeImpBudget() {
+        return lifetimeImpBudget;
+    }
+
+    public float getDailyImpBudget() {
+        return dailyImpBudget;
     }
 
     public String getStatus() {

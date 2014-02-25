@@ -27,18 +27,23 @@ public class Campaign implements Serializable {
     private float lifetimeCtr;
     private DateTime startDate;
     private DateTime endDate;
+    private float lifetimeImpBudget;
+    private float dailyImpBudget;
 
 
     public Campaign(String campaignID, String campaignName, String status, float lifetimeBudget,
-                    String startDate, String endDate, float dailyBudget) throws ParseException {
+                    String startDate, String endDate, float dailyBudget, float lifetimeImpBudget,
+                    float dailyImpBudget) throws ParseException {
         this.campaignID = campaignID;
         this.campaignName = campaignName;
         this.lifetimeBudget = lifetimeBudget;
         this.dailyBudget = dailyBudget;
         this.status = status;
+        this.dailyImpBudget = dailyImpBudget;
+        this.lifetimeImpBudget = lifetimeImpBudget;
 
         //Converting parsed date strings to Date objects
-        DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
         if (!startDate.equals("null")) {
             this.startDate = new DateTime(formatter.parseDateTime(startDate), DateTimeZone.UTC);
         }
@@ -58,6 +63,14 @@ public class Campaign implements Serializable {
 
         this.daysActive = startToEndDuration.getStandardDays();
         this.daysRemaining = nowToEndPeriod.getStandardDays() + 1;
+    }
+
+    public float getLifetimeImpBudget() {
+        return lifetimeImpBudget;
+    }
+
+    public float getDailyImpBudget() {
+        return dailyImpBudget;
     }
 
     public int getLifetimeConvs() {

@@ -60,8 +60,9 @@ public class MxService {
         return DataParse.populateLineItemList(json);
     }
 
-    public ArrayList<com.mediacrossing.campaignbooks.Campaign>
-    requestCampaignsForLineItem(String adId, String lineId) throws Exception {
+    public ArrayList<com.mediacrossing.campaignbooks.Campaign> requestCampaignsForLineItem(String adId, String lineId)
+            throws Exception
+    {
         String json = requests.getRequest(url + "/api/catalog/advertisers/" + adId
                 + "/line-items/" + lineId + "/campaigns");
         return DataParse.populateCampaignList(json);
