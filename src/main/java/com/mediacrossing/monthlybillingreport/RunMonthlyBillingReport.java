@@ -45,8 +45,8 @@ public class RunMonthlyBillingReport {
         String mxUrl = properties.getMxUrl();
         MxService mxConn = new MxService(mxUrl, mxUsername, mxPass);
 
-        ArrayList<BillingAdvertiser> adList = anConn.requestBillingReport();
-        List<String[]> adExData = anConn.requestSellerReport();
+        ArrayList<BillingAdvertiser> adList = anConn.requestBillingReport("last_month");
+        List<String[]> adExData = anConn.requestSellerReport("last_month");
         for (String[] l : adExData) {
             String googleAdExchangeId = "181";
             if (l[0].equals(googleAdExchangeId)) {
