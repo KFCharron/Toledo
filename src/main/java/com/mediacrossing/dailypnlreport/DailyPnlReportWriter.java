@@ -442,7 +442,7 @@ public class DailyPnlReportWriter {
         totalAd.getCell(16).setCellStyle(fullCurrency);
         totalAd.getCell(17).setCellStyle(fullCurrency);
         for (Cell c : summaryHeader) {
-            if (c.getColumnIndex( > 17 && 
+            if (c.getColumnIndex() > 17 &&
                     !summaryHeader.getCell(c.getColumnIndex()).getStringCellValue().equals("Lotame Imps") &&
                     !summaryHeader.getCell(c.getColumnIndex()).getStringCellValue().equals("Brilig Imps"))
             {
