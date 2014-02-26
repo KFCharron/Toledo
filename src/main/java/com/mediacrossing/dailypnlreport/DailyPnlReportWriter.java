@@ -58,26 +58,22 @@ public class DailyPnlReportWriter {
         summarySheet.createRow(1).createCell(0).setCellValue("Imps:");
         summarySheet.createRow(2).createCell(0).setCellValue("Clicks:");
         summarySheet.createRow(3).createCell(0).setCellValue("Convs:");
-        summarySheet.createRow(4).createCell(0).setCellValue("3rd Party Imps:");
-        summarySheet.createRow(5).createCell(0).setCellValue("Billable Imps:");
-        summarySheet.createRow(6).createCell(0).setCellValue("CPM:");
-        summarySheet.createRow(7).createCell(0).setCellValue("App Nexus Revenue:");
-        summarySheet.createRow(8).createCell(0).setCellValue("Billable To Client:");
-        summarySheet.createRow(9).createCell(0).setCellValue("Media Cost:");
-        summarySheet.createRow(10).createCell(0).setCellValue("AppNexus Media Cost:");
-        summarySheet.createRow(11).createCell(0).setCellValue("AdEx Media Cost:");
-        summarySheet.createRow(12).createCell(0).setCellValue("MX Media Cost:");
-        summarySheet.createRow(13).createCell(0).setCellValue("AppNexus Commission:");
-        summarySheet.createRow(14).createCell(0).setCellValue("AdEx Commission:");
-        summarySheet.createRow(15).createCell(0).setCellValue("MX Commission:");
-        summarySheet.createRow(16).createCell(0).setCellValue("AppNexus Imps:");
-        summarySheet.createRow(17).createCell(0).setCellValue("AdEx Imps:");
-        summarySheet.createRow(18).createCell(0).setCellValue("MX Imps:");
-        summarySheet.createRow(19).createCell(0).setCellValue("AppNexus eCPM:");
-        summarySheet.createRow(20).createCell(0).setCellValue("AdEx eCPM:");
-        summarySheet.createRow(21).createCell(0).setCellValue("MX eCPM:");
-        summarySheet.createRow(22).createCell(0).setCellValue("Brilig Imps:");
-        int rowCount = 22;
+        summarySheet.createRow(4).createCell(0).setCellValue("App Nexus Revenue:");
+        summarySheet.createRow(5).createCell(0).setCellValue("Media Cost:");
+        summarySheet.createRow(6).createCell(0).setCellValue("AppNexus Media Cost:");
+        summarySheet.createRow(7).createCell(0).setCellValue("AdEx Media Cost:");
+        summarySheet.createRow(8).createCell(0).setCellValue("MX Media Cost:");
+        summarySheet.createRow(9).createCell(0).setCellValue("AppNexus Commission:");
+        summarySheet.createRow(10).createCell(0).setCellValue("AdEx Commission:");
+        summarySheet.createRow(11).createCell(0).setCellValue("MX Commission:");
+        summarySheet.createRow(12).createCell(0).setCellValue("AppNexus Imps:");
+        summarySheet.createRow(13).createCell(0).setCellValue("AdEx Imps:");
+        summarySheet.createRow(14).createCell(0).setCellValue("MX Imps:");
+        summarySheet.createRow(15).createCell(0).setCellValue("AppNexus eCPM:");
+        summarySheet.createRow(16).createCell(0).setCellValue("AdEx eCPM:");
+        summarySheet.createRow(17).createCell(0).setCellValue("MX eCPM:");
+        summarySheet.createRow(18).createCell(0).setCellValue("Brilig Imps:");
+        int rowCount = 18;
         for (String n : feeNames) {
             if (n.equals("Lotame")) {
                 summarySheet.createRow(++rowCount).createCell(0).setCellValue("Lotame Imps");
@@ -101,21 +97,21 @@ public class DailyPnlReportWriter {
         summarySheet.getRow(1).createCell(1).setCellValue(grandTotal.getImps());
         summarySheet.getRow(2).createCell(1).setCellValue(grandTotal.getClicks());
         summarySheet.getRow(3).createCell(1).setCellValue(grandTotal.getConvs());
-        summarySheet.getRow(7).createCell(1).setCellValue(grandTotal.getNetworkRevenue());
-        summarySheet.getRow(9).createCell(1).setCellValue(grandTotal.getMediaCost());
-        summarySheet.getRow(10).createCell(1).setCellValue(grandTotal.getAppNexusMediaCost());
-        summarySheet.getRow(11).createCell(1).setCellValue(grandTotal.getAdXMediaCost());
-        summarySheet.getRow(12).createCell(1).setCellValue(grandTotal.getMxMediaCost());
-        summarySheet.getRow(13).createCell(1).setCellValue(grandTotal.getAnCommission());
-        summarySheet.getRow(14).createCell(1).setCellValue(grandTotal.getAdXCommission());
-        summarySheet.getRow(15).createCell(1).setCellValue(grandTotal.getMxCommission());
-        summarySheet.getRow(16).createCell(1).setCellValue(grandTotal.getAppNexusImps());
-        summarySheet.getRow(17).createCell(1).setCellValue(grandTotal.getAdExImps());
-        summarySheet.getRow(18).createCell(1).setCellValue(grandTotal.getMxImps());
-        summarySheet.getRow(19).createCell(1).setCellValue(grandTotal.getAnCpm());
-        summarySheet.getRow(20).createCell(1).setCellValue(grandTotal.getAdXCpm());
-        summarySheet.getRow(21).createCell(1).setCellValue(grandTotal.getMxCpm());
-        summarySheet.getRow(22).createCell(1).setCellValue(grandTotal.getBriligImps());
+        summarySheet.getRow(4).createCell(1).setCellValue(grandTotal.getNetworkRevenue());
+        summarySheet.getRow(5).createCell(1).setCellValue(grandTotal.getMediaCost());
+        summarySheet.getRow(6).createCell(1).setCellValue(grandTotal.getAppNexusMediaCost());
+        summarySheet.getRow(7).createCell(1).setCellValue(grandTotal.getAdXMediaCost());
+        summarySheet.getRow(8).createCell(1).setCellValue(grandTotal.getMxMediaCost());
+        summarySheet.getRow(9).createCell(1).setCellValue(grandTotal.getAnCommission());
+        summarySheet.getRow(10).createCell(1).setCellValue(grandTotal.getAdXCommission());
+        summarySheet.getRow(11).createCell(1).setCellValue(grandTotal.getMxCommission());
+        summarySheet.getRow(12).createCell(1).setCellValue(grandTotal.getAppNexusImps());
+        summarySheet.getRow(13).createCell(1).setCellValue(grandTotal.getAdExImps());
+        summarySheet.getRow(14).createCell(1).setCellValue(grandTotal.getMxImps());
+        summarySheet.getRow(15).createCell(1).setCellValue(grandTotal.getAnCpm());
+        summarySheet.getRow(16).createCell(1).setCellValue(grandTotal.getAdXCpm());
+        summarySheet.getRow(17).createCell(1).setCellValue(grandTotal.getMxCpm());
+        summarySheet.getRow(18).createCell(1).setCellValue(grandTotal.getBriligImps());
         for (BillingAdvertiser a : adList) {
             for (BillingCampaign c : a.getCampaigns()) {
                 for (ServingFee f : c.getServingFees()) {
@@ -133,17 +129,17 @@ public class DailyPnlReportWriter {
             }
         }
 
+        summarySheet.getRow(4).getCell(1).setCellStyle(fullCurrency);
+        summarySheet.getRow(5).getCell(1).setCellStyle(fullCurrency);
+        summarySheet.getRow(6).getCell(1).setCellStyle(fullCurrency);
         summarySheet.getRow(7).getCell(1).setCellStyle(fullCurrency);
+        summarySheet.getRow(8).getCell(1).setCellStyle(fullCurrency);
         summarySheet.getRow(9).getCell(1).setCellStyle(fullCurrency);
         summarySheet.getRow(10).getCell(1).setCellStyle(fullCurrency);
         summarySheet.getRow(11).getCell(1).setCellStyle(fullCurrency);
-        summarySheet.getRow(12).getCell(1).setCellStyle(fullCurrency);
-        summarySheet.getRow(13).getCell(1).setCellStyle(fullCurrency);
-        summarySheet.getRow(14).getCell(1).setCellStyle(fullCurrency);
         summarySheet.getRow(15).getCell(1).setCellStyle(fullCurrency);
-        summarySheet.getRow(19).getCell(1).setCellStyle(fullCurrency);
-        summarySheet.getRow(20).getCell(1).setCellStyle(fullCurrency);
-        summarySheet.getRow(21).getCell(1).setCellStyle(fullCurrency);
+        summarySheet.getRow(16).getCell(1).setCellStyle(fullCurrency);
+        summarySheet.getRow(17).getCell(1).setCellStyle(fullCurrency);
 
         summarySheet.autoSizeColumn(0);
         summarySheet.autoSizeColumn(1);
@@ -163,32 +159,28 @@ public class DailyPnlReportWriter {
             headerRow.createCell(1).setCellValue("Imps");
             headerRow.createCell(2).setCellValue("Clicks");
             headerRow.createCell(3).setCellValue("Convs");
-            headerRow.createCell(4).setCellValue("3rd Party Imps.");
-            headerRow.createCell(5).setCellValue("Billable Imps");
-            headerRow.createCell(6).setCellValue("CPM");
-            headerRow.createCell(7).setCellValue("App Nexus Rev.");
-            headerRow.createCell(8).setCellValue("Billable To Client");
-            headerRow.createCell(9).setCellValue("Media Cost");
-            headerRow.createCell(10).setCellValue("AppNexus Media Cost");
-            headerRow.createCell(11).setCellValue("AdEx Media Cost");
-            headerRow.createCell(12).setCellValue("MX Media Cost");
-            headerRow.createCell(13).setCellValue("AppNexus Commission");
-            headerRow.createCell(14).setCellValue("AdEx Commission");
-            headerRow.createCell(15).setCellValue("MX Commission");
-            headerRow.createCell(16).setCellValue("AppNexus Imps");
-            headerRow.createCell(17).setCellValue("AdEx Imps");
-            headerRow.createCell(18).setCellValue("MX Imps");
-            headerRow.createCell(19).setCellValue("AppNexus eCPM");
-            headerRow.createCell(20).setCellValue("AdEx eCPM");
-            headerRow.createCell(21).setCellValue("MX eCPM");
-            headerRow.createCell(22).setCellValue("Brilig Imps");
-            int cellCount = 22;
+            headerRow.createCell(4).setCellValue("App Nexus Rev.");
+            headerRow.createCell(5).setCellValue("Media Cost");
+            headerRow.createCell(6).setCellValue("AppNexus Media Cost");
+            headerRow.createCell(7).setCellValue("AdEx Media Cost");
+            headerRow.createCell(8).setCellValue("MX Media Cost");
+            headerRow.createCell(9).setCellValue("AppNexus Commission");
+            headerRow.createCell(10).setCellValue("AdEx Commission");
+            headerRow.createCell(11).setCellValue("MX Commission");
+            headerRow.createCell(12).setCellValue("AppNexus Imps");
+            headerRow.createCell(13).setCellValue("AdEx Imps");
+            headerRow.createCell(14).setCellValue("MX Imps");
+            headerRow.createCell(15).setCellValue("AppNexus eCPM");
+            headerRow.createCell(16).setCellValue("AdEx eCPM");
+            headerRow.createCell(17).setCellValue("MX eCPM");
+            headerRow.createCell(18).setCellValue("Brilig Imps");
+            int cellCount = 18;
             for (String n : feeNames) {
                 if (n.equals("Lotame")) headerRow.createCell(++cellCount).setCellValue("Lotame Imps");
                 headerRow.createCell(++cellCount).setCellValue(n);
             }
             headerRow.createCell(++cellCount).setCellValue("Amazon Cost");
-            headerRow.createCell(++cellCount).setCellValue("AdX Cost");
+            //TODO move next to Brilig
             headerRow.createCell(++cellCount).setCellValue("Brilig Cost");
             headerRow.createCell(++cellCount).setCellValue("Total Cost");
             headerRow.createCell(++cellCount).setCellValue("Gross Profit");
@@ -209,26 +201,22 @@ public class DailyPnlReportWriter {
                 dataRow.createCell(1).setCellValue(c.getImps());
                 dataRow.createCell(2).setCellValue(c.getClicks());
                 dataRow.createCell(3).setCellValue(c.getConvs());
-                dataRow.createCell(4);
-                dataRow.createCell(5);
-                dataRow.createCell(6);
-                dataRow.createCell(7).setCellValue(c.getNetworkRevenue());
-                dataRow.createCell(8);
-                dataRow.createCell(9).setCellValue(c.getMediaCost());
-                dataRow.createCell(10).setCellValue(c.getAppNexusMediaCost());
-                dataRow.createCell(11).setCellValue(c.getAdXMediaCost());
-                dataRow.createCell(12).setCellValue(c.getMxMediaCost());
-                dataRow.createCell(13).setCellValue(c.getAnCommission());
-                dataRow.createCell(14).setCellValue(c.getAdXCommission());
-                dataRow.createCell(15).setCellValue(c.getMxCommission());
-                dataRow.createCell(16).setCellValue(c.getAppNexusImps());
-                dataRow.createCell(17).setCellValue(c.getAdExImps());
-                dataRow.createCell(18).setCellValue(c.getMxImps());
-                dataRow.createCell(19).setCellValue(c.getAnCpm());
-                dataRow.createCell(20).setCellValue(c.getAdXCpm());
-                dataRow.createCell(21).setCellValue(c.getMxCpm());
-                dataRow.createCell(22).setCellValue(c.getBriligImps());
-                cellCount = 22;
+                dataRow.createCell(4).setCellValue(c.getNetworkRevenue());
+                dataRow.createCell(5).setCellValue(c.getMediaCost());
+                dataRow.createCell(6).setCellValue(c.getAppNexusMediaCost());
+                dataRow.createCell(7).setCellValue(c.getAdXMediaCost());
+                dataRow.createCell(8).setCellValue(c.getMxMediaCost());
+                dataRow.createCell(9).setCellValue(c.getAnCommission());
+                dataRow.createCell(10).setCellValue(c.getAdXCommission());
+                dataRow.createCell(11).setCellValue(c.getMxCommission());
+                dataRow.createCell(12).setCellValue(c.getAppNexusImps());
+                dataRow.createCell(13).setCellValue(c.getAdExImps());
+                dataRow.createCell(14).setCellValue(c.getMxImps());
+                dataRow.createCell(15).setCellValue(c.getAnCpm());
+                dataRow.createCell(16).setCellValue(c.getAdXCpm());
+                dataRow.createCell(17).setCellValue(c.getMxCpm());
+                dataRow.createCell(18).setCellValue(c.getBriligImps());
+                cellCount = 18;
                 for (String n : feeNames) {
                     if (n.equals("Lotame")) {
                         dataRow.createCell(++cellCount).setCellValue(c.getLotameImps());
@@ -238,9 +226,9 @@ public class DailyPnlReportWriter {
                 }
                 dataRow.createCell(++cellCount).setCellValue((float)c.getImps()/1000 * amazonCost);
                 dataRow.getCell(cellCount).setCellStyle(fullCurrency);
-                dataRow.createCell(++cellCount);
                 dataRow.createCell(++cellCount).setCellValue((float)c.getBriligImps()/1000 * briligCost);
                 dataRow.getCell(cellCount).setCellStyle(fullCurrency);
+                //TODO move brilig, set totals
                 dataRow.createCell(++cellCount);
                 dataRow.createCell(++cellCount);
                 dataRow.createCell(++cellCount);
@@ -266,17 +254,17 @@ public class DailyPnlReportWriter {
                     if (!saved) adTotal.getServingFees().add(f);
                 }
 
+                dataRow.getCell(4).setCellStyle(fullCurrency);
+                dataRow.getCell(5).setCellStyle(fullCurrency);
+                dataRow.getCell(6).setCellStyle(fullCurrency);
                 dataRow.getCell(7).setCellStyle(fullCurrency);
+                dataRow.getCell(8).setCellStyle(fullCurrency);
                 dataRow.getCell(9).setCellStyle(fullCurrency);
                 dataRow.getCell(10).setCellStyle(fullCurrency);
                 dataRow.getCell(11).setCellStyle(fullCurrency);
-                dataRow.getCell(12).setCellStyle(fullCurrency);
-                dataRow.getCell(13).setCellStyle(fullCurrency);
-                dataRow.getCell(14).setCellStyle(fullCurrency);
                 dataRow.getCell(15).setCellStyle(fullCurrency);
-                dataRow.getCell(19).setCellStyle(fullCurrency);
-                dataRow.getCell(20).setCellStyle(fullCurrency);
-                dataRow.getCell(21).setCellStyle(fullCurrency);
+                dataRow.getCell(16).setCellStyle(fullCurrency);
+                dataRow.getCell(17).setCellStyle(fullCurrency);
 
                 adTotal.setImps(adTotal.getImps() + c.getImps());
                 adTotal.setClicks(adTotal.getClicks() + c.getClicks());
@@ -303,26 +291,22 @@ public class DailyPnlReportWriter {
             totalRow.createCell(1).setCellValue(adTotal.getImps());
             totalRow.createCell(2).setCellValue(adTotal.getClicks());
             totalRow.createCell(3).setCellValue(adTotal.getConvs());
-            totalRow.createCell(4);
-            totalRow.createCell(5);
-            totalRow.createCell(6);
-            totalRow.createCell(7).setCellValue(adTotal.getNetworkRevenue());
-            totalRow.createCell(8);
-            totalRow.createCell(9).setCellValue(adTotal.getMediaCost());
-            totalRow.createCell(10).setCellValue(adTotal.getAdExImps());
-            totalRow.createCell(11).setCellValue(adTotal.getAdXMediaCost());
-            totalRow.createCell(12).setCellValue(adTotal.getMxMediaCost());
-            totalRow.createCell(13).setCellValue(adTotal.getAnCommission());
-            totalRow.createCell(14).setCellValue(adTotal.getAdXCommission());
-            totalRow.createCell(15).setCellValue(adTotal.getMxCommission());
-            totalRow.createCell(16).setCellValue(adTotal.getAppNexusImps());
-            totalRow.createCell(17).setCellValue(adTotal.getAdExImps());
-            totalRow.createCell(18).setCellValue(adTotal.getMxImps());
-            totalRow.createCell(19).setCellValue(adTotal.getAnCpm());
-            totalRow.createCell(20).setCellValue(adTotal.getAdXCpm());
-            totalRow.createCell(21).setCellValue(adTotal.getMxCpm());
-            totalRow.createCell(22).setCellValue(adTotal.getBriligImps());
-            cellCount = 22;
+            totalRow.createCell(4).setCellValue(adTotal.getNetworkRevenue());
+            totalRow.createCell(5).setCellValue(adTotal.getMediaCost());
+            totalRow.createCell(6).setCellValue(adTotal.getAdExImps());
+            totalRow.createCell(7).setCellValue(adTotal.getAdXMediaCost());
+            totalRow.createCell(8).setCellValue(adTotal.getMxMediaCost());
+            totalRow.createCell(9).setCellValue(adTotal.getAnCommission());
+            totalRow.createCell(10).setCellValue(adTotal.getAdXCommission());
+            totalRow.createCell(11).setCellValue(adTotal.getMxCommission());
+            totalRow.createCell(12).setCellValue(adTotal.getAppNexusImps());
+            totalRow.createCell(13).setCellValue(adTotal.getAdExImps());
+            totalRow.createCell(14).setCellValue(adTotal.getMxImps());
+            totalRow.createCell(15).setCellValue(adTotal.getAnCpm());
+            totalRow.createCell(16).setCellValue(adTotal.getAdXCpm());
+            totalRow.createCell(17).setCellValue(adTotal.getMxCpm());
+            totalRow.createCell(18).setCellValue(adTotal.getBriligImps());
+            cellCount = 18;
             for (String n : feeNames) {
                 if (n.equals("Lotame")) totalRow.createCell(++cellCount).setCellValue(adTotal.getLotameImps());
                 totalRow.createCell(++cellCount).setCellValue(0);
@@ -341,9 +325,9 @@ public class DailyPnlReportWriter {
             }
             totalRow.createCell(++cellCount).setCellValue((float)adTotal.getImps()/1000 * amazonCost);
             totalRow.getCell(cellCount).setCellStyle(fullCurrency);
-            cellCount++;
             totalRow.createCell(++cellCount).setCellValue((float)adTotal.getBriligImps()/1000 * briligCost);
             totalRow.getCell(cellCount).setCellStyle(fullCurrency);
+            //TODO move brilig, pop total cells
             cellCount++;
             cellCount++;
             cellCount++;
@@ -352,17 +336,17 @@ public class DailyPnlReportWriter {
                 totalRow.getCell(cellCount).setCellStyle(fullCurrency);
             }
 
+            totalRow.getCell(4).setCellStyle(fullCurrency);
+            totalRow.getCell(5).setCellStyle(fullCurrency);
+            totalRow.getCell(6).setCellStyle(fullCurrency);
             totalRow.getCell(7).setCellStyle(fullCurrency);
+            totalRow.getCell(8).setCellStyle(fullCurrency);
             totalRow.getCell(9).setCellStyle(fullCurrency);
             totalRow.getCell(10).setCellStyle(fullCurrency);
             totalRow.getCell(11).setCellStyle(fullCurrency);
-            totalRow.getCell(12).setCellStyle(fullCurrency);
-            totalRow.getCell(13).setCellStyle(fullCurrency);
-            totalRow.getCell(14).setCellStyle(fullCurrency);
             totalRow.getCell(15).setCellStyle(fullCurrency);
-            totalRow.getCell(19).setCellStyle(fullCurrency);
-            totalRow.getCell(20).setCellStyle(fullCurrency);
-            totalRow.getCell(21).setCellStyle(fullCurrency);
+            totalRow.getCell(16).setCellStyle(fullCurrency);
+            totalRow.getCell(17).setCellStyle(fullCurrency);
 
             for (int x = 0; x <= cellCount; x++) advertiserSheet.autoSizeColumn(x);
         }
@@ -373,32 +357,28 @@ public class DailyPnlReportWriter {
         summaryHeader.createCell(1).setCellValue("Imps");
         summaryHeader.createCell(2).setCellValue("Clicks");
         summaryHeader.createCell(3).setCellValue("Convs");
-        summaryHeader.createCell(4).setCellValue("3rd Party Imps.");
-        summaryHeader.createCell(5).setCellValue("Billable Imps");
-        summaryHeader.createCell(6).setCellValue("CPM");
-        summaryHeader.createCell(7).setCellValue("App Nexus Rev.");
-        summaryHeader.createCell(8).setCellValue("Billable To Client");
-        summaryHeader.createCell(9).setCellValue("Media Cost");
-        summaryHeader.createCell(10).setCellValue("AppNexus Media Cost");
-        summaryHeader.createCell(11).setCellValue("AdEx Media Cost");
-        summaryHeader.createCell(12).setCellValue("MX Media Cost");
-        summaryHeader.createCell(13).setCellValue("AppNexus Commission");
-        summaryHeader.createCell(14).setCellValue("AdEx Commission");
-        summaryHeader.createCell(15).setCellValue("MX Commission");
-        summaryHeader.createCell(16).setCellValue("AppNexus Imps");
-        summaryHeader.createCell(17).setCellValue("AdEx Imps");
-        summaryHeader.createCell(18).setCellValue("MX Imps");
-        summaryHeader.createCell(19).setCellValue("AppNexus eCPM");
-        summaryHeader.createCell(20).setCellValue("AdEx eCPM");
-        summaryHeader.createCell(21).setCellValue("MX eCPM");
-        summaryHeader.createCell(22).setCellValue("Brilig Imps");
-        int cellCount = 22;
+        summaryHeader.createCell(4).setCellValue("App Nexus Rev.");
+        summaryHeader.createCell(5).setCellValue("Media Cost");
+        summaryHeader.createCell(6).setCellValue("AppNexus Media Cost");
+        summaryHeader.createCell(7).setCellValue("AdEx Media Cost");
+        summaryHeader.createCell(8).setCellValue("MX Media Cost");
+        summaryHeader.createCell(9).setCellValue("AppNexus Commission");
+        summaryHeader.createCell(10).setCellValue("AdEx Commission");
+        summaryHeader.createCell(11).setCellValue("MX Commission");
+        summaryHeader.createCell(12).setCellValue("AppNexus Imps");
+        summaryHeader.createCell(13).setCellValue("AdEx Imps");
+        summaryHeader.createCell(14).setCellValue("MX Imps");
+        summaryHeader.createCell(15).setCellValue("AppNexus eCPM");
+        summaryHeader.createCell(16).setCellValue("AdEx eCPM");
+        summaryHeader.createCell(17).setCellValue("MX eCPM");
+        summaryHeader.createCell(18).setCellValue("Brilig Imps");
+        int cellCount = 18;
         for (String n : feeNames) {
             if (n.equals("Lotame")) summaryHeader.createCell(++cellCount).setCellValue("Lotame Imps");
             summaryHeader.createCell(++cellCount).setCellValue(n);
         }
         summaryHeader.createCell(++cellCount).setCellValue("Amazon Cost");
-        summaryHeader.createCell(++cellCount).setCellValue("AdX Cost");
+        //TODO move brilig
         summaryHeader.createCell(++cellCount).setCellValue("Brilig Cost");
         summaryHeader.createCell(++cellCount).setCellValue("Total Cost");
         summaryHeader.createCell(++cellCount).setCellValue("Gross Profit");
@@ -412,25 +392,21 @@ public class DailyPnlReportWriter {
                 adRow.createCell(1).setCellValue(c.getImps());
                 adRow.createCell(2).setCellValue(c.getClicks());
                 adRow.createCell(3).setCellValue(c.getConvs());
-                adRow.createCell(4);
-                adRow.createCell(5);
-                adRow.createCell(6);
-                adRow.createCell(7).setCellValue(c.getNetworkRevenue());
-                adRow.createCell(8);
-                adRow.createCell(9).setCellValue(c.getMediaCost());
-                adRow.createCell(10).setCellValue(c.getAdExImps());
-                adRow.createCell(11).setCellValue(c.getAdXMediaCost());
-                adRow.createCell(12).setCellValue(c.getMxMediaCost());
-                adRow.createCell(13).setCellValue(c.getAnCommission());
-                adRow.createCell(14).setCellValue(c.getAdXCommission());
-                adRow.createCell(15).setCellValue(c.getMxCommission());
-                adRow.createCell(16).setCellValue(c.getAppNexusImps());
-                adRow.createCell(17).setCellValue(c.getAdExImps());
-                adRow.createCell(18).setCellValue(c.getMxImps());
-                adRow.createCell(19).setCellValue(c.getAnCpm());
-                adRow.createCell(20).setCellValue(c.getAdXCpm());
-                adRow.createCell(21).setCellValue(c.getMxCpm());
-                adRow.createCell(22).setCellValue(c.getBriligImps());
+                adRow.createCell(4).setCellValue(c.getNetworkRevenue());
+                adRow.createCell(5).setCellValue(c.getMediaCost());
+                adRow.createCell(6).setCellValue(c.getAdExImps());
+                adRow.createCell(7).setCellValue(c.getAdXMediaCost());
+                adRow.createCell(8).setCellValue(c.getMxMediaCost());
+                adRow.createCell(9).setCellValue(c.getAnCommission());
+                adRow.createCell(10).setCellValue(c.getAdXCommission());
+                adRow.createCell(11).setCellValue(c.getMxCommission());
+                adRow.createCell(12).setCellValue(c.getAppNexusImps());
+                adRow.createCell(13).setCellValue(c.getAdExImps());
+                adRow.createCell(14).setCellValue(c.getMxImps());
+                adRow.createCell(15).setCellValue(c.getAnCpm());
+                adRow.createCell(16).setCellValue(c.getAdXCpm());
+                adRow.createCell(17).setCellValue(c.getMxCpm());
+                adRow.createCell(18).setCellValue(c.getBriligImps());
                 for (Cell cell : summaryHeader) {
                     if (cell.getStringCellValue().equals("Lotame Imps")) {
                         adRow.createCell(cell.getColumnIndex()).setCellValue(c.getLotameImps());
@@ -451,36 +427,36 @@ public class DailyPnlReportWriter {
                     }
                 }
 
+                adRow.getCell(4).setCellStyle(fullCurrency);
+                adRow.getCell(5).setCellStyle(fullCurrency);
+                adRow.getCell(6).setCellStyle(fullCurrency);
                 adRow.getCell(7).setCellStyle(fullCurrency);
+                adRow.getCell(8).setCellStyle(fullCurrency);
                 adRow.getCell(9).setCellStyle(fullCurrency);
                 adRow.getCell(10).setCellStyle(fullCurrency);
                 adRow.getCell(11).setCellStyle(fullCurrency);
-                adRow.getCell(12).setCellStyle(fullCurrency);
-                adRow.getCell(13).setCellStyle(fullCurrency);
-                adRow.getCell(14).setCellStyle(fullCurrency);
                 adRow.getCell(15).setCellStyle(fullCurrency);
-                adRow.getCell(19).setCellStyle(fullCurrency);
-                adRow.getCell(20).setCellStyle(fullCurrency);
-                adRow.getCell(21).setCellStyle(fullCurrency);
+                adRow.getCell(16).setCellStyle(fullCurrency);
+                adRow.getCell(17).setCellStyle(fullCurrency);
 
                 rowCount++;
             }
         }
         Row totalAd = advertiserSummary.createRow(++rowCount);
         for (Cell c : summaryHeader) totalAd.createCell(c.getColumnIndex()).setCellValue(0);
+        totalAd.getCell(4).setCellStyle(fullCurrency);
+        totalAd.getCell(5).setCellStyle(fullCurrency);
+        totalAd.getCell(6).setCellStyle(fullCurrency);
         totalAd.getCell(7).setCellStyle(fullCurrency);
+        totalAd.getCell(8).setCellStyle(fullCurrency);
         totalAd.getCell(9).setCellStyle(fullCurrency);
         totalAd.getCell(10).setCellStyle(fullCurrency);
         totalAd.getCell(11).setCellStyle(fullCurrency);
-        totalAd.getCell(12).setCellStyle(fullCurrency);
-        totalAd.getCell(13).setCellStyle(fullCurrency);
-        totalAd.getCell(14).setCellStyle(fullCurrency);
         totalAd.getCell(15).setCellStyle(fullCurrency);
-        totalAd.getCell(19).setCellStyle(fullCurrency);
-        totalAd.getCell(20).setCellStyle(fullCurrency);
-        totalAd.getCell(21).setCellStyle(fullCurrency);
+        totalAd.getCell(16).setCellStyle(fullCurrency);
+        totalAd.getCell(17).setCellStyle(fullCurrency);
         for (Cell c : summaryHeader) {
-            if (c.getColumnIndex() > 21 && !summaryHeader.getCell(c.getColumnIndex()).getStringCellValue().equals("Lotame Imps")) {
+            if (c.getColumnIndex() > 17 && !summaryHeader.getCell(c.getColumnIndex()).getStringCellValue().equals("Lotame Imps")) {
                 totalAd.getCell(c.getColumnIndex()).setCellStyle(fullCurrency);
             }
         }
