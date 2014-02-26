@@ -1,6 +1,5 @@
 package com.mediacrossing.dailypnlreport;
 
-import com.mediacrossing.creativebillingreport.BillingCreative;
 import com.mediacrossing.dailycheckupsreport.ServingFee;
 import com.mediacrossing.monthlybillingreport.BillingAdvertiser;
 import com.mediacrossing.monthlybillingreport.BillingCampaign;
@@ -29,7 +28,6 @@ public class DailyPnlReportWriter {
 
         /*GLOBAL COST VARIABLES*/
         float amazonCost = 0.05f;
-        float briligCost = 0.50f;
         float discoveryCommission = 0.20f;
 
         //Write summary sheet
@@ -72,11 +70,13 @@ public class DailyPnlReportWriter {
         summarySheet.createRow(15).createCell(0).setCellValue("AppNexus eCPM:");
         summarySheet.createRow(16).createCell(0).setCellValue("AdEx eCPM:");
         summarySheet.createRow(17).createCell(0).setCellValue("MX eCPM:");
-        summarySheet.createRow(18).createCell(0).setCellValue("Brilig Imps:");
-        int rowCount = 18;
+        int rowCount = 17;
         for (String n : feeNames) {
             if (n.equals("Lotame")) {
                 summarySheet.createRow(++rowCount).createCell(0).setCellValue("Lotame Imps");
+                summarySheet.getRow(rowCount).createCell(1).setCellValue(0);
+            }else if (n.equals("Brilig")) {
+                summarySheet.createRow(++rowCount).createCell(0).setCellValue("Brilig Imps");
                 summarySheet.getRow(rowCount).createCell(1).setCellValue(0);
             }
             summarySheet.createRow(++rowCount).createCell(0).setCellValue(n);
@@ -84,11 +84,7 @@ public class DailyPnlReportWriter {
             summarySheet.getRow(rowCount).getCell(1).setCellStyle(fullCurrency);
         }
         summarySheet.createRow(++rowCount).createCell(0).setCellValue("Amazon Cost:");
-        summarySheet.getRow(rowCount).createCell(1).setCellValue((float)grandTotal.getImps()/1000 * amazonCost);
-        summarySheet.getRow(rowCount).getCell(1).setCellStyle(fullCurrency);
-        summarySheet.createRow(++rowCount).createCell(0).setCellValue("AdEx Cost:");
-        summarySheet.createRow(++rowCount).createCell(0).setCellValue("Brilig Cost:");
-        summarySheet.getRow(rowCount).createCell(1).setCellValue((float)grandTotal.getBriligImps()/1000 * briligCost);
+        summarySheet.getRow(rowCount).createCell(1).setCellValue((float) grandTotal.getImps() / 1000 * amazonCost);
         summarySheet.getRow(rowCount).getCell(1).setCellStyle(fullCurrency);
         summarySheet.createRow(++rowCount).createCell(0).setCellValue("Total Cost:");
         summarySheet.createRow(++rowCount).createCell(0).setCellValue("Gross Profit:");
@@ -111,7 +107,6 @@ public class DailyPnlReportWriter {
         summarySheet.getRow(15).createCell(1).setCellValue(grandTotal.getAnCpm());
         summarySheet.getRow(16).createCell(1).setCellValue(grandTotal.getAdXCpm());
         summarySheet.getRow(17).createCell(1).setCellValue(grandTotal.getMxCpm());
-        summarySheet.getRow(18).createCell(1).setCellValue(grandTotal.getBriligImps());
         for (BillingAdvertiser a : adList) {
             for (BillingCampaign c : a.getCampaigns()) {
                 for (ServingFee f : c.getServingFees()) {
@@ -126,6 +121,9 @@ public class DailyPnlReportWriter {
         for (Row r : summarySheet) {
             if (r.getCell(0).getStringCellValue().equals("Lotame Imps")) {
                 r.getCell(1).setCellValue(grandTotal.getLotameImps());
+            }
+            if (r.getCell(0).getStringCellValue().equals("Brilig Imps")) {
+                r.getCell(1).setCellValue(grandTotal.getBriligImps());
             }
         }
 
@@ -173,15 +171,13 @@ public class DailyPnlReportWriter {
             headerRow.createCell(15).setCellValue("AppNexus eCPM");
             headerRow.createCell(16).setCellValue("AdEx eCPM");
             headerRow.createCell(17).setCellValue("MX eCPM");
-            headerRow.createCell(18).setCellValue("Brilig Imps");
-            int cellCount = 18;
+            int cellCount = 17;
             for (String n : feeNames) {
                 if (n.equals("Lotame")) headerRow.createCell(++cellCount).setCellValue("Lotame Imps");
+                else if (n.equals("Brilig")) headerRow.createCell(++cellCount).setCellValue("Brilig Imps");
                 headerRow.createCell(++cellCount).setCellValue(n);
             }
             headerRow.createCell(++cellCount).setCellValue("Amazon Cost");
-            //TODO move next to Brilig
-            headerRow.createCell(++cellCount).setCellValue("Brilig Cost");
             headerRow.createCell(++cellCount).setCellValue("Total Cost");
             headerRow.createCell(++cellCount).setCellValue("Gross Profit");
             headerRow.createCell(++cellCount).setCellValue("GP Margin");
@@ -215,20 +211,18 @@ public class DailyPnlReportWriter {
                 dataRow.createCell(15).setCellValue(c.getAnCpm());
                 dataRow.createCell(16).setCellValue(c.getAdXCpm());
                 dataRow.createCell(17).setCellValue(c.getMxCpm());
-                dataRow.createCell(18).setCellValue(c.getBriligImps());
-                cellCount = 18;
+                cellCount = 17;
                 for (String n : feeNames) {
                     if (n.equals("Lotame")) {
                         dataRow.createCell(++cellCount).setCellValue(c.getLotameImps());
+                    } else if (n.equals("Brilig")) {
+                        dataRow.createCell(++cellCount).setCellValue(c.getBriligImps());
                     }
                     dataRow.createCell(++cellCount).setCellValue(0);
                     dataRow.getCell(cellCount).setCellStyle(fullCurrency);
                 }
-                dataRow.createCell(++cellCount).setCellValue((float)c.getImps()/1000 * amazonCost);
+                dataRow.createCell(++cellCount).setCellValue((float) c.getImps() / 1000 * amazonCost);
                 dataRow.getCell(cellCount).setCellStyle(fullCurrency);
-                dataRow.createCell(++cellCount).setCellValue((float)c.getBriligImps()/1000 * briligCost);
-                dataRow.getCell(cellCount).setCellStyle(fullCurrency);
-                //TODO move brilig, set totals
                 dataRow.createCell(++cellCount);
                 dataRow.createCell(++cellCount);
                 dataRow.createCell(++cellCount);
@@ -305,10 +299,10 @@ public class DailyPnlReportWriter {
             totalRow.createCell(15).setCellValue(adTotal.getAnCpm());
             totalRow.createCell(16).setCellValue(adTotal.getAdXCpm());
             totalRow.createCell(17).setCellValue(adTotal.getMxCpm());
-            totalRow.createCell(18).setCellValue(adTotal.getBriligImps());
-            cellCount = 18;
+            cellCount = 17;
             for (String n : feeNames) {
                 if (n.equals("Lotame")) totalRow.createCell(++cellCount).setCellValue(adTotal.getLotameImps());
+                else if (n.equals("Brilig")) totalRow.createCell(++cellCount).setCellValue(adTotal.getBriligImps());
                 totalRow.createCell(++cellCount).setCellValue(0);
                 for (Row r : advertiserSheet) {
                     for (Cell c : r) {
@@ -323,11 +317,8 @@ public class DailyPnlReportWriter {
                 }
                 totalRow.getCell(cellCount).setCellStyle(fullCurrency);
             }
-            totalRow.createCell(++cellCount).setCellValue((float)adTotal.getImps()/1000 * amazonCost);
+            totalRow.createCell(++cellCount).setCellValue((float) adTotal.getImps() / 1000 * amazonCost);
             totalRow.getCell(cellCount).setCellStyle(fullCurrency);
-            totalRow.createCell(++cellCount).setCellValue((float)adTotal.getBriligImps()/1000 * briligCost);
-            totalRow.getCell(cellCount).setCellStyle(fullCurrency);
-            //TODO move brilig, pop total cells
             cellCount++;
             cellCount++;
             cellCount++;
@@ -371,15 +362,13 @@ public class DailyPnlReportWriter {
         summaryHeader.createCell(15).setCellValue("AppNexus eCPM");
         summaryHeader.createCell(16).setCellValue("AdEx eCPM");
         summaryHeader.createCell(17).setCellValue("MX eCPM");
-        summaryHeader.createCell(18).setCellValue("Brilig Imps");
-        int cellCount = 18;
+        int cellCount = 17;
         for (String n : feeNames) {
             if (n.equals("Lotame")) summaryHeader.createCell(++cellCount).setCellValue("Lotame Imps");
+            else if (n.equals("Brilig")) summaryHeader.createCell(++cellCount).setCellValue("Brilig Imps");
             summaryHeader.createCell(++cellCount).setCellValue(n);
         }
         summaryHeader.createCell(++cellCount).setCellValue("Amazon Cost");
-        //TODO move brilig
-        summaryHeader.createCell(++cellCount).setCellValue("Brilig Cost");
         summaryHeader.createCell(++cellCount).setCellValue("Total Cost");
         summaryHeader.createCell(++cellCount).setCellValue("Gross Profit");
         summaryHeader.createCell(++cellCount).setCellValue("GP Margin");
@@ -406,10 +395,11 @@ public class DailyPnlReportWriter {
                 adRow.createCell(15).setCellValue(c.getAnCpm());
                 adRow.createCell(16).setCellValue(c.getAdXCpm());
                 adRow.createCell(17).setCellValue(c.getMxCpm());
-                adRow.createCell(18).setCellValue(c.getBriligImps());
                 for (Cell cell : summaryHeader) {
                     if (cell.getStringCellValue().equals("Lotame Imps")) {
                         adRow.createCell(cell.getColumnIndex()).setCellValue(c.getLotameImps());
+                    } else if (cell.getStringCellValue().equals("Brilig Imps")) {
+                        adRow.createCell(cell.getColumnIndex()).setCellValue(c.getBriligImps());
                     }
                     for (ServingFee f : c.getServingFees()) {
                         if (f.getBrokerName().equals(cell.getStringCellValue())) {
@@ -419,10 +409,6 @@ public class DailyPnlReportWriter {
                     }
                     if (cell.getStringCellValue().equals("Amazon Cost")) {
                         adRow.createCell(cell.getColumnIndex()).setCellValue((float)c.getImps()/1000 * amazonCost);
-                        adRow.getCell(cell.getColumnIndex()).setCellStyle(fullCurrency);
-                    }
-                    if (cell.getStringCellValue().equals("Brilig Cost")) {
-                        adRow.createCell(cell.getColumnIndex()).setCellValue((float)c.getBriligImps()/1000 * briligCost);
                         adRow.getCell(cell.getColumnIndex()).setCellStyle(fullCurrency);
                     }
                 }
@@ -456,7 +442,10 @@ public class DailyPnlReportWriter {
         totalAd.getCell(16).setCellStyle(fullCurrency);
         totalAd.getCell(17).setCellStyle(fullCurrency);
         for (Cell c : summaryHeader) {
-            if (c.getColumnIndex() > 17 && !summaryHeader.getCell(c.getColumnIndex()).getStringCellValue().equals("Lotame Imps")) {
+            if (c.getColumnIndex( > 17 && 
+                    !summaryHeader.getCell(c.getColumnIndex()).getStringCellValue().equals("Lotame Imps") &&
+                    !summaryHeader.getCell(c.getColumnIndex()).getStringCellValue().equals("Brilig Imps"))
+            {
                 totalAd.getCell(c.getColumnIndex()).setCellStyle(fullCurrency);
             }
         }

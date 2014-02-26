@@ -101,7 +101,6 @@ public class RunDailyPnlReport {
 
         List<String> sortedFees = new ArrayList<>(feeNames);
         Collections.sort(sortedFees);
-        sortedFees.remove("Brilig");
 
         DailyPnlReportWriter.writeReportToFile(adList, sortedFees, outputPath);
     }
