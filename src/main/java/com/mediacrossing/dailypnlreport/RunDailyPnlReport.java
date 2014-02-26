@@ -1,9 +1,10 @@
-package com.mediacrossing.dailypnlreport.;
+package com.mediacrossing.dailypnlreport;
 
 import com.mediacrossing.connections.AppNexusService;
 import com.mediacrossing.connections.MxService;
 import com.mediacrossing.dailycheckupsreport.Campaign;
 import com.mediacrossing.dailycheckupsreport.ServingFee;
+import com.mediacrossing.dailypnlreport.DailyPnlReportWriter;
 import com.mediacrossing.monthlybillingreport.BillingAdvertiser;
 import com.mediacrossing.monthlybillingreport.BillingCampaign;
 import com.mediacrossing.properties.ConfigurationProperties;
@@ -102,6 +103,6 @@ public class RunDailyPnlReport {
         Collections.sort(sortedFees);
         sortedFees.remove("Brilig");
 
-        MonthlyBillingReportWriter.writeReportToFile(adList, sortedFees, outputPath);
+        DailyPnlReportWriter.writeReportToFile(adList, sortedFees, outputPath);
     }
 }
