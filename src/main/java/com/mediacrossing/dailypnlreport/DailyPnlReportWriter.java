@@ -26,6 +26,10 @@ public class DailyPnlReportWriter {
         CellStyle fullCurrency = wb.createCellStyle();
         fullCurrency.setDataFormat(df.getFormat("$#,##0.00"));
 
+        CellStyle pattern = wb.createCellStyle();
+        pattern.setFillForegroundColor(IndexedColors.LIGHT_GREEN.getIndex());
+        pattern.setFillPattern(CellStyle.SOLID_FOREGROUND);
+
         /*GLOBAL COST VARIABLES*/
         float amazonCost = 0.05f;
         float discoveryCommission = 0.20f;
@@ -350,6 +354,15 @@ public class DailyPnlReportWriter {
             totalRow.getCell(16).setCellStyle(fullCurrency);
             totalRow.getCell(17).setCellStyle(fullCurrency);
 
+            for (Row r : advertiserSheet) {
+                for (Cell cell : r) {
+                    int i = cell.getColumnIndex();
+                    if ((i < 10 && i > 5) || (i < 18 && i > 13)) {
+                        cell.setCellStyle(pattern);
+                    }
+                }
+            }
+
             for (int x = 0; x <= cellCount; x++) advertiserSheet.autoSizeColumn(x);
         }
 
@@ -472,6 +485,15 @@ public class DailyPnlReportWriter {
                     totalAd.getCell(c.getColumnIndex())
                             .setCellValue(totalAd.getCell(c.getColumnIndex()).getNumericCellValue() +
                                     c.getNumericCellValue());
+                }
+            }
+        }
+
+        for (Row r : advertiserSummary) {
+            for (Cell cell : r) {
+                int i = cell.getColumnIndex();
+                if ((i < 10 && i > 5) || (i < 18 && i > 13)) {
+                    cell.setCellStyle(pattern);
                 }
             }
         }
