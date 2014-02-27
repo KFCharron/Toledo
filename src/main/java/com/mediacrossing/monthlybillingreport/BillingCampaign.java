@@ -26,6 +26,7 @@ public class BillingCampaign implements Serializable {
     private float adXMediaCost;
     private float appNexusMediaCost;
     private int lotameImps = 0;
+    private int blueKaiImps = 0;
 
     public BillingCampaign(String id, String name, int imps, int clicks, float convs, float mediaCost,
                            float networkRevenue, float cpm, String creativeId, String creativeName) {
@@ -223,5 +224,13 @@ public class BillingCampaign implements Serializable {
 
     public void setAppNexusMediaCost(float appNexusMediaCost) {
         this.appNexusMediaCost = appNexusMediaCost;
+    }
+
+    public int getBlueKaiImps() {
+        return blueKaiImps;
+    }
+
+    public void setBlueKaiImps(int blueKaiImps) {
+        this.blueKaiImps = blueKaiImps;
     }
 }

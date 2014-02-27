@@ -93,6 +93,9 @@ public class RunDailyPnlReport {
                             if (fee.getBrokerName().equals("Lotame")) {
                                 bc.setLotameImps(bc.getImps());
                             }
+                            if (fee.getBrokerName().equals("BlueKai")) {
+                                bc.setBlueKaiImps(bc.getImps());
+                            }
                         }
                     }
                 }

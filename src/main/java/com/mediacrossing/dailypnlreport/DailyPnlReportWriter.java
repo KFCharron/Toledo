@@ -50,6 +50,7 @@ public class DailyPnlReportWriter {
                 grandTotal.setAdXMediaCost(grandTotal.getAdXMediaCost() + c.getAdXMediaCost());
                 grandTotal.setAppNexusMediaCost(grandTotal.getAppNexusMediaCost() + c.getAppNexusMediaCost());
                 grandTotal.setLotameImps(grandTotal.getLotameImps() + c.getLotameImps());
+                grandTotal.setBlueKaiImps(grandTotal.getBlueKaiImps() + c.getBlueKaiImps());
             }
         }
 
@@ -77,6 +78,9 @@ public class DailyPnlReportWriter {
                 summarySheet.getRow(rowCount).createCell(1).setCellValue(0);
             }else if (n.equals("Brilig")) {
                 summarySheet.createRow(++rowCount).createCell(0).setCellValue("Brilig Imps");
+                summarySheet.getRow(rowCount).createCell(1).setCellValue(0);
+            }else if (n.equals("BlueKai")) {
+                summarySheet.createRow(++rowCount).createCell(0).setCellValue("BlueKai Imps");
                 summarySheet.getRow(rowCount).createCell(1).setCellValue(0);
             }
             summarySheet.createRow(++rowCount).createCell(0).setCellValue(n);
@@ -122,8 +126,11 @@ public class DailyPnlReportWriter {
             if (r.getCell(0).getStringCellValue().equals("Lotame Imps")) {
                 r.getCell(1).setCellValue(grandTotal.getLotameImps());
             }
-            if (r.getCell(0).getStringCellValue().equals("Brilig Imps")) {
+            else if (r.getCell(0).getStringCellValue().equals("Brilig Imps")) {
                 r.getCell(1).setCellValue(grandTotal.getBriligImps());
+            }
+            else if (r.getCell(0).getStringCellValue().equals("BlueKai Imps")) {
+                r.getCell(1).setCellValue(grandTotal.getBlueKaiImps());
             }
         }
 
@@ -175,6 +182,7 @@ public class DailyPnlReportWriter {
             for (String n : feeNames) {
                 if (n.equals("Lotame")) headerRow.createCell(++cellCount).setCellValue("Lotame Imps");
                 else if (n.equals("Brilig")) headerRow.createCell(++cellCount).setCellValue("Brilig Imps");
+                else if (n.equals("BlueKai")) headerRow.createCell(++cellCount).setCellValue("BlueKai Imps");
                 headerRow.createCell(++cellCount).setCellValue(n);
             }
             headerRow.createCell(++cellCount).setCellValue("Amazon Cost");
@@ -216,6 +224,8 @@ public class DailyPnlReportWriter {
                     if (n.equals("Lotame")) {
                         dataRow.createCell(++cellCount).setCellValue(c.getLotameImps());
                     } else if (n.equals("Brilig")) {
+                        dataRow.createCell(++cellCount).setCellValue(c.getBriligImps());
+                    } else if (n.equals("BlueKai")) {
                         dataRow.createCell(++cellCount).setCellValue(c.getBriligImps());
                     }
                     dataRow.createCell(++cellCount).setCellValue(0);
@@ -303,6 +313,7 @@ public class DailyPnlReportWriter {
             for (String n : feeNames) {
                 if (n.equals("Lotame")) totalRow.createCell(++cellCount).setCellValue(adTotal.getLotameImps());
                 else if (n.equals("Brilig")) totalRow.createCell(++cellCount).setCellValue(adTotal.getBriligImps());
+                else if (n.equals("BlueKai")) totalRow.createCell(++cellCount).setCellValue(adTotal.getBriligImps());
                 totalRow.createCell(++cellCount).setCellValue(0);
                 for (Row r : advertiserSheet) {
                     for (Cell c : r) {
@@ -366,6 +377,7 @@ public class DailyPnlReportWriter {
         for (String n : feeNames) {
             if (n.equals("Lotame")) summaryHeader.createCell(++cellCount).setCellValue("Lotame Imps");
             else if (n.equals("Brilig")) summaryHeader.createCell(++cellCount).setCellValue("Brilig Imps");
+            else if (n.equals("BlueKai")) summaryHeader.createCell(++cellCount).setCellValue("BlueKai Imps");
             summaryHeader.createCell(++cellCount).setCellValue(n);
         }
         summaryHeader.createCell(++cellCount).setCellValue("Amazon Cost");
@@ -400,6 +412,8 @@ public class DailyPnlReportWriter {
                         adRow.createCell(cell.getColumnIndex()).setCellValue(c.getLotameImps());
                     } else if (cell.getStringCellValue().equals("Brilig Imps")) {
                         adRow.createCell(cell.getColumnIndex()).setCellValue(c.getBriligImps());
+                    } else if (cell.getStringCellValue().equals("BlueKai Imps")) {
+                        adRow.createCell(cell.getColumnIndex()).setCellValue(c.getBlueKaiImps());
                     }
                     for (ServingFee f : c.getServingFees()) {
                         if (f.getBrokerName().equals(cell.getStringCellValue())) {
@@ -444,7 +458,8 @@ public class DailyPnlReportWriter {
         for (Cell c : summaryHeader) {
             if (c.getColumnIndex() > 17 &&
                     !summaryHeader.getCell(c.getColumnIndex()).getStringCellValue().equals("Lotame Imps") &&
-                    !summaryHeader.getCell(c.getColumnIndex()).getStringCellValue().equals("Brilig Imps"))
+                    !summaryHeader.getCell(c.getColumnIndex()).getStringCellValue().equals("Brilig Imps") &&
+                    !summaryHeader.getCell(c.getColumnIndex()).getStringCellValue().equals("BlueKai Imps"))
             {
                 totalAd.getCell(c.getColumnIndex()).setCellStyle(fullCurrency);
             }
