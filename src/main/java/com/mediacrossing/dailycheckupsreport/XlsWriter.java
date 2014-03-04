@@ -43,6 +43,7 @@ public class XlsWriter {
         setCAMPAIGNARRAYLIST(campaignArrayList);
         setOUTPUTPATH(outputPath);
         WORKBOOK = new HSSFWorkbook();
+        buildSummarySheet();
         buildSegmentSheet();
         buildFrequencySheet();
         buildDaypartSheet();
@@ -55,6 +56,20 @@ public class XlsWriter {
         LocalDate today = new LocalDate(DateTimeZone.UTC);
         writeWorkbookToFileWithName("DailyCheckUps_"+today.toString()+".xls");
 
+    }
+
+    public static void buildSummarySheet() {
+        Sheet s = WORKBOOK.createSheet("Campaigns Changed Yesterday");
+        Row h = s.createRow(0);
+        h.createCell(0).setCellValue("Campaigns Adjusted Yesterday");
+        int count = 2;
+        for (Campaign c : CAMPAIGNARRAYLIST) {
+            if (c.getProfile().modifiedYesterday()) {
+                s.createRow(count).createCell(0).setCellValue(c.getName() + " (" + c.getId() + ")");
+                count++;
+            }
+        }
+        s.autoSizeColumn(0);
     }
 
     public static void buildGeographySheet() {
