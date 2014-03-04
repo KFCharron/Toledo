@@ -29,6 +29,14 @@ public class DailyPnlReportWriter {
         CellStyle pattern = wb.createCellStyle();
         pattern.setFillForegroundColor(IndexedColors.LIGHT_GREEN.getIndex());
         pattern.setFillPattern(CellStyle.SOLID_FOREGROUND);
+        pattern.setDataFormat(df.getFormat("$#,##0.00"));
+
+        CellStyle patternImp = wb.createCellStyle();
+        patternImp.setFillForegroundColor(IndexedColors.LIGHT_GREEN.getIndex());
+        patternImp.setFillPattern(CellStyle.SOLID_FOREGROUND);
+        
+        CellStyle percentage = wb.createCellStyle();
+        percentage.setDataFormat(df.getFormat("00.00%"));
 
         /*GLOBAL COST VARIABLES*/
         float amazonCost = 0.05f;
@@ -92,11 +100,21 @@ public class DailyPnlReportWriter {
             summarySheet.getRow(rowCount).getCell(1).setCellStyle(fullCurrency);
         }
         summarySheet.createRow(++rowCount).createCell(0).setCellValue("Amazon Cost:");
-        summarySheet.getRow(rowCount).createCell(1).setCellValue((float) grandTotal.getImps() / 1000 * amazonCost);
+        float amazonFee = (float) grandTotal.getImps() / 1000 * amazonCost;
+        summarySheet.getRow(rowCount).createCell(1).setCellValue(amazonFee);
         summarySheet.getRow(rowCount).getCell(1).setCellStyle(fullCurrency);
         summarySheet.createRow(++rowCount).createCell(0).setCellValue("Total Cost:");
+        summarySheet.getRow(rowCount).createCell(1).setCellValue(grandTotal.getTotalCost() + amazonFee);
+        summarySheet.getRow(rowCount).getCell(1).setCellStyle(fullCurrency);
         summarySheet.createRow(++rowCount).createCell(0).setCellValue("Gross Profit:");
+        summarySheet.getRow(rowCount).createCell(1).setCellValue(grandTotal.getNetworkRevenue()
+                - grandTotal.getTotalCost() - amazonFee);
+        summarySheet.getRow(rowCount).getCell(1).setCellStyle(fullCurrency);
         summarySheet.createRow(++rowCount).createCell(0).setCellValue("GP Margin:");
+        summarySheet.getRow(rowCount).createCell(1)
+                .setCellValue(summarySheet.getRow(rowCount - 1).getCell(1).getNumericCellValue()                        
+                        / grandTotal.getNetworkRevenue());
+        summarySheet.getRow(rowCount).getCell(1).setCellStyle(percentage);
 
         summarySheet.getRow(1).createCell(1).setCellValue(grandTotal.getImps());
         summarySheet.getRow(2).createCell(1).setCellValue(grandTotal.getClicks());
@@ -230,16 +248,21 @@ public class DailyPnlReportWriter {
                     } else if (n.equals("Brilig")) {
                         dataRow.createCell(++cellCount).setCellValue(c.getBriligImps());
                     } else if (n.equals("BlueKai")) {
-                        dataRow.createCell(++cellCount).setCellValue(c.getBriligImps());
+                        dataRow.createCell(++cellCount).setCellValue(c.getBlueKaiImps());
                     }
                     dataRow.createCell(++cellCount).setCellValue(0);
                     dataRow.getCell(cellCount).setCellStyle(fullCurrency);
                 }
-                dataRow.createCell(++cellCount).setCellValue((float) c.getImps() / 1000 * amazonCost);
+                amazonFee = (float) c.getImps() / 1000 * amazonCost; 
+                dataRow.createCell(++cellCount).setCellValue(amazonFee);
                 dataRow.getCell(cellCount).setCellStyle(fullCurrency);
-                dataRow.createCell(++cellCount);
-                dataRow.createCell(++cellCount);
-                dataRow.createCell(++cellCount);
+                dataRow.createCell(++cellCount).setCellValue(c.getTotalCost() + amazonFee);
+                dataRow.getCell(cellCount).setCellStyle(fullCurrency);
+                dataRow.createCell(++cellCount).setCellValue(c.getNetworkRevenue() - c.getTotalCost() - amazonFee);
+                dataRow.getCell(cellCount).setCellStyle(fullCurrency);
+                dataRow.createCell(++cellCount)
+                        .setCellValue(dataRow.getCell(cellCount-1).getNumericCellValue()/c.getNetworkRevenue());
+                dataRow.getCell(cellCount).setCellStyle(percentage);
                 if (ad.getId().equals("242222")) {
                     dataRow.createCell(++cellCount).setCellValue(discoveryCommission * c.getNetworkRevenue());
                     dataRow.getCell(cellCount).setCellStyle(fullCurrency);
@@ -287,6 +310,7 @@ public class DailyPnlReportWriter {
                 adTotal.setMxMediaCost(adTotal.getMxMediaCost() + c.getMxMediaCost());
                 adTotal.setAppNexusMediaCost(adTotal.getAppNexusMediaCost() + c.getAppNexusMediaCost());
                 adTotal.setLotameImps(adTotal.getLotameImps() + c.getLotameImps());
+                adTotal.setBlueKaiImps(adTotal.getBlueKaiImps() + c.getBlueKaiImps());
             }
 
             //add totals to advertiser summary sheet
@@ -332,11 +356,16 @@ public class DailyPnlReportWriter {
                 }
                 totalRow.getCell(cellCount).setCellStyle(fullCurrency);
             }
-            totalRow.createCell(++cellCount).setCellValue((float) adTotal.getImps() / 1000 * amazonCost);
+            amazonFee = (float) adTotal.getImps() / 1000 * amazonCost; 
+            totalRow.createCell(++cellCount).setCellValue(amazonFee);
             totalRow.getCell(cellCount).setCellStyle(fullCurrency);
-            cellCount++;
-            cellCount++;
-            cellCount++;
+            totalRow.createCell(++cellCount).setCellValue(adTotal.getTotalCost() + amazonFee);
+            totalRow.getCell(cellCount).setCellStyle(fullCurrency);
+            totalRow.createCell(++cellCount).setCellValue(adTotal.getNetworkRevenue() - adTotal.getTotalCost() - amazonFee);
+            totalRow.getCell(cellCount).setCellStyle(fullCurrency);
+            totalRow.createCell(++cellCount)
+                    .setCellValue(totalRow.getCell(cellCount-1).getNumericCellValue()/adTotal.getNetworkRevenue());
+            totalRow.getCell(cellCount).setCellStyle(percentage);
             if (ad.getId().equals("242222")) {
                 totalRow.createCell(++cellCount).setCellValue(adTotal.getNetworkRevenue() * discoveryCommission);
                 totalRow.getCell(cellCount).setCellStyle(fullCurrency);
@@ -358,7 +387,9 @@ public class DailyPnlReportWriter {
                 for (Cell cell : r) {
                     int i = cell.getColumnIndex();
                     if ((i < 10 && i > 5) || (i < 18 && i > 13)) {
-                        cell.setCellStyle(pattern);
+                        if (advertiserSheet.getRow(0).getCell(i).getStringCellValue().contains("Imp")) {
+                            cell.setCellStyle(patternImp);
+                        } else cell.setCellStyle(pattern);
                     }
                 }
             }
@@ -434,9 +465,22 @@ public class DailyPnlReportWriter {
                             adRow.getCell(cell.getColumnIndex()).setCellStyle(fullCurrency);
                         }
                     }
+                    amazonFee = (float)c.getImps()/1000 * amazonCost;
                     if (cell.getStringCellValue().equals("Amazon Cost")) {
-                        adRow.createCell(cell.getColumnIndex()).setCellValue((float)c.getImps()/1000 * amazonCost);
+                        adRow.createCell(cell.getColumnIndex()).setCellValue(amazonFee);
                         adRow.getCell(cell.getColumnIndex()).setCellStyle(fullCurrency);
+                    } else if (cell.getStringCellValue().equals("Total Cost")) {
+                        adRow.createCell(cell.getColumnIndex()).setCellValue(c.getTotalCost() + amazonFee);
+                        adRow.getCell(cell.getColumnIndex()).setCellStyle(fullCurrency);
+                    } else if (cell.getStringCellValue().equals("Gross Profit")) {
+                        adRow.createCell(cell.getColumnIndex())
+                                .setCellValue(c.getNetworkRevenue() - c.getTotalCost() - amazonFee);
+                        adRow.getCell(cell.getColumnIndex()).setCellStyle(fullCurrency);
+                    } else if (cell.getStringCellValue().equals("GP Margin")) {
+                        adRow.createCell(cell.getColumnIndex())
+                                .setCellValue(adRow.getCell(cell.getColumnIndex()-1).getNumericCellValue()
+                                        /c.getNetworkRevenue());
+                        adRow.getCell(cell.getColumnIndex()).setCellStyle(percentage);
                     }
                 }
 
@@ -481,7 +525,8 @@ public class DailyPnlReportWriter {
         for (Row r : advertiserSummary) {
             for (Cell c : r) {
                 if (c.getColumnIndex() != 0 && c.getRowIndex() != totalAd.getRowNum() && c.getRowIndex() != 0 &&
-                        !advertiserSummary.getRow(0).getCell(c.getColumnIndex()).getStringCellValue().contains("eCPM")) {
+                        !advertiserSummary.getRow(0).getCell(c.getColumnIndex()).getStringCellValue().contains("eCPM")
+                        && !advertiserSummary.getRow(0).getCell(c.getColumnIndex()).getStringCellValue().contains("GP Margin")) {
                     totalAd.getCell(c.getColumnIndex())
                             .setCellValue(totalAd.getCell(c.getColumnIndex()).getNumericCellValue() +
                                     c.getNumericCellValue());
@@ -493,7 +538,9 @@ public class DailyPnlReportWriter {
             for (Cell cell : r) {
                 int i = cell.getColumnIndex();
                 if ((i < 10 && i > 5) || (i < 18 && i > 13)) {
-                    cell.setCellStyle(pattern);
+                    if (advertiserSummary.getRow(0).getCell(i).getStringCellValue().contains("Imps")) {
+                        cell.setCellStyle(patternImp);
+                    } else cell.setCellStyle(pattern);
                 }
             }
         }
@@ -505,7 +552,7 @@ public class DailyPnlReportWriter {
         LocalDate now = new LocalDate(DateTimeZone.UTC);
         FileOutputStream fileOut =
                 new FileOutputStream(new File(outputPath, "Daily_PnL_"
-                        +now.toString()+".xls"));
+                        + now.toString() + ".xls"));
         wb.write(fileOut);
         fileOut.close();
     }

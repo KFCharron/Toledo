@@ -80,13 +80,16 @@ public class RunDailyPnlReport {
             for (BillingAdvertiser a : adList) {
                 for (BillingCampaign bc : a.getCampaigns()) {
                     if (bc.getId().equals(c.getId())) {
+                        int ind = -1;
+                        for (ServingFee f : c.getServingFeeList()) {
+                            if (f.getBrokerName().equals("MediaCrossing")) ind = c.getServingFeeList().indexOf(f);
+                        }
+                        if (ind != -1) c.getServingFeeList().remove(ind);
                         for (ServingFee fee : c.getServingFeeList()) {
                             fee.setTotalFee(bc.getImps() * (Float.parseFloat(fee.getValue()) / 1000));
                             if (fee.getBrokerName().equals("Peer39")) fee.setTotalFee(bc.getMediaCost() * 0.15f);
                             bc.getServingFees().add(fee);
-                            if (!fee.getBrokerName().equals("MediaCrossing")) {
-                                feeNames.add(fee.getBrokerName());
-                            }
+                            feeNames.add(fee.getBrokerName());
                             if (fee.getBrokerName().equals("Brilig")) {
                                 bc.setBriligImps(bc.getImps());
                             }

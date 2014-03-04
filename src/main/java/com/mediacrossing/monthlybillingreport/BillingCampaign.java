@@ -233,4 +233,12 @@ public class BillingCampaign implements Serializable {
     public void setBlueKaiImps(int blueKaiImps) {
         this.blueKaiImps = blueKaiImps;
     }
+
+    public float getTotalCost() {
+        float serveCost = 0;
+        for (ServingFee f : this.getServingFees()) {
+            serveCost = serveCost + f.getTotalFee();
+        }
+        return (this.mediaCost + this.getAnCommission() + this.getMxCommission() + this.getAdXCommission() + serveCost);
+    }
 }
