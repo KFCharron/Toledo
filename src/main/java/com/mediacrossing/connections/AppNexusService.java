@@ -467,7 +467,7 @@ public class AppNexusService {
                 "            \"imps_total\",\n" +
                 "            \"imps_sold\",\n" +
                 "            \"clicks\",\n" +
-                "            \"imps_rtb\",\n" +
+                "            \"imps_resold\",\n" +
                 "            \"imps_kept\",\n" +
                 "            \"imps_default\",\n" +
                 "            \"imps_psa\",\n" +
@@ -568,7 +568,7 @@ public class AppNexusService {
                 "\t\t\"imps_total\",\n" +
                 "\t\t\"imps_sold\",\n" +
                 "\t\t\"clicks\",\n" +
-                "            \t \"imps_rtb\",\n" +
+                "            \t \"imps_resold\",\n" +
                 "            \t \"imps_kept\",\n" +
                 "            \t \"imps_default\",\n" +
                 "            \t \"imps_psa\",\n" +

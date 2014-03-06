@@ -12,7 +12,7 @@ public class Placement implements Serializable{
     private int impsTotal;
     private int impsSold;
     private int clicks;
-    private int rtbImps;
+    private int resoldImps;
     private int keptImps;
     private int defaultImps;
     private int psaImps;
@@ -28,11 +28,11 @@ public class Placement implements Serializable{
         this.cpm = cpm;
     }
 
-    public String getRtbPercentage() {
+    public String getResoldPercentage() {
         if (impsTotal == 0) {
             return "";
         }
-        return df.format(rtbImps / impsTotal * 100);
+        return df.format(resoldImps / impsTotal * 100);
     }
 
     public String getKeptPercentage() {
@@ -112,12 +112,12 @@ public class Placement implements Serializable{
         this.clicks = clicks;
     }
 
-    public int getRtbImps() {
-        return rtbImps;
+    public int getResoldImps() {
+        return resoldImps;
     }
 
-    public void setRtbImps(int rtbImps) {
-        this.rtbImps = rtbImps;
+    public void setResoldImps(int resoldImps) {
+        this.resoldImps = resoldImps;
     }
 
     public int getKeptImps() {

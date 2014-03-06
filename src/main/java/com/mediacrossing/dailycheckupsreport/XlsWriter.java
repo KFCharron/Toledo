@@ -651,7 +651,7 @@ public class XlsWriter {
         headerRow.createCell(2).setCellValue("Total Imps");
         headerRow.createCell(3).setCellValue("Imps Sold");
         headerRow.createCell(4).setCellValue("Clicks");
-        headerRow.createCell(5).setCellValue("RTB Imps");
+        headerRow.createCell(5).setCellValue("Resold Imps");
         headerRow.createCell(6).setCellValue("Imps Kept");
         headerRow.createCell(7).setCellValue("Default Imps");
         headerRow.createCell(8).setCellValue("PSA Imps");
@@ -678,7 +678,7 @@ public class XlsWriter {
             dataRow.createCell(2).setCellValue(pub.getImpsTotal());
             dataRow.createCell(3).setCellValue(pub.getImpsSold());
             dataRow.createCell(4).setCellValue(pub.getClicks());
-            dataRow.createCell(5).setCellValue(pub.getRtbPercentage() + "% (" + pub.getImpsRtb() + ")");
+            dataRow.createCell(5).setCellValue(pub.getResoldPercentage() + "% (" + pub.getImpsResold() + ")");
             dataRow.createCell(6).setCellValue(pub.getKeptPercentage() + "% (" + pub.getImpsKept() + ")");
             dataRow.createCell(7).setCellValue(pub.getDefaultPercentage() + "% (" + pub.getImpsDefault() + ")");
             dataRow.createCell(8).setCellValue(pub.getPsaPercentage() + "% (" + pub.getImpsPsa() + ")");
@@ -704,7 +704,7 @@ public class XlsWriter {
         headerRow.createCell(2).setCellValue("Total Imps");
         headerRow.createCell(3).setCellValue("Imps Sold");
         headerRow.createCell(4).setCellValue("Clicks");
-        headerRow.createCell(5).setCellValue("RTB Imps");
+        headerRow.createCell(5).setCellValue("Resold Imps");
         headerRow.createCell(6).setCellValue("Imps Kept");
         headerRow.createCell(7).setCellValue("Default Imps");
         headerRow.createCell(8).setCellValue("PSA Imps");
@@ -724,7 +724,7 @@ public class XlsWriter {
             dataRow.createCell(2).setCellValue(pub.getImpsTotal());
             dataRow.createCell(3).setCellValue(pub.getImpsSold());
             dataRow.createCell(4).setCellValue(pub.getClicks());
-            dataRow.createCell(5).setCellValue(pub.getRtbPercentage() + "% (" + pub.getImpsRtb() + ")");
+            dataRow.createCell(5).setCellValue(pub.getResoldPercentage() + "% (" + pub.getImpsResold() + ")");
             dataRow.createCell(6).setCellValue(pub.getKeptPercentage() + "% (" + pub.getImpsKept() + ")");
             dataRow.createCell(7).setCellValue(pub.getDefaultPercentage() + "% (" + pub.getImpsDefault() + ")");
             dataRow.createCell(8).setCellValue(pub.getPsaPercentage() + "% (" + pub.getImpsPsa() + ")");
@@ -753,7 +753,7 @@ public class XlsWriter {
         headerRow.createCell(4).setCellValue("Imps Total");
         headerRow.createCell(5).setCellValue("Imps Sold");
         headerRow.createCell(6).setCellValue("Clicks");
-        headerRow.createCell(7).setCellValue("RTB");
+        headerRow.createCell(7).setCellValue("Resold");
         headerRow.createCell(8).setCellValue("Kept");
         headerRow.createCell(9).setCellValue("Default");
         headerRow.createCell(10).setCellValue("PSA");
@@ -775,7 +775,7 @@ public class XlsWriter {
             dataRow.createCell(4).setCellValue(p.getImpsTotal());
             dataRow.createCell(5).setCellValue(p.getImpsSold());
             dataRow.createCell(6).setCellValue(p.getClicks());
-            dataRow.createCell(7).setCellValue(p.getRtbImps() + "(" + p.getRtbPercentage() + "%)");
+            dataRow.createCell(7).setCellValue(p.getResoldImps() + "(" + p.getResoldPercentage() + "%)");
             dataRow.createCell(8).setCellValue(p.getKeptImps() + "(" + p.getKeptPercentage() + "%)");
             dataRow.createCell(9).setCellValue(p.getDefaultImps() + "(" + p.getDefaultPercentage() + "%)");
             dataRow.createCell(10).setCellValue(p.getPsaImps() + "(" + p.getPsaPercentage() + "%)");
@@ -803,7 +803,7 @@ public class XlsWriter {
         headerRow.createCell(4).setCellValue("Imps Total");
         headerRow.createCell(5).setCellValue("Imps Sold");
         headerRow.createCell(6).setCellValue("Clicks");
-        headerRow.createCell(7).setCellValue("RTB");
+        headerRow.createCell(7).setCellValue("Resold");
         headerRow.createCell(8).setCellValue("Kept");
         headerRow.createCell(9).setCellValue("Default");
         headerRow.createCell(10).setCellValue("PSA");
@@ -825,7 +825,7 @@ public class XlsWriter {
             dataRow.createCell(4).setCellValue(p.getImpsTotal());
             dataRow.createCell(5).setCellValue(p.getImpsSold());
             dataRow.createCell(6).setCellValue(p.getClicks());
-            dataRow.createCell(7).setCellValue(p.getRtbImps() + "(" + p.getRtbPercentage() + "%)");
+            dataRow.createCell(7).setCellValue(p.getResoldImps() + "(" + p.getResoldPercentage() + "%)");
             dataRow.createCell(8).setCellValue(p.getKeptImps() + "(" + p.getKeptPercentage() + "%)");
             dataRow.createCell(9).setCellValue(p.getDefaultImps() + "(" + p.getDefaultPercentage() + "%)");
             dataRow.createCell(10).setCellValue(p.getPsaImps() + "(" + p.getPsaPercentage() + "%)");

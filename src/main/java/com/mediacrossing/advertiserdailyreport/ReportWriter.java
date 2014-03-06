@@ -43,7 +43,7 @@ public class ReportWriter {
         percentage.setDataFormat(df.getFormat("0%"));
 
         CellStyle ctrPercentage = wb.createCellStyle();
-        ctrPercentage.setDataFormat(df.getFormat("#.0000%"));
+        ctrPercentage.setDataFormat(df.getFormat("#.##%"));
 
         CellStyle greenFullCurrency = wb.createCellStyle();
         greenFullCurrency.setDataFormat(df.getFormat("$#,##0.00"));
@@ -96,8 +96,8 @@ public class ReportWriter {
         lineItemHeader.createCell(3).setCellValue("Clicks");
         lineItemHeader.createCell(4).setCellValue("Total Conv");
         lineItemHeader.createCell(5).setCellValue("Media Cost");
-        lineItemHeader.createCell(6).setCellValue("CTR");
-        lineItemHeader.createCell(7).setCellValue("Conv Rate");
+        lineItemHeader.createCell(6).setCellValue("CTR (bp)");
+        lineItemHeader.createCell(7).setCellValue("Conv Rate (bp)");
         lineItemHeader.createCell(8).setCellValue("CPM");
         lineItemHeader.createCell(9).setCellValue("CPC");
         lineItemHeader.createCell(10).setCellValue("Start Date");
@@ -127,8 +127,8 @@ public class ReportWriter {
                 dataRow.createCell(3).setCellValue(data.getClicks());
                 dataRow.createCell(4).setCellValue(data.getTotalConv());
                 dataRow.createCell(5).setCellValue(data.getMediaCost());
-                dataRow.createCell(6).setCellValue(data.getCtr());
-                dataRow.createCell(7).setCellValue(data.getConvRate());
+                dataRow.createCell(6).setCellValue(data.getCtr() * 10000);
+                dataRow.createCell(7).setCellValue(data.getConvRate() * 10000);
                 dataRow.createCell(8).setCellValue(data.getCpm());
                 dataRow.createCell(9).setCellValue(data.getCpc());
                 if(data.getStartDay() != null && data.getEndDay() != null) {
@@ -228,8 +228,8 @@ public class ReportWriter {
         campaignHeader.createCell(3).setCellValue("Clicks");
         campaignHeader.createCell(4).setCellValue("Total Conv");
         campaignHeader.createCell(5).setCellValue("Media Cost");
-        campaignHeader.createCell(6).setCellValue("CTR");
-        campaignHeader.createCell(7).setCellValue("Conv Rate");
+        campaignHeader.createCell(6).setCellValue("CTR (bp)");
+        campaignHeader.createCell(7).setCellValue("Conv Rate (bp)");
         campaignHeader.createCell(8).setCellValue("CPM");
         campaignHeader.createCell(9).setCellValue("CPC");
         campaignHeader.createCell(10).setCellValue("Start Date");
@@ -261,8 +261,8 @@ public class ReportWriter {
                 dataRow.createCell(3).setCellValue(data.getClicks());
                 dataRow.createCell(4).setCellValue(data.getTotalConv());
                 dataRow.createCell(5).setCellValue(data.getMediaCost());
-                dataRow.createCell(6).setCellValue(data.getCtr());
-                dataRow.createCell(7).setCellValue(data.getConvRate());
+                dataRow.createCell(6).setCellValue(data.getCtr() * 10000);
+                dataRow.createCell(7).setCellValue(data.getConvRate() * 10000);
                 dataRow.createCell(8).setCellValue(data.getCpm());
                 dataRow.createCell(9).setCellValue(data.getCpc());
                 if(data.getStartDay() != null && data.getEndDay() != null) {
@@ -368,8 +368,8 @@ public class ReportWriter {
         nextLineItemHeader.createCell(3).setCellValue("Clicks");
         nextLineItemHeader.createCell(4).setCellValue("Total Conv");
         nextLineItemHeader.createCell(5).setCellValue("Media Cost");
-        nextLineItemHeader.createCell(6).setCellValue("CTR");
-        nextLineItemHeader.createCell(7).setCellValue("Conv Rate");
+        nextLineItemHeader.createCell(6).setCellValue("CTR (bp)");
+        nextLineItemHeader.createCell(7).setCellValue("Conv Rate (bp)");
         nextLineItemHeader.createCell(8).setCellValue("CPM");
         nextLineItemHeader.createCell(9).setCellValue("CPC");
         nextLineItemHeader.createCell(10).setCellValue("Start Date");
@@ -401,8 +401,8 @@ public class ReportWriter {
                     dataRow.createCell(3).setCellValue(data.getClicks());
                     dataRow.createCell(4).setCellValue(data.getTotalConv());
                     dataRow.createCell(5).setCellValue(data.getMediaCost());
-                    dataRow.createCell(6).setCellValue(data.getCtr());
-                    dataRow.createCell(7).setCellValue(data.getConvRate());
+                    dataRow.createCell(6).setCellValue(data.getCtr() * 10000);
+                    dataRow.createCell(7).setCellValue(data.getConvRate() * 10000);
                     dataRow.createCell(8).setCellValue(data.getCpm());
                     dataRow.createCell(9).setCellValue(data.getCpc());
                     if(data.getStartDay() != null && data.getEndDay() != null) {
@@ -506,8 +506,8 @@ public class ReportWriter {
         nextCampaignHeader.createCell(3).setCellValue("Clicks");
         nextCampaignHeader.createCell(4).setCellValue("Total Conv");
         nextCampaignHeader.createCell(5).setCellValue("Media Cost");
-        nextCampaignHeader.createCell(6).setCellValue("CTR");
-        nextCampaignHeader.createCell(7).setCellValue("Conv Rate");
+        nextCampaignHeader.createCell(6).setCellValue("CTR (bp)");
+        nextCampaignHeader.createCell(7).setCellValue("Conv Rate (bp)");
         nextCampaignHeader.createCell(8).setCellValue("CPM");
         nextCampaignHeader.createCell(9).setCellValue("CPC");
         nextCampaignHeader.createCell(10).setCellValue("Start Date");
@@ -542,8 +542,8 @@ public class ReportWriter {
                     dataRow.createCell(3).setCellValue(data.getClicks());
                     dataRow.createCell(4).setCellValue(data.getTotalConv());
                     dataRow.createCell(5).setCellValue(data.getMediaCost());
-                    dataRow.createCell(6).setCellValue(data.getCtr());
-                    dataRow.createCell(7).setCellValue(data.getConvRate());
+                    dataRow.createCell(6).setCellValue(data.getCtr() * 10000);
+                    dataRow.createCell(7).setCellValue(data.getConvRate() * 10000);
                     dataRow.createCell(8).setCellValue(data.getCpm());
                     dataRow.createCell(9).setCellValue(data.getCpc());
                     if(data.getStartDay() != null && data.getEndDay() != null) {

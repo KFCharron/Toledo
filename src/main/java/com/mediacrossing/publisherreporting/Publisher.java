@@ -10,11 +10,11 @@ public class Publisher implements Serializable {
     private float impsTotal;
     private int impsSold;
     private int clicks;
-    private float impsRtb;
+    private float impsResold;
     private float impsKept;
     private float impsDefault;
     private float impsPsa;
-    private String rtbPercentage;
+    private String resoldPercentage;
     private String keptPercentage;
     private String defaultPercentage;
     private String psaPercentage;
@@ -35,26 +35,26 @@ public class Publisher implements Serializable {
     }
 
     public Publisher(String id, String publisherName, float impsTotal, int impsSold,
-                     int clicks, float impsRtb, float impsKept, float impsDefault, float impsPsa, float cpm) {
+                     int clicks, float impsResold, float impsKept, float impsDefault, float impsPsa, float cpm) {
         this.id = id;
         this.publisherName = publisherName;
         this.impsTotal = impsTotal;
         this.impsSold = impsSold;
         this.clicks = clicks;
-        this.impsRtb = impsRtb;
+        this.impsResold = impsResold;
         this.impsKept = impsKept;
         this.impsDefault = impsDefault;
         this.impsPsa = impsPsa;
         DecimalFormat df = new DecimalFormat("#.00");
         this.cpm = cpm;
         if (impsTotal != 0) {
-            this.rtbPercentage = df.format(impsRtb / impsTotal * 100);
+            this.resoldPercentage = df.format(impsResold / impsTotal * 100);
             this.keptPercentage = df.format(impsKept / impsTotal * 100);
             this.defaultPercentage = df.format(impsDefault / impsTotal * 100);
             this.psaPercentage = df.format(impsPsa / impsTotal * 100);
         }
         else {
-            this.rtbPercentage = "";
+            this.resoldPercentage = "";
             this.keptPercentage = "";
             this.defaultPercentage = "";
             this.psaPercentage = "";
@@ -90,8 +90,8 @@ public class Publisher implements Serializable {
         return clicks;
     }
 
-    public float getImpsRtb() {
-        return impsRtb;
+    public float getImpsResold() {
+        return impsResold;
     }
 
     public float getImpsKept() {
@@ -106,8 +106,8 @@ public class Publisher implements Serializable {
         return impsPsa;
     }
 
-    public String getRtbPercentage() {
-        return rtbPercentage;
+    public String getResoldPercentage() {
+        return resoldPercentage;
     }
 
     public String getKeptPercentage() {

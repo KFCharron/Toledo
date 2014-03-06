@@ -42,7 +42,7 @@ public class RunAdvertiserDaily {
             mxConn = new MxService(mxUrl, mxUsername, mxPassword);
         }
         AppNexusService anConn = new AppNexusService(appNexusUrl, properties.getAppNexusUsername(),
-                properties.getAppNexusPassword());
+                properties.getAppNexusPassword(), properties.getPartitionSize(), properties.getRequestDelayInSeconds());
 
         //Parse and save to list of advertisers
         final List<Advertiser> advertiserList = mxConn.requestAllAdvertisers();
@@ -161,7 +161,7 @@ public class RunAdvertiserDaily {
             for (Advertiser ad : liveAdvertiserList) {
                 //get line item data
                 //save to a list of line items
-                List<LineItem> lineItems = mxConn.requestLineItemsForAdvertiser(ad.getAdvertiserID());
+                List<LineItem> lineItems = anConn.requestLineItems(ad.getAdvertiserID());
                 for(LineItem li : lineItems) {
                     for(DailyData data : lifetimeLineItems) {
                         if(li.getLineItemID().equals(data.getId())) {
@@ -183,7 +183,7 @@ public class RunAdvertiserDaily {
                     }
 
                     //get campaign data
-                    List<Campaign> campaigns = mxConn.requestCampaignsForLineItem(advertiser.getAdvertiserID(),
+                    List<Campaign> campaigns = anConn.requestCampaigns(advertiser.getAdvertiserID(),
                             li.getLineItemID());
                     for(Campaign camp : campaigns) {
                         for(DailyData data : lifetimeCampaigns) {

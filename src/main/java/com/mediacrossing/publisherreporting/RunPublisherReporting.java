@@ -140,7 +140,7 @@ public class RunPublisherReporting {
                 p.setImpsTotal(Integer.parseInt(line[4]));
                 p.setImpsSold(Integer.parseInt(line[5]));
                 p.setClicks(Integer.parseInt(line[6]));
-                p.setRtbImps(Integer.parseInt(line[7]));
+                p.setResoldImps(Integer.parseInt(line[7]));
                 p.setKeptImps(Integer.parseInt(line[8]));
                 p.setDefaultImps(Integer.parseInt(line[9]));
                 p.setPsaImps(Integer.parseInt(line[10]));
@@ -167,7 +167,7 @@ public class RunPublisherReporting {
                 p.setImpsTotal(Integer.parseInt(line[4]));
                 p.setImpsSold(Integer.parseInt(line[5]));
                 p.setClicks(Integer.parseInt(line[6]));
-                p.setRtbImps(Integer.parseInt(line[7]));
+                p.setResoldImps(Integer.parseInt(line[7]));
                 p.setKeptImps(Integer.parseInt(line[8]));
                 p.setDefaultImps(Integer.parseInt(line[9]));
                 p.setPsaImps(Integer.parseInt(line[10]));
