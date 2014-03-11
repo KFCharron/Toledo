@@ -161,6 +161,9 @@ public class JSONParse {
                 newCampaign.setProfileID(jsonObject.get("profileId").toString().replace("\"", ""));
                 newCampaign.setLineItemID(jsonObject.get("lineItemId").toString().replace("\"", ""));
                 newCampaign.setEndDate(jsonObject.get("endDate").toString().replace("\"", ""));
+                if (!jsonObject.get("baseBid").isJsonNull())
+                    newCampaign.setBaseBid(Float.parseFloat(jsonObject.get("baseBid").toString().replace("\"","")));
+                else newCampaign.setBaseBid(0);
                 JsonArray jarray = jsonObject.getAsJsonArray("brokerFees");
                 ArrayList<ServingFee> newServingFeeList = new ArrayList<ServingFee>();
                 for (int x = 0; x < jarray.size(); x++) {

@@ -1,4 +1,4 @@
-package com.mediacrossing.dailypnlreport;
+package com.mediacrossing.weeklypnlreport;
 
 import com.mediacrossing.connections.AppNexusService;
 import com.mediacrossing.connections.MxService;
@@ -14,9 +14,9 @@ import scala.concurrent.duration.Duration;
 
 import java.util.*;
 
-public class RunDailyPnlReport {
+public class RunWeeklyFlashPnlReport {
 
-    private static final Logger LOG = LoggerFactory.getLogger(RunDailyPnlReport.class);
+    private static final Logger LOG = LoggerFactory.getLogger(RunWeeklyFlashPnlReport.class);
 
     public static void registerLoggerWithUncaughtExceptions() {
         Thread.setDefaultUncaughtExceptionHandler(
@@ -48,8 +48,8 @@ public class RunDailyPnlReport {
         String mxUrl = properties.getMxUrl();
         MxService mxConn = new MxService(mxUrl, mxUsername, mxPass);
 
-        ArrayList<BillingAdvertiser> adList = anConn.requestBillingReport("yesterday");
-        List<String[]> adExData = anConn.requestSellerReport("yesterday");
+        ArrayList<BillingAdvertiser> adList = anConn.requestBillingReport("last_7_days");
+        List<String[]> adExData = anConn.requestSellerReport("last_7_days");
         for (String[] l : adExData) {
             String googleAdExchangeId = "181";
             if (l[0].equals(googleAdExchangeId)) {
@@ -80,12 +80,16 @@ public class RunDailyPnlReport {
             for (BillingAdvertiser a : adList) {
                 for (BillingCampaign bc : a.getCampaigns()) {
                     if (bc.getId().equals(c.getId())) {
+                        bc.setBaseBid(c.getBaseBid());
+                    }
+                    if (bc.getId().equals(c.getId())) {
                         int ind = -1;
                         for (ServingFee f : c.getServingFeeList()) {
                             if (f.getBrokerName().equals("MediaCrossing")) ind = c.getServingFeeList().indexOf(f);
                         }
                         if (ind != -1) c.getServingFeeList().remove(ind);
                         for (ServingFee fee : c.getServingFeeList()) {
+
                             fee.setTotalFee(bc.getImps() * (Float.parseFloat(fee.getValue()) / 1000));
                             if (fee.getBrokerName().equals("Peer39")) fee.setTotalFee(bc.getMediaCost() * 0.15f);
                             bc.getServingFees().add(fee);
@@ -93,10 +97,10 @@ public class RunDailyPnlReport {
                             if (fee.getBrokerName().equals("Brilig")) {
                                 bc.setBriligImps(bc.getImps());
                             }
-                            if (fee.getBrokerName().equals("Lotame")) {
+                            else if (fee.getBrokerName().equals("Lotame")) {
                                 bc.setLotameImps(bc.getImps());
                             }
-                            if (fee.getBrokerName().equals("BlueKai")) {
+                            else if (fee.getBrokerName().equals("BlueKai")) {
                                 bc.setBlueKaiImps(bc.getImps());
                             }
                         }
@@ -108,6 +112,6 @@ public class RunDailyPnlReport {
         List<String> sortedFees = new ArrayList<>(feeNames);
         Collections.sort(sortedFees);
 
-        DailyPnlReportWriter.writeReportToFile(adList, sortedFees, outputPath);
+        DailyPnlReportWriter.writeReportToFile(adList, sortedFees, outputPath, "Weekly_Flash_PnL_");
     }
 }

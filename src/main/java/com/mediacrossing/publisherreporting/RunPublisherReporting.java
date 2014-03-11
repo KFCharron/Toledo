@@ -43,7 +43,7 @@ public class RunPublisherReporting {
         //get yesterday publisher report
         ArrayList<Publisher> commonData = anConn.requestPublishers();
         ArrayList<Publisher> dayPubList = commonData;
-        ArrayList<Publisher> newPl = new ArrayList<Publisher>();
+        ArrayList<Publisher> newPl = new ArrayList<>();
 
         for(Publisher pub : dayPubList) {
 

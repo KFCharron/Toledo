@@ -642,8 +642,32 @@ public class XlsWriter {
         //Create cell style for network revenue
         DataFormat df = WORKBOOK.createDataFormat();
         CellStyle fullCurrency = WORKBOOK.createCellStyle();
-
         fullCurrency.setDataFormat(df.getFormat("$#,##0.00"));
+
+        CellStyle greenFullCurrency = WORKBOOK.createCellStyle();
+        greenFullCurrency.setDataFormat(df.getFormat("$#,##0.00"));
+        greenFullCurrency.setFillForegroundColor(IndexedColors.LIGHT_GREEN.index);
+        greenFullCurrency.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+
+        CellStyle greenHalfCurrency = WORKBOOK.createCellStyle();
+        greenHalfCurrency.setDataFormat(df.getFormat("$#,##0"));
+        greenHalfCurrency.setFillForegroundColor(IndexedColors.LIGHT_GREEN.index);
+        greenHalfCurrency.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+
+        CellStyle greenPercentage = WORKBOOK.createCellStyle();
+        greenPercentage.setDataFormat(df.getFormat("0%"));
+        greenPercentage.setFillForegroundColor(IndexedColors.LIGHT_GREEN.index);
+        greenPercentage.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+
+        CellStyle greenCtrPercentage = WORKBOOK.createCellStyle();
+        greenCtrPercentage.setDataFormat(df.getFormat("0.0000%"));
+        greenCtrPercentage.setFillForegroundColor(IndexedColors.LIGHT_GREEN.index);
+        greenCtrPercentage.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+
+        CellStyle greenStyle = WORKBOOK.createCellStyle();
+        greenStyle.setFillForegroundColor(IndexedColors.LIGHT_GREEN.index);
+        greenStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+        
         //Header row
         Row headerRow = publisherSheet.createRow((short) 0);
         headerRow.createCell(0).setCellValue("Publisher ID");
@@ -686,6 +710,13 @@ public class XlsWriter {
             dataRow.getCell(9).setCellStyle(fullCurrency);
             dataRow.createCell(10).setCellValue(pub.getPnl());
             dataRow.getCell(10).setCellStyle(fullCurrency);
+            if (dataRow.getRowNum() % 2 == 1) {
+                for (Cell c : dataRow) {
+                    if (c.getColumnIndex() == 9 || c.getColumnIndex() == 10) {
+                        c.setCellStyle(greenFullCurrency);
+                    } else c.setCellStyle(greenStyle);
+                }
+            }
             rowCounter++;
         }
 
@@ -732,6 +763,13 @@ public class XlsWriter {
             dataRow.getCell(9).setCellStyle(fullCurrency);
             dataRow.createCell(10).setCellValue(pub.getPnl());
             dataRow.getCell(10).setCellStyle(fullCurrency);
+            if (dataRow.getRowNum() % 2 == 1) {
+                for (Cell c : dataRow) {
+                    if (c.getColumnIndex() == 9 || c.getColumnIndex() == 10) {
+                        c.setCellStyle(greenFullCurrency);
+                    } else c.setCellStyle(greenStyle);
+                }
+            }
             rowCounter++;
         }
 
@@ -783,6 +821,13 @@ public class XlsWriter {
             dataRow.createCell(12).setCellValue(p.getCpm());
             dataRow.getCell(11).setCellStyle(fullCurrency);
             dataRow.getCell(12).setCellStyle(fullCurrency);
+            if (dataRow.getRowNum() % 2 == 1) {
+                for (Cell c : dataRow) {
+                    if (c.getColumnIndex() == 11 || c.getColumnIndex() == 12) {
+                        c.setCellStyle(greenFullCurrency);
+                    } else c.setCellStyle(greenStyle);
+                }
+            }
 
             rowCounter++;
         }
@@ -833,6 +878,13 @@ public class XlsWriter {
             dataRow.createCell(12).setCellValue(p.getCpm());
             dataRow.getCell(11).setCellStyle(fullCurrency);
             dataRow.getCell(12).setCellStyle(fullCurrency);
+            if (dataRow.getRowNum() % 2 == 1) {
+                for (Cell c : dataRow) {
+                    if (c.getColumnIndex() == 11 || c.getColumnIndex() == 12) {
+                        c.setCellStyle(greenFullCurrency);
+                    } else c.setCellStyle(greenStyle);
+                }
+            }
             rowCounter++;
         }
 

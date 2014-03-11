@@ -51,8 +51,8 @@ public class DataParse {
                     jsonObject.get("lifetimeBudget").toString().replace("\"",""),
                     jsonObject.get("dailyBudget").toString().replace("\"",""),
                     jsonObject.get("status").toString().replace("\"", ""),
-                    jsonObject.get("lifetime_budget_imps").toString().replace("\"", ""),
-                    jsonObject.get("daily_budget_imps").toString().replace("\"", "")
+                    jsonObject.get("lifetimeBudgetImps").toString().replace("\"", ""),
+                    jsonObject.get("dailyBudgetImps").toString().replace("\"", "")
             ));
         }
         return lineItemList;
@@ -77,13 +77,13 @@ public class DataParse {
             if(!jsonObject.get("dailyBudget").isJsonNull()) {
                 dailyBudget = jsonObject.get("dailyBudget").getAsFloat();
             }
-            float lifetimeImp = 0;
-            if(!jsonObject.get("lifetime_budget_imps").isJsonNull()) {
-                lifetimeImp = jsonObject.get("lifetime_budget_imps").getAsFloat();
+            int lifetimeImp = 0;
+            if(!jsonObject.get("lifetimeBudgetImps").isJsonNull()) {
+                lifetimeImp = jsonObject.get("lifetimeBudgetImps").getAsInt();
             }
-            float dailyImp = 0;
-            if(!jsonObject.get("daily_budget_imps").isJsonNull()) {
-                dailyImp = jsonObject.get("daily_budget_imps").getAsFloat();
+            int dailyImp = 0;
+            if(!jsonObject.get("dailyBudgetImps").isJsonNull()) {
+                dailyImp = jsonObject.get("dailyBudgetImps").getAsInt();
             }
             campaignList.add(new
                     Campaign(id, name, status, lifetimeBudget, startDate, endDate, dailyBudget, lifetimeImp, dailyImp));
@@ -157,13 +157,13 @@ public class DataParse {
             if(!jo.get("daily_budget").isJsonNull()) {
                 dailyBudget = Float.parseFloat(jo.get("daily_budget").toString().replace("\"",""));
             }
-            float ltImpBudget = 0;
+            int ltImpBudget = 0;
             if(!jo.get("lifetime_budget_imps").isJsonNull()) {
-                dailyBudget = Float.parseFloat(jo.get("lifetime_budget_imps").toString().replace("\"",""));
+                dailyBudget = Integer.parseInt(jo.get("lifetime_budget_imps").toString().replace("\"",""));
             }
-            float dailyImpBudget = 0;
+            int dailyImpBudget = 0;
             if(!jo.get("daily_budget_imps").isJsonNull()) {
-                dailyBudget = Float.parseFloat(jo.get("daily_budget_imps").toString().replace("\"",""));
+                dailyBudget = Integer.parseInt(jo.get("daily_budget_imps").toString().replace("\"",""));
             }
 
 

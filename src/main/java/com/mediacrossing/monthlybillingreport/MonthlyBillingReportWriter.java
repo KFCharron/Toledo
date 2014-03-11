@@ -16,8 +16,10 @@ import java.util.List;
 
 public class MonthlyBillingReportWriter {
 
-    public static void writeReportToFile(ArrayList<BillingAdvertiser> adList, List<String> feeNames, String outputPath)
-            throws IOException {
+    public static void writeReportToFile(ArrayList<BillingAdvertiser> adList,
+                                         List<String> feeNames,
+                                         String outputPath,
+                                         String name) throws IOException {
 
         //Create wb
         Workbook wb = new HSSFWorkbook();
@@ -457,7 +459,7 @@ public class MonthlyBillingReportWriter {
         //Export file
         LocalDate now = new LocalDate(DateTimeZone.UTC);
         FileOutputStream fileOut =
-                new FileOutputStream(new File(outputPath, "MonthlyBillingReport_"
+                new FileOutputStream(new File(outputPath, name+"BillingReport_"
                         +now.toString()+".xls"));
         wb.write(fileOut);
         fileOut.close();

@@ -22,6 +22,8 @@ public class DailyData implements Serializable{
     private DateTime endDay;
     private float dailyBudget;
     private float lifetimeBudget;
+    private int dailyBudgetImps;
+    private int lifetimeBudgetImps;
     private String status = "";
 
     public String getStatus() {
@@ -45,15 +47,20 @@ public class DailyData implements Serializable{
     }
 
     public float getPercentThroughLifetimeBudget() {
-        return Float.parseFloat(mediaCost)/lifetimeBudget;
+        if (lifetimeBudget > 0) {
+            return Float.parseFloat(mediaCost)/lifetimeBudget;
+        } else {
+            return (float)Integer.parseInt(imps)/lifetimeBudgetImps;
+        }
     }
 
     public float getSuggestedDailyBudget() {
         if (endDay != null) {
             DateTime now = new DateTime();
             Duration nowToEnd = new Duration(now, endDay);
-
-            return (lifetimeBudget-Float.parseFloat(mediaCost))/nowToEnd.getStandardDays();
+            if (lifetimeBudget > 0) {
+                return (lifetimeBudget-Float.parseFloat(mediaCost))/nowToEnd.getStandardDays();
+            } else return (float)(lifetimeBudgetImps - Integer.parseInt(imps))/nowToEnd.getStandardDays();
         } else {
             return 0;
         }
@@ -170,5 +177,21 @@ public class DailyData implements Serializable{
 
     public void setEndDay(DateTime endDay) {
         this.endDay = endDay;
+    }
+
+    public int getDailyBudgetImps() {
+        return dailyBudgetImps;
+    }
+
+    public void setDailyBudgetImps(int dailyBudgetImps) {
+        this.dailyBudgetImps = dailyBudgetImps;
+    }
+
+    public int getLifetimeBudgetImps() {
+        return lifetimeBudgetImps;
+    }
+
+    public void setLifetimeBudgetImps(int lifetimeBudgetImps) {
+        this.lifetimeBudgetImps = lifetimeBudgetImps;
     }
 }

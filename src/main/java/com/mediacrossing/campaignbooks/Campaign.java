@@ -27,13 +27,13 @@ public class Campaign implements Serializable {
     private float lifetimeCtr;
     private DateTime startDate;
     private DateTime endDate;
-    private float lifetimeImpBudget;
-    private float dailyImpBudget;
+    private int lifetimeImpBudget;
+    private int dailyImpBudget;
 
 
     public Campaign(String campaignID, String campaignName, String status, float lifetimeBudget,
-                    String startDate, String endDate, float dailyBudget, float lifetimeImpBudget,
-                    float dailyImpBudget) throws ParseException {
+                    String startDate, String endDate, float dailyBudget, int lifetimeImpBudget,
+                    int dailyImpBudget) throws ParseException {
         this.campaignID = campaignID;
         this.campaignName = campaignName;
         this.lifetimeBudget = lifetimeBudget;
@@ -43,7 +43,7 @@ public class Campaign implements Serializable {
         this.lifetimeImpBudget = lifetimeImpBudget;
 
         //Converting parsed date strings to Date objects
-        DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+        DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'z'");
         if (!startDate.equals("null")) {
             this.startDate = new DateTime(formatter.parseDateTime(startDate), DateTimeZone.UTC);
         }
@@ -65,11 +65,11 @@ public class Campaign implements Serializable {
         this.daysRemaining = nowToEndPeriod.getStandardDays() + 1;
     }
 
-    public float getLifetimeImpBudget() {
+    public int getLifetimeImpBudget() {
         return lifetimeImpBudget;
     }
 
-    public float getDailyImpBudget() {
+    public int getDailyImpBudget() {
         return dailyImpBudget;
     }
 
@@ -119,7 +119,15 @@ public class Campaign implements Serializable {
     }
 
     public float getActualDailyBudget() {
-        return (lifetimeBudget - totalDelivery) / daysRemaining;
+        if (daysRemaining != 0) {
+            if (lifetimeBudget > 0) {
+                return (lifetimeBudget - totalDelivery) / daysRemaining;
+            } else return (lifetimeImpBudget - lifetimeImps)/daysRemaining;
+        } else return 0;
+    }
+
+    public float getActualImpBudget() {
+        return (lifetimeImpBudget- lifetimeImps) / daysRemaining;
     }
 
     public float getTotalDelivery() {

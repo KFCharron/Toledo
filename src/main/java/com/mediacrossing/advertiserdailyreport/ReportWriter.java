@@ -75,7 +75,6 @@ public class ReportWriter {
 
         //style header
         Font font = wb.createFont();
-        font.setFontHeightInPoints((short) 16);
         font.setBoldweight((short) 700);
         CellStyle bold = wb.createCellStyle();
         bold.setFont(font);
@@ -115,8 +114,6 @@ public class ReportWriter {
         float mediaCostTotal = 0.0f;
         float cpmTotal = 0.0f;
         float cpcTotal = 0.0f;
-        float dailyBudgetTotal = 0.0f;
-        int lifetimeBudgetTotal = 0;
         for(Advertiser ad : advertiserList) {
             LOG.debug("Starting Advertiser " + ad.getAdvertiserID());
             for(DailyData data : ad.getDailyLineItems()) {
@@ -137,8 +134,19 @@ public class ReportWriter {
                     dataRow.createCell(11).setCellValue(data.getEndDay().getMonthOfYear() + "/" +
                         data.getEndDay().getDayOfMonth());
                     dataRow.createCell(12).setCellValue(data.getPercentThroughFlight());
-                    dataRow.createCell(13).setCellValue(data.getDailyBudget());
-                    dataRow.createCell(14).setCellValue(data.getLifetimeBudget());
+                    if (data.getDailyBudget() > 0) {
+                        dataRow.createCell(13).setCellValue(data.getDailyBudget());
+                        dataRow.getCell(13).setCellStyle(fullCurrency);
+                    } else {
+                        dataRow.createCell(13).setCellValue(data.getDailyBudgetImps());
+                    }
+                    if (data.getLifetimeBudget() > 0) {
+                        LOG.debug("Lifetime B > 0");
+                        dataRow.createCell(14).setCellValue(data.getLifetimeBudget());
+                        dataRow.getCell(14).setCellStyle(halfCurrency);
+                    } else {
+                        dataRow.createCell(14).setCellValue(data.getLifetimeBudgetImps());
+                    }
                 } else {
                     dataRow.createCell(10);
                     dataRow.createCell(11);
@@ -153,8 +161,6 @@ public class ReportWriter {
                 dataRow.getCell(8).setCellStyle(fullCurrency);
                 dataRow.getCell(9).setCellStyle(fullCurrency);
                 dataRow.getCell(12).setCellStyle(percentage);
-                dataRow.getCell(13).setCellStyle(fullCurrency);
-                dataRow.getCell(14).setCellStyle(halfCurrency);
 
                 //Pattern rows
                 if(rowCount % 2 == 1) {
@@ -171,8 +177,14 @@ public class ReportWriter {
                     dataRow.getCell(10).setCellStyle(greenStyle);
                     dataRow.getCell(11).setCellStyle(greenStyle);
                     dataRow.getCell(12).setCellStyle(greenPercentage);
-                    dataRow.getCell(13).setCellStyle(greenFullCurrency);
-                    dataRow.getCell(14).setCellStyle(greenHalfCurrency);
+                    if (data.getLifetimeBudget() > 0) {
+                        dataRow.getCell(13).setCellStyle(greenFullCurrency);
+                        dataRow.getCell(14).setCellStyle(greenHalfCurrency);
+                    } else {
+                        dataRow.getCell(13).setCellStyle(greenStyle);
+                        dataRow.getCell(14).setCellStyle(greenStyle);
+                    }
+
                 }
                 rowCount++;
 
@@ -183,8 +195,6 @@ public class ReportWriter {
                 mediaCostTotal += data.getMediaCost();
                 cpmTotal += data.getCpm();
                 cpcTotal += data.getCpc();
-                dailyBudgetTotal += data.getDailyBudget();
-                lifetimeBudgetTotal += data.getLifetimeBudget();
             }
             LOG.debug("Finished Advertiser " + ad.getAdvertiserID());
 
@@ -200,15 +210,11 @@ public class ReportWriter {
         totalRow.createCell(5).setCellValue(mediaCostTotal);
         totalRow.createCell(8).setCellValue(cpmTotal);
         totalRow.createCell(9).setCellValue(cpcTotal);
-        totalRow.createCell(13).setCellValue(dailyBudgetTotal);
-        totalRow.createCell(14).setCellValue(lifetimeBudgetTotal);
 
         //style total row
         totalRow.getCell(5).setCellStyle(fullCurrency);
         totalRow.getCell(8).setCellStyle(fullCurrency);
         totalRow.getCell(9).setCellStyle(fullCurrency);
-        totalRow.getCell(13).setCellStyle(fullCurrency);
-        totalRow.getCell(14).setCellStyle(halfCurrency);
 
         //autosize columns
         for (int x = 0; x < 15; x++) {
@@ -249,8 +255,6 @@ public class ReportWriter {
         mediaCostTotal = 0.0f;
         cpmTotal = 0.0f;
         cpcTotal = 0.0f;
-        dailyBudgetTotal = 0.0f;
-        lifetimeBudgetTotal = 0;
         for(Advertiser ad : advertiserList) {
             LOG.debug("Started Advertiser " + ad.getAdvertiserID());
             for(DailyData data : ad.getDailyCampaigns()) {
@@ -271,8 +275,18 @@ public class ReportWriter {
                     dataRow.createCell(11).setCellValue(data.getEndDay().getMonthOfYear() + "/" +
                         data.getEndDay().getDayOfMonth());
                     dataRow.createCell(12).setCellValue(data.getPercentThroughFlight());
-                    dataRow.createCell(13).setCellValue(data.getDailyBudget());
-                    dataRow.createCell(14).setCellValue(data.getLifetimeBudget());
+                    if (data.getDailyBudget() > 0) {
+                        dataRow.createCell(13).setCellValue(data.getDailyBudget());
+                        dataRow.getCell(13).setCellStyle(fullCurrency);
+                    } else {
+                        dataRow.createCell(13).setCellValue(data.getDailyBudgetImps());
+                    }
+                    if (data.getLifetimeBudget() > 0) {
+                        dataRow.createCell(14).setCellValue(data.getLifetimeBudget());
+                        dataRow.getCell(14).setCellStyle(halfCurrency);
+                    } else {
+                        dataRow.createCell(14).setCellValue(data.getLifetimeBudgetImps());
+                    }
                 } else {
                     dataRow.createCell(10);
                     dataRow.createCell(11);
@@ -287,8 +301,6 @@ public class ReportWriter {
                 dataRow.getCell(8).setCellStyle(fullCurrency);
                 dataRow.getCell(9).setCellStyle(fullCurrency);
                 dataRow.getCell(12).setCellStyle(percentage);
-                dataRow.getCell(13).setCellStyle(fullCurrency);
-                dataRow.getCell(14).setCellStyle(halfCurrency);
 
                 //Pattern rows
                 if(rowCount % 2 == 1) {
@@ -305,8 +317,12 @@ public class ReportWriter {
                     dataRow.getCell(10).setCellStyle(greenStyle);
                     dataRow.getCell(11).setCellStyle(greenStyle);
                     dataRow.getCell(12).setCellStyle(greenPercentage);
-                    dataRow.getCell(13).setCellStyle(greenFullCurrency);
-                    dataRow.getCell(14).setCellStyle(greenHalfCurrency);
+                    if (data.getDailyBudget() > 0) {
+                        dataRow.getCell(13).setCellStyle(greenFullCurrency);
+                    } else dataRow.getCell(13).setCellStyle(greenStyle);
+                    if (data.getLifetimeBudget() > 0) {
+                        dataRow.getCell(14).setCellStyle(greenHalfCurrency);
+                    } else dataRow.getCell(14).setCellStyle(greenStyle);
                 }
 
                 rowCount++;
@@ -318,8 +334,6 @@ public class ReportWriter {
                 mediaCostTotal += data.getMediaCost();
                 cpmTotal += data.getCpm();
                 cpcTotal += data.getCpc();
-                dailyBudgetTotal += data.getDailyBudget();
-                lifetimeBudgetTotal += data.getLifetimeBudget();
             }
             LOG.debug("Finished Advertiser " + ad.getAdvertiserID());
         }
@@ -335,15 +349,11 @@ public class ReportWriter {
         totalRow.createCell(5).setCellValue(mediaCostTotal);
         totalRow.createCell(8).setCellValue(cpmTotal);
         totalRow.createCell(9).setCellValue(cpcTotal);
-        totalRow.createCell(13).setCellValue(dailyBudgetTotal);
-        totalRow.createCell(14).setCellValue(lifetimeBudgetTotal);
 
         //style total row
         totalRow.getCell(5).setCellStyle(fullCurrency);
         totalRow.getCell(8).setCellStyle(fullCurrency);
         totalRow.getCell(9).setCellStyle(fullCurrency);
-        totalRow.getCell(13).setCellStyle(fullCurrency);
-        totalRow.getCell(14).setCellStyle(halfCurrency);
 
         //autosize columns
         for (int x = 0; x < 15; x++) {
@@ -361,7 +371,6 @@ public class ReportWriter {
         rowCount++;
 
         Row nextLineItemHeader = sheet.createRow(rowCount);
-        nextLineItemHeader = sheet.createRow(rowCount);
         nextLineItemHeader.createCell(0).setCellValue("Line Item ID");
         nextLineItemHeader.createCell(1).setCellValue("Line Item Name");
         nextLineItemHeader.createCell(2).setCellValue("Imps");
@@ -389,8 +398,6 @@ public class ReportWriter {
         mediaCostTotal = 0.0f;
         cpmTotal = 0.0f;
         cpcTotal = 0.0f;
-        dailyBudgetTotal = 0.0f;
-        lifetimeBudgetTotal = 0;
         for(Advertiser ad : advertiserList) {
             for(DailyData data : ad.getLifetimeLineItems()) {
                 if (data.getStatus().equals("active")) {
@@ -411,8 +418,14 @@ public class ReportWriter {
                         dataRow.createCell(11).setCellValue(data.getEndDay().getMonthOfYear() + "/" +
                                 data.getEndDay().getDayOfMonth());
                         dataRow.createCell(12).setCellValue(data.getPercentThroughFlight());
-                        dataRow.createCell(13).setCellValue(data.getDailyBudget());
-                        dataRow.createCell(14).setCellValue(data.getLifetimeBudget());
+                        if (data.getDailyBudget() > 0) {
+                            dataRow.createCell(13).setCellValue(data.getDailyBudget());
+                            dataRow.getCell(13).setCellStyle(fullCurrency);
+                        } else dataRow.createCell(13).setCellValue(data.getDailyBudgetImps());
+                        if (data.getLifetimeBudget() > 0) {
+                            dataRow.createCell(14).setCellValue(data.getLifetimeBudget());
+                            dataRow.getCell(14).setCellStyle(halfCurrency);
+                        } else dataRow.createCell(14).setCellValue(data.getLifetimeBudgetImps());
                         dataRow.createCell(15).setCellValue(data.getPercentThroughLifetimeBudget());
                         dataRow.createCell(16).setCellValue(data.getSuggestedDailyBudget());
                     } else {
@@ -431,11 +444,10 @@ public class ReportWriter {
                     dataRow.getCell(8).setCellStyle(fullCurrency);
                     dataRow.getCell(9).setCellStyle(fullCurrency);
                     dataRow.getCell(12).setCellStyle(percentage);
-                    dataRow.getCell(13).setCellStyle(fullCurrency);
-                    dataRow.getCell(14).setCellStyle(halfCurrency);
                     dataRow.getCell(15).setCellStyle(percentage);
-                    dataRow.getCell(16).setCellStyle(fullCurrency);
-
+                    if (data.getDailyBudget() > 0) {
+                        dataRow.getCell(16).setCellStyle(fullCurrency);
+                    }
                     //Pattern rows
                     if(rowCount % 2 == 1) {
                         dataRow.getCell(0).setCellStyle(greenStyle);
@@ -451,10 +463,16 @@ public class ReportWriter {
                         dataRow.getCell(10).setCellStyle(greenStyle);
                         dataRow.getCell(11).setCellStyle(greenStyle);
                         dataRow.getCell(12).setCellStyle(greenPercentage);
-                        dataRow.getCell(13).setCellStyle(greenFullCurrency);
-                        dataRow.getCell(14).setCellStyle(greenHalfCurrency);
+                        if (data.getLifetimeBudget() > 0) {
+                            dataRow.getCell(13).setCellStyle(greenFullCurrency);
+                            dataRow.getCell(14).setCellStyle(greenHalfCurrency);
+                            dataRow.getCell(16).setCellStyle(greenFullCurrency);
+                        } else {
+                            dataRow.getCell(13).setCellStyle(greenStyle);
+                            dataRow.getCell(14).setCellStyle(greenStyle);
+                            dataRow.getCell(16).setCellStyle(greenStyle);
+                        }
                         dataRow.getCell(15).setCellStyle(greenPercentage);
-                        dataRow.getCell(16).setCellStyle(greenFullCurrency);
                     }
                     rowCount++;
 
@@ -465,8 +483,6 @@ public class ReportWriter {
                     mediaCostTotal += data.getMediaCost();
                     cpmTotal += data.getCpm();
                     cpcTotal += data.getCpc();
-                    dailyBudgetTotal += data.getDailyBudget();
-                    lifetimeBudgetTotal += data.getLifetimeBudget();
                 }
 
             }
@@ -481,15 +497,12 @@ public class ReportWriter {
         totalRow.createCell(5).setCellValue(mediaCostTotal);
         totalRow.createCell(8).setCellValue(cpmTotal);
         totalRow.createCell(9).setCellValue(cpcTotal);
-        totalRow.createCell(13).setCellValue(dailyBudgetTotal);
-        totalRow.createCell(14).setCellValue(lifetimeBudgetTotal);
+
 
         //style total row
         totalRow.getCell(5).setCellStyle(fullCurrency);
         totalRow.getCell(8).setCellStyle(fullCurrency);
         totalRow.getCell(9).setCellStyle(fullCurrency);
-        totalRow.getCell(13).setCellStyle(fullCurrency);
-        totalRow.getCell(14).setCellStyle(halfCurrency);
 
         //autosize columns
         for (int x = 0; x < 17; x++) {
@@ -530,8 +543,6 @@ public class ReportWriter {
         mediaCostTotal = 0.0f;
         cpmTotal = 0.0f;
         cpcTotal = 0.0f;
-        dailyBudgetTotal = 0.0f;
-        lifetimeBudgetTotal = 0;
         for(Advertiser ad : advertiserList) {
             for(DailyData data : ad.getLifetimeCampaigns()) {
                 if (data.getStatus().equals("active")) {
@@ -552,8 +563,15 @@ public class ReportWriter {
                         dataRow.createCell(11).setCellValue(data.getEndDay().getMonthOfYear() + "/" +
                                 data.getEndDay().getDayOfMonth());
                         dataRow.createCell(12).setCellValue(data.getPercentThroughFlight());
-                        dataRow.createCell(13).setCellValue(data.getDailyBudget());
-                        dataRow.createCell(14).setCellValue(data.getLifetimeBudget());
+                        if (data.getDailyBudget() > 0) {
+                            dataRow.createCell(13).setCellValue(data.getDailyBudget());
+                            dataRow.createCell(14).setCellValue(data.getLifetimeBudget());
+                            dataRow.getCell(13).setCellStyle(fullCurrency);
+                            dataRow.getCell(14).setCellStyle(halfCurrency);
+                        } else {
+                            dataRow.createCell(13).setCellValue(data.getDailyBudgetImps());
+                            dataRow.createCell(14).setCellValue(data.getLifetimeBudgetImps());
+                        }
                         dataRow.createCell(15).setCellValue(data.getPercentThroughLifetimeBudget());
                         dataRow.createCell(16).setCellValue(data.getSuggestedDailyBudget());
                     } else {
@@ -572,10 +590,10 @@ public class ReportWriter {
                     dataRow.getCell(8).setCellStyle(fullCurrency);
                     dataRow.getCell(9).setCellStyle(fullCurrency);
                     dataRow.getCell(12).setCellStyle(percentage);
-                    dataRow.getCell(13).setCellStyle(fullCurrency);
-                    dataRow.getCell(14).setCellStyle(halfCurrency);
                     dataRow.getCell(15).setCellStyle(percentage);
-                    dataRow.getCell(16).setCellStyle(fullCurrency);
+                    if (data.getDailyBudget() > 0) {
+                        dataRow.getCell(16).setCellStyle(fullCurrency);
+                    }
 
                     //Pattern rows
                     if(rowCount % 2 == 1) {
@@ -592,10 +610,16 @@ public class ReportWriter {
                         dataRow.getCell(10).setCellStyle(greenStyle);
                         dataRow.getCell(11).setCellStyle(greenStyle);
                         dataRow.getCell(12).setCellStyle(greenPercentage);
-                        dataRow.getCell(13).setCellStyle(greenFullCurrency);
-                        dataRow.getCell(14).setCellStyle(greenHalfCurrency);
+                        if (data.getDailyBudget() > 0) {
+                            dataRow.getCell(13).setCellStyle(greenFullCurrency);
+                            dataRow.getCell(14).setCellStyle(greenHalfCurrency);
+                            dataRow.getCell(16).setCellStyle(greenFullCurrency);
+                        } else {
+                            dataRow.getCell(13).setCellStyle(greenStyle);
+                            dataRow.getCell(14).setCellStyle(greenStyle);
+                            dataRow.getCell(16).setCellStyle(greenStyle);
+                        }
                         dataRow.getCell(15).setCellStyle(greenPercentage);
-                        dataRow.getCell(16).setCellStyle(greenFullCurrency);
                     }
                     rowCount++;
 
@@ -606,8 +630,6 @@ public class ReportWriter {
                     mediaCostTotal += data.getMediaCost();
                     cpmTotal += data.getCpm();
                     cpcTotal += data.getCpc();
-                    dailyBudgetTotal += data.getDailyBudget();
-                    lifetimeBudgetTotal += data.getLifetimeBudget();
                 }
 
             }
@@ -622,15 +644,11 @@ public class ReportWriter {
         totalRow.createCell(5).setCellValue(mediaCostTotal);
         totalRow.createCell(8).setCellValue(cpmTotal);
         totalRow.createCell(9).setCellValue(cpcTotal);
-        totalRow.createCell(13).setCellValue(dailyBudgetTotal);
-        totalRow.createCell(14).setCellValue(lifetimeBudgetTotal);
 
         //style total row
         totalRow.getCell(5).setCellStyle(fullCurrency);
         totalRow.getCell(8).setCellStyle(fullCurrency);
         totalRow.getCell(9).setCellStyle(fullCurrency);
-        totalRow.getCell(13).setCellStyle(fullCurrency);
-        totalRow.getCell(14).setCellStyle(halfCurrency);
 
         //style subheaders
         Font smallBold = wb.createFont();

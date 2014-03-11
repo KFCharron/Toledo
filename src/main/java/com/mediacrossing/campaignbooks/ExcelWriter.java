@@ -17,8 +17,6 @@ public class ExcelWriter {
 
     private static Workbook WORKBOOK = new HSSFWorkbook();
 
-    //private static final Logger LOG = LoggerFactory.getLogger(ExcelWriter.class);
-
     public static void writeAdvertiserSheetToWorkbook(Advertiser ad) {
 
         //Create new sheet
@@ -74,6 +72,54 @@ public class ExcelWriter {
         redStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
         redStyle.setDataFormat(df.getFormat("$#,##0.00"));
 
+        CellStyle impStyle = WORKBOOK.createCellStyle();
+        impStyle.setBorderBottom(CellStyle.BORDER_NONE);
+        impStyle.setBorderTop(CellStyle.BORDER_THICK);
+
+        CellStyle greenImpStyle = WORKBOOK.createCellStyle();
+        greenImpStyle.setBorderBottom(CellStyle.BORDER_NONE);
+        greenImpStyle.setBorderTop(CellStyle.BORDER_THICK);
+        greenImpStyle.setFillForegroundColor(IndexedColors.LIGHT_GREEN.index);
+        greenImpStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
+
+        CellStyle clickConvStyle = WORKBOOK.createCellStyle();
+        clickConvStyle.setBorderTop(CellStyle.BORDER_NONE);
+        clickConvStyle.setBorderBottom(CellStyle.BORDER_NONE);
+
+        CellStyle greenClickConvStyle = WORKBOOK.createCellStyle();
+        greenClickConvStyle.setBorderTop(CellStyle.BORDER_NONE);
+        greenClickConvStyle.setBorderBottom(CellStyle.BORDER_NONE);
+        greenClickConvStyle.setFillForegroundColor(IndexedColors.LIGHT_GREEN.index);
+        greenClickConvStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
+
+        CellStyle ctrStyle = WORKBOOK.createCellStyle();
+        ctrStyle.setBorderTop(CellStyle.BORDER_NONE);
+        ctrStyle.setBorderBottom(CellStyle.BORDER_THICK);
+        DataFormat decFor = WORKBOOK.createDataFormat();
+        ctrStyle.setDataFormat(decFor.getFormat("#.0###%"));
+
+        CellStyle greenCtrStyle = WORKBOOK.createCellStyle();
+        greenCtrStyle.setBorderTop(CellStyle.BORDER_NONE);
+        greenCtrStyle.setBorderBottom(CellStyle.BORDER_THICK);
+        greenCtrStyle.setFillForegroundColor(IndexedColors.LIGHT_GREEN.index);
+        greenCtrStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
+        greenCtrStyle.setDataFormat(decFor.getFormat("#.0###%"));
+
+        CellStyle bottomBorder = WORKBOOK.createCellStyle();
+        bottomBorder.setBorderTop(CellStyle.BORDER_NONE);
+        bottomBorder.setBorderBottom(CellStyle.BORDER_THICK);
+
+        CellStyle bottomBorderCtr = WORKBOOK.createCellStyle();
+        bottomBorderCtr.setBorderTop(CellStyle.BORDER_NONE);
+        bottomBorderCtr.setBorderBottom(CellStyle.BORDER_THICK);
+        bottomBorderCtr.setDataFormat(df.getFormat("0.0000%"));
+
+        CellStyle topBorder = WORKBOOK.createCellStyle();
+        topBorder.setBorderTop(CellStyle.BORDER_THICK);
+
+        CellStyle number = WORKBOOK.createCellStyle();
+        number.setDataFormat(decFor.getFormat("#,###"));
+
         int rowCount = 0;
         //setup totals for entire advertiser
         float ltBudgetGrandTotal = 0;
@@ -126,14 +172,21 @@ public class ExcelWriter {
             if (lineItem.getLifetimeBudget() > 0) {
                 lineItemRow.createCell(2).setCellValue(lineItem.getLifetimeBudget());
                 lineItemRow.getCell(2).setCellStyle(fullCurrency);
-            }else lineItemRow.createCell(2).setCellValue(lineItem.getLifetimeImpBudget());
+            }else {
+                lineItemRow.createCell(2).setCellValue(lineItem.getLifetimeImpBudget());
+                lineItemHeader.getCell(2).setCellValue("Lifetime Budget (Imps)");
+            }
             lineItemRow.createCell(3).setCellValue(lineItem.getStartDateString());
             lineItemRow.createCell(4).setCellValue(lineItem.getEndDateString());
             lineItemRow.createCell(5).setCellValue(lineItem.getDaysActive());
             if (lineItem.getDailyBudget() > 0) {
                 lineItemRow.createCell(6).setCellValue(lineItem.getDailyBudget());
                 lineItemRow.getCell(6).setCellStyle(fullCurrency);
-            }else lineItemRow.createCell(6).setCellValue(lineItem.getDailyImpBudget());
+            }else {
+                lineItemRow.createCell(6).setCellValue(lineItem.getDailyImpBudget());
+                lineItemRow.getCell(6).setCellStyle(number);
+                lineItemHeader.getCell(6).setCellValue("Daily Budget (Imps)");
+            }
             lineItemRow.createCell(7); //set after obtaining all pacing numbers
             lineItemRow.createCell(8); //same here
             lineItemRow.createCell(10).setCellValue(lineItem.getDaysRemaining());
@@ -207,7 +260,11 @@ public class ExcelWriter {
                 if (campaign.getLifetimeBudget() > 0) {
                     campaignRow.createCell(2).setCellValue(campaign.getLifetimeBudget());
                     campaignRow.getCell(2).setCellStyle(halfCurrency);
-                } else campaignRow.createCell(2).setCellValue(campaign.getLifetimeImpBudget());
+                } else {
+                    campaignRow.createCell(2).setCellValue(campaign.getLifetimeImpBudget());
+                    campaignRow.getCell(2).setCellStyle(number);
+                    campaignHeaderRow.getCell(2).setCellValue("Lifetime Budget (Imps)");
+                }
 
                 //only add date if they're not null
                 if (campaign.getStartDate() != null && campaign.getEndDate() != null) {
@@ -217,24 +274,47 @@ public class ExcelWriter {
                             "/" + campaign.getEndDate().getDayOfMonth());
                 }
                 campaignRow.createCell(5).setCellValue(campaign.getDaysActive());
-                campaignRow.createCell(6).setCellValue(campaign.getDailyBudget());
-                campaignRow.createCell(7).setCellValue(campaign.getActualDailyBudget());
+                if (campaign.getDailyBudget() > 0) {
+                    System.out.println(campaign.getCampaignName() + " " + campaign.getDailyBudget());
+                    campaignRow.createCell(6).setCellValue(campaign.getDailyBudget());
+                    campaignRow.getCell(6).setCellStyle(fullCurrency);
+                } else {
+                    campaignRow.createCell(6).setCellValue(campaign.getDailyImpBudget());
+                    campaignHeaderRow.getCell(6).setCellValue("Daily Budget (Imps)");
+                    campaignRow.getCell(6).setCellStyle(number);
+                }
+                if (campaign.getLifetimeBudget() > 1) {
+                    campaignRow.createCell(7).setCellValue(campaign.getActualDailyBudget());
+                    campaignRow.getCell(7).setCellStyle(fullCurrency);
+                } else {
+                    campaignRow.createCell(7).setCellValue(campaign.getActualDailyBudget());
+                    campaignRow.getCell(7).setCellStyle(number);
+                }
                 campaignRow.createCell(8).setCellValue(campaign.getTotalDelivery());
 
                 //set styles
-                campaignRow.getCell(6).setCellStyle(fullCurrency);
-                campaignRow.getCell(7).setCellStyle(fullCurrency);
                 campaignRow.getCell(8).setCellStyle(fullCurrency);
 
                 //add yellow if total delivery within 2 daily budgets of lifetime budget
 
-                if (campaign.getTotalDelivery() >= campaign.getLifetimeBudget() - (campaign.getDailyBudget()*2)) {
-                    campaignRow.getCell(8).setCellStyle(yellowStyle);
+                if (campaign.getLifetimeBudget() > 0) {
+                    if (campaign.getTotalDelivery() >= campaign.getLifetimeBudget() - (campaign.getDailyBudget()*2)) {
+                        campaignRow.getCell(8).setCellStyle(yellowStyle);
+                    }
+                    if (campaign.getTotalDelivery() >= campaign.getLifetimeBudget()) {
+                        campaignRow.getCell(8).setCellStyle(redStyle);
+                    }
+                } else {
+                    if (campaign.getLifetimeImps() >= campaign.getLifetimeImpBudget() - (campaign.getDailyImpBudget()*2)) {
+                        campaignRow.getCell(8).setCellStyle(yellowStyle);
+                    }
+                    if (campaign.getLifetimeImps() >= campaign.getLifetimeImpBudget()) {
+                        campaignRow.getCell(8).setCellStyle(redStyle);
+                    }
                 }
+
                 //add red if total delivery equals or exceeds lifetime budget
-                if (campaign.getTotalDelivery() >= campaign.getLifetimeBudget()) {
-                    campaignRow.getCell(8).setCellStyle(redStyle);
-                }
+
 
                 int cellCount = 9;
                 //list daily deliveries
@@ -283,9 +363,6 @@ public class ExcelWriter {
             //display totals
             Row totalRow = lineItemSheet.createRow(rowCount);
             totalRow.createCell(1).setCellValue("Column Totals:");
-            totalRow.createCell(2).setCellValue(totalLifetimeBudget);
-            totalRow.createCell(6).setCellValue(totalDailyBudget);
-            totalRow.createCell(7).setCellValue(totalActualDailyBudget);
             totalRow.createCell(8).setCellValue(totalCumulativeDelivery);
 
             //add to grand totals
@@ -294,9 +371,6 @@ public class ExcelWriter {
             cumulativeDeliveryGrandTotal += totalCumulativeDelivery;
 
             //set cell styles
-            totalRow.getCell(2).setCellStyle(fullCurrency);
-            totalRow.getCell(6).setCellStyle(fullCurrency);
-            totalRow.getCell(7).setCellStyle(fullCurrency);
             totalRow.getCell(8).setCellStyle(fullCurrency);
 
             for(int x = cellTrack - 1; x > 8; x--) {
@@ -310,11 +384,23 @@ public class ExcelWriter {
                 lineItemRow.getCell(7).setCellValue(((lineItem.getLifetimeBudget()-totalCumulativeDelivery)
                         /lineItem.getDaysRemaining()));
                 lineItemRow.getCell(7).setCellStyle(fullCurrency);
-            } else lineItemRow.getCell(7).setCellValue(((lineItem.getLifetimeImpBudget()-totalCumulativeImpDelivery)
-                    /lineItem.getDaysRemaining()));
+            } else {
+                if (lineItem.getDaysRemaining() != 0) {
+                    lineItemRow.getCell(7).setCellValue((float)((lineItem.getLifetimeImpBudget()-totalCumulativeImpDelivery)
+                            /lineItem.getDaysRemaining()));
+                } else lineItemRow.getCell(7).setCellValue(0);
+                lineItemRow.getCell(7).setCellStyle(number);
+            }
 
             //set % lt budget used
-            double perLTBudget = totalCumulativeDelivery/lineItem.getLifetimeBudget();
+            double perLTBudget;
+            if (lineItem.getLifetimeBudget() > 1) perLTBudget = totalCumulativeDelivery/lineItem.getLifetimeBudget();
+            else {
+                if (lineItem.getLifetimeImpBudget() == 0) {
+                    perLTBudget = 0;
+                } else
+                perLTBudget = (float)totalCumulativeImpDelivery/lineItem.getLifetimeImpBudget();
+            }
             if (perLTBudget > 1) perLTBudget = 1;
             lineItemRow.getCell(8).setCellValue(perLTBudget);
             lineItemRow.getCell(8).setCellStyle(percentage);
@@ -322,7 +408,8 @@ public class ExcelWriter {
             long daysPassed = lineItem.getDaysActive()-lineItem.getDaysRemaining();
             float pacing = totalCumulativeDelivery / (lineItem.getDailyBudget() * daysPassed);
             if (Float.isInfinite(pacing) || Float.isNaN(pacing)) {
-                pacing = totalCumulativeImpDelivery / (lineItem.getDailyImpBudget() * daysPassed);
+                if (lineItem.getDailyImpBudget() * daysPassed == 0) pacing = 0;
+                else pacing = (float)totalCumulativeImpDelivery / (lineItem.getDailyImpBudget() * daysPassed);
             }
             lineItemRow.createCell(11).setCellValue(pacing);
             lineItemRow.getCell(11).setCellStyle(percentage);
@@ -346,51 +433,7 @@ public class ExcelWriter {
 
             rowCount++;
 
-            CellStyle impStyle = WORKBOOK.createCellStyle();
-            impStyle.setBorderBottom(CellStyle.BORDER_NONE);
-            impStyle.setBorderTop(CellStyle.BORDER_THICK);
 
-            CellStyle greenImpStyle = WORKBOOK.createCellStyle();
-            greenImpStyle.setBorderBottom(CellStyle.BORDER_NONE);
-            greenImpStyle.setBorderTop(CellStyle.BORDER_THICK);
-            greenImpStyle.setFillForegroundColor(IndexedColors.LIGHT_GREEN.index);
-            greenImpStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
-
-            CellStyle clickConvStyle = WORKBOOK.createCellStyle();
-            clickConvStyle.setBorderTop(CellStyle.BORDER_NONE);
-            clickConvStyle.setBorderBottom(CellStyle.BORDER_NONE);
-
-            CellStyle greenClickConvStyle = WORKBOOK.createCellStyle();
-            greenClickConvStyle.setBorderTop(CellStyle.BORDER_NONE);
-            greenClickConvStyle.setBorderBottom(CellStyle.BORDER_NONE);
-            greenClickConvStyle.setFillForegroundColor(IndexedColors.LIGHT_GREEN.index);
-            greenClickConvStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
-
-            CellStyle ctrStyle = WORKBOOK.createCellStyle();
-            ctrStyle.setBorderTop(CellStyle.BORDER_NONE);
-            ctrStyle.setBorderBottom(CellStyle.BORDER_THICK);
-            DataFormat decFor = WORKBOOK.createDataFormat();
-            ctrStyle.setDataFormat(decFor.getFormat("#.0###%"));
-
-            CellStyle greenCtrStyle = WORKBOOK.createCellStyle();
-            greenCtrStyle.setBorderTop(CellStyle.BORDER_NONE);
-            greenCtrStyle.setBorderBottom(CellStyle.BORDER_THICK);
-            greenCtrStyle.setFillForegroundColor(IndexedColors.LIGHT_GREEN.index);
-            greenCtrStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
-            greenCtrStyle.setDataFormat(decFor.getFormat("#.0###%"));
-
-            CellStyle bottomBorder = WORKBOOK.createCellStyle();
-            bottomBorder.setBorderTop(CellStyle.BORDER_NONE);
-            bottomBorder.setBorderBottom(CellStyle.BORDER_THICK);
-
-            CellStyle bottomBorderCtr = WORKBOOK.createCellStyle();
-            bottomBorderCtr.setBorderTop(CellStyle.BORDER_NONE);
-            bottomBorderCtr.setBorderBottom(CellStyle.BORDER_THICK);
-            bottomBorderCtr.setDataFormat(df.getFormat("0.0000%"));
-
-
-            CellStyle topBorder = WORKBOOK.createCellStyle();
-            topBorder.setBorderTop(CellStyle.BORDER_THICK);
 
 
             //populate data for every campaign

@@ -23,8 +23,8 @@ public class LineItem implements Serializable {
     private DateTime startDateTime;
     private DateTime endDateTime;
     private String status;
-    private float lifetimeImpBudget;
-    private float dailyImpBudget;
+    private int lifetimeImpBudget;
+    private int dailyImpBudget;
 
 
 
@@ -34,7 +34,7 @@ public class LineItem implements Serializable {
         this.lineItemID = lineItemID;
         this.lineItemName = lineItemName;
         this.status = status;
-        DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+        DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'z'");
 
         if(!startDate.equals("null") && !endDate.equals("null")) {
             this.startDateTime = new DateTime(formatter.parseDateTime(startDate), DateTimeZone.UTC);
@@ -54,19 +54,19 @@ public class LineItem implements Serializable {
             this.dailyBudget = Float.parseFloat(dailyBudget);
         }
         if (!ltImpBudget.equals("null")) {
-            this.lifetimeImpBudget = Float.parseFloat(ltImpBudget);
+            this.lifetimeImpBudget = Integer.parseInt(ltImpBudget);
         }
         if (!dImpBudget.equals("null")) {
-            this.dailyImpBudget = Float.parseFloat(dImpBudget);
+            this.dailyImpBudget = Integer.parseInt(dImpBudget);
         }
         this.daysRemaining = nowToEnd.getStandardDays() + 1L;
     }
 
-    public float getLifetimeImpBudget() {
+    public int getLifetimeImpBudget() {
         return lifetimeImpBudget;
     }
 
-    public float getDailyImpBudget() {
+    public int getDailyImpBudget() {
         return dailyImpBudget;
     }
 

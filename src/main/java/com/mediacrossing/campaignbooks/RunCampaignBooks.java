@@ -56,11 +56,11 @@ public class RunCampaignBooks {
         int count = 0;
         for (Advertiser ad : advertiserList) {
             try {
-                ArrayList<LineItem> lineItemList = anConn.requestLineItems(ad.getAdvertiserID());
+                ArrayList<LineItem> lineItemList = mxConn.requestLineItemsForAdvertiser(ad.getAdvertiserID());
                 for (LineItem lineItem : lineItemList) {
 
                     ArrayList<Campaign> campaignList =
-                            anConn.requestCampaigns(ad.getAdvertiserID(), lineItem.getLineItemID());
+                            mxConn.requestCampaignsForLineItem(ad.getAdvertiserID(), lineItem.getLineItemID());
                     lineItem.setCampaignList(campaignList);
                 }
                 ad = new Advertiser(ad.getAdvertiserID(), ad.getAdvertiserName(), lineItemList);

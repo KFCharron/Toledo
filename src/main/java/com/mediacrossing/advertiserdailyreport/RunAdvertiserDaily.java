@@ -161,7 +161,7 @@ public class RunAdvertiserDaily {
             for (Advertiser ad : liveAdvertiserList) {
                 //get line item data
                 //save to a list of line items
-                List<LineItem> lineItems = anConn.requestLineItems(ad.getAdvertiserID());
+                List<LineItem> lineItems = mxConn.requestLineItemsForAdvertiser(ad.getAdvertiserID());
                 for(LineItem li : lineItems) {
                     for(DailyData data : lifetimeLineItems) {
                         if(li.getLineItemID().equals(data.getId())) {
@@ -170,6 +170,8 @@ public class RunAdvertiserDaily {
                             data.setEndDay(li.getEndDateTime());
                             data.setLifetimeBudget(li.getLifetimeBudget());
                             data.setStatus(li.getStatus());
+                            data.setDailyBudgetImps(li.getDailyImpBudget());
+                            data.setLifetimeBudgetImps(li.getLifetimeImpBudget());
                         }
                     }
                     for(DailyData data : dailyLineItems) {
@@ -178,12 +180,14 @@ public class RunAdvertiserDaily {
                             data.setStartDay(li.getStartDateTime());
                             data.setEndDay(li.getEndDateTime());
                             data.setLifetimeBudget(li.getLifetimeBudget());
+                            data.setLifetimeBudgetImps(li.getLifetimeImpBudget());
                             data.setStatus(li.getStatus());
+                            data.setDailyBudgetImps(li.getLifetimeImpBudget());
                         }
                     }
 
                     //get campaign data
-                    List<Campaign> campaigns = anConn.requestCampaigns(advertiser.getAdvertiserID(),
+                    List<Campaign> campaigns = mxConn.requestCampaignsForLineItem(advertiser.getAdvertiserID(),
                             li.getLineItemID());
                     for(Campaign camp : campaigns) {
                         for(DailyData data : lifetimeCampaigns) {
@@ -192,15 +196,19 @@ public class RunAdvertiserDaily {
                                 data.setStartDay(camp.getStartDate());
                                 data.setEndDay(camp.getEndDate());
                                 data.setLifetimeBudget(camp.getLifetimeBudget());
+                                data.setLifetimeBudgetImps(camp.getLifetimeImpBudget());
                                 data.setStatus(camp.getStatus());
+                                data.setDailyBudgetImps(camp.getDailyImpBudget());
                             }
                         }
                         for(DailyData data : dailyCampaigns) {
                             if(camp.getCampaignID().equals(data.getId())) {
                                 data.setDailyBudget(camp.getDailyBudget());
+                                data.setDailyBudgetImps(camp.getDailyImpBudget());
                                 data.setStartDay(camp.getStartDate());
                                 data.setEndDay(camp.getEndDate());
                                 data.setLifetimeBudget(camp.getLifetimeBudget());
+                                data.setLifetimeBudgetImps(camp.getLifetimeImpBudget());
                                 data.setStatus(camp.getStatus());
                             }
                         }
