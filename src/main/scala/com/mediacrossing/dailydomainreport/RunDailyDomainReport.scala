@@ -52,7 +52,7 @@ object RunDailyDomainReport extends App {
     if (a.dataRows.size != 0) {
       val sheet = wb.createSheet(a.name + " (" + a.id + ")")
       val hRow = sheet.createRow(0)
-      val headers = List("Domain", "Imps", "Clicks", "CTR", "Post View Convs", "Post Click Convs", "CPM")
+      val headers = List("Domain", "Imps", "Clicks", "CTR (%)", "Post View Convs", "Post Click Convs", "CPM")
       for (x <- 0 to 6) hRow.createCell(x).setCellValue(headers(x))
       for (r <- a.dataRows) {
         val row = sheet.createRow(a.dataRows.indexOf(r) + 1)
@@ -66,7 +66,6 @@ object RunDailyDomainReport extends App {
 
         row.getCell(1).setCellStyle(num)
         row.getCell(2).setCellStyle(num)
-        row.getCell(3).setCellStyle(cur)
         row.getCell(4).setCellStyle(num)
         row.getCell(5).setCellStyle(num)
         row.getCell(6).setCellStyle(cur)
