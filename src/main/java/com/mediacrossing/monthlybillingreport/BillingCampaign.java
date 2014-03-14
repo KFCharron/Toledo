@@ -28,6 +28,7 @@ public class BillingCampaign implements Serializable {
     private int lotameImps = 0;
     private int blueKaiImps = 0;
     private float maxBid;
+    private float baseBid;
 
     public BillingCampaign(String id, String name, int imps, int clicks, float convs, float mediaCost,
                            float networkRevenue, float cpm, String creativeId, String creativeName) {
@@ -69,6 +70,14 @@ public class BillingCampaign implements Serializable {
         this.adXMediaCost = 0;
         this.appNexusMediaCost = 0;
         this.lotameImps = 0;
+    }
+
+    public float getBaseBid() {
+        return baseBid;
+    }
+
+    public void setBaseBid(float baseBid) {
+        this.baseBid = baseBid;
     }
 
     public float getMaxBid() {

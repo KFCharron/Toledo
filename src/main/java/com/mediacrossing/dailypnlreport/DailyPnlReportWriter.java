@@ -235,7 +235,8 @@ public class DailyPnlReportWriter {
                 dataRow.createCell(1).setCellValue(c.getImps());
                 dataRow.createCell(2).setCellValue(c.getClicks());
                 dataRow.createCell(3).setCellValue(c.getConvs());
-                dataRow.createCell(4).setCellValue(c.getMaxBid());
+                if (c.getMaxBid() > 0) dataRow.createCell(4).setCellValue(c.getMaxBid());
+                else dataRow.createCell(4).setCellValue(c.getBaseBid());
                 dataRow.createCell(5).setCellValue(c.getNetworkRevenue());
                 dataRow.createCell(6).setCellValue(c.getMediaCost());
                 dataRow.createCell(7).setCellValue(c.getAppNexusMediaCost());

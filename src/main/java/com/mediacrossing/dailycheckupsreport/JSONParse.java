@@ -164,6 +164,9 @@ public class JSONParse {
                 if (!jsonObject.get("maxBid").isJsonNull())
                     newCampaign.setMaxBid(Float.parseFloat(jsonObject.get("maxBid").toString().replace("\"", "")));
                 else newCampaign.setMaxBid(0);
+                if (!jsonObject.get("baseBid").isJsonNull())
+                    newCampaign.setBaseBid(Float.parseFloat(jsonObject.get("baseBid").toString().replace("\"", "")));
+                else newCampaign.setBaseBid(0);
                 JsonArray jarray = jsonObject.getAsJsonArray("brokerFees");
                 ArrayList<ServingFee> newServingFeeList = new ArrayList<ServingFee>();
                 for (int x = 0; x < jarray.size(); x++) {

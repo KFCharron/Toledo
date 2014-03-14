@@ -80,6 +80,7 @@ public class RunDailyFlashPnlReport {
                 for (BillingCampaign bc : a.getCampaigns()) {
                     if (bc.getId().equals(c.getId())) {
                         bc.setMaxBid(c.getMaxBid());
+                        bc.setBaseBid(c.getBaseBid());
                     }
                     if (bc.getId().equals(c.getId())) {
                         int ind = -1;

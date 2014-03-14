@@ -17,6 +17,15 @@ public class Campaign implements Serializable {
     private String advertiserName;
     private String lineItemName;
     private float maxBid;
+    private float baseBid;
+
+    public float getBaseBid() {
+        return baseBid;
+    }
+
+    public void setBaseBid(float baseBid) {
+        this.baseBid = baseBid;
+    }
 
     public String getAdvertiserName() {
         return advertiserName;
