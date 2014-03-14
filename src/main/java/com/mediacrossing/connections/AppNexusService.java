@@ -85,7 +85,9 @@ public class AppNexusService {
     public ArrayList<PublisherConfig> requestPublisherConfigs() throws Exception {
         ArrayList<Publisher> temp = requestPublishers();
         ArrayList<PublisherConfig> pubConfigs = new ArrayList<>();
-        for (Publisher p : temp) pubConfigs.add(new PublisherConfig(p.getId(), p.getPublisherName(), p.getLastModified()));
+        for (Publisher p : temp)
+            if (p.getStatus().equals("active"))
+                pubConfigs.add(new PublisherConfig(p.getId(), p.getPublisherName(), p.getLastModified()));
         return pubConfigs;
     }
 
@@ -338,6 +340,32 @@ public class AppNexusService {
 
         String json = requests.postRequest(url+"/report", jsonPost);
         return ResponseParser.parseDomainReport(downloadReportWhenReady(json));
+    }
+
+    public List<String[]> requestDailyDomainReport(String id) throws Exception {
+        String jsonPost = "{\n" +
+                "    \"report\":\n" +
+                "    {\n" +
+                "        \"report_type\": \"site_domain_performance\",\n" +
+                "        \"columns\": [\n" +
+                "            \"site_domain\",\n" +
+                "            \"imps\",\n" +
+                "            \"clicks\",\n" +
+                "            \"click_thru_pct\",\n" +
+                "            \"post_view_convs\",\n" +
+                "            \"post_click_convs\",\n" +
+                "            \"cpm\"\n" +
+                "        ],\n" +
+                "        \"report_interval\": \"yesterday\",\n" +
+                "        \"orders\": [{\n" +
+                "            \"order_by\":\"imps\", \"direction\":\"DESC\"\n" +
+                "        }],\n" +
+                "        \"timezone\": \"EST5EDT\"\n" +
+                "    }\n" +
+                "}";
+
+        String json = requests.postRequest(url + "/report?advertiser_id=" + id, jsonPost);
+        return downloadReportWhenReady(json);
     }
 
     public List<String[]> requestPublisherReport(String id) throws Exception {
