@@ -23,30 +23,33 @@ public class ResponseParser {
             JsonArray jarray = jobject.getAsJsonArray("placements");
             for (JsonElement j : jarray) {
                 JsonObject jo = j.getAsJsonObject();
-                String id = jo.get("id").toString().replace("\"", "");
-                String name = jo.get("name").toString().replace("\"", "");
-                String state = jo.get("state").toString().replace("\"", "");
-                String lastModified = jo.get("last_modified").toString().replace("\"", "");
-                ArrayList<IdName> filteredAdvertisers = new ArrayList<>();
-                if(!jo.get("filtered_advertisers").isJsonNull()) {
-                    JsonArray ja = jo.getAsJsonArray("filtered_advertisers");
-                    for (JsonElement el : ja) {
-                        JsonObject job = el.getAsJsonObject();
-                        filteredAdvertisers.add(new IdName(job.get("id").toString().replace("\"", ""),
-                                job.get("name").toString().replace("\"", "")));
+                if (jo.get("state").toString().replace("\"","").equals("active")) {
+                    String id = jo.get("id").toString().replace("\"", "");
+                    String name = jo.get("name").toString().replace("\"", "");
+                    String state = jo.get("state").toString().replace("\"", "");
+                    String lastModified = jo.get("last_modified").toString().replace("\"", "");
+                    ArrayList<IdName> filteredAdvertisers = new ArrayList<>();
+                    if(!jo.get("filtered_advertisers").isJsonNull()) {
+                        JsonArray ja = jo.getAsJsonArray("filtered_advertisers");
+                        for (JsonElement el : ja) {
+                            JsonObject job = el.getAsJsonObject();
+                            filteredAdvertisers.add(new IdName(job.get("id").toString().replace("\"", ""),
+                                    job.get("name").toString().replace("\"", "")));
+                        }
                     }
-                }
-                ArrayList<IdName> contentCategories = new ArrayList<>();
-                if(!jo.get("content_categories").isJsonNull()) {
-                    JsonArray jarr = jo.getAsJsonArray("content_categories");
-                    for (JsonElement el : jarr) {
-                        JsonObject job = el.getAsJsonObject();
-                        String ccId = job.get("id").toString().replace("\"", "");
-                        String ccName = job.get("name").toString().replace("\"", "");
-                        contentCategories.add(new IdName(ccId, ccName));
+                    ArrayList<IdName> contentCategories = new ArrayList<>();
+                    if(!jo.get("content_categories").isJsonNull()) {
+                        JsonArray jarr = jo.getAsJsonArray("content_categories");
+                        for (JsonElement el : jarr) {
+                            JsonObject job = el.getAsJsonObject();
+                            String ccId = job.get("id").toString().replace("\"", "");
+                            String ccName = job.get("name").toString().replace("\"", "");
+                            contentCategories.add(new IdName(ccId, ccName));
+                        }
                     }
+                    placements.add(new Placement(id, name, state, filteredAdvertisers, contentCategories, lastModified));
                 }
-                placements.add(new Placement(id, name, state, filteredAdvertisers, contentCategories, lastModified));
+
             }
         }
         return placements;
@@ -75,17 +78,19 @@ public class ResponseParser {
             JsonArray jarray = jobject.getAsJsonArray("payment-rules");
             for (JsonElement j : jarray) {
                 JsonObject jo = j.getAsJsonObject();
-                String id = jo.get("id").toString().replace("\"", "");
-                String name = jo.get("name").toString().replace("\"", "");
-                String state = jo.get("state").toString().replace("\"", "");
-                String lastModified = jo.get("last_modified").toString().replace("\"", "");
-                String pricingType = jo.get("pricing_type").toString().replace("\"", "");
-                double revshare;
-                if (jo.get("revshare").isJsonNull()) revshare = 0;
-                else revshare = Double.parseDouble(jo.get("revshare").toString().replace("\"", ""));
-                String priority = jo.get("priority").toString().replace("\"", "");
+                if (jo.get("state").toString().replace("\"","").equals("active")) {
+                    String id = jo.get("id").toString().replace("\"", "");
+                    String name = jo.get("name").toString().replace("\"", "");
+                    String state = jo.get("state").toString().replace("\"", "");
+                    String lastModified = jo.get("last_modified").toString().replace("\"", "");
+                    String pricingType = jo.get("pricing_type").toString().replace("\"", "");
+                    double revshare;
+                    if (jo.get("revshare").isJsonNull()) revshare = 0;
+                    else revshare = Double.parseDouble(jo.get("revshare").toString().replace("\"", ""));
+                    String priority = jo.get("priority").toString().replace("\"", "");
 
-                paymentRules.add(new PaymentRule(id, name, state, pricingType, revshare, priority, lastModified));
+                    paymentRules.add(new PaymentRule(id, name, state, pricingType, revshare, priority, lastModified));
+                }
             }
         }
         return paymentRules;

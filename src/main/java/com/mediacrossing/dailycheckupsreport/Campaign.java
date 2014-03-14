@@ -16,7 +16,7 @@ public class Campaign implements Serializable {
     private int dailyImps;
     private String advertiserName;
     private String lineItemName;
-    private float baseBid;
+    private float maxBid;
 
     public String getAdvertiserName() {
         return advertiserName;
@@ -122,11 +122,11 @@ public class Campaign implements Serializable {
         this.lineItemID = lineItemID;
     }
 
-    public float getBaseBid() {
-        return baseBid;
+    public float getMaxBid() {
+        return maxBid;
     }
 
-    public void setBaseBid(float baseBid) {
-        this.baseBid = baseBid;
+    public void setMaxBid(float maxBid) {
+        this.maxBid = maxBid;
     }
 }

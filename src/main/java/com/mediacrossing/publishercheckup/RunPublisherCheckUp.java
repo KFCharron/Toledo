@@ -1,6 +1,8 @@
 package com.mediacrossing.publishercheckup;
 
+import com.mediacrossing.campaignbooks.Advertiser;
 import com.mediacrossing.connections.AppNexusService;
+import com.mediacrossing.connections.MxService;
 import com.mediacrossing.properties.ConfigurationProperties;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -11,7 +13,9 @@ import org.slf4j.LoggerFactory;
 import scala.concurrent.duration.Duration;
 
 import java.io.*;
+import java.net.IDN;
 import java.util.ArrayList;
+import java.util.List;
 
 public class RunPublisherCheckUp {
 
@@ -37,20 +41,43 @@ public class RunPublisherCheckUp {
         String anUser = configProps.getAppNexusUsername();
         String anPass = configProps.getAppNexusPassword();
         String anUrl = configProps.getAppNexusUrl();
+        String mxUsername = configProps.getMxUsername();
+        String mxUrl = configProps.getMxUrl();
+        String mxPassword = configProps.getMxPassword();
         int anPartitionSize = configProps.getPartitionSize();
         Duration requestDelayInSeconds = configProps.getRequestDelayInSeconds();
         AppNexusService anService = new AppNexusService(anUrl, anUser, anPass, anPartitionSize, requestDelayInSeconds);
+        MxService mxConn;
+        if (mxUsername == null) {
+            mxConn = new MxService(mxUrl);
+        } else {
+            mxConn = new MxService(mxUrl, mxUsername, mxPassword);
+        }
         String outPath = configProps.getOutputPath();
         Workbook wb = new HSSFWorkbook();
 
         //Request publishers from AN
         ArrayList<PublisherConfig> pubs = anService.requestPublisherConfigs();
 
+        List<Advertiser> aList = mxConn.requestAllAdvertisers();
         //for each publisher, request placements, payment rules, and profiles; parse and store.
         for (PublisherConfig p : pubs) {
             p.setPlacements(anService.requestPlacements(p.getId()));
             p.setPaymentRules(anService.requestPaymentRules(p.getId()));
             p.setYmProfiles(anService.requestYmProfiles(p.getId()));
+            for (Placement pm : p.getPlacements()) {
+                List<IdName> indList = new ArrayList<>();
+                for (IdName a : pm.getFilteredAdvertisers()) {
+                    for (Advertiser ad : aList) {
+                        if (a.getId().equals(ad.getAdvertiserID())) {
+                            if (!ad.isLive()) {
+                               indList.add(a);
+                            }
+                        }
+                    }
+                }
+                for (IdName x : indList) pm.getFilteredAdvertisers().remove(x);
+            }
         }
 
         // Serialize data object to a file
