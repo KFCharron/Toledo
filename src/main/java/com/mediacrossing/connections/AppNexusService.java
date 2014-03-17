@@ -568,6 +568,7 @@ public class AppNexusService {
                 "        ],\n" +
                 "        \"report_interval\":\"last_7_days\",\n" +
                 "        \"format\":\"csv\",\n" +
+                "        \"timezone\":\"EST5EDT\",\n" +
                 "        \"emails\":[\n" +
                 "        ],\n" +
                 "        \"orders\": [\n" +
@@ -575,7 +576,7 @@ public class AppNexusService {
                 "                        \"order_by\":\"day\", \n" +
                 "                        \"direction\":\"DESC\"\n" +
                 "                    }\n" +
-                "                ]\n" +
+                "                ],\n" +
                 "    }\n" +
                 "}";
 
