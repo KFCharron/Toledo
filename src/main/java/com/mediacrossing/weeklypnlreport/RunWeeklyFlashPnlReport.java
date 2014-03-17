@@ -110,6 +110,14 @@ public class RunWeeklyFlashPnlReport {
             }
         }
 
+        for (BillingAdvertiser a : adList) {
+            if (a.getId().equals("186199")) {
+                for (BillingCampaign c : a.getCampaigns()) {
+                    c.setNetworkRevenue(c.getTotalCost() + (.05f * c.getImps()/1000));
+                }
+            }
+        }
+
         List<String> sortedFees = new ArrayList<>(feeNames);
         Collections.sort(sortedFees);
 
