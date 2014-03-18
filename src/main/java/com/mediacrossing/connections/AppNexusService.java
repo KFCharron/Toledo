@@ -148,6 +148,35 @@ public class AppNexusService {
         return ResponseParser.parseBillingReport(downloadReportWhenReady(json));
     }
 
+    public List<String[]> requestImpReport() throws Exception {
+        String jsonPost = "{\n" +
+                "    \"report\":\n" +
+                "    {\n" +
+                "        \"report_type\": \"network_billing\",\n" +
+                "        \"columns\": [\n" +
+                "            \"campaign_id\",\n" +
+                "            \"imps\"\n" +
+                "        ],\n" +
+                "        \"row_per\" :[\n" +
+                "            \"campaign_id\"\n" +
+                "        ],\n" +
+                "        \"start_date\": \"2014-02-12\", \"end_date\": \"2014-03-01\","+
+                "        \"format\": \"csv\",\n" +
+                "        \"emails\":[],\n" +
+                "        \"orders\": [\n" +
+                "            {\n" +
+                "            \"order_by\" : \"campaign_id\",\n" +
+                "            \"direction\": \"DESC\"\n" +
+                "            }\n" +
+                "        ],\n" +
+                "        \"timezone\": \"EST5EDT\"\n" +
+                "    }\n" +
+                "}";
+
+        String json = requests.postRequest(url+"/report", jsonPost);
+        return downloadReportWhenReady(json);
+    }
+
     public List<String[]> getPnlReport(String pubId, String interval) throws Exception {
         String jsonPost = "{\n" +
                 "    \"report\":\n" +
