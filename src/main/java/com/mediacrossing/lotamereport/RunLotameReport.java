@@ -1,16 +1,19 @@
 package com.mediacrossing.lotamereport;
 
-import com.mediacrossing.dailycheckupsreport.Campaign;
+import com.mediacrossing.connections.HTTPRequest;
+import com.mediacrossing.dailycheckupsreport.*;
 import com.mediacrossing.connections.AppNexusService;
 import com.mediacrossing.connections.MxService;
-import com.mediacrossing.dailycheckupsreport.ServingFee;
+import com.mediacrossing.dailycheckupsreport.profiles.ProfileRepository;
 import com.mediacrossing.properties.ConfigurationProperties;
+import com.mediacrossing.segmenttargeting.profiles.PartitionedProfileRepository;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import scala.Tuple2;
 import scala.concurrent.duration.Duration;
 
 import java.io.File;
@@ -33,6 +36,15 @@ public class RunLotameReport {
         );
     }
 
+    private static int APPNEXUS_PARTITION_SIZE;
+    private static Duration APPNEXUS_REQUEST_DELAY;
+    private static ProfileRepository production(HTTPRequest r) {
+        return new PartitionedProfileRepository(
+                r,
+                APPNEXUS_PARTITION_SIZE,
+                APPNEXUS_REQUEST_DELAY);
+    }
+
     public static void main(String[] args) throws Exception {
 
         registerLoggerWithUncaughtExceptions();
@@ -51,6 +63,8 @@ public class RunLotameReport {
         String mxPass = properties.getMxPassword();
         String mxUrl = properties.getMxUrl();
         MxService mxConn = new MxService(mxUrl, mxUsername, mxPass);
+        APPNEXUS_PARTITION_SIZE = properties.getPartitionSize();
+        APPNEXUS_REQUEST_DELAY = properties.getRequestDelayInSeconds();
 
         ArrayList<Campaign> campList = mxConn.requestAllCampaigns();
 
@@ -64,6 +78,26 @@ public class RunLotameReport {
                 }
             }
             if (lotameCamp) lotameCamps.add(c);
+        }
+
+        final ProfileRepository profileRepository = production(anConn.requests);
+
+        final List<Tuple2<String, String>> advertiserIdAndProfileIds =
+                new ArrayList<Tuple2<String, String>>();
+        for (Campaign c : lotameCamps) {
+            advertiserIdAndProfileIds.add(
+                    new Tuple2<String, String>(c.getAdvertiserID(), c.getProfileID()));
+        }
+
+        final List<Profile> profiles = profileRepository.findBy(advertiserIdAndProfileIds);
+
+        for (Campaign c : lotameCamps) {
+            for (Profile p : profiles) {
+                if (p.getId().equals(
+                        c.getProfileID())) {
+                    c.setProfile(p);
+                }
+            }
         }
 
         List<String[]> data = anConn.requestImpReport();
@@ -81,22 +115,40 @@ public class RunLotameReport {
         Sheet sheet = wb.createSheet();
         Row header = sheet.createRow(0);
         header.createCell(0).setCellValue("Campaign");
-        header.createCell(1).setCellValue("Imps");
+        header.createCell(1).setCellValue("Segment Name");
+        header.createCell(2).setCellValue("Segment ID");
+        header.createCell(3).setCellValue("Segment Code");
+        header.createCell(4).setCellValue("Imps");
         int rowCount = 1;
         for (Campaign c : lotameCamps) {
             if (c.getDailyImps() > 0) {
-                Row dataRow = sheet.createRow(rowCount);
-                dataRow.createCell(0).setCellValue(c.getName());
-                dataRow.createCell(1).setCellValue(c.getDailyImps());
-                rowCount++;
+                for (SegmentGroupTarget g : c.getProfile().getSegmentGroupTargets()) {
+                    for (Segment s : g.getSegmentArrayList()) {
+                        if (s.getAction().equals("include") && (s.getCode().contains("LME")
+                                || s.getName().contains("Lotame")
+                                || c.getName().contains("Lotame")) && !s.getCode().contains("VTOP")) {
+                            Row dataRow = sheet.createRow(rowCount);
+                            dataRow.createCell(0).setCellValue(c.getName());
+                            dataRow.createCell(1).setCellValue(s.getName());
+                            dataRow.createCell(2).setCellValue(s.getId());
+                            dataRow.createCell(3).setCellValue(s.getCode());
+                            dataRow.createCell(4).setCellValue(c.getDailyImps());
+                            rowCount++;
+                        }
+                    }
+                }
+
             }
 
         }
         sheet.autoSizeColumn(0);
         sheet.autoSizeColumn(1);
+        sheet.autoSizeColumn(2);
+        sheet.autoSizeColumn(3);
+        sheet.autoSizeColumn(4);
 
         FileOutputStream fileOut =
-                new FileOutputStream(new File(outputPath, "Lotame_Imps_Feb12-28.xls"));
+                new FileOutputStream(new File(outputPath, "Lotame_Imps_Feb01-11.xls"));
         wb.write(fileOut);
         fileOut.close();
     }

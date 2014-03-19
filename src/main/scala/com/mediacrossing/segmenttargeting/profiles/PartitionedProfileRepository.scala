@@ -49,6 +49,7 @@ class PartitionedProfileRepository(http: HTTPRequest,
 
 
           val p = new Profile
+          p.setId(profileId)
           p.setLastModified(JSONParse.obtainLastModified(json))
           p.setFrequencyTarget(JSONParse.populateFrequencyTarget(json))
           p.setDaypartTargetList(JSONParse.populateDaypartTarget(json))
