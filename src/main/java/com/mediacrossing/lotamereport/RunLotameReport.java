@@ -122,6 +122,7 @@ public class RunLotameReport {
         int rowCount = 1;
         for (Campaign c : lotameCamps) {
             if (c.getDailyImps() > 0) {
+                boolean usedImp = false;
                 for (SegmentGroupTarget g : c.getProfile().getSegmentGroupTargets()) {
                     for (Segment s : g.getSegmentArrayList()) {
                         if (s.getAction().equals("include") && (s.getCode().contains("LME")
@@ -132,7 +133,10 @@ public class RunLotameReport {
                             dataRow.createCell(1).setCellValue(s.getName());
                             dataRow.createCell(2).setCellValue(s.getId());
                             dataRow.createCell(3).setCellValue(s.getCode());
-                            dataRow.createCell(4).setCellValue(c.getDailyImps());
+                            if (!usedImp) {
+                                dataRow.createCell(4).setCellValue(c.getDailyImps());
+                                usedImp = true;
+                            }
                             rowCount++;
                         }
                     }
@@ -148,7 +152,7 @@ public class RunLotameReport {
         sheet.autoSizeColumn(4);
 
         FileOutputStream fileOut =
-                new FileOutputStream(new File(outputPath, "Lotame_Imps_Feb01-11.xls"));
+                new FileOutputStream(new File(outputPath, "Lotame_Imps_Feb12-28.xls"));
         wb.write(fileOut);
         fileOut.close();
     }
