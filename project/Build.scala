@@ -50,6 +50,10 @@ object BuildSettings {
     val opencsv = "net.sf.opencsv" % "opencsv" % "2.3"
     val commonsCodec = "commons-codec" % "commons-codec" % "1.8"
     val specs2 = "org.specs2" %% "specs2" % "2.1.1" % "test"
+    val dfa = "com.google.apis" % "google-api-services-dfareporting" % "v1.3-rev4-1.17.0-rc"
+    val jackson = "com.google.http-client" % "google-http-client-jackson2" % "1.17.0-rc"
+    val oauth = "com.google.oauth-client" % "google-oauth-client-jetty" % "1.17.0-rc"
+    val guava = "com.google.guava" % "guava" % "14.0"
   }
 
 }
@@ -73,7 +77,12 @@ object TargetSegmentingBuild extends Build {
               playFramework,
               opencsv,
               commonsCodec,
-              specs2)) ++
+              specs2,
+              dfa,
+              jackson,
+              oauth,
+              guava
+          )) ++
         customAssemblySettings
   )
 }
