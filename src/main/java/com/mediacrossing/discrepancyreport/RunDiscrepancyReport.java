@@ -1,5 +1,6 @@
 package com.mediacrossing.discrepancyreport;
 
+import au.com.bytecode.opencsv.CSVReader;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
 import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
@@ -13,10 +14,14 @@ import com.google.api.client.util.store.DataStoreFactory;
 import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.dfareporting.Dfareporting;
 import com.google.api.services.dfareporting.DfareportingScopes;
+import com.google.api.services.dfareporting.model.*;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class RunDiscrepancyReport {
@@ -69,12 +74,24 @@ public class RunDiscrepancyReport {
             // authorization
             Credential credential = authorize();
 
+
             // set up global Dfareporting instance
             client = new Dfareporting.Builder(httpTransport, JSON_FACTORY, credential)
                     .setApplicationName(APPLICATION_NAME).build();
 
-            //Add Code Here
+            // Create report.
+            long reportId = 7563880;
+            long profileId = 1154616;
 
+            Dfareporting reporting = new Dfareporting(httpTransport, JSON_FACTORY, credential);
+
+            File reportFile = reporting.reports().run(profileId, reportId).setSynchronous(true).execute();
+
+            CSVReader reader = new CSVReader(new BufferedReader(new StringReader(reportFile.toString())));
+
+            List<String[]> csvData = reader.readAll();
+
+            csvData = csvData.subList(7, csvData.size()-1);
 
         } catch (IOException e) {
             System.err.println(e.getMessage());
