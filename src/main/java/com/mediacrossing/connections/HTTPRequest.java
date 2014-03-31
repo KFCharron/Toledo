@@ -113,6 +113,52 @@ public class HTTPRequest implements Request {
         return response.toString();
     }
 
+    public String putRequest(String url, String jsonRequest) throws Exception {
+
+        URL obj = new URL(url);
+        HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+
+        if (requestProperties != null) {
+            for (Tuple2<String, String> kv : requestProperties) {
+                con.setRequestProperty(kv._1(), kv._2());
+            }
+        }
+
+        //add request header
+        con.setRequestMethod("PUT");
+        con.setRequestProperty("Content-Type", "application/json");
+
+        // Send post request
+        con.setDoOutput(true);
+        DataOutputStream wr = new DataOutputStream(con.getOutputStream());
+        wr.writeBytes(jsonRequest);
+        wr.flush();
+        wr.close();
+
+        int responseCode = con.getResponseCode();
+        if (responseCode != 200) {
+            LOG.error("Received Response Code " + responseCode + " from " + url);
+            LOG.error("Exiting Program");
+            System.exit(1);
+        }
+        LOG.debug("\nSending 'PUT' request to URL : " + url);
+        LOG.debug("Response Code : " + responseCode);
+
+        BufferedReader in = new BufferedReader(
+                new InputStreamReader(con.getInputStream()));
+        String inputLine;
+        StringBuilder response = new StringBuilder();
+
+        while ((inputLine = in.readLine()) != null) {
+            response.append(inputLine);
+        }
+        in.close();
+
+        //Received JSON data
+        LOG.debug(response.toString());
+        return response.toString();
+    }
+
     public List<String[]> reportRequest(String url) throws Exception {
 
         //Create URL object
