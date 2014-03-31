@@ -290,10 +290,14 @@ public class ExcelWriter {
                     campaignRow.createCell(7).setCellValue(campaign.getActualDailyBudget());
                     campaignRow.getCell(7).setCellStyle(number);
                 }
-                campaignRow.createCell(8).setCellValue(campaign.getTotalDelivery());
+                if (campaign.getLifetimeBudget() > 1) {
+                    campaignRow.createCell(8).setCellValue(campaign.getTotalDelivery());
+                    campaignRow.getCell(8).setCellStyle(fullCurrency);
 
-                //set styles
-                campaignRow.getCell(8).setCellStyle(fullCurrency);
+                } else {
+                    campaignRow.createCell(8).setCellValue(campaign.getLifetimeImps());
+                    campaignRow.getCell(8).setCellStyle(number);
+                }
 
                 //add yellow if total delivery within 2 daily budgets of lifetime budget
 
@@ -332,13 +336,21 @@ public class ExcelWriter {
                                 lineItem.getStartDateTime()
                                         .plusDays((int)x).monthOfYear().get() ==
                                         del.getDate().getMonthOfYear()) {
+                            if (campaign.getLifetimeBudget() > 1) {
+                                campaignRow.createCell(cellCount).setCellValue(del.getDelivery());
+                                //set style
+                                campaignRow.getCell(cellCount).setCellStyle(fullCurrency);
+                                //add to total count for the column
+                                tots.set(cellCount, del.getDelivery()+ tots.get(cellCount));
+                                grandTots.set(cellCount, del.getDelivery()+ grandTots.get(cellCount));
+                            } else {
+                                campaignRow.createCell(cellCount).setCellValue(del.getImps());
+                                campaignRow.getCell(cellCount).setCellStyle(number);
+                                tots.set(cellCount, del.getImps()+ tots.get(cellCount));
+                                grandTots.set(cellCount, del.getImps()+ grandTots.get(cellCount));
+                            }
 
-                            campaignRow.createCell(cellCount).setCellValue(del.getDelivery());
-                            //set style
-                            campaignRow.getCell(cellCount).setCellStyle(fullCurrency);
-                            //add to total count for the column
-                            tots.set(cellCount, del.getDelivery()+ tots.get(cellCount));
-                            grandTots.set(cellCount, del.getDelivery()+ grandTots.get(cellCount));
+
                         }
                     }
                     cellCount++;
@@ -363,7 +375,14 @@ public class ExcelWriter {
             //display totals
             Row totalRow = lineItemSheet.createRow(rowCount);
             totalRow.createCell(1).setCellValue("Column Totals:");
-            totalRow.createCell(8).setCellValue(totalCumulativeDelivery);
+            if (lineItem.getLifetimeBudget() > 1) {
+                totalRow.createCell(8).setCellValue(totalCumulativeDelivery);
+                totalRow.getCell(8).setCellStyle(fullCurrency);
+            } else {
+                totalRow.createCell(8).setCellValue(totalCumulativeImpDelivery);
+                totalRow.getCell(8).setCellStyle(number);
+            }
+
 
             //add to grand totals
             ltBudgetGrandTotal += totalLifetimeBudget;
@@ -371,8 +390,6 @@ public class ExcelWriter {
             cumulativeDeliveryGrandTotal += totalCumulativeDelivery;
 
             //set cell styles
-            totalRow.getCell(8).setCellStyle(fullCurrency);
-
             for(int x = cellTrack - 1; x > 8; x--) {
                 totalRow.createCell(x).setCellValue(tots.get(x));
                 //set style

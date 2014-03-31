@@ -37,8 +37,8 @@ public class LineItem implements Serializable {
         DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'z'");
 
         if(!startDate.equals("null") && !endDate.equals("null")) {
-            this.startDateTime = new DateTime(formatter.parseDateTime(startDate), DateTimeZone.UTC);
-            this.endDateTime = new DateTime(formatter.parseDateTime(endDate), DateTimeZone.UTC);
+            this.startDateTime = new DateTime(formatter.parseDateTime(startDate));
+            this.endDateTime = new DateTime(formatter.parseDateTime(endDate));
         }
 
         Duration startToEnd = new Duration(startDateTime, endDateTime);

@@ -18,6 +18,12 @@ public class DataParse {
         return reportUrl;
     }
 
+    public static boolean parsePutResponse(String response) {
+        JsonElement jsonElement = new JsonParser().parse(response);
+        JsonObject jsonObject = jsonElement.getAsJsonObject().getAsJsonObject("response");
+        return true;
+    }
+
     public static boolean parseSegment(String rawData) {
         JsonElement je = new JsonParser().parse(rawData);
         JsonObject jsonObject = je.getAsJsonObject().getAsJsonObject("response");

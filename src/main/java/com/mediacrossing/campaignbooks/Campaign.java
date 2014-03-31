@@ -45,13 +45,13 @@ public class Campaign implements Serializable {
         //Converting parsed date strings to Date objects
         DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'z'");
         if (!startDate.equals("null")) {
-            this.startDate = new DateTime(formatter.parseDateTime(startDate), DateTimeZone.UTC);
+            this.startDate = new DateTime(formatter.parseDateTime(startDate));
         }
         else {
             this.startDate = null;
         }
         if (!endDate.equals("null")) {
-            this.endDate = new DateTime(formatter.parseDateTime(endDate), DateTimeZone.UTC);
+            this.endDate = new DateTime(formatter.parseDateTime(endDate));
         }
         else {
             this.endDate = null;
