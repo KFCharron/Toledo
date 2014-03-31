@@ -46,7 +46,7 @@ public class DailyPnlReportWriter {
         float discoveryCommission = 0.20f;
 
         //Write summary sheet
-        Sheet summarySheet = wb.createSheet("Overview");
+        Sheet summarySheet = wb.createSheet("Advertiser Overview");
 
         //Create grand total billing campaign
         BillingCampaign grandTotal = new BillingCampaign();
@@ -555,6 +555,9 @@ public class DailyPnlReportWriter {
         }
 
         for (int x = 0; x <= 50; x++) advertiserSummary.autoSizeColumn(x);
+
+        //TODO *********** Publisher Overview, Publisher list, each individual pub
+
 
 
         //Export file
