@@ -4,6 +4,7 @@ import com.mediacrossing.campaignbooks.Campaign;
 import com.mediacrossing.campaignbooks.LineItem;
 import com.mediacrossing.campaignbooks.DataParse;
 import com.mediacrossing.dailycheckupsreport.JSONParse;
+import com.mediacrossing.discrepancyreport.Creative;
 import com.mediacrossing.monthlybillingreport.BillingAdvertiser;
 import com.mediacrossing.publishercheckup.*;
 import com.mediacrossing.publisherreporting.Publisher;
@@ -58,6 +59,11 @@ public class AppNexusService {
         }
     }
 
+    public String putRequest(String url2, String json) throws Exception {
+        return requests.putRequest(url + url2, json);
+        //return DataParse.parsePutResponse(requests.putRequest(url, json));
+    }
+
     public ArrayList<Publisher> requestPublishers() throws Exception {
         String json = requests.getRequest(url + "/publisher");
         throttleCheck();
@@ -109,7 +115,39 @@ public class AppNexusService {
         return ResponseParser.parseYmProfiles(json);
     }
 
-    public ArrayList<BillingAdvertiser> requestBillingReport (String interval) throws Exception {
+    public ArrayList<Creative> getActiveDfaCreative (String adId) throws Exception {
+        String adUrl = "?advertiser_id=" + adId;
+//        for (int x = 0; x < adIds.length; x++) {
+//            adUrl = adUrl.concat(adIds[x]);
+//            if (!(x+1 >= adIds.length)) adUrl = adUrl.concat(",");
+//        }
+        String json = requests.getRequest(url + "/creative" + adUrl + "&state=active");
+        return ResponseParser.parseCreatives(json);
+    }
+
+    public List<String[]> requestDfaCreativeReport(String interval) throws Exception {
+        String jsonPost = "{\n" +
+                "    \"report\":\n" +
+                "    {\n" +
+                "        \"report_type\": \"network_billing\",\n" +
+                "        \"columns\":[\n" +
+                "            \"creative_id\",\n" +
+                "            \"imps\",\n" +
+                "            \"clicks\",\n" +
+                "            \"convs\"\n" +
+                "        ],\n" +
+                "        \"row_per\":[\n" +
+                "            \"creative_id\"\n" +
+                "        ],\n" +
+                "        \"report_interval\":\"" + interval + "\",\n" +
+                "        \"timezone\":\"EST\"\n" +
+                "    }\n" +
+                "}";
+        String json = requests.postRequest(url+"/report", jsonPost);
+        return downloadReportWhenReady(json);
+    }
+
+    public ArrayList<BillingAdvertiser> requestBillingReport(String interval) throws Exception {
         String jsonPost = "{\n" +
                 "    \"report\":\n" +
                 "    {\n" +

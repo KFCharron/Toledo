@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.mediacrossing.discrepancyreport.Creative;
 import com.mediacrossing.monthlybillingreport.BillingAdvertiser;
 import com.mediacrossing.monthlybillingreport.BillingCampaign;
 import com.mediacrossing.weeklydomainreport.Domain;
@@ -13,6 +14,32 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ResponseParser {
+
+    public static ArrayList<Creative> parseCreatives(String json) {
+        ArrayList<Creative> creatives = new ArrayList<>();
+        JsonElement jelement = new JsonParser().parse(json);
+        JsonObject jobject = jelement.getAsJsonObject();
+        jobject = jobject.getAsJsonObject("response");
+        if(!jobject.get("creatives").isJsonNull()) {
+            JsonArray jarray = jobject.getAsJsonArray("creatives");
+            for (JsonElement j : jarray) {
+                JsonObject jo = j.getAsJsonObject();
+                String id = jo.get("id").toString().replace("\"", "");
+                String name = jo.get("name").toString().replace("\"", "");
+                String originalContent = jo.get("original_content").toString().replace("\"", "");
+                List<String> campaigns = new ArrayList<>();
+                if(!jo.get("campaigns").isJsonNull()) {
+                    JsonArray ja = jo.getAsJsonArray("campaigns");
+                    for (JsonElement el : ja) {
+                        JsonObject job = el.getAsJsonObject();
+                        campaigns.add(job.get("campaign_id").toString().replace("\"", ""));
+                    }
+                }
+                creatives.add(new Creative(name, id, originalContent, campaigns));
+            }
+        }
+        return creatives;
+    }
 
     public static ArrayList<Placement> parsePlacements(String json) {
         ArrayList<Placement> placements = new ArrayList<>();
