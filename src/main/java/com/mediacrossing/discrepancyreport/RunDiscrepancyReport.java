@@ -139,12 +139,11 @@ public class RunDiscrepancyReport {
             }
 
             for (Creative c : creatives) {
-                System.out.println(c.getDfaPlacementId());
                 for (String[] l : dfaCsvData) {
                     if (l[0].equals(c.getDfaPlacementId())) {
                         c.setDfaImps(Integer.parseInt(l[1]));
                         c.setDfaClicks(Integer.parseInt(l[2]));
-                        c.setDfaConvs(Integer.parseInt(l[3]) + Integer.parseInt(l[4]));
+                        c.setDfaConvs(Integer.parseInt(l[3]));
                     }
                 }
             }
@@ -156,15 +155,6 @@ public class RunDiscrepancyReport {
                     if (l[0].equals(c.getAppNexusId())) {
                         c.setAppNexusImps(Integer.parseInt(l[1]));
                         c.setAppNexusClicks(Integer.parseInt(l[2]));
-                    }
-                }
-            }
-
-            //LT Conv Nos.
-            List<String[]> ltCsvData = anConn.requestDfaCreativeReport("lifetime");
-            for (Creative c : creatives) {
-                for (String[] l : ltCsvData) {
-                    if (l[0].equals(c.getAppNexusId())) {
                         c.setAppNexusConvs(Integer.parseInt(l[3]));
                     }
                 }
@@ -221,4 +211,3 @@ public class RunDiscrepancyReport {
         }
     }
 }
-
