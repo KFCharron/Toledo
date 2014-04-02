@@ -5,6 +5,7 @@ import com.mediacrossing.campaignbooks.DataParse;
 import com.mediacrossing.campaignbooks.LineItem;
 import com.mediacrossing.dailycheckupsreport.Campaign;
 import com.mediacrossing.dailycheckupsreport.JSONParse;
+import com.mediacrossing.publisherreporting.Publisher;
 import com.mediacrossing.weeklyconversionreport.ConversionAdvertiser;
 import com.mediacrossing.weeklyconversionreport.ConversionParser;
 import scala.Tuple2;
@@ -40,6 +41,11 @@ public class MxService {
     public ArrayList<Campaign> requestAllCampaigns() throws Exception {
         String json = requests.getRequest(url + "/api/catalog/campaigns");
         return JSONParse.populateCampaignArrayList(json);
+    }
+
+    public ArrayList<Publisher> requestAllPublishers() throws Exception {
+        String json = requests.getRequest(url + "/api/catalog/publishers");
+        return JSONParse.populatePublisherArrayList(json);
     }
 
     public String requestAdvertiser(String adId) throws Exception {

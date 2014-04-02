@@ -7,11 +7,15 @@ import com.google.gson.JsonParser;
 import com.mediacrossing.discrepancyreport.Creative;
 import com.mediacrossing.monthlybillingreport.BillingAdvertiser;
 import com.mediacrossing.monthlybillingreport.BillingCampaign;
+import com.mediacrossing.monthlybillingreport.BillingPublisher;
+import com.mediacrossing.monthlybillingreport.ImpType;
 import com.mediacrossing.weeklydomainreport.Domain;
 import scala.Tuple2;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class ResponseParser {
 
@@ -237,6 +241,18 @@ public class ResponseParser {
             }
         }
         return ads;
+    }
+
+    public static ArrayList<ImpType> parsePublisherBillingReport (List<String[]> csvData) {
+        csvData.remove(0);
+        ArrayList<ImpType> data = new ArrayList<>();
+        for (String[] l : csvData) {
+            data.add(new ImpType(l[0],
+                    Integer.parseInt(l[1]),
+                    Float.parseFloat(l[2]),
+                    Float.parseFloat(l[3])));
+        }
+        return data;
     }
 
     public static float parseResoldRevenue (List<String[]> csvData) {

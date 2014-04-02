@@ -6,7 +6,9 @@ import com.mediacrossing.dailycheckupsreport.Campaign;
 import com.mediacrossing.dailycheckupsreport.ServingFee;
 import com.mediacrossing.monthlybillingreport.BillingAdvertiser;
 import com.mediacrossing.monthlybillingreport.BillingCampaign;
+import com.mediacrossing.monthlybillingreport.BillingPublisher;
 import com.mediacrossing.properties.ConfigurationProperties;
+import com.mediacrossing.publisherreporting.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scala.concurrent.duration.Duration;
@@ -119,6 +121,17 @@ public class RunDailyFlashPnlReport {
         List<String> sortedFees = new ArrayList<>(feeNames);
         Collections.sort(sortedFees);
 
-        DailyPnlReportWriter.writeReportToFile(adList, sortedFees, outputPath, "Daily_Flash_PnL_");
+
+        ArrayList<Publisher> pubs = mxConn.requestAllPublishers();
+        ArrayList<BillingPublisher> pubList = new ArrayList<>();
+        for (Publisher p : pubs) {
+            if (p.getStatus().equals("active")) {
+                BillingPublisher bp = new BillingPublisher(p.getPublisherName() + " (" + p.getId() + ")",
+                        anConn.requestPublisherBillingReport(p.getId(), "yesterday"));
+                pubList.add(bp);
+            }
+        }
+
+        DailyPnlReportWriter.writeReportToFile(adList, sortedFees, outputPath, "Daily_Flash_PnL_", pubList);
     }
 }

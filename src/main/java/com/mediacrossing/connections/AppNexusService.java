@@ -6,6 +6,7 @@ import com.mediacrossing.campaignbooks.DataParse;
 import com.mediacrossing.dailycheckupsreport.JSONParse;
 import com.mediacrossing.discrepancyreport.Creative;
 import com.mediacrossing.monthlybillingreport.BillingAdvertiser;
+import com.mediacrossing.monthlybillingreport.ImpType;
 import com.mediacrossing.publishercheckup.*;
 import com.mediacrossing.publisherreporting.Publisher;
 import com.mediacrossing.weeklydomainreport.Domain;
@@ -184,6 +185,35 @@ public class AppNexusService {
 
         String json = requests.postRequest(url+"/report", jsonPost);
         return ResponseParser.parseBillingReport(downloadReportWhenReady(json));
+    }
+
+    public ArrayList<ImpType> requestPublisherBillingReport(String publisherId, String interval) throws Exception {
+        String jsonPost = "{\n" +
+                "    \"report\":\n" +
+                "    {\n" +
+                "        \"report_type\": \"network_publisher_analytics\",\n" +
+                "        \"columns\":[\n" +
+                "            \"imp_type\",\n" +
+                "            \"imps_total\",\n" +
+                "            \"network_revenue\",\n" +
+                "            \"publisher_revenue\"\n" +
+                "        ],\n" +
+                "        \"row_per\":[\n" +
+                "            \"imp_type\"\n" +
+                "        ],\n" +
+                "        \"report_interval\":\"" + interval + "\",\n" +
+                "        \"orders\": [\n" +
+                "            {\n" +
+                "            \"order_by\" : \"imp_type\",\n" +
+                "            \"direction\": \"DESC\"\n" +
+                "            }\n" +
+                "        ],\n" +
+                "        \"timezone\" : \"EST5EDT\"\n" +
+                "    }\n" +
+                "}";
+
+        String json = requests.postRequest(url+"/report?publisher_id=" + publisherId, jsonPost);
+        return ResponseParser.parsePublisherBillingReport(downloadReportWhenReady(json));
     }
 
     public List<String[]> requestImpReport() throws Exception {

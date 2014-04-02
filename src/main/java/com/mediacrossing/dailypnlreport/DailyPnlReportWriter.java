@@ -3,6 +3,8 @@ package com.mediacrossing.dailypnlreport;
 import com.mediacrossing.dailycheckupsreport.ServingFee;
 import com.mediacrossing.monthlybillingreport.BillingAdvertiser;
 import com.mediacrossing.monthlybillingreport.BillingCampaign;
+import com.mediacrossing.monthlybillingreport.BillingPublisher;
+import com.mediacrossing.monthlybillingreport.ImpType;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.WorkbookUtil;
@@ -20,7 +22,8 @@ public class DailyPnlReportWriter {
     public static void writeReportToFile(ArrayList<BillingAdvertiser> adList,
                                          List<String> feeNames,
                                          String outputPath,
-                                         String name)
+                                         String name,
+                                         ArrayList<BillingPublisher> pubList)
             throws IOException {
 
         //Create wb
@@ -558,7 +561,101 @@ public class DailyPnlReportWriter {
 
         //TODO *********** Publisher Overview, Publisher list, each individual pub
 
+        CellStyle pubHeadStyle = wb.createCellStyle();
+        Font pubHeadFont = wb.createFont();
+        pubHeadFont.setColor(IndexedColors.WHITE.getIndex());
+        pubHeadFont.setBoldweight((short)1000);
+        pubHeadStyle.setFont(pubHeadFont);
+        pubHeadStyle.setFillForegroundColor(IndexedColors.GREEN.getIndex());
+        pubHeadStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
 
+        CellStyle totalStyle = wb.createCellStyle();
+        Font bold = wb.createFont();
+        bold.setBoldweight((short)1000);
+        totalStyle.setFont(bold);
+        totalStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
+        totalStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
+
+        CellStyle totalNumber = wb.createCellStyle();
+        totalNumber.cloneStyleFrom(totalStyle);
+        totalNumber.setDataFormat(df.getFormat("#,##0"));
+
+        CellStyle totalCurrency = wb.createCellStyle();
+        totalCurrency.cloneStyleFrom(totalStyle);
+        totalCurrency.setDataFormat(df.getFormat("$#,##0.00"));
+
+        CellStyle normal = wb.createCellStyle();
+
+        CellStyle number = wb.createCellStyle();
+        number.setDataFormat(df.getFormat("#,##0"));
+
+        Sheet publisherSheet = wb.createSheet("Publisher Overview");
+        rowCount = 2;
+        for (BillingPublisher p : pubList) {
+            Row header = publisherSheet.createRow(rowCount);
+            header.createCell(0).setCellValue(p.getName());
+            header.createCell(1).setCellValue("Impressions");
+            header.createCell(2).setCellValue("Gross Revenue");
+            header.createCell(3).setCellValue("Pub Revenue");
+            header.createCell(4).setCellValue("Profit");
+            header.createCell(5).setCellValue("AN_AdServing Fee");
+            header.createCell(6).setCellValue("AN_Exchange Fee");
+            header.createCell(7).setCellValue("Amazon Fee");
+            header.createCell(8).setCellValue("Evidon Fee");
+            header.createCell(9).setCellValue("Total Fees");
+            header.createCell(10).setCellValue("MX PnL");
+            for (Cell c : header) c.setCellStyle(pubHeadStyle);
+
+            ImpType totals = new ImpType();
+            for (ImpType t : p.getImpTypes()) {
+                Row data = publisherSheet.createRow(++rowCount);
+                data.createCell(0).setCellValue(t.getName());
+                data.createCell(1).setCellValue(t.getImps());
+                data.createCell(2).setCellValue(t.getGrossRevenue());
+                data.createCell(3).setCellValue(t.getPublisherRevenue());
+                data.createCell(4).setCellValue(t.getProfit());
+                data.createCell(5).setCellValue(t.getAnServingFee());
+                data.createCell(6).setCellValue(t.getAnExchangeFee());
+                data.createCell(7).setCellValue(t.getAmazonFee());
+                data.createCell(8).setCellValue(t.getEvidonFee());
+                data.createCell(9).setCellValue(t.getTotalFees());
+                data.createCell(10).setCellValue(t.getPnl());
+
+                for (Cell c : data) c.setCellStyle(fullCurrency);
+                data.getCell(0).setCellStyle(normal);
+                data.getCell(1).setCellStyle(number);
+
+                totals.setImps(totals.getImps() + t.getImps());
+                totals.setGrossRevenue(totals.getGrossRevenue() + t.getGrossRevenue());
+                totals.setPublisherRevenue(totals.getPublisherRevenue() + t.getPublisherRevenue());
+                totals.setProfit(totals.getProfit() + t.getProfit());
+                totals.setAnServingFee(totals.getAnServingFee() + t.getAnServingFee());
+                totals.setAnExchangeFee(totals.getAnExchangeFee() + t.getAnExchangeFee());
+                totals.setAmazonFee(totals.getAmazonFee() + t.getAmazonFee());
+                totals.setEvidonFee(totals.getEvidonFee() + t.getEvidonFee());
+                totals.setTotalFees(totals.getTotalFees() + t.getTotalFees());
+                totals.setPnl(totals.getPnl() + t.getPnl());
+            }
+            Row totalRow = publisherSheet.createRow(++rowCount);
+            totalRow.createCell(0).setCellValue("Totals");
+            totalRow.createCell(1).setCellValue(totals.getImps());
+            totalRow.createCell(2).setCellValue(totals.getGrossRevenue());
+            totalRow.createCell(3).setCellValue(totals.getPublisherRevenue());
+            totalRow.createCell(4).setCellValue(totals.getProfit());
+            totalRow.createCell(5).setCellValue(totals.getAnServingFee());
+            totalRow.createCell(6).setCellValue(totals.getAnExchangeFee());
+            totalRow.createCell(7).setCellValue(totals.getAmazonFee());
+            totalRow.createCell(8).setCellValue(totals.getEvidonFee());
+            totalRow.createCell(9).setCellValue(totals.getTotalFees());
+            totalRow.createCell(10).setCellValue(totals.getPnl());
+
+            for (Cell c : totalRow) c.setCellStyle(totalCurrency);
+            totalRow.getCell(0).setCellStyle(totalStyle);
+            totalRow.getCell(1).setCellStyle(totalNumber);
+
+            rowCount += 3;
+            for (Cell c : header) publisherSheet.autoSizeColumn(c.getColumnIndex());
+        }
 
         //Export file
         LocalDate now = new LocalDate(DateTimeZone.UTC);

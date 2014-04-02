@@ -6,6 +6,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Map;
 
+import com.mediacrossing.publisherreporting.Publisher;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
@@ -189,6 +190,23 @@ public class JSONParse {
         }
         return campaignArrayList1;
 
+    }
+
+    public static ArrayList<Publisher> populatePublisherArrayList(String rawData) throws ParseException {
+
+        ArrayList<Publisher> pubs = new ArrayList<>();
+        JsonElement jElement = new JsonParser().parse(rawData);
+        JsonArray jArray = jElement.getAsJsonArray();
+        for (JsonElement entry : jArray) {
+            JsonObject jsonObject = entry.getAsJsonObject();
+            Publisher p = new Publisher(jsonObject.get("id").toString().replace("\"",""),
+                    jsonObject.get("name").toString().replace("\"",""),
+                    null,
+                    jsonObject.get("status").toString().replace("\"",""));
+
+            pubs.add(p);
+        }
+        return pubs;
     }
 
     public static ArrayList<SegmentGroupTarget> populateSegmentGroupTargetList(String rawData) {
