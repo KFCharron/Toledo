@@ -11,6 +11,8 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.joda.time.DateTimeZone;
+import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scala.Tuple2;
@@ -151,8 +153,9 @@ public class RunLotameReport {
         sheet.autoSizeColumn(3);
         sheet.autoSizeColumn(4);
 
+        LocalDate now = new LocalDate(DateTimeZone.UTC);
         FileOutputStream fileOut =
-                new FileOutputStream(new File(outputPath, "Lotame_Imps_Feb12-28.xls"));
+                new FileOutputStream(new File(outputPath, "Monthly_Lotame_Report_" + now.toString() + ".xls"));
         wb.write(fileOut);
         fileOut.close();
     }

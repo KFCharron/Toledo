@@ -228,7 +228,8 @@ public class AppNexusService {
                 "        \"row_per\" :[\n" +
                 "            \"campaign_id\"\n" +
                 "        ],\n" +
-                "        \"start_date\": \"2014-02-12\", \"end_date\": \"2014-03-01\","+
+                "           \"report_interval\": \"last_month\"," +
+                //"        \"start_date\": \"2014-02-12\", \"end_date\": \"2014-03-01\","+
                 "        \"format\": \"csv\",\n" +
                 "        \"emails\":[],\n" +
                 "        \"orders\": [\n" +
