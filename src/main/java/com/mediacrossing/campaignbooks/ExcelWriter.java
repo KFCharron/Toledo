@@ -238,7 +238,6 @@ public class ExcelWriter {
             //init total counts
             Float totalLifetimeBudget = 0.0f;
             Float totalDailyBudget = 0.0f;
-            Float totalActualDailyBudget = 0.0f;
             Float totalCumulativeDelivery = 0.0f;
             int totalCumulativeImpDelivery = 0;
             ArrayList<Float> tots =
@@ -366,7 +365,6 @@ public class ExcelWriter {
                 //add to column totals
                 totalLifetimeBudget += campaign.getLifetimeBudget();
                 totalDailyBudget += campaign.getDailyBudget();
-                totalActualDailyBudget += campaign.getActualDailyBudget();
                 totalCumulativeDelivery += campaign.getTotalDelivery();
                 totalCumulativeImpDelivery += campaign.getLifetimeImps();
             }
@@ -393,7 +391,8 @@ public class ExcelWriter {
             for(int x = cellTrack - 1; x > 8; x--) {
                 totalRow.createCell(x).setCellValue(tots.get(x));
                 //set style
-                totalRow.getCell(x).setCellStyle(fullCurrency);
+                if(ad.getLineItemList().get(0).getLifetimeBudget() > 1) totalRow.getCell(x).setCellStyle(fullCurrency);
+                else totalRow.getCell(x).setCellStyle(number);
             }
 
             //set total pacing
