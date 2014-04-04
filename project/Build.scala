@@ -43,7 +43,7 @@ object BuildSettings {
 
   object Dependencies {
     val gson = "com.google.code.gson" % "gson" % "2.2.4"
-    val poi = "org.apache.poi" % "poi" % "3.9"
+    val poi = "org.apache.poi" % "poi" % "3.10-FINAL"
     val logback = "ch.qos.logback" % "logback-classic" % "1.0.13"
     val playFramework = "play" % "play_2.10" % "2.1.2" exclude(
       "commons-logging", "commons-logging")
