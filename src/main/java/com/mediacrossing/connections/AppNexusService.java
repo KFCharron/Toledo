@@ -148,6 +148,29 @@ public class AppNexusService {
         return downloadReportWhenReady(json);
     }
 
+    public List<String[]> requestAcctReport() throws Exception {
+        String jsonPost = "{\n" +
+                "    \"report\":\n" +
+                "    {\n" +
+                "        \"report_type\":\"network_analytics\",\n" +
+                "        \"columns\":[\n" +
+                "            \"line_item_id\",\n" +
+                "            \"month\",\n" +
+                "            \"imps\"\n" +
+                "        ],\n" +
+                "        \"row_per\" : [\n" +
+                "            \"month\",\n" +
+                "            \"line_item_id\"\n" +
+                "        ],\n" +
+                "        \"orders\" : [{\"order_by\":\"month\", \"direction\":\"DESC\"}],\n" +
+                "        \"report_interval\":\"lifetime\",\n" +
+                "        \"timezone\":\"EST\"\n" +
+                "    }\n" +
+                "}";
+        String json = requests.postRequest(url+"/report", jsonPost);
+        return downloadReportWhenReady(json);
+    }
+
     public ArrayList<BillingAdvertiser> requestBillingReport(String interval) throws Exception {
         String jsonPost = "{\n" +
                 "    \"report\":\n" +
