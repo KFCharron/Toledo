@@ -8,7 +8,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RunAppNexusUpload {
+public class RunZipUpload {
     public static String anUrl = "http://api.appnexus.com/";
     public static String anUsername = "mediacrossing_api_user";
     public static String anPassword = "Z3^at0Fbr";
@@ -88,6 +88,7 @@ public class RunAppNexusUpload {
 
         // call put w/ String
         AppNexusService anConn = new AppNexusService(anUrl, anUsername, anPassword);
+
         System.out.println(anConn.putRequest("/profile?id=" + profileId + "&advertiser_id=" + advertiserId, json));
 
     }

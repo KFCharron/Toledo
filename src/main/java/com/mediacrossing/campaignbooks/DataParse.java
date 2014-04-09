@@ -126,6 +126,18 @@ public class DataParse {
         return pl;
     }
 
+    public static ArrayList<String> parseProfiles (String rawData) throws ParseException {
+        ArrayList<String> pros = new ArrayList<>();
+        JsonElement je = new JsonParser().parse(rawData);
+        JsonObject jo = je.getAsJsonObject().getAsJsonObject("response");
+        JsonArray ja = jo.getAsJsonArray("profiles");
+        for(JsonElement jsonElement : ja) {
+            jo = jsonElement.getAsJsonObject();
+            pros.add(jo.get("id").toString().replace("\"", ""));
+        }
+        return pros;
+    }
+
     public static ArrayList<LineItem> parseLineItems(String rawData) throws ParseException {
         ArrayList<LineItem> liList = new ArrayList<>();
         JsonElement je = new JsonParser().parse(rawData);

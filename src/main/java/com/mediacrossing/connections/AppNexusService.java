@@ -61,14 +61,20 @@ public class AppNexusService {
     }
 
     public String putRequest(String url2, String json) throws Exception {
+        throttleCheck();
         return requests.putRequest(url + url2, json);
-        //return DataParse.parsePutResponse(requests.putRequest(url, json));
     }
 
     public ArrayList<Publisher> requestPublishers() throws Exception {
         String json = requests.getRequest(url + "/publisher");
         throttleCheck();
         return DataParse.parsePublisherIdAndName(json);
+    }
+
+    public ArrayList<String> requestAllProfilesForAdvertiser(String adId) throws Exception {
+        String anUrl = "http://localhost:8080/an/profile?advertiser_id=283120";
+        String json = requests.getRequest(anUrl);
+        return DataParse.parseProfiles(json);
     }
 
     public ArrayList<LineItem> requestLineItems(String adId) throws Exception {
