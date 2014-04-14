@@ -912,7 +912,9 @@ public class AppNexusService {
                 "            \"segment_name\",\n" +
                 "            \"day\",\n" +
                 "            \"total_loads\",\n" +
-                "            \"daily_uniques\"\n" +
+                "            \"daily_uniques\",\n" +
+                "            \"month\",\n" +
+                "            \"monthly_uniques\"\n" +
                 "        ],\n" +
                 "        \"filters\": [\n" +
                 "            {\n" +

@@ -578,6 +578,7 @@ public class XlsWriter {
         headerRow.createCell(6).setCellValue("Total Segment Loads");
         headerRow.createCell(7).setCellValue("Daily Segment Loads");
         headerRow.createCell(8).setCellValue("Daily Campaign Impressions");
+        headerRow.createCell(9).setCellValue("Monthly Uniques");
 
 
         //Style header
@@ -586,7 +587,7 @@ public class XlsWriter {
         font.setBoldweight((short) 700);
         CellStyle bold = WORKBOOK.createCellStyle();
         bold.setFont(font);
-        for(int x = 0; x < 9; x++)
+        for(int x = 0; x < 10; x++)
             headerRow.getCell(x).setCellStyle(bold);
 
         //Repeat row for every segment row
@@ -607,6 +608,7 @@ public class XlsWriter {
                     segmentRow.createCell(6).setCellValue(segment.getTotalSegmentLoads());
                     segmentRow.createCell(7).setCellValue(segment.getDailySegmentLoads());
                     segmentRow.createCell(8).setCellValue(campaign.getDailyImps());
+                    segmentRow.createCell(9).setCellValue(segment.getMonthlySegmentLoads());
 
                     rowCounter++;
                 }
@@ -615,7 +617,7 @@ public class XlsWriter {
         }
 
         //auto-size columns
-        for(int x = 0; x < 9; x++) {
+        for(int x = 0; x < 10; x++) {
             segmentSheet.autoSizeColumn(x);
         }
     }

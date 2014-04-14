@@ -197,6 +197,7 @@ public class RunSegmentLoadReport {
                         if(segment.getId().equals(line[0])) {
                             segment.setTotalSegmentLoads(line[3]);
                             segment.setDailySegmentLoads(line[4]);
+                            segment.setMonthlySegmentLoads(line[6]);
                         }
                     }
                 }
