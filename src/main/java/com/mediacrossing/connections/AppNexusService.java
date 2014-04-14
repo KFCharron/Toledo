@@ -72,7 +72,7 @@ public class AppNexusService {
     }
 
     public ArrayList<String> requestAllProfilesForAdvertiser(String adId) throws Exception {
-        String anUrl = "http://localhost:8080/an/profile?advertiser_id=283120";
+        String anUrl = "http://localhost:8888/an/profile?advertiser_id=283120";
         String json = requests.getRequest(anUrl);
         return DataParse.parseProfiles(json);
     }
