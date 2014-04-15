@@ -495,6 +495,30 @@ public class AppNexusService {
         return downloadReportWhenReady(json);
     }
 
+    public List<String[]> requestRollingDomainImpsReport() throws Exception {
+        String jsonPost = "{\n" +
+                "    \"report\":\n" +
+                "    {\n" +
+                "        \"report_type\": \"network_site_domain_performance\",\n" +
+                "        \"columns\": [\n" +
+                "            \"advertiser_name\",\n" +
+                "            \"site_domain\",\n" +
+                "            \"day\",\n" +
+                "            \"imps\"\n" +
+                "        ],\n" +
+                "        \"report_interval\": \"last_7_days\",\n" +
+                "        \"orders\": [\n" +
+                "            {\"order_by\":\"day\", \"direction\":\"DESC\"\n}," +
+                "            {\"order_by\":\"imps\", \"direction\":\"DESC\"\n}" +
+                "        ],\n" +
+                "        \"timezone\": \"EST5EDT\"\n" +
+                "    }\n" +
+                "}";
+
+        String json = requests.postRequest(url + "/report", jsonPost);
+        return downloadReportWhenReady(json);
+    }
+
     public List<String[]> requestPublisherReport(String id) throws Exception {
         String j = "{\n" +
                 "    \"report\":\n" +
