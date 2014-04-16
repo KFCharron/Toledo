@@ -4,6 +4,7 @@ import AssemblyKeys._
 import Keys._
 import sbtrelease._
 import sbtrelease.ReleasePlugin.ReleaseKeys
+import org.scalastyle.sbt.ScalastylePlugin
 
 object BuildSettings {
   lazy val releaseSettings = ReleasePlugin.releaseSettings ++ Seq(
@@ -20,7 +21,10 @@ object BuildSettings {
         scalacOptions ++= _scalacOptions,
         testOptions in Test := Seq(Tests.Filter(s => s.endsWith("Spec"))))
 
-  lazy val standardSettings = buildSettings210 ++ releaseSettings
+  lazy val standardSettings = 
+    buildSettings210 ++ 
+    releaseSettings ++ 
+    ScalastylePlugin.Settings
 
   lazy val customAssemblySettings = assemblySettings ++ Seq(
     mergeStrategy in assembly <<= (mergeStrategy in assembly) {
