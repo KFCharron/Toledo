@@ -577,7 +577,9 @@ public class ExcelWriter {
 
         //Display daily grand totals
         int cellCount = 9;
-        while(cellCount < grandTots.size()) {
+        int grandTotalCount = grandTots.size();
+        if (grandTots.size() > 255) grandTotalCount = 255;
+        while(cellCount < grandTotalCount) {
             grandTotal.createCell(cellCount).setCellValue(grandTots.get(cellCount));
             grandTotal.getCell(cellCount).setCellStyle(fullCurrency);
             if(grandTots.get(cellCount) == 0) grandTotal.removeCell(grandTotal.getCell(cellCount));
