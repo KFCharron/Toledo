@@ -56,6 +56,8 @@ object RunDailyClientPublisherReport extends App {
   currency.setDataFormat(df.getFormat("$#,##0.00"))
   val percentage = wb.createCellStyle()
   percentage.setDataFormat(df.getFormat("0.00%"))
+  val number = wb.createCellStyle()
+  number.setDataFormat(df.getFormat("#,##0"))
 
   // Add row to excel sheet for every placement under the publisher
   var rowCount = 2
@@ -67,8 +69,8 @@ object RunDailyClientPublisherReport extends App {
     row.createCell(3).setCellValue(r.sold.toFloat / r.avails)
     row.createCell(4).setCellValue(r.publisherRevenue)
 
-    row.getCell(1).setCellType(Cell.CELL_TYPE_NUMERIC)
-    row.getCell(2).setCellType(Cell.CELL_TYPE_NUMERIC)
+    row.getCell(1).setCellStyle(number)
+    row.getCell(2).setCellStyle(number)
     row.getCell(3).setCellStyle(percentage)
     row.getCell(4).setCellStyle(currency)
 
@@ -85,6 +87,8 @@ object RunDailyClientPublisherReport extends App {
   totalRow.createCell(4).setCellFormula("SUM(E3:E" + (rowCount-1) + ")")
 
   // Style and Autosize Columns
+  totalRow.getCell(1).setCellStyle(number)
+  totalRow.getCell(2).setCellStyle(number)
   totalRow.getCell(3).setCellStyle(percentage)
   totalRow.getCell(4).setCellStyle(currency)
 
