@@ -132,6 +132,29 @@ public class AppNexusService {
         return ResponseParser.parseCreatives(json);
     }
 
+    public List<String[]> requestClientPublisherReport(String pubId) throws Exception {
+        String jsonPost = "{\n" +
+                "    \"report\":\n" +
+                "    {\n" +
+                "        \"report_type\": \"network_publisher_analytics\",\n" +
+                "        \"columns\":[\n" +
+                "            \"placement_id\",\n" +
+                "            \"placement_name\",\n" +
+                "            \"imps_total\",\n" +
+                "            \"imps_sold\",\n" +
+                "            \"publisher_revenue\"\n" +
+                "        ],\n" +
+                "        \"row_per\":[\n" +
+                "            \"placement_name\"\n" +
+                "        ],\n" +
+                "        \"report_interval\":\"yesterday\",\n" +
+                "        \"timezone\":\"EST\"\n" +
+                "    }\n" +
+                "}";
+        String json = requests.postRequest(url+"/report?publisher_id=" + pubId, jsonPost);
+        return downloadReportWhenReady(json);
+    }
+
     public List<String[]> requestDfaCreativeReport(String interval) throws Exception {
         String jsonPost = "{\n" +
                 "    \"report\":\n" +
@@ -848,7 +871,7 @@ public class AppNexusService {
                 "        \"timezone\": \"EST5EDT\""+
                 "    }\n" +
                 "}";
-        String json = requests.postRequest(url + "/report?advertiser_id=" + adId, jsonPostData);
+        String json = requests.postRequest(url + "report?advertiser_id=" + adId, jsonPostData);
 
         return downloadReportWhenReady(json);
     }

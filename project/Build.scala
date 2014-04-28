@@ -47,7 +47,7 @@ object BuildSettings {
 
   object Dependencies {
     val gson = "com.google.code.gson" % "gson" % "2.2.4"
-    val poi = "org.apache.poi" % "poi" % "3.10-FINAL"
+    val poi = "org.apache.poi" % "poi-ooxml" % "3.10-FINAL"
     val logback = "ch.qos.logback" % "logback-classic" % "1.0.13"
     val playFramework = "play" % "play_2.10" % "2.1.2" exclude(
       "commons-logging", "commons-logging")
@@ -58,6 +58,8 @@ object BuildSettings {
     val jackson = "com.google.http-client" % "google-http-client-jackson2" % "1.17.0-rc"
     val oauth = "com.google.oauth-client" % "google-oauth-client-jetty" % "1.17.0-rc"
     val guava = "com.google.guava" % "guava" % "14.0"
+    val xerces = "xerces" % "xerces" % "1.4.0"
+    val temp = "gov.nih.imagej" % "imagej" % "1.47"
   }
 
 }
@@ -85,7 +87,9 @@ object TargetSegmentingBuild extends Build {
               dfa,
               jackson,
               oauth,
-              guava
+              guava,
+              xerces,
+              temp
           )) ++
         customAssemblySettings
   )

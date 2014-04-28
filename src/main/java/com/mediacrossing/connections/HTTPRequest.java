@@ -28,7 +28,7 @@ public class HTTPRequest implements Request {
         int responseCode = 0;
         HttpURLConnection con = null;
         int attemptCount = 0;
-        while (responseCode != 200 && attemptCount < 20) {
+        while (responseCode != 200) {
             //Create URL object
             URL obj = new URL(url);
             LOG.debug("\nSending 'GET' request to URL : " + url);
@@ -68,7 +68,7 @@ public class HTTPRequest implements Request {
         if (rawJSON.isEmpty()) {
             LOG.error("No JSON received.");
         }
-
+        LOG.debug(rawJSON);
         return rawJSON;
     }
 
@@ -98,7 +98,6 @@ public class HTTPRequest implements Request {
         if (responseCode != 200) {
             LOG.error("Received Response Code " + responseCode + " from " + url);
             LOG.error("Exiting Program");
-            System.exit(1);
         }
         LOG.debug("\nSending 'POST' request to URL : " + url);
         LOG.debug("Response Code : " + responseCode);
