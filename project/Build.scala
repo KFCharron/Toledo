@@ -43,7 +43,12 @@ object BuildSettings {
     }, artifact in(Compile, assembly) ~= {
       art =>
         art.copy(`classifier` = Some("assembly"))
+    }, excludedJars in assembly <<= (fullClasspath in assembly) map { cp =>
+      cp filter {_.data.getName == "xml-apis-1.0.b2.jar"}
     }) ++ addArtifact(artifact in(Compile, assembly), assembly)
+
+
+
 
   object Dependencies {
     val gson = "com.google.code.gson" % "gson" % "2.2.4"
