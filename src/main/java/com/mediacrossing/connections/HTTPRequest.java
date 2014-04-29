@@ -25,32 +25,22 @@ public class HTTPRequest implements Request {
 
     public String getRequest(String url) throws Exception {
 
-        int responseCode = 0;
-        HttpURLConnection con = null;
-        int attemptCount = 0;
-        while (responseCode != 200 && attemptCount < 100) {
-            //Create URL object
-            URL obj = new URL(url);
-            LOG.debug("\nSending 'GET' request to URL : " + url);
+        //Create URL object
+        URL obj = new URL(url);
+        LOG.debug("\nSending 'GET' request to URL : " + url);
 
-            //Open connection
-            con = (HttpURLConnection) obj.openConnection();
+        //Open connection
+        HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 
-            if (requestProperties != null) {
-                for (Tuple2<String, String> kv : requestProperties) {
-                    con.setRequestProperty(kv._1(), kv._2());
-                }
+        if (requestProperties != null) {
+            for (Tuple2<String, String> kv : requestProperties) {
+                con.setRequestProperty(kv._1(), kv._2());
             }
-
-            //Obtain response code
-            responseCode = con.getResponseCode();
-            if (responseCode != 200) {
-                LOG.error("Received Response Code " + responseCode + " from " + url);
-                LOG.error("Exiting Program");
-            }
-            LOG.debug("Response Code : " + responseCode);
-            attemptCount++;
         }
+
+        //Obtain response code
+        int responseCode = con.getResponseCode();
+        LOG.debug("Response Code : " + responseCode);
 
         //Init Input Reader
         BufferedReader in = new BufferedReader(
@@ -69,6 +59,9 @@ public class HTTPRequest implements Request {
             LOG.error("No JSON received.");
         }
         LOG.debug(rawJSON);
+        if (responseCode != 200) {
+            LOG.error("Exiting Program Due to Non-200");
+        }
         return rawJSON;
     }
 
