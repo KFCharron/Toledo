@@ -28,7 +28,7 @@ public class HTTPRequest implements Request {
         int responseCode = 0;
         HttpURLConnection con = null;
         int attemptCount = 0;
-        while (responseCode != 200) {
+        while (responseCode != 200 && attemptCount < 100) {
             //Create URL object
             URL obj = new URL(url);
             LOG.debug("\nSending 'GET' request to URL : " + url);
