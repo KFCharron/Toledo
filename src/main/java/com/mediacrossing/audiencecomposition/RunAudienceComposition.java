@@ -25,26 +25,12 @@ import org.xml.sax.helpers.XMLReaderFactory;
 
 public class RunAudienceComposition {
 
-    public static SXSSFWorkbook wb = new SXSSFWorkbook(100);
+    public static SXSSFWorkbook wb =
+            new SXSSFWorkbook();
     public static Sheet sheet = wb.createSheet();
     public static Row row;
     public static int rowCount = 0;
     public static int cellCount = 0;
-
-    public static void processOneSheet(String filename) throws Exception {
-        OPCPackage pkg = OPCPackage.open(filename);
-        XSSFReader r = new XSSFReader( pkg );
-        SharedStringsTable sst = r.getSharedStringsTable();
-
-        XMLReader parser = fetchSheetParser(sst);
-
-        // rId2 found by processing the Workbook
-        // Seems to either be rId# or rSheet#
-        InputStream sheet2 = r.getSheet("rId2");
-        InputSource sheetSource = new InputSource(sheet2);
-        parser.parse(sheetSource);
-        sheet2.close();
-    }
 
     public static void processAllSheets(String filename) throws Exception {
         OPCPackage pkg = OPCPackage.open(filename);
@@ -149,6 +135,9 @@ public class RunAudienceComposition {
     }
 
     public static void main(String[] args) throws Exception {
+        wb = new SXSSFWorkbook( new XSSFWorkbook(RunAudienceComposition
+                                .class
+                                .getResourceAsStream("/Test_Audience_Template.xlsx")), 100);
         processAllSheets("/Users/charronkyle/Documents/Developer/toledo/src/main/resources/MX - Lotame 4.14.14.xlsx");
         //processOneSheet("/Users/charronkyle/Documents/Developer/toledo/src/main/resources/MX - Lotame 4.14.14.xlsx");
         System.out.println("DONE!");
