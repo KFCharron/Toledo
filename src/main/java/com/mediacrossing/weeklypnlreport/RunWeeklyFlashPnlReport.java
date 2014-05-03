@@ -50,8 +50,8 @@ public class RunWeeklyFlashPnlReport {
         String mxUrl = properties.getMxUrl();
         MxService mxConn = new MxService(mxUrl, mxUsername, mxPass);
 
-        ArrayList<BillingAdvertiser> adList = anConn.requestBillingReport("month_to_date");
-        List<String[]> adExData = anConn.requestSellerReport("month_to_date");
+        ArrayList<BillingAdvertiser> adList = anConn.requestBillingReport("last_7_days");
+        List<String[]> adExData = anConn.requestSellerReport("last_7_days");
         for (String[] l : adExData) {
             String googleAdExchangeId = "181";
             if (l[0].equals(googleAdExchangeId)) {
@@ -128,12 +128,12 @@ public class RunWeeklyFlashPnlReport {
         for (Publisher p : pubs) {
             if (p.getStatus().equals("active")) {
                 BillingPublisher bp = new BillingPublisher(p.getPublisherName() + " (" + p.getId() + ")",
-                        anConn.requestPublisherBillingReport(p.getId(), "month_to_date"));
+                        anConn.requestPublisherBillingReport(p.getId(), "last_7_days"));
                 pubList.add(bp);
             }
         }
 
 
-        DailyPnlReportWriter.writeReportToFile(adList, sortedFees, outputPath, "Month_To_Date_Flash_PnL_", pubList);
+        DailyPnlReportWriter.writeReportToFile(adList, sortedFees, outputPath, "Weekly_Flash_PnL_", pubList);
     }
 }
