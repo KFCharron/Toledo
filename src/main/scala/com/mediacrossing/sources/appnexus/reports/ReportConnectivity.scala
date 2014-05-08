@@ -11,21 +11,24 @@ object ReportConnectivity {
   import ReportRequest.reportRequestW
 
   def requestReportBlocking[Req, Resp](client: FailSafeHttpClient)
-                                      (request: Req)
-                                      (implicit marshaller: ReportRequestMarshaller[Req],
+                                      (request: Req,
                                        deserializer: String => \/[String, Resp],
-                                       ec: ExecutionContext,
+                                       marshaller: ReportRequestMarshaller[Req])
+                                      (implicit ec: ExecutionContext,
                                        requestTimeout: Duration): Resp =
     Await.result(
       awaitable =
-        requestReport(client = client)(request = request),
+        requestReport(client = client)(
+          request = request,
+          deserializer = deserializer,
+          marshaller = marshaller),
       atMost = requestTimeout)
 
   def requestReport[Req, Resp](client: FailSafeHttpClient)
-                              (request: Req)
-                              (implicit marshaller: ReportRequestMarshaller[Req],
+                              (request: Req,
                                deserializer: String => \/[String, Resp],
-                               ec: ExecutionContext): Future[Resp] =
+                               marshaller: ReportRequestMarshaller[Req])
+                              (implicit ec: ExecutionContext): Future[Resp] =
     marshaller.marshal(request) match {
       case (queryString, r) =>
         client

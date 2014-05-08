@@ -14,10 +14,10 @@ trait ConfiguredBuyReportRequests {
                            (implicit c: @@[FailSafeHttpClient, PutneyClient],
                             ec: ExecutionContext,
                             requestTimeout: @@[Duration, PutneyReportRequestTimeout]): List[CsvRow] = {
-    import SiteDomainPerformance.marshaller
-    import Deserializers.csv
-
-    requestReportBlocking(client = c)(request = r)
+    requestReportBlocking(client = c)(
+      request = r,
+      deserializer = Deserializers.csv,
+      marshaller = SiteDomainPerformance.marshaller)
   }
 }
 
