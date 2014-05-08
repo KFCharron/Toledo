@@ -21,7 +21,8 @@ public class ConfigurationProperties {
     private final Duration requestDelayInSeconds;
     private final String outputPath;
     private final String putneyHosts;
-    private final Duration putneyRequestTimeout;
+    private final Duration putneyReportRequestTimeout;
+    private final Duration khajuRequestTimeout;
 
     public ConfigurationProperties(String[] args) throws IOException {
 
@@ -48,9 +49,13 @@ public class ConfigurationProperties {
             mxUsername = prop.getProperty("mxUsername");
             mxPassword = prop.getProperty("mxPassword");
             putneyHosts = prop.getProperty("putneyHosts");
-            putneyRequestTimeout =
+            putneyReportRequestTimeout =
                     Duration.apply(
-                            Integer.parseInt(prop.getProperty("putneyRequestTimeoutSeconds")),
+                            Integer.parseInt(prop.getProperty("putneyReportRequestTimeoutSeconds")),
+                            TimeUnit.SECONDS);
+            khajuRequestTimeout =
+                    Duration.apply(
+                            Integer.parseInt(prop.getProperty("khajuRequestTimeoutSeconds")),
                             TimeUnit.SECONDS);
         } else {
             throw new RuntimeException("Properties File Failed To Load");
@@ -61,8 +66,12 @@ public class ConfigurationProperties {
         return putneyHosts;
     }
 
-    public Duration putneyRequestTimeout() {
-        return putneyRequestTimeout;
+    public Duration putneyReportRequestTimeout() {
+        return putneyReportRequestTimeout;
+    }
+
+    public Duration khajuRequestTimeout() {
+        return khajuRequestTimeout;
     }
 
     public String getAppNexusUrl() {

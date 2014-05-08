@@ -34,7 +34,12 @@ trait PutneyConnectivity {
           logger = Logger)))
   }
 
-  implicit val requestTimeout: Duration =
-    configuration.putneyRequestTimeout
+  implicit val reportRequestTimeout: Duration =
+    configuration.putneyReportRequestTimeout
 
+}
+
+class JPutneyConnectivity(c: ConfigurationProperties) extends PutneyConnectivity {
+
+  override val configuration: ConfigurationProperties = c
 }

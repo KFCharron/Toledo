@@ -20,3 +20,5 @@ trait ConfiguredBuyReportRequests {
     requestReportBlocking(client = c)(request = r)
   }
 }
+
+class JConfiguredBuyReportRequests extends ConfiguredBuyReportRequests
