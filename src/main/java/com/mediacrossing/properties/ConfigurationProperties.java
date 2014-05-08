@@ -22,7 +22,15 @@ public class ConfigurationProperties {
     private final String outputPath;
     private final String putneyHosts;
     private final Duration putneyReportRequestTimeout;
+    private final Duration putneyReadRequestTimeout;
     private final Duration khajuRequestTimeout;
+
+    private Duration readSeconds(Properties prop,
+                                 String propertyName) {
+        return Duration.apply(
+                Integer.parseInt(prop.getProperty(propertyName)),
+                TimeUnit.SECONDS);
+    }
 
     public ConfigurationProperties(String[] args) throws IOException {
 
@@ -50,13 +58,11 @@ public class ConfigurationProperties {
             mxPassword = prop.getProperty("mxPassword");
             putneyHosts = prop.getProperty("putneyHosts");
             putneyReportRequestTimeout =
-                    Duration.apply(
-                            Integer.parseInt(prop.getProperty("putneyReportRequestTimeoutSeconds")),
-                            TimeUnit.SECONDS);
+                    readSeconds(prop, "putneyReportRequestTimeoutSeconds");
+            putneyReadRequestTimeout =
+                    readSeconds(prop, "putneyReadRequestTimeoutSeconds");
             khajuRequestTimeout =
-                    Duration.apply(
-                            Integer.parseInt(prop.getProperty("khajuRequestTimeoutSeconds")),
-                            TimeUnit.SECONDS);
+                    readSeconds(prop, "khajuRequestTimeoutSeconds");
         } else {
             throw new RuntimeException("Properties File Failed To Load");
         }
@@ -68,6 +74,10 @@ public class ConfigurationProperties {
 
     public Duration putneyReportRequestTimeout() {
         return putneyReportRequestTimeout;
+    }
+
+    public Duration putneyReadRequestTimeout() {
+        return putneyReadRequestTimeout;
     }
 
     public Duration khajuRequestTimeout() {

@@ -4,9 +4,6 @@ import scalaz.{\/-, \/}
 
 object Deserializers {
 
-  implicit val noOp: String => \/[String, String] =
-    s => \/-(s)
-
   implicit val csv: String => \/[String, List[CsvRow]] =
     s =>
       \/-(

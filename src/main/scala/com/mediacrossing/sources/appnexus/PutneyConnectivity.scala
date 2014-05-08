@@ -8,6 +8,10 @@ import scalaz.{Tag, @@}
 
 sealed trait PutneyClient
 
+sealed trait PutneyReportRequestTimeout
+
+sealed trait PutneyReadRequestTimeout
+
 trait PutneyConnectivity {
 
   val configuration: ConfigurationProperties
@@ -34,8 +38,11 @@ trait PutneyConnectivity {
           logger = Logger)))
   }
 
-  implicit val reportRequestTimeout: Duration =
-    configuration.putneyReportRequestTimeout
+  implicit val reportRequestTimeout: @@[Duration, PutneyReportRequestTimeout] =
+    Tag(configuration.putneyReportRequestTimeout)
+
+  implicit val readRequestTimeout: @@[Duration, PutneyReadRequestTimeout] =
+  Tag(configuration.putneyReportRequestTimeout)
 
 }
 

@@ -12,6 +12,8 @@ import scala.concurrent.duration.Duration
 
 sealed trait KhajuClient
 
+sealed trait KhajuRequestTimeout
+
 trait KhajuConnectivity {
 
   val configuration: ConfigurationProperties
@@ -38,8 +40,8 @@ trait KhajuConnectivity {
           logger = Logger)))
   }
 
-  implicit val requestTimeout: Duration =
-    configuration.khajuRequestTimeout
+  implicit val requestTimeout: @@[Duration, KhajuRequestTimeout] =
+    Tag(configuration.khajuRequestTimeout)
 
 }
 

@@ -11,7 +11,7 @@ trait ConfiguredAdvertisers {
 
   def all(implicit client: @@[FailSafeHttpClient, KhajuClient],
           ec: ExecutionContext,
-          requestTimeout: Duration): java.util.List[Advertiser] =
+          requestTimeout: @@[Duration, KhajuRequestTimeout]): java.util.List[Advertiser] =
     blockingGet(client = client)(
       path = "/api/catalog/advertisers",
       deserializer =
