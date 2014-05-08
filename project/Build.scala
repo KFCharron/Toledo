@@ -7,11 +7,14 @@ import sbtrelease.ReleasePlugin.ReleaseKeys
 import org.scalastyle.sbt.ScalastylePlugin
 
 object BuildSettings {
-  lazy val releaseSettings = ReleasePlugin.releaseSettings ++ Seq(
-    ReleaseKeys.versionBump := Version.Bump.Minor
-  )
+  lazy val releaseSettings =
+    ReleasePlugin.releaseSettings ++
+      Seq(ReleaseKeys.versionBump := Version.Bump.Minor)
 
-  lazy val buildSettings210 = settings(_scalaVersion = "2.10.3", Seq("-unchecked", "-deprecation", "-feature"))
+  lazy val buildSettings210 =
+    settings(
+      _scalaVersion = "2.10.3",
+      _scalacOptions = Seq("-unchecked", "-deprecation", "-feature", "-Xlint"))
 
   private def settings(_scalaVersion: String, _scalacOptions: Seq[String]) =
     Defaults.defaultSettings ++
@@ -21,10 +24,10 @@ object BuildSettings {
         scalacOptions ++= _scalacOptions,
         testOptions in Test := Seq(Tests.Filter(s => s.endsWith("Spec"))))
 
-  lazy val standardSettings = 
-    buildSettings210 ++ 
-    releaseSettings ++ 
-    ScalastylePlugin.Settings
+  lazy val standardSettings =
+    buildSettings210 ++
+      releaseSettings ++
+      ScalastylePlugin.Settings
 
   lazy val customAssemblySettings = assemblySettings ++ Seq(
     mergeStrategy in assembly <<= (mergeStrategy in assembly) {
@@ -43,11 +46,12 @@ object BuildSettings {
     }, artifact in(Compile, assembly) ~= {
       art =>
         art.copy(`classifier` = Some("assembly"))
-    }, excludedJars in assembly <<= (fullClasspath in assembly) map { cp =>
-      cp filter {_.data.getName == "xml-apis-1.0.b2.jar"}
+    }, excludedJars in assembly <<= (fullClasspath in assembly) map {
+      cp =>
+        cp filter {
+          _.data.getName == "xml-apis-1.0.b2.jar"
+        }
     }) ++ addArtifact(artifact in(Compile, assembly), assembly)
-
-
 
 
   object Dependencies {
@@ -65,6 +69,8 @@ object BuildSettings {
     val guava = "com.google.guava" % "guava" % "14.0"
     val xerces = "xerces" % "xerces" % "1.4.0"
     val temp = "gov.nih.imagej" % "imagej" % "1.47"
+    val goldengate = "com.mediacrossing" %% "goldengate" % "0.3.0"
+    val scalaz = "org.scalaz" %% "scalaz-core" % "7.0.6"
   }
 
 }
@@ -94,8 +100,9 @@ object TargetSegmentingBuild extends Build {
               oauth,
               guava,
               xerces,
-              temp
-          )) ++
+              temp,
+              goldengate,
+              scalaz)) ++
         customAssemblySettings
   )
 }

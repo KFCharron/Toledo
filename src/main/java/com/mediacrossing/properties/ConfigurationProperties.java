@@ -1,27 +1,27 @@
 package com.mediacrossing.properties;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import scala.concurrent.duration.Duration;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 public class ConfigurationProperties {
 
-    private String appNexusUrl;
-    private String appNexusUsername;
-    private String appNexusPassword;
-    private String mxUrl;
-    private String mxUsername;
-    private String mxPassword;
-    private int partitionSize;
-    private Duration requestDelayInSeconds;
-    private String outputPath;
-
-
-    private static final Logger LOG = LoggerFactory.getLogger(ConfigurationProperties.class);
+    private final String appNexusUrl;
+    private final String appNexusUsername;
+    private final String appNexusPassword;
+    private final String mxUrl;
+    private final String mxUsername;
+    private final String mxPassword;
+    private final int partitionSize;
+    private final Duration requestDelayInSeconds;
+    private final String outputPath;
+    private final String putneyHosts;
+    private final Duration putneyRequestTimeout;
 
     public ConfigurationProperties(String[] args) throws IOException {
 
@@ -47,10 +47,22 @@ public class ConfigurationProperties {
             mxUrl = prop.getProperty("mxUrl");
             mxUsername = prop.getProperty("mxUsername");
             mxPassword = prop.getProperty("mxPassword");
-
+            putneyHosts = prop.getProperty("putneyHosts");
+            putneyRequestTimeout =
+                    Duration.apply(
+                            Integer.parseInt(prop.getProperty("putneyRequestTimeoutSeconds")),
+                            TimeUnit.SECONDS);
         } else {
-            LOG.error("Properties File Failed To Load");
+            throw new RuntimeException("Properties File Failed To Load");
         }
+    }
+
+    public String putneyHosts() {
+        return putneyHosts;
+    }
+
+    public Duration putneyRequestTimeout() {
+        return putneyRequestTimeout;
     }
 
     public String getAppNexusUrl() {

@@ -6,34 +6,44 @@ import scala.collection.JavaConversions._
 import org.apache.poi.hssf.usermodel.HSSFWorkbook
 import java.io.{File, FileOutputStream}
 import org.joda.time.{DateTimeZone, LocalDate}
+import com.mediacrossing.sources.appnexus.PutneyConnectivity
+import com.mediacrossing.sources.appnexus.reports.buy.{ConfiguredBuyReportRequests, SiteDomainPerformance}
+import SiteDomainPerformance.Request
 
-object RunDailyDomainReport extends App {
+object RunDailyDomainReport
+  extends App
+  with PutneyConnectivity
+  with ConfiguredBuyReportRequests {
 
-  val props = new ConfigurationProperties(args)
+  val configuration = new ConfigurationProperties(args)
   val mxConn = {
-    if (props.getMxUsername == null) new MxService(props.getMxUrl)
-    else new MxService(props.getMxUrl, props.getMxUsername, props.getMxPassword)
+    if (configuration.getMxUsername == null) new MxService(configuration.getMxUrl)
+    else new MxService(configuration.getMxUrl, configuration.getMxUsername, configuration.getMxPassword)
   }
   val anConn = new AppNexusService(
-    props.getAppNexusUrl,
-    props.getAppNexusUsername,
-    props.getAppNexusPassword)
+    configuration.getAppNexusUrl,
+    configuration.getAppNexusUsername,
+    configuration.getAppNexusPassword)
 
   val ads = mxConn.requestAllAdvertisers().toList.filter(a => a.isLive)
+
+  import scala.concurrent.ExecutionContext.Implicits.global
 
   //store ad name and list of data rows in class
   val adList = for (a <- ads) yield {
     val name = a.getAdvertiserName
     val id = a.getAdvertiserID
-    val dataRows = for (line <- anConn.requestDailyDomainReport(id).tail) yield {
-      DataRow(name = line(0),
-        imps = line(1).toInt,
-        clicks = line(2).toInt,
-        ctr = line(3).replace("%", "").toFloat,
-        viewConvs = line(4).toInt,
-        clickConvs = line(5).toInt,
-        cpm = line(6).toFloat)
-    }
+    val dataRows =
+      for (line <- siteDomainPerformance(Request(advertiserId = id))
+        .tail) yield {
+        DataRow(name = line(0),
+          imps = line(1).toInt,
+          clicks = line(2).toInt,
+          ctr = line(3).replace("%", "").toFloat,
+          viewConvs = line(4).toInt,
+          clickConvs = line(5).toInt,
+          cpm = line(6).toFloat)
+      }
     DomainAdvertiser(name, id, dataRows.toList)
   }
 
@@ -48,7 +58,7 @@ object RunDailyDomainReport extends App {
   val num = wb.createCellStyle()
   num.setDataFormat(df.getFormat("#,##0"))
 
-  for(a <- adList) {
+  for (a <- adList) {
     if (a.dataRows.size != 0) {
       val sheet = wb.createSheet(a.name + " (" + a.id + ")")
       val hRow = sheet.createRow(0)
@@ -70,13 +80,15 @@ object RunDailyDomainReport extends App {
         row.getCell(5).setCellStyle(num)
         row.getCell(6).setCellStyle(cur)
       }
-      for(x <- 0 to 6) sheet.autoSizeColumn(x)
+      for (x <- 0 to 6) sheet.autoSizeColumn(x)
     }
   }
   val today = new LocalDate(DateTimeZone.UTC)
-  wb.write(new FileOutputStream(new File(props.getOutputPath, "Daily_Domain_Report_" + today.toString + ".xls")))
+  wb.write(new FileOutputStream(new File(configuration.getOutputPath, "Daily_Domain_Report_" + today.toString + ".xls")))
 
 
 }
-case class DataRow(name: String, imps: Int, clicks: Int, ctr: Float, viewConvs: Int, clickConvs:Int, cpm: Float)
+
+case class DataRow(name: String, imps: Int, clicks: Int, ctr: Float, viewConvs: Int, clickConvs: Int, cpm: Float)
+
 case class DomainAdvertiser(name: String, id: String, dataRows: List[DataRow])
