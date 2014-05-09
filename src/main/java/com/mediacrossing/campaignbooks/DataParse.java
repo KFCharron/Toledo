@@ -5,6 +5,9 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mediacrossing.publisherreporting.Publisher;
+import com.mediacrossing.dailypacingreport.PacingLineItem;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -158,6 +161,31 @@ public class DataParse {
             ));
         }
         return liList;
+    }
+
+    public static ArrayList<PacingLineItem> parsePacingLineItems(String rawData) throws ParseException {
+        ArrayList<PacingLineItem> lis = new ArrayList<>();
+        JsonElement je = new JsonParser().parse(rawData);
+        JsonArray ja = je.getAsJsonArray();
+        DateTimeFormatter dtf = DateTimeFormat.forPattern("YYYY-MM-dd'T'HH:mm:ss'Z'");
+        for (JsonElement e : ja) {
+            JsonObject li = e.getAsJsonObject();
+            if (!li.get("advertiserId").isJsonNull() &&
+                !li.get("name").isJsonNull() &&
+                !li.get("startDate").isJsonNull() &&
+                !li.get("endDate").isJsonNull() &&
+                !li.get("lifetimeBudgetImps").isJsonNull()) {
+
+                lis.add(new PacingLineItem(li.get("advertiserId").getAsString().replace("\"",""),
+                        li.get("name").getAsString().replace("\"",""),
+                        dtf.parseDateTime(li.get("startDate").getAsString().replace("\"","")),
+                        dtf.parseDateTime(li.get("endDate").getAsString().replace("\"","")),
+
+                        Integer.parseInt(li.get("lifetimeBudgetImps").getAsString().replace("\"",""))));
+            }
+
+        }
+        return lis;
     }
 
     public static ArrayList<Campaign> parseCampaigns(String rawData, String liId) throws ParseException {

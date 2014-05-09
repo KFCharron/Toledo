@@ -10,6 +10,7 @@ import com.mediacrossing.monthlybillingreport.ImpType;
 import com.mediacrossing.publishercheckup.*;
 import com.mediacrossing.publisherreporting.Publisher;
 import com.mediacrossing.weeklydomainreport.Domain;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scala.Tuple2;
@@ -72,9 +73,8 @@ public class AppNexusService {
     }
 
     public ArrayList<String> requestAllProfilesForAdvertiser(String adId) throws Exception {
-        String anUrl = "http://localhost:8888/an/profile?advertiser_id=283120";
-        String json = requests.getRequest(anUrl);
-        return DataParse.parseProfiles(json);
+        // FIXME This returns Line Item Profiles that you don't want to make changes to.
+        return null;
     }
 
     public ArrayList<LineItem> requestLineItems(String adId) throws Exception {
@@ -130,6 +130,26 @@ public class AppNexusService {
 //        }
         String json = requests.getRequest(url + "/creative" + adUrl + "&state=active");
         return ResponseParser.parseCreatives(json);
+    }
+
+    public List<String[]> requestPacingReport(DateTime earliest) throws Exception {
+        System.out.println(earliest.toString("YYYY-MM-dd"));
+        String jsonPost = "{\n" +
+                "  \"report\": {\n" +
+                "    \"report_type\": \"network_analytics\",\n" +
+                "    \"columns\" : [\n" +
+                "      \"advertiser_name\",\n" +
+                "      \"line_item_name\",\n" +
+                "      \"day\",\n" +
+                "      \"imps\"\n" +
+                "    ],\n" +
+                "    \"timezone\": \"EST\",\n" +
+                "    \"start_date\": \"" + earliest.toString("YYYY-MM-dd") + "\"," +
+                "    \"end_date\": \"" + new DateTime().toString("YYYY-MM-dd") + "\"" +
+                "  }\n" +
+                "}";
+        String json = requests.postRequest(url+"/report", jsonPost);
+        return downloadReportWhenReady(json);
     }
 
     public List<String[]> requestClientPublisherReport(String pubId) throws Exception {
@@ -221,8 +241,8 @@ public class AppNexusService {
                 "        \"row_per\" :[\n" +
                 "            \"campaign_id\"\n" +
                 "        ],\n" +
-                "        \"report_interval\": \"" + interval + "\",\n" +
-                //"           \"start_date\": \"2013-11-01\", \"end_date\": \"2013-12-01\","+
+                //"        \"report_interval\": \"" + interval + "\",\n" +
+                "           \"start_date\": \"2014-04-15\", \"end_date\": \"2014-05-09\","+
                 "        \"format\": \"csv\",\n" +
                 "        \"emails\":[],\n" +
                 "        \"orders\": [\n" +
@@ -400,8 +420,8 @@ public class AppNexusService {
                 "            \"campaign_id\",\n" +
                 "            \"seller_member_id\"\n" +
                 "        ],\n" +
-                "        \"report_interval\": \"" + interval + "\",\n" +
-                //"           \"start_date\": \"2013-11-01\", \"end_date\": \"2013-12-01\","+
+                //"        \"report_interval\": \"" + interval + "\",\n" +
+                "           \"start_date\": \"2014-04-15\", \"end_date\": \"2014-05-0\","+
                 "        \"format\": \"csv\",\n" +
                 "        \"emails\":[],\n" +
                 "        \"orders\": [\n" +

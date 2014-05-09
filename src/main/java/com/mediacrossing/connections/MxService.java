@@ -8,6 +8,7 @@ import com.mediacrossing.dailycheckupsreport.JSONParse;
 import com.mediacrossing.publisherreporting.Publisher;
 import com.mediacrossing.weeklyconversionreport.ConversionAdvertiser;
 import com.mediacrossing.weeklyconversionreport.ConversionParser;
+import com.mediacrossing.dailypacingreport.PacingLineItem;
 import scala.Tuple2;
 
 import java.util.ArrayList;
@@ -81,6 +82,10 @@ public class MxService {
 
     public String requestAllPublisherJson() throws Exception {
         return requests.getRequest(url+"/api/catalog/publishers");
+    }
+
+    public ArrayList<PacingLineItem> requestAllLineItems() throws Exception {
+        return DataParse.parsePacingLineItems(requestAllLineItemJson());
     }
 
     public String requestAllLineItemJson() throws Exception {

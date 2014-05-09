@@ -125,15 +125,15 @@ public class RunWeeklyFlashPnlReport {
 
         ArrayList<Publisher> pubs = mxConn.requestAllPublishers();
         ArrayList<BillingPublisher> pubList = new ArrayList<>();
-        for (Publisher p : pubs) {
-            if (p.getStatus().equals("active")) {
-                BillingPublisher bp = new BillingPublisher(p.getPublisherName() + " (" + p.getId() + ")",
-                        anConn.requestPublisherBillingReport(p.getId(), "last_7_days"));
-                pubList.add(bp);
-            }
-        }
+//        for (Publisher p : pubs) {
+//            if (p.getStatus().equals("active")) {
+//                BillingPublisher bp = new BillingPublisher(p.getPublisherName() + " (" + p.getId() + ")",
+//                        anConn.requestPublisherBillingReport(p.getId(), "last_7_days"));
+//                pubList.add(bp);
+//            }
+//        }
 
 
-        DailyPnlReportWriter.writeReportToFile(adList, sortedFees, outputPath, "Weekly_Flash_PnL_", pubList);
+        DailyPnlReportWriter.writeReportToFile(adList, sortedFees, outputPath, "5-2_Through_5-5_Flash_PnL_", pubList);
     }
 }
