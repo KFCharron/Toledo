@@ -260,7 +260,6 @@ public class AppNexusService {
     }
 
     public ArrayList<ImpType> requestPublisherBillingReport(String publisherId, String interval) throws Exception {
-    public ArrayList<ImpType> requestPublisherBillingReport(String publisherId, String interval) throws Exception {
         String jsonPost = "{\n" +
                 "    \"report\":\n" +
                 "    {\n" +
