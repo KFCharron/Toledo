@@ -241,8 +241,8 @@ public class AppNexusService {
                 "        \"row_per\" :[\n" +
                 "            \"campaign_id\"\n" +
                 "        ],\n" +
-                //"        \"report_interval\": \"" + interval + "\",\n" +
-                "           \"start_date\": \"2014-04-15\", \"end_date\": \"2014-05-09\","+
+                "        \"report_interval\": \"" + interval + "\",\n" +
+                //"           \"start_date\": \"2014-04-15\", \"end_date\": \"2014-05-09\","+
                 "        \"format\": \"csv\",\n" +
                 "        \"emails\":[],\n" +
                 "        \"orders\": [\n" +
@@ -259,6 +259,7 @@ public class AppNexusService {
         return ResponseParser.parseBillingReport(downloadReportWhenReady(json));
     }
 
+    public ArrayList<ImpType> requestPublisherBillingReport(String publisherId, String interval) throws Exception {
     public ArrayList<ImpType> requestPublisherBillingReport(String publisherId, String interval) throws Exception {
         String jsonPost = "{\n" +
                 "    \"report\":\n" +
@@ -420,8 +421,8 @@ public class AppNexusService {
                 "            \"campaign_id\",\n" +
                 "            \"seller_member_id\"\n" +
                 "        ],\n" +
-                //"        \"report_interval\": \"" + interval + "\",\n" +
-                "           \"start_date\": \"2014-04-15\", \"end_date\": \"2014-05-0\","+
+                "        \"report_interval\": \"" + interval + "\",\n" +
+                //"           \"start_date\": \"2014-04-15\", \"end_date\": \"2014-05-0\","+
                 "        \"format\": \"csv\",\n" +
                 "        \"emails\":[],\n" +
                 "        \"orders\": [\n" +

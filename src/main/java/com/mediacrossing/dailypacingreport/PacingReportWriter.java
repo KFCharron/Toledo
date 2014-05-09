@@ -110,7 +110,6 @@ public class PacingReportWriter {
             int cellCount = 1;
             for (ImpressionDateBudget i : weeklyNos) {
                 dateRow.createCell(cellCount).setCellValue(i.getDate().toString("dd-MMM"));
-                //dailyImpGoalRow
             }
 
             cellCount = 1;
