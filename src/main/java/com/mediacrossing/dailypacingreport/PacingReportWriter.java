@@ -56,7 +56,7 @@ public class PacingReportWriter {
             Duration dur = new Duration(earliest, latest);
 
             // Create List of weekly line items that are totals for each week
-            ArrayList<ImpressionDateBudget> weeklyNos = new ArrayList<>();
+            ArrayList<WeeklyTotals> weeklyNos = new ArrayList<>();
             // Check if before earliest + 7 days until latest
             DateTime current = earliest;
             int goalToDate = 0;
@@ -74,7 +74,7 @@ public class PacingReportWriter {
                 }
                 goalToDate = goalToDate + budgetCount;
                 impToDate = impToDate + impCount;
-                weeklyNos.add(new ImpressionDateBudget(current, impCount, budgetCount));
+                weeklyNos.add(new WeeklyTotals(current, budgetCount, goalToDate, impCount, impToDate));
                 current = current.plusDays(7);
             }
 
@@ -108,8 +108,17 @@ public class PacingReportWriter {
             yellowDayHeader.getCell(0).setCellValue("BY DAY");
 
             int cellCount = 1;
-            for (ImpressionDateBudget i : weeklyNos) {
-                dateRow.createCell(cellCount).setCellValue(i.getDate().toString("dd-MMM"));
+            for (WeeklyTotals w : weeklyNos) {
+                dateRow.createCell(cellCount).setCellValue(w.getDate().toString("dd-MMM"));
+                dailyImpGoalRow.createCell(cellCount).setCellValue(w.getImpGoalByWeek());
+                impGoalToDateRow.createCell(cellCount).setCellValue(w.getImpGoalToDate());
+                goalPercentageDeliveredRow.createCell(cellCount).setCellValue((float)w.getImpGoalByWeek()/w.getImpGoalToDate());
+                goalPercentageDeliveredRow.getCell(cellCount).setCellStyle(percentage);
+                dailyImpActualRow.createCell(cellCount).setCellValue(w.getImpActualByWeek());
+                actualImpsToDateRow.createCell(cellCount).setCellValue(w.getImpActualToDate());
+                actualPercentageDeliveredRow.createCell(cellCount).setCellValue((float)w.getImpActualByWeek()/w.getImpActualToDate());
+                actualPercentageDeliveredRow.getCell(cellCount).setCellStyle(percentage);
+                cellCount++;
             }
 
             cellCount = 1;

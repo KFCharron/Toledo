@@ -11,8 +11,13 @@ public class PacingAdvertiser {
     private ArrayList<PacingLineItem> lineItems = new ArrayList<>();
 
     public PacingAdvertiser(Advertiser a) {
-        name = a.getAdvertiserName();
-        id = a.getAdvertiserID();
+        this.name = a.getAdvertiserName();
+        this.id = a.getAdvertiserID();
+    }
+
+    public PacingAdvertiser(String name) {
+        this.name = name;
+        this.id = "";
     }
 
     public String getName() {
