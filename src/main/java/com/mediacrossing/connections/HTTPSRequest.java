@@ -109,6 +109,11 @@ public class HTTPSRequest implements Request {
         return rawJSON;
     }
 
+    public String putRequest(String url, String json) throws Exception {
+        // FIXME
+        return ":)";
+    }
+
     public String postRequest(String url, String jsonRequest) throws Exception {
 
         URL obj = new URL(url);

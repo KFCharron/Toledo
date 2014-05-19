@@ -152,17 +152,19 @@ public class AppNexusService {
         return downloadReportWhenReady(json);
     }
 
-    public List<String[]> requestClientPublisherReport(String pubId) throws Exception {
+    public List<String[]> requestClientPublisherReport() throws Exception {
         String jsonPost = "{\n" +
                 "    \"report\":\n" +
                 "    {\n" +
-                "        \"report_type\": \"network_publisher_analytics\",\n" +
+                "        \"report_type\": \"network_analytics\",\n" +
                 "        \"columns\":[\n" +
+                "            \"publisher_id\",\n" +
                 "            \"placement_id\",\n" +
                 "            \"placement_name\",\n" +
-                "            \"imps_total\",\n" +
-                "            \"imps_sold\",\n" +
-                "            \"publisher_revenue\"\n" +
+                "            \"imps\",\n" +
+                "            \"imps_kept\",\n" +
+                "            \"imps_resold\",\n" +
+                "            \"revenue\"\n" +
                 "        ],\n" +
                 "        \"row_per\":[\n" +
                 "            \"placement_name\"\n" +
@@ -171,7 +173,7 @@ public class AppNexusService {
                 "        \"timezone\":\"EST\"\n" +
                 "    }\n" +
                 "}";
-        String json = requests.postRequest(url+"/report?publisher_id=" + pubId, jsonPost);
+        String json = requests.postRequest(url+"/report", jsonPost);
         return downloadReportWhenReady(json);
     }
 

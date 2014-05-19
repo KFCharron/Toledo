@@ -45,14 +45,9 @@ public class PacingReportWriter {
             rowCount++;
 
 
-            DateTime earliest = new DateTime();
-            DateTime latest = new DateTime();
-            int lifetimeDeliveryGoal = 0;
-            for (PacingLineItem l : a.getLineItems()) {
-                if (l.getStartDate().isBefore(earliest)) earliest = l.getStartDate();
-                if (l.getEndDate().isAfter(latest)) latest = l.getEndDate();
-                lifetimeDeliveryGoal += l.getLifetimeBudget();
-            }
+            DateTime earliest = a.getEarliest();
+            DateTime latest = a.getLatest();
+            int lifetimeDeliveryGoal = a.getLifetimeBudget();
             Duration dur = new Duration(earliest, latest);
 
             // Create List of weekly line items that are totals for each week
@@ -68,7 +63,7 @@ public class PacingReportWriter {
                     for (ImpressionDateBudget i : l.getDailyData()) {
                         if(i.getDate().isBefore(current.plusDays(7)) && i.getDate().isAfter(current)) {
                             impCount = impCount + i.getImpressions();
-                            budgetCount = budgetCount + i.getPacingBudget();
+                            budgetCount = budgetCount + a.getNormalDailyBudget();
                         }
                     }
                 }
@@ -112,7 +107,7 @@ public class PacingReportWriter {
                 dateRow.createCell(cellCount).setCellValue(w.getDate().toString("dd-MMM"));
                 dailyImpGoalRow.createCell(cellCount).setCellValue(w.getImpGoalByWeek());
                 impGoalToDateRow.createCell(cellCount).setCellValue(w.getImpGoalToDate());
-                goalPercentageDeliveredRow.createCell(cellCount).setCellValue((float)w.getImpGoalByWeek()/w.getImpGoalToDate());
+                goalPercentageDeliveredRow.createCell(cellCount).setCellValue((float)w.getImpGoalByWeek());
                 goalPercentageDeliveredRow.getCell(cellCount).setCellStyle(percentage);
                 dailyImpActualRow.createCell(cellCount).setCellValue(w.getImpActualByWeek());
                 actualImpsToDateRow.createCell(cellCount).setCellValue(w.getImpActualToDate());

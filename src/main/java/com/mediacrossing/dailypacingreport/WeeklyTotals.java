@@ -9,6 +9,7 @@ public class WeeklyTotals {
     private int impGoalToDate;
     private int impActualByWeek;
     private int impActualToDate;
+    private int lifetimeGoal;
 
     public WeeklyTotals(DateTime date, int impGoalByWeek, int impGoalToDate, int impActualByWeek, int impActualToDate) {
         this.date = date;

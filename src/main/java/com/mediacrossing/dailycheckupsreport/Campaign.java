@@ -13,11 +13,20 @@ public class Campaign implements Serializable {
     private Profile profile = new Profile();
     private ArrayList<ServingFee> servingFeeList;
     private String endDate;
+    private String startDate;
     private int dailyImps;
     private String advertiserName;
     private String lineItemName;
     private float maxBid;
     private float baseBid;
+
+    public String getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(String startDate) {
+        this.startDate = startDate;
+    }
 
     public float getBaseBid() {
         return baseBid;

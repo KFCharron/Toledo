@@ -39,6 +39,10 @@ public class MxService {
         this.requests = new HTTPRequest();
     }
 
+    public String putRequest(String url2, String json) throws Exception {
+        return requests.putRequest(url + url2, json);
+    }
+
     public ArrayList<Campaign> requestAllCampaigns() throws Exception {
         String json = requests.getRequest(url + "/api/catalog/campaigns");
         return JSONParse.populateCampaignArrayList(json);

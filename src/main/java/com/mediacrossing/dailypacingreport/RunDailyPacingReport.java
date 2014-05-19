@@ -54,15 +54,24 @@ public class RunDailyPacingReport {
         MxService mxConn = new MxService(mxUrl, mxUsername, mxPass);
 
         DateTimeFormatter dtf = DateTimeFormat.forPattern("YYYY-MM-dd");
+        DateTime today = new DateTime();
 
         // Get All Line-Items From MX
-        ArrayList<PacingLineItem> lis = mxConn.requestAllLineItems();
+        ArrayList<PacingLineItem> allLines = mxConn.requestAllLineItems();
+        ArrayList<PacingLineItem> activeLines = new ArrayList<>();
+
+        for (PacingLineItem l : allLines) {
+            if (l.getEndDate().isAfter(today) && l.getStartDate().isBefore(today)) activeLines.add(l);
+        }
 
         // Get All Advertisers
         List<Advertiser> adverts = mxConn.requestAllAdvertisers();
         ArrayList<PacingAdvertiser> ads = new ArrayList<>();
+        // For Every Advertiser
         for (Advertiser a : adverts) {
-            if (a.isLive()) {
+            // If the advertiser is live and is not a test advertiser
+            if (a.isLive() && !a.getAdvertiserID().equals("151391") && !a.getAdvertiserID().equals("186199")) {
+                // If advertiser is Millenium, split flights into different advertisers
                 if (a.getAdvertiserName().equals("Millenium Hotel")) {
                     PacingAdvertiser springBlooms = new PacingAdvertiser("Mill - Spring Blooms");
                     PacingAdvertiser advancePurchase = new PacingAdvertiser("Mill - Adv. Purch.");
@@ -70,11 +79,13 @@ public class RunDailyPacingReport {
                     ads.add(springBlooms);
                     ads.add(advancePurchase);
                     ads.add(other);
-                    for (PacingLineItem l : lis) {
+                    // Save Line Items depending on their Flight name
+                    for (PacingLineItem l : activeLines) {
                         if (l.getName().contains("SpringBlooms")) springBlooms.getLineItems().add(l);
                         else if (l.getName().contains("Advance")) advancePurchase.getLineItems().add(l);
                         else other.getLineItems().add(l);
                     }
+                // Separate FELD line items as well
                 } else if (a.getAdvertiserName().contains("FELD")) {
                     PacingAdvertiser data = new PacingAdvertiser(a.getAdvertiserName() + " - Data");
                     PacingAdvertiser retargeting = new PacingAdvertiser(a.getAdvertiserName() + " - Retargeting");
@@ -84,16 +95,17 @@ public class RunDailyPacingReport {
                     ads.add(retargeting);
                     ads.add(supply);
                     ads.add(remaining);
-                    for (PacingLineItem l : lis) {
+                    for (PacingLineItem l : activeLines) {
                         if (l.getName().contains("Data")) data.getLineItems().add(l);
                         else if (l.getName().contains("Retargeting")) retargeting.getLineItems().add(l);
                         else if (l.getName().contains("Supply")) supply.getLineItems().add(l);
                         else remaining.getLineItems().add(l);
                     }
+                // Neither Millennium or FELD, save advertiser as normal
                 } else {
                     PacingAdvertiser pa = new PacingAdvertiser(a);
                     ads.add(pa);
-                    for (PacingLineItem l : lis) {
+                    for (PacingLineItem l : activeLines) {
                         if (l.getAdvertiserId().equals(a.getAdvertiserID())) {
                             pa.getLineItems().add(l);
                         }
@@ -118,26 +130,22 @@ public class RunDailyPacingReport {
             for (PacingAdvertiser a : ads) {
                 for (PacingLineItem l : a.getLineItems()) {
                     if (l.getName().equals(line[1])) {
-
-                        int pacingBudget;
-                        org.joda.time.Duration dur = new org.joda.time.Duration(l.getStartDate(), l.getEndDate());
-                        long daysLive = dur.getStandardDays();
                         DateTime dataDate = dtf.parseDateTime(line[2]);
-                        int normalBudget = (l.getLifetimeBudget() / (int)daysLive);
-                        if (dataDate.dayOfYear().equals(l.getEndDate().dayOfYear())) {
-                            pacingBudget = (int)(.75 * normalBudget);
-                        } else {
-                            pacingBudget = (int)(((.25 * normalBudget)/(daysLive-1)) + normalBudget);
-                        }
-
                         l.getDailyData().add(new ImpressionDateBudget(
                                 dataDate,
-                                Integer.parseInt(line[3]),
-                                pacingBudget
+                                Integer.parseInt(line[3])
                             ));
                     }
                 }
 
+            }
+        }
+
+        for (PacingAdvertiser a : ads) {
+            for (PacingLineItem l : a.getLineItems()) {
+                a.setLifetimeBudget(a.getLifetimeBudget() + l.getLifetimeBudget());
+                if (l.getStartDate().isBefore(a.getEarliest())) a.setEarliest(l.getStartDate());
+                if (l.getEndDate().isAfter(a.getLatest())) a.setLatest(l.getEndDate());
             }
         }
 

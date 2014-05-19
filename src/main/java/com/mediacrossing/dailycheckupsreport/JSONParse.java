@@ -162,6 +162,7 @@ public class JSONParse {
                 newCampaign.setProfileID(jsonObject.get("profileId").toString().replace("\"", ""));
                 newCampaign.setLineItemID(jsonObject.get("lineItemId").toString().replace("\"", ""));
                 newCampaign.setEndDate(jsonObject.get("endDate").toString().replace("\"", ""));
+                newCampaign.setStartDate(jsonObject.get("startDate").toString().replace("\"", ""));
                 if (!jsonObject.get("maxBid").isJsonNull())
                     newCampaign.setMaxBid(Float.parseFloat(jsonObject.get("maxBid").toString().replace("\"", "")));
                 else newCampaign.setMaxBid(0);

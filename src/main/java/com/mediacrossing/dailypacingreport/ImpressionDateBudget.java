@@ -6,12 +6,10 @@ public class ImpressionDateBudget {
 
     private DateTime date;
     private int impressions;
-    private int pacingBudget;
 
-    public ImpressionDateBudget(DateTime date, int impressions, int pacingBudget) {
+    public ImpressionDateBudget(DateTime date, int impressions) {
         this.date = date;
         this.impressions = impressions;
-        this.pacingBudget = pacingBudget;
     }
 
     public DateTime getDate() {
@@ -20,9 +18,5 @@ public class ImpressionDateBudget {
 
     public int getImpressions() {
         return impressions;
-    }
-
-    public int getPacingBudget() {
-        return pacingBudget;
     }
 }
