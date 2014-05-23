@@ -65,7 +65,7 @@ public class ExcelWriter {
         CellStyle yellowStyle = WORKBOOK.createCellStyle();
         yellowStyle.setFillForegroundColor(IndexedColors.LIGHT_YELLOW.index);
         yellowStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
-        yellowStyle.setDataFormat(df.getFormat("$#,##0.00"));
+        yellowStyle.setDataFormat(df.getFormat("#,##0"));
 
         CellStyle redStyle = WORKBOOK.createCellStyle();
         redStyle.setFillForegroundColor(IndexedColors.RED.index);

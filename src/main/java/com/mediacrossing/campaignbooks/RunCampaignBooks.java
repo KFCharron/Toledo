@@ -84,7 +84,7 @@ public class RunCampaignBooks {
         for (Advertiser ad : advertiserList) {
             ad.setLive(false);
             for(LineItem li : ad.getLineItemList()) {
-                if(li.getDaysRemaining() > 0 && li.getEndDateTime()!= null) {
+                if(li.getDaysRemaining() > 0 && li.getEndDateTime()!= null && !li.getLineItemName().contains("TEST")) {
                     ad.setLive(true);
                 }
             }
