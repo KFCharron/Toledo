@@ -2,6 +2,7 @@ package com.mediacrossing.dailypacingreport;
 
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
+import play.libs.F;
 
 import java.util.ArrayList;
 
@@ -13,13 +14,13 @@ public class PacingLineItem {
     private DateTime endDate;
     private int lifetimeBudget;
     private int daysActive;
-    private ArrayList<ImpressionDateBudget> dailyData = new ArrayList<ImpressionDateBudget>();
+    private ArrayList<F.Tuple<DateTime, Integer>> dailyData = new ArrayList<>();
 
     public PacingLineItem(String advertiserId, String name, DateTime startDate, DateTime endDate, int lifetimeBudget) {
         this.advertiserId = advertiserId;
         this.name = name;
-        this.startDate = startDate;
-        this.endDate = endDate;
+        this.startDate = startDate.withTimeAtStartOfDay();
+        this.endDate = endDate.withTimeAtStartOfDay();
         this.lifetimeBudget = lifetimeBudget;
         this.daysActive = (int)new Duration(startDate, endDate).getStandardDays();
     }
@@ -51,7 +52,7 @@ public class PacingLineItem {
         return daysActive;
     }
 
-    public ArrayList<ImpressionDateBudget> getDailyData() {
+    public ArrayList<F.Tuple<DateTime, Integer>> getDailyData() {
         return dailyData;
     }
 }

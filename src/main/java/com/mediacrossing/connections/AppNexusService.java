@@ -152,6 +152,25 @@ public class AppNexusService {
         return downloadReportWhenReady(json);
     }
 
+    public List<String[]> requestDailyPacingReport(DateTime earliest) throws Exception {
+        String jsonPost = "{\n" +
+                "  \"report\": {\n" +
+                "    \"report_type\": \"network_analytics\",\n" +
+                "    \"columns\" : [\n" +
+                "      \"advertiser_name\",\n" +
+                "      \"line_item_name\",\n" +
+                "      \"day\",\n" +
+                "      \"imps\"\n" +
+                "    ],\n" +
+                "    \"timezone\": \"EST\",\n" +
+                "    \"start_date\": \"" + earliest.toString("YYYY-MM-dd") + "\"," +
+                "    \"end_date\": \"" + new DateTime().toString("YYYY-MM-dd") + "\"" +
+                "  }\n" +
+                "}";
+        String json = requests.postRequest(url+"/report", jsonPost);
+        return downloadReportWhenReady(json);
+    }
+
     public List<String[]> requestClientPublisherReport() throws Exception {
         String jsonPost = "{\n" +
                 "    \"report\":\n" +

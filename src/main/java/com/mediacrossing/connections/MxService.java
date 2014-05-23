@@ -66,6 +66,10 @@ public class MxService {
         return DataParse.populateAdvertiserList(json);
     }
 
+    public String requestAllAdvertiserJson() throws Exception {
+        return requests.getRequest(url + "/ap/catalog/advertisers");
+    }
+
     public ArrayList<LineItem> requestLineItemsForAdvertiser(String adId) throws Exception {
         String json = requests.getRequest(url + "/api/catalog/advertisers/" + adId + "/line-items");
         return DataParse.populateLineItemList(json);
