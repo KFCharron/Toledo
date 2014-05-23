@@ -70,7 +70,7 @@ public class ExcelWriter {
         CellStyle redStyle = WORKBOOK.createCellStyle();
         redStyle.setFillForegroundColor(IndexedColors.RED.index);
         redStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
-        redStyle.setDataFormat(df.getFormat("$#,##0.00"));
+        redStyle.setDataFormat(df.getFormat("#,###"));
 
         CellStyle impStyle = WORKBOOK.createCellStyle();
         impStyle.setBorderBottom(CellStyle.BORDER_NONE);
@@ -165,6 +165,9 @@ public class ExcelWriter {
 
             rowCount++;
 
+            // Needed For Pacing Formula
+            int pacingCellNumber = rowCount + 1;
+
             //add line item data
             Row lineItemRow = lineItemSheet.createRow(rowCount);
             lineItemRow.createCell(0);
@@ -175,6 +178,7 @@ public class ExcelWriter {
             }else {
                 lineItemRow.createCell(2).setCellValue(lineItem.getLifetimeImpBudget());
                 lineItemHeader.getCell(2).setCellValue("Lifetime Budget (Imps)");
+                lineItemRow.getCell(2).setCellStyle(number);
             }
             lineItemRow.createCell(3).setCellValue(lineItem.getStartDateString());
             lineItemRow.createCell(4).setCellValue(lineItem.getEndDateString());
@@ -187,6 +191,7 @@ public class ExcelWriter {
                 lineItemRow.getCell(6).setCellStyle(number);
                 lineItemHeader.getCell(6).setCellValue("Daily Budget (Imps)");
             }
+            // TODO
             lineItemRow.createCell(7); //set after obtaining all pacing numbers
             lineItemRow.createCell(8); //same here
             lineItemRow.createCell(10).setCellValue(lineItem.getDaysRemaining());
@@ -288,6 +293,9 @@ public class ExcelWriter {
                 } else {
                     campaignRow.createCell(7).setCellValue(campaign.getActualDailyBudget());
                     campaignRow.getCell(7).setCellStyle(number);
+                    // TODO
+                    campaignRow.getCell(7).setCellFormula("(C" + (rowCount+1)
+                            + " - I" + (rowCount+1) + ") / K" + pacingCellNumber);
                 }
                 if (campaign.getLifetimeBudget() > 1) {
                     campaignRow.createCell(8).setCellValue(campaign.getTotalDelivery());
@@ -397,9 +405,12 @@ public class ExcelWriter {
             }
 
             //set total pacing
+            // TODO
             if (lineItem.getLifetimeBudget() > 0) {
                 lineItemRow.getCell(7).setCellValue(((lineItem.getLifetimeBudget()-totalCumulativeDelivery)
                         /lineItem.getDaysRemaining()));
+                lineItemRow.getCell(7).setCellFormula("(C" + pacingCellNumber
+                        + " - I" + pacingCellNumber + ") / K" + pacingCellNumber);
                 lineItemRow.getCell(7).setCellStyle(fullCurrency);
             } else {
                 if (lineItem.getDaysRemaining() != 0) {
@@ -571,9 +582,9 @@ public class ExcelWriter {
         grandTotal.createCell(4).setCellValue(cumulativeDeliveryGrandTotal);
 
         //set styles
-        grandTotal.getCell(2).setCellStyle(fullCurrency);
-        grandTotal.getCell(3).setCellStyle(fullCurrency);
-        grandTotal.getCell(4).setCellStyle(fullCurrency);
+        grandTotal.getCell(2).setCellStyle(number);
+        grandTotal.getCell(3).setCellStyle(number);
+        grandTotal.getCell(4).setCellStyle(number);
 
         //Display daily grand totals
         int cellCount = 9;
@@ -581,7 +592,7 @@ public class ExcelWriter {
         if (grandTots.size() > 255) grandTotalCount = 255;
         while(cellCount < grandTotalCount) {
             grandTotal.createCell(cellCount).setCellValue(grandTots.get(cellCount));
-            grandTotal.getCell(cellCount).setCellStyle(fullCurrency);
+            grandTotal.getCell(cellCount).setCellStyle(number);
             if(grandTots.get(cellCount) == 0) grandTotal.removeCell(grandTotal.getCell(cellCount));
             cellCount++;
         }
