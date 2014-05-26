@@ -5,6 +5,8 @@ import org.joda.time.DateTime;
 import org.joda.time.Duration;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 public class PacingAdvertiser {
 
@@ -15,6 +17,7 @@ public class PacingAdvertiser {
     private int duration;
     private ArrayList<DailyPacingData> dailyPacingNumbers = new ArrayList<>();
     private ArrayList<PacingLineItem> lineList = new ArrayList<>();
+    private Set<String> flightNames = new HashSet<>();
 
     public PacingAdvertiser(String name, String id) {
         this.name = name;
@@ -63,5 +66,9 @@ public class PacingAdvertiser {
 
     public int getDuration() {
         return duration;
+    }
+
+    public Set<String> getFlightNames() {
+        return flightNames;
     }
 }
