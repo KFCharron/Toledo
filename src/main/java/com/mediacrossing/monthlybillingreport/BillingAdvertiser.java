@@ -8,6 +8,7 @@ public class BillingAdvertiser implements Serializable {
     private String name;
     private String id;
     private ArrayList<BillingCampaign> campaigns = new ArrayList<BillingCampaign>();
+    private ArrayList<BillingCampaign> mtdCampaigns = new ArrayList<>();
 
     public BillingAdvertiser(String name, String id) {
         this.name = name;
@@ -24,5 +25,9 @@ public class BillingAdvertiser implements Serializable {
 
     public ArrayList<BillingCampaign> getCampaigns() {
         return campaigns;
+    }
+
+    public ArrayList<BillingCampaign> getMtdCampaigns() {
+        return mtdCampaigns;
     }
 }

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 public class BillingCampaign implements Serializable {
 
+    private String adId;
     private String id;
     private String name;
     private String creativeId;
@@ -30,8 +31,9 @@ public class BillingCampaign implements Serializable {
     private float maxBid;
     private float baseBid;
 
-    public BillingCampaign(String id, String name, int imps, int clicks, float convs, float mediaCost,
+    public BillingCampaign(String adId, String id, String name, int imps, int clicks, float convs, float mediaCost,
                            float networkRevenue, float cpm, String creativeId, String creativeName) {
+        this.adId = adId;
         this.id = id;
         this.name = name;
         this.creativeId = creativeId;
@@ -44,8 +46,9 @@ public class BillingCampaign implements Serializable {
         this.cpm = cpm;
     }
 
-    public BillingCampaign(String id, String name, int imps, int clicks, float convs, float mediaCost,
+    public BillingCampaign(String adId, String id, String name, int imps, int clicks, float convs, float mediaCost,
                            float networkRevenue, float cpm) {
+        this.adId = adId;
         this.id = id;
         this.name = name;
         this.imps = imps;
@@ -70,6 +73,10 @@ public class BillingCampaign implements Serializable {
         this.adXMediaCost = 0;
         this.appNexusMediaCost = 0;
         this.lotameImps = 0;
+    }
+
+    public String getAdId() {
+        return adId;
     }
 
     public float getBaseBid() {

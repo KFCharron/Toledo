@@ -6,6 +6,7 @@ import com.mediacrossing.campaignbooks.DataParse;
 import com.mediacrossing.dailycheckupsreport.JSONParse;
 import com.mediacrossing.discrepancyreport.Creative;
 import com.mediacrossing.monthlybillingreport.BillingAdvertiser;
+import com.mediacrossing.monthlybillingreport.BillingCampaign;
 import com.mediacrossing.monthlybillingreport.ImpType;
 import com.mediacrossing.publishercheckup.*;
 import com.mediacrossing.publisherreporting.Publisher;
@@ -105,7 +106,7 @@ public class AppNexusService {
     }
 
     public ArrayList<Placement> requestPlacements(String pubId) throws Exception {
-        String json = requests.getRequest(url+"/placement?publisher_id="+pubId);
+        String json = requests.getRequest(url + "/placement?publisher_id=" + pubId);
         throttleCheck();
         return ResponseParser.parsePlacements(json);
     }
@@ -148,7 +149,7 @@ public class AppNexusService {
                 "    \"end_date\": \"" + new DateTime().toString("YYYY-MM-dd") + "\"" +
                 "  }\n" +
                 "}";
-        String json = requests.postRequest(url+"/report", jsonPost);
+        String json = requests.postRequest(url + "/report", jsonPost);
         return downloadReportWhenReady(json);
     }
 
@@ -239,6 +240,17 @@ public class AppNexusService {
                 "}";
         String json = requests.postRequest(url+"/report", jsonPost);
         return downloadReportWhenReady(json);
+    }
+
+    public ArrayList<BillingCampaign> requestMtdBillingReport() throws Exception {
+        ArrayList<BillingAdvertiser> adverts = requestBillingReport("month_to_date");
+        ArrayList<BillingCampaign> camps = new ArrayList<>();
+        for (BillingAdvertiser a : adverts) {
+            for (BillingCampaign c : a.getCampaigns()) {
+                camps.add(c);
+            }
+        }
+        return camps;
     }
 
     public ArrayList<BillingAdvertiser> requestBillingReport(String interval) throws Exception {

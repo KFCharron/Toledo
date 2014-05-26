@@ -4,7 +4,7 @@ import com.mediacrossing.connections.AppNexusService;
 import com.mediacrossing.connections.MxService;
 import com.mediacrossing.dailycheckupsreport.Campaign;
 import com.mediacrossing.dailycheckupsreport.ServingFee;
-import com.mediacrossing.dailypnlreport.DailyPnlReportWriter;
+import com.mediacrossing.dailypnlreport.PnlReportWriter;
 import com.mediacrossing.monthlybillingreport.BillingAdvertiser;
 import com.mediacrossing.monthlybillingreport.BillingCampaign;
 import com.mediacrossing.monthlybillingreport.BillingPublisher;
@@ -134,6 +134,6 @@ public class RunMonthlyPnlReport {
         }
 
 
-        DailyPnlReportWriter.writeReportToFile(adList, sortedFees, outputPath, "Monthly_Flash_PnL_", pubList);
+        PnlReportWriter.writeReportToFile(adList, sortedFees, outputPath, "Monthly_Flash_PnL_", pubList);
     }
 }

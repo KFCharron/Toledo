@@ -197,7 +197,7 @@ public class ResponseParser {
         csvData.remove(0);
         ArrayList<BillingAdvertiser> ads = new ArrayList<>();
         for (String[] l : csvData) {
-            BillingCampaign camp = new BillingCampaign(l[2], l[3], Integer.parseInt(l[4]),
+            BillingCampaign camp = new BillingCampaign(l[0], l[2], l[3], Integer.parseInt(l[4]),
                     Integer.parseInt(l[5]),
                     Integer.parseInt(l[6]),
                     Float.parseFloat(l[7]),
@@ -269,7 +269,7 @@ public class ResponseParser {
         csvData.remove(0);
         ArrayList<BillingAdvertiser> ads = new ArrayList<>();
         for (String[] l : csvData) {
-            BillingCampaign camp = new BillingCampaign(l[2], l[3], Integer.parseInt(l[4]),
+            BillingCampaign camp = new BillingCampaign(l[0], l[2], l[3], Integer.parseInt(l[4]),
                     Integer.parseInt(l[5]),
                     Integer.parseInt(l[6]),
                     Float.parseFloat(l[7]),

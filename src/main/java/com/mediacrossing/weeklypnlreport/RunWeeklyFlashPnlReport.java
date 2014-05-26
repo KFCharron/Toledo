@@ -4,7 +4,7 @@ import com.mediacrossing.connections.AppNexusService;
 import com.mediacrossing.connections.MxService;
 import com.mediacrossing.dailycheckupsreport.Campaign;
 import com.mediacrossing.dailycheckupsreport.ServingFee;
-import com.mediacrossing.dailypnlreport.DailyPnlReportWriter;
+import com.mediacrossing.dailypnlreport.PnlReportWriter;
 import com.mediacrossing.monthlybillingreport.BillingAdvertiser;
 import com.mediacrossing.monthlybillingreport.BillingCampaign;
 import com.mediacrossing.monthlybillingreport.BillingPublisher;
@@ -74,6 +74,40 @@ public class RunWeeklyFlashPnlReport {
                 }
             }
         }
+
+        // Gets all mtd campaigns, adds them to each advertiser
+        ArrayList<BillingCampaign> mtdCamps = anConn.requestMtdBillingReport();
+        for (BillingAdvertiser a : adList) {
+            for (BillingCampaign c : mtdCamps) {
+                if (c.getAdId().equals(a.getId())) {
+                    a.getMtdCampaigns().add(c);
+                }
+            }
+        }
+        List<String[]> mtdAdExData = anConn.requestSellerReport("month_to_date");
+        for (String[] l : mtdAdExData) {
+            String googleAdExchangeId = "181";
+            if (l[0].equals(googleAdExchangeId)) {
+                for (BillingAdvertiser ad : adList) {
+                    for (BillingCampaign camp : ad.getMtdCampaigns()) {
+                        if (camp.getId().equals(l[2])) {
+                            camp.setAdExImps(Integer.parseInt(l[3]));
+                        }
+                    }
+                }
+            }
+            String mxImpId = "1770";
+            if (l[0].equals(mxImpId)) {
+                for (BillingAdvertiser ad : adList) {
+                    for (BillingCampaign camp : ad.getMtdCampaigns()) {
+                        if (camp.getId().equals(l[2])) {
+                            camp.setMxImps(Integer.parseInt(l[3]));
+                        }
+                    }
+                }
+            }
+        }
+
         //call on campaigns from mx
         //parse broker fees
         ArrayList<Campaign> feeCampaigns = mxConn.requestAllCampaigns();
@@ -92,18 +126,41 @@ public class RunWeeklyFlashPnlReport {
                         }
                         if (ind != -1) c.getServingFeeList().remove(ind);
                         for (ServingFee fee : c.getServingFeeList()) {
-
-                            fee.setTotalFee(bc.getImps() * (Float.parseFloat(fee.getValue()) / 1000));
-                            if (fee.getBrokerName().equals("Peer39")) fee.setTotalFee(bc.getMediaCost() * 0.15f);
-                            bc.getServingFees().add(fee);
-                            feeNames.add(fee.getBrokerName());
-                            if (fee.getBrokerName().equals("Brilig")) {
+                            ServingFee newFee = new ServingFee(fee.getBrokerName(), fee.getPaymentType(), fee.getValue(), fee.getDescription());
+                            newFee.setTotalFee(bc.getImps() * (Float.parseFloat(newFee.getValue()) / 1000));
+                            if (newFee.getBrokerName().equals("Peer39")) newFee.setTotalFee(bc.getMediaCost() * 0.15f);
+                            bc.getServingFees().add(newFee);
+                            feeNames.add(newFee.getBrokerName());
+                            if (newFee.getBrokerName().equals("Brilig")) {
                                 bc.setBriligImps(bc.getImps());
                             }
                             else if (fee.getBrokerName().equals("Lotame")) {
                                 bc.setLotameImps(bc.getImps());
                             }
                             else if (fee.getBrokerName().equals("BlueKai")) {
+                                bc.setBlueKaiImps(bc.getImps());
+                            }
+                        }
+                    }
+                }
+                for (BillingCampaign bc : a.getMtdCampaigns()) {
+                    if (bc.getId().equals(c.getId())) {
+                        int ind = -1;
+                        for (ServingFee f : c.getServingFeeList()) {
+                            if (f.getBrokerName().equals("MediaCrossing")) ind = c.getServingFeeList().indexOf(f);
+                        }
+                        if (ind != -1) c.getServingFeeList().remove(ind);
+                        for (ServingFee fee : c.getServingFeeList()) {
+                            ServingFee newFee = new ServingFee(fee.getBrokerName(), fee.getPaymentType(), fee.getValue(), fee.getDescription());
+                            newFee.setTotalFee(bc.getImps() * (Float.parseFloat(newFee.getValue()) / 1000));
+                            if (newFee.getBrokerName().equals("Peer39")) newFee.setTotalFee(bc.getMediaCost() * 0.15f);
+                            bc.getServingFees().add(newFee);
+                            feeNames.add(newFee.getBrokerName());
+                            if (newFee.getBrokerName().equals("Brilig")) {
+                                bc.setBriligImps(bc.getImps());
+                            } else if (fee.getBrokerName().equals("Lotame")) {
+                                bc.setLotameImps(bc.getImps());
+                            } else if (fee.getBrokerName().equals("BlueKai")) {
                                 bc.setBlueKaiImps(bc.getImps());
                             }
                         }
@@ -117,6 +174,9 @@ public class RunWeeklyFlashPnlReport {
                 for (BillingCampaign c : a.getCampaigns()) {
                     c.setNetworkRevenue(c.getTotalCost() + (.05f * c.getImps()/1000));
                 }
+                for (BillingCampaign c : a.getMtdCampaigns()) {
+                    c.setNetworkRevenue(c.getTotalCost() + (.05f * c.getImps()/1000));
+                }
             }
         }
 
@@ -125,15 +185,14 @@ public class RunWeeklyFlashPnlReport {
 
         ArrayList<Publisher> pubs = mxConn.requestAllPublishers();
         ArrayList<BillingPublisher> pubList = new ArrayList<>();
-//        for (Publisher p : pubs) {
-//            if (p.getStatus().equals("active")) {
-//                BillingPublisher bp = new BillingPublisher(p.getPublisherName() + " (" + p.getId() + ")",
-//                        anConn.requestPublisherBillingReport(p.getId(), "last_7_days"));
-//                pubList.add(bp);
-//            }
-//        }
+        for (Publisher p : pubs) {
+            if (p.getStatus().equals("active")) {
+                BillingPublisher bp = new BillingPublisher(p.getPublisherName() + " (" + p.getId() + ")",
+                        anConn.requestPublisherBillingReport(p.getId(), "last_7_days"));
+                pubList.add(bp);
+            }
+        }
 
-
-        DailyPnlReportWriter.writeReportToFile(adList, sortedFees, outputPath, "5-2_Through_5-5_Flash_PnL_", pubList);
+        PnlReportWriter.writeReportToFile(adList, sortedFees, outputPath, "Weekly_Flash_PnL_", pubList);
     }
 }
