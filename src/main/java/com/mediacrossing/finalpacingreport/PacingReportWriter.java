@@ -72,14 +72,16 @@ public class PacingReportWriter {
         header.createCell(0).setCellValue("Line Item");
         header.createCell(1).setCellValue("Start Date");
         header.createCell(2).setCellValue("End Date");
-        header.createCell(3).setCellValue("% Through Flight");
-        header.createCell(4).setCellValue("Lifetime Goal");
-        header.createCell(5).setCellValue("Imps Delivered To Date");
-        header.createCell(6).setCellValue("% To Lifetime");
-        header.createCell(7).setCellValue("Imps Needed Yesterday");
-        header.createCell(8).setCellValue("Delivered Yesterday");
-        header.createCell(9).setCellValue("% Delivered Yesterday");
-        header.createCell(10).setCellValue("Daily Imps Needed");
+        header.createCell(3).setCellValue("% Time Through Flight");
+        header.createCell(4).setCellValue("% Imps To LT");
+        header.createCell(5).setCellValue("LT Goal");
+        header.createCell(6).setCellValue("Imps Delivered To Date");
+        header.createCell(7).setCellValue("Imps Needed Yest.");
+        header.createCell(8).setCellValue("Delivered Yest.");
+        header.createCell(9).setCellValue("% Needed Delivered Yest.");
+        header.createCell(10).setCellValue("New Daily Imps Needed");
+        header.createCell(11).setCellValue("Past 7 Day Imps Delivery Avg");
+        header.createCell(12).setCellValue("% Needed / 7 Day Avg");
 
         int rowCount = 1;
         for (PacingAdvertiser a : ads) {
