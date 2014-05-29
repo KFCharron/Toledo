@@ -19,7 +19,9 @@ import scala.concurrent.duration.Duration;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class RunFinalPacingReport {
 
@@ -76,6 +78,7 @@ public class RunFinalPacingReport {
         }
 
         // Query AN for Report Using Grabbed Start Date
+        System.out.println("STARTING DATE FOR REPORT REQUEST:  " + earliestDate.getMonthOfYear() + "/" + earliestDate.getDayOfMonth());
         List<String[]> reportData = anConn.requestPacingReport(earliestDate);
         reportData.remove(0);
         for (String[] line : reportData) {
@@ -87,54 +90,26 @@ public class RunFinalPacingReport {
             }
         }
 
+        Set<String> flightNames = new HashSet<>();
 
         ArrayList<PacingAdvertiser> finalAdvertisers = new ArrayList<>();
         for (Advertiser a : liveAdvertisers) {
             PacingAdvertiser pacingAdvertiser = new PacingAdvertiser(a.getAdvertiserName(), a.getAdvertiserID());
             for (PacingLineItem l : activeLines) {
                 if (l.getAdvertiserId().equals(pacingAdvertiser.getId())) {
+                    String lName = l.getName();
+                    String[] parsed = lName.split("]");
+                    String flightName = parsed[1].substring(4, parsed[1].length());
+                    flightNames.add(a.getAdvertiserName() + " - " + flightName);
                     pacingAdvertiser.getLineList().add(l);
                     if (l.getStartDate().isBefore(pacingAdvertiser.getStart())) pacingAdvertiser.setStart(l.getStartDate());
                     if (l.getEndDate().isAfter(pacingAdvertiser.getEnd())) pacingAdvertiser.setEnd(l.getEndDate());
-
                 }
             }
             pacingAdvertiser.setDuration();
-            int goalToDate = 0;
-            int impsToDate = 0;
-            // For every day the advertiser is live
-//            for (int x = 0; x < pacingAdvertiser.getDuration(); x++) {
-//                // Create the Date
-//                DateTime currentDate = pacingAdvertiser.getStart().plusDays(x);
-//                // Create the daily data object
-//                DailyPacingData now = new DailyPacingData(currentDate);
-//
-//                // For every Line Item in the Advertiser
-//                for (PacingLineItem l : pacingAdvertiser.getLineList()) {
-//                    // If the lineItem is live during this time
-//                    if (l.getStartDate().minusDays(1).isBefore(currentDate) &&
-//                            l.getEndDate().plusDays(1).isAfter(currentDate)) {
-//                        // Add to budget for this day
-//                        now.setGoalToday(now.getGoalToday() + 0);// TODO day of budget
-//                        goalToDate = goalToDate + 0; // TODO day of budget
-//                        now.setGoalToDate(goalToDate);
-//                    }
-//                    for (F.Tuple<DateTime, Integer> d : l.getDailyData()) {
-//                        if (d._1.getMillis() == currentDate.getMillis()) {
-//                            // TODO Watch this to make sure matches are being made correctly
-//                            now.setImpsDelivered(
-//                                    now.getImpsDelivered()
-//                                    + d._2.intValue());
-//                            impsToDate = impsToDate + d._2.intValue();
-//                            now.setImpsToDate(impsToDate);
-//                        }
-//                    }
-//                }
-//                pacingAdvertiser.getDailyPacingNumbers().add(now);
-//            }
             finalAdvertisers.add(pacingAdvertiser);
         }
-        Workbook wb = PacingReportWriter.writeReport(finalAdvertisers);
+        Workbook wb = PacingReportWriter.writeReport(finalAdvertisers, flightNames);
         LocalDate now = new LocalDate(DateTimeZone.UTC);
         FileOutputStream fileOut =
                 new FileOutputStream(new File(outputPath, "Daily_Pacing_Report_"

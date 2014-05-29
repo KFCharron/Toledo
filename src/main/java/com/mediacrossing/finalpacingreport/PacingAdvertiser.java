@@ -17,7 +17,6 @@ public class PacingAdvertiser {
     private int duration;
     private ArrayList<DailyPacingData> dailyPacingNumbers = new ArrayList<>();
     private ArrayList<PacingLineItem> lineList = new ArrayList<>();
-    private Set<String> flightNames = new HashSet<>();
 
     public PacingAdvertiser(String name, String id) {
         this.name = name;
@@ -68,7 +67,4 @@ public class PacingAdvertiser {
         return duration;
     }
 
-    public Set<String> getFlightNames() {
-        return flightNames;
-    }
 }
