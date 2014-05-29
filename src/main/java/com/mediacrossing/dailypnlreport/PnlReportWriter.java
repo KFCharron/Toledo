@@ -47,7 +47,7 @@ public class PnlReportWriter {
         percentage.setDataFormat(df.getFormat("00.00%"));
 
         /*GLOBAL COST VARIABLES*/
-        float amazonCost = 0.05f;
+        float advertiserAmazonCost = 0.095f;
         float discoveryCommission = 0.20f;
 
         //Write summary sheet
@@ -223,8 +223,8 @@ public class PnlReportWriter {
         }
 
         summarySheet.createRow(++rowCount).createCell(0).setCellValue("Amazon Cost:");
-        float amazonFee = (float) grandTotal.getImps() / 1000 * amazonCost;
-        float mtdAmazonFee = (float) mtdGrandTotal.getImps() / 1000 * amazonCost;
+        float amazonFee = (float) grandTotal.getImps() / 1000 * advertiserAmazonCost;
+        float mtdAmazonFee = (float) mtdGrandTotal.getImps() / 1000 * advertiserAmazonCost;
         summarySheet.getRow(rowCount).createCell(1).setCellValue(amazonFee);
         summarySheet.getRow(rowCount).createCell(2).setCellValue(mtdAmazonFee);
         summarySheet.getRow(rowCount).getCell(1).setCellStyle(fullCurrency);
@@ -376,7 +376,7 @@ public class PnlReportWriter {
                     dataRow.createCell(++cellCount).setCellValue(0);
                     dataRow.getCell(cellCount).setCellStyle(fullCurrency);
                 }
-                amazonFee = (float) c.getImps() / 1000 * amazonCost; 
+                amazonFee = (float) c.getImps() / 1000 * advertiserAmazonCost;
                 dataRow.createCell(++cellCount).setCellValue(amazonFee);
                 dataRow.getCell(cellCount).setCellStyle(fullCurrency);
                 dataRow.createCell(++cellCount).setCellValue(c.getTotalCost() + amazonFee);
@@ -478,7 +478,7 @@ public class PnlReportWriter {
                 }
                 totalRow.getCell(cellCount).setCellStyle(fullCurrency);
             }
-            amazonFee = (float) adTotal.getImps() / 1000 * amazonCost; 
+            amazonFee = (float) adTotal.getImps() / 1000 * advertiserAmazonCost;
             totalRow.createCell(++cellCount).setCellValue(amazonFee);
             totalRow.getCell(cellCount).setCellStyle(fullCurrency);
             totalRow.createCell(++cellCount).setCellValue(adTotal.getTotalCost() + amazonFee);
@@ -587,7 +587,7 @@ public class PnlReportWriter {
                             adRow.getCell(cell.getColumnIndex()).setCellStyle(fullCurrency);
                         }
                     }
-                    amazonFee = (float)c.getImps()/1000 * amazonCost;
+                    amazonFee = (float)c.getImps()/1000 * advertiserAmazonCost;
                     if (cell.getStringCellValue().equals("Amazon Cost")) {
                         adRow.createCell(cell.getColumnIndex()).setCellValue(amazonFee);
                         adRow.getCell(cell.getColumnIndex()).setCellStyle(fullCurrency);

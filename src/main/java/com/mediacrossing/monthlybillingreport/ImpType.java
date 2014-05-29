@@ -12,6 +12,7 @@ public class ImpType {
     private float evidonFee;
     private float totalFees;
     private float pnl;
+    private float amazonCpm = .005f;
 
     public ImpType(String name, int imps, float grossRevenue, float publisherRevenue) {
         this.name = name;
@@ -26,7 +27,7 @@ public class ImpType {
             this.anExchangeFee = grossRevenue * .0135f;
         } else this.anExchangeFee = 0;
         if (!name.contains("External")) {
-            this.amazonFee = imps * .05f / 1000;
+            this.amazonFee = imps * amazonCpm / 1000;
             if (name.equals("Kept")) {
                 this.evidonFee = imps * .01f / 1000;
             } else this.evidonFee = 0;
