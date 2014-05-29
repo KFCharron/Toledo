@@ -20,7 +20,7 @@ public class RunSegmentLoadReport {
 
     private static int APPNEXUS_PARTITION_SIZE;
     private static Duration APPNEXUS_REQUEST_DELAY;
-    private static final Logger LOG = LoggerFactory.getLogger(RunDailyCheckUps.class);
+    private static final Logger LOG = LoggerFactory.getLogger(RunSegmentLoadReport.class);
 
     private static ProfileRepository development(HTTPRequest r) {
         return new TruncatedProfileRepository(r, 10);
