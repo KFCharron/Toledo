@@ -134,6 +134,6 @@ public class RunMonthlyPnlReport {
         }
 
 
-        PnlReportWriter.writeReportToFile(adList, sortedFees, outputPath, "Monthly_Flash_PnL_", pubList);
+        MonthlyPnLWriter.writeReportToFile(adList, sortedFees, outputPath, "Monthly_Flash_PnL_", pubList);
     }
 }
