@@ -272,14 +272,6 @@ public class PacingReportWriter {
         }
         for (Cell c : header) summarySheet.autoSizeColumn(c.getColumnIndex());
 
-        Sheet charts = wb.createSheet("Charts");
-        for (String flightName : flightNames) {
-            // Create a map between day numbers
-            HashMap<Integer, Integer> dailyTotals = new HashMap<>();
-
-
-        }
-
         return wb;
     }
 }
