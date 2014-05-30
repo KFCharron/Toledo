@@ -11,8 +11,16 @@ import play.api.libs.json._
 import org.joda.time.format.DateTimeFormat
 import play.api.libs.json.Reads._
 import play.api.libs.functional.syntax._
+import org.slf4j.LoggerFactory
 
 object RunDailyClientPublisherReport extends App {
+
+  val LOG = LoggerFactory.getLogger(RunDailyClientPublisherReport.getClass)
+  Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler {
+    def uncaughtException(t: Thread, e: Throwable) {
+      LOG.error(e.getMessage, e)
+    }
+  })
 
   val props = new ConfigurationProperties(args)
   val anConn = new AppNexusService(props.getAppNexusUrl,
