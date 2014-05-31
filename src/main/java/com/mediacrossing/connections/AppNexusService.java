@@ -1,5 +1,6 @@
 package com.mediacrossing.connections;
 
+import au.com.bytecode.opencsv.CSVReader;
 import com.mediacrossing.campaignbooks.Campaign;
 import com.mediacrossing.campaignbooks.LineItem;
 import com.mediacrossing.campaignbooks.DataParse;
@@ -17,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import scala.Tuple2;
 import scala.concurrent.duration.Duration;
 
+import java.io.StringReader;
 import java.util.*;
 
 public class AppNexusService {
@@ -1208,20 +1210,7 @@ public class AppNexusService {
     }
 
     private List<String[]> downloadReportWhenReady(String json) throws Exception {
-
-        String reportId = JSONParse.obtainReportId(json);
-        boolean ready = false;
-        while (!ready) {
-            //Check to see if report is ready
-            String jsonResponse = requests.getRequest(url + "/report?id=" + reportId);
-            LOG.debug(jsonResponse);
-            ready = DataParse.parseReportStatus(jsonResponse);
-            if (!ready)
-                Thread.sleep(20000);
-        }
-        //Report is ready, download it
-        String downloadUrl = url + DataParse.getReportUrl();
-
-        return requests.reportRequest(downloadUrl);
+        CSVReader reader = new CSVReader(new StringReader(json));
+        return reader.readAll();
     }
 }
