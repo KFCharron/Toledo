@@ -68,13 +68,11 @@ public class AppNexusService {
     }
 
     public String putRequest(String url2, String json) throws Exception {
-        throttleCheck();
         return requests.putRequest(url + url2, json);
     }
 
     public ArrayList<Publisher> requestPublishers() throws Exception {
         String json = requests.getRequest(url + "/publisher");
-        throttleCheck();
         return DataParse.parsePublisherIdAndName(json);
     }
 
@@ -85,19 +83,16 @@ public class AppNexusService {
 
     public ArrayList<LineItem> requestLineItems(String adId) throws Exception {
         String json = requests.getRequest(url + "/line-item?advertiser_id=" + adId);
-        throttleCheck();
         return DataParse.parseLineItems(json);
     }
 
     public ArrayList<Campaign> requestCampaigns(String adId, String liId) throws Exception {
         String json = requests.getRequest(url + "/campaign?advertiser_id=" + adId);
-        throttleCheck();
         return DataParse.parseCampaigns(json, liId);
     }
 
     public boolean checkForSegment(String code) throws Exception {
         String json = requests.getRequest(url + "/segment?code=" + code);
-        throttleCheck();
         return DataParse.parseSegment(json);
     }
 
@@ -112,19 +107,16 @@ public class AppNexusService {
 
     public ArrayList<Placement> requestPlacements(String pubId) throws Exception {
         String json = requests.getRequest(url + "/placement?publisher_id=" + pubId);
-        throttleCheck();
         return ResponseParser.parsePlacements(json);
     }
 
     public ArrayList<PaymentRule> requestPaymentRules(String pubId) throws Exception {
         String json = requests.getRequest(url+"/payment-rule?publisher_id=" + pubId);
-        throttleCheck();
         return ResponseParser.parsePaymentRules(json);
     }
 
     public ArrayList<YMProfile> requestYmProfiles (String pubId) throws Exception {
         String json = requests.getRequest(url+"/ym-profile?publisher_id="+pubId);
-        throttleCheck();
         return ResponseParser.parseYmProfiles(json);
     }
 
@@ -929,7 +921,7 @@ public class AppNexusService {
                 "        \"timezone\": \"EST5EDT\""+
                 "    }\n" +
                 "}";
-        String json = requests.postRequest(url + "report?advertiser_id=" + adId, jsonPostData);
+        String json = requests.postRequest(url + "/report?advertiser_id=" + adId, jsonPostData);
 
         return downloadReportWhenReady(json);
     }
