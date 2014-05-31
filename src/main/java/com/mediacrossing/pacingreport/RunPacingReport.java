@@ -35,7 +35,7 @@
 //
 //        //Declare variables
 //        ConfigurationProperties properties = new ConfigurationProperties(args);
-//        String appNexusUrl = properties.getAppNexusUrl();
+//        String appNexusUrl = properties.getPutneyUrl();
 //        String outputPath = properties.getOutputPath();
 //        String appNexusUsername = properties.getAppNexusUsername();
 //        String appNexusPassword = properties.getAppNexusPassword();

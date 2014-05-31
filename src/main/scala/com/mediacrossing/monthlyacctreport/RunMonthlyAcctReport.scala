@@ -35,7 +35,7 @@ object RunMonthlyAcctReport extends App {
     if (props.getMxUsername == null) new MxService(props.getMxUrl)
     else new MxService(props.getMxUrl, props.getMxUsername, props.getMxPassword)
   }
-  val anConn = new AppNexusService(props.getAppNexusUrl, props.getAppNexusUsername, props.getAppNexusPassword)
+  val anConn = new AppNexusService(props.getPutneyUrl, props.getAppNexusUsername, props.getAppNexusPassword)
 
   val lineR = (
     (__ \ "id").read[String] ~

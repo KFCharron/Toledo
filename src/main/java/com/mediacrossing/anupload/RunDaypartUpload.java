@@ -18,7 +18,7 @@ public class RunDaypartUpload {
 
         //Get all profile IDs for homeserve
         //For each profile ID, upload target
-        //AppNexusService anConn = new AppNexusService(properties.getAppNexusUrl(), anUsername, anPassword, properties.getPartitionSize(), properties.getRequestDelayInSeconds());
+        //AppNexusService anConn = new AppNexusService(properties.getPutneyUrl(), anUsername, anPassword, properties.getPartitionSize(), properties.getRequestDelayInSeconds());
         MxService mxConn = new MxService(anUrl);
         //ArrayList<String> profileIds = anConn.requestAllProfilesForAdvertiser(advertiserId);
         String[] proIds = new String[] {"9649324",

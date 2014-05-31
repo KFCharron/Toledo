@@ -87,7 +87,7 @@ public class RunZipUpload {
         System.out.println(json);
 
         // call put w/ String
-        AppNexusService anConn = new AppNexusService(anUrl, anUsername, anPassword);
+        AppNexusService anConn = new AppNexusService(anUrl);
 
         System.out.println(anConn.putRequest("/profile?id=" + profileId + "&advertiser_id=" + advertiserId, json));
 

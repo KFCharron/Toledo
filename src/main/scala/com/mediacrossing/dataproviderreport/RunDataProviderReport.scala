@@ -23,7 +23,7 @@ object RunDataProviderReport extends App {
   //init variables
   val p = new ConfigurationProperties(args)
   val anConn = new AppNexusService(
-    p.getAppNexusUrl,
+    p.getPutneyUrl,
     p.getAppNexusUsername,
     p.getAppNexusPassword,
     p.getPartitionSize,

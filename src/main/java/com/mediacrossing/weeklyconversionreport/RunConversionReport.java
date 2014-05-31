@@ -32,7 +32,7 @@ public class RunConversionReport {
         //Declare variables
         ConfigurationProperties properties = new ConfigurationProperties(args);
         String mxUrl = properties.getMxUrl();
-        String appNexusUrl = properties.getAppNexusUrl();
+        String appNexusUrl = properties.getPutneyUrl();
         String outputPath = properties.getOutputPath();
         String appNexusUsername = properties.getAppNexusUsername();
         String appNexusPassword = properties.getAppNexusPassword();
@@ -44,8 +44,8 @@ public class RunConversionReport {
         } else {
             mxConn = new MxService(mxUrl, mxUsername, mxPassword);
         }
-        AppNexusService anConn = new AppNexusService(appNexusUrl, appNexusUsername,
-                appNexusPassword);
+        AppNexusService anConn = new AppNexusService(appNexusUrl
+        );
 
         //for faster debugging
         boolean development = false;

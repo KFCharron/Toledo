@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 
 public class ConfigurationProperties {
 
-    private String appNexusUrl;
+    private String putneyUrl;
     private String appNexusUsername;
     private String appNexusPassword;
     private String mxUrl;
@@ -19,7 +19,7 @@ public class ConfigurationProperties {
     private int partitionSize;
     private Duration requestDelayInSeconds;
     private String outputPath;
-    private String putneyUrl;
+    private String appNexusUrl;
 
 
     private static final Logger LOG = LoggerFactory.getLogger(ConfigurationProperties.class);
@@ -37,7 +37,7 @@ public class ConfigurationProperties {
 
         //set the properties
         if (!prop.isEmpty()) {
-            appNexusUrl = prop.getProperty("appNexusUrl");
+            putneyUrl = prop.getProperty("appNexusUrl");
             appNexusUsername = prop.getProperty("appNexusUsername");
             appNexusPassword = prop.getProperty("appNexusPassword");
             partitionSize = Integer.parseInt(prop.getProperty("partitionSize"));
@@ -48,15 +48,15 @@ public class ConfigurationProperties {
             mxUrl = prop.getProperty("mxUrl");
             mxUsername = prop.getProperty("mxUsername");
             mxPassword = prop.getProperty("mxPassword");
-            putneyUrl = prop.getProperty("putneyUrl");
+            appNexusUrl = prop.getProperty("appNexusUrl");
 
         } else {
             LOG.error("Properties File Failed To Load");
         }
     }
 
-    public String getAppNexusUrl() {
-        return appNexusUrl;
+    public String getPutneyUrl() {
+        return putneyUrl;
     }
 
     public String getAppNexusUsername() {
@@ -91,7 +91,7 @@ public class ConfigurationProperties {
         return outputPath;
     }
 
-    public String getPutneyUrl() {
-        return putneyUrl;
+    public String getAppNexusUrl() {
+        return appNexusUrl;
     }
 }

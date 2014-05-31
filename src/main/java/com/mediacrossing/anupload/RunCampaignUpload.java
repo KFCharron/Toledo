@@ -19,7 +19,7 @@ public class RunCampaignUpload {
 
         //Get all campaign ids
         //For each campaign ID, upload pacing
-        AppNexusService anConn = new AppNexusService(properties.getAppNexusUrl(), anUsername, anPassword, properties.getPartitionSize(), properties.getRequestDelayInSeconds());
+        AppNexusService anConn = new AppNexusService(properties.getPutneyUrl());
         MxService mxConn = new MxService(properties.getMxUrl(), properties.getMxUsername(), properties.getMxPassword());
         ArrayList<LineItem> lines = mxConn.requestLineItemsForAdvertiser(advertiserId);
         for (LineItem l : lines) {

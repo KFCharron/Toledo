@@ -23,7 +23,7 @@ object RunDailyClientPublisherReport extends App {
   })
 
   val props = new ConfigurationProperties(args)
-  val anConn = new AppNexusService(props.getAppNexusUrl,
+  val anConn = new AppNexusService(props.getPutneyUrl,
                                    props.getAppNexusUsername,
                                    props.getAppNexusPassword)
   val mxConn = new MxService(props.getMxUrl, props.getMxUsername, props.getMxPassword)

@@ -15,7 +15,7 @@ object RunDailyDomainReport extends App {
     else new MxService(props.getMxUrl, props.getMxUsername, props.getMxPassword)
   }
   val anConn = new AppNexusService(
-    props.getAppNexusUrl,
+    props.getPutneyUrl,
     props.getAppNexusUsername,
     props.getAppNexusPassword)
 

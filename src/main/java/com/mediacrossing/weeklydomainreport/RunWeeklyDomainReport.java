@@ -5,7 +5,6 @@ import com.mediacrossing.properties.ConfigurationProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
 import java.util.ArrayList;
 
 public class RunWeeklyDomainReport {
@@ -29,12 +28,12 @@ public class RunWeeklyDomainReport {
 
         //Declare variables
         ConfigurationProperties properties = new ConfigurationProperties(args);
-        String appNexusUrl = properties.getAppNexusUrl();
+        String appNexusUrl = properties.getPutneyUrl();
         String outputPath = properties.getOutputPath();
         String appNexusUsername = properties.getAppNexusUsername();
         String appNexusPassword = properties.getAppNexusPassword();
-        AppNexusService anConn = new AppNexusService(appNexusUrl, appNexusUsername,
-                appNexusPassword);
+        AppNexusService anConn = new AppNexusService(appNexusUrl
+        );
 
         //Parse and save to list of advertisers
         final ArrayList<Domain> domains = anConn.requestDomainReport();

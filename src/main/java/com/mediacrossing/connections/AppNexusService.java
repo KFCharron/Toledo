@@ -29,42 +29,9 @@ public class AppNexusService {
     private Duration delay;
     private int queryCount;
 
-    public AppNexusService(String url, String username, String password, int anPartitionSize, Duration dur) throws Exception {
-        String authJson = "{\"auth\":{\"username\":\"" + username +
-                "\",\"password\":\"" + password + "\"}}";
-        String tokenJson = new HTTPSRequest().postRequest("https://api.appnexus.com/auth", authJson);
-        String token = JSONParse.obtainToken(tokenJson);
-        Iterable<Tuple2<String, String>> requestProperties = Collections.unmodifiableList(
-                Arrays.asList(ConnectionRequestProperties.authorization(token)));
-        this.requests = new HTTPRequest(requestProperties);
-        this.url = url;
-        this.partitionSize = anPartitionSize;
-        this.delay = dur;
-        this.queryCount = 0;
-    }
-
-    public AppNexusService(String url, String username, String password) throws Exception {
-        String authJson = "{\"auth\":{\"username\":\"" + username +
-                "\",\"password\":\"" + password + "\"}}";
-        String tokenJson = new HTTPSRequest().postRequest("https://api.appnexus.com/auth", authJson);
-        String token = JSONParse.obtainToken(tokenJson);
-        Iterable<Tuple2<String, String>> requestProperties = Collections.unmodifiableList(
-                Arrays.asList(ConnectionRequestProperties.authorization(token)));
-        this.requests = new HTTPRequest(requestProperties);
-        this.url = url;
-    }
-
     public AppNexusService(String url) throws Exception {
         this.requests = new HTTPRequest();
         this.url = url;
-    }
-
-    private void throttleCheck() throws InterruptedException {
-        this.queryCount++;
-        if(this.queryCount >= this.partitionSize) {
-            Thread.sleep(delay.toMillis());
-            this.queryCount = 0;
-        }
     }
 
     public String putRequest(String url2, String json) throws Exception {

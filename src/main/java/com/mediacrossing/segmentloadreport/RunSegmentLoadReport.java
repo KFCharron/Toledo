@@ -59,9 +59,9 @@ public class RunSegmentLoadReport {
         } else {
             mxConn = new MxService(mxUrl, mxUsername, mxPassword);
         }
-        String appNexusUrl = properties.getAppNexusUrl();
-        AppNexusService anConn = new AppNexusService(appNexusUrl, properties.getAppNexusUsername(),
-                properties.getAppNexusPassword());
+        String appNexusUrl = properties.getPutneyUrl();
+        AppNexusService anConn = new AppNexusService(appNexusUrl
+        );
         DataStore dataStore = new DataStore();
         String fileOutputPath = properties.getOutputPath();
 

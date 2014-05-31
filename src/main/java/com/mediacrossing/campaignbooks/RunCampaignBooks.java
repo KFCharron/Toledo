@@ -36,7 +36,7 @@ public class RunCampaignBooks {
         //Declare variables
         ConfigurationProperties properties = new ConfigurationProperties(args);
         String mxUrl = properties.getMxUrl();
-        String appNexusUrl = properties.getAppNexusUrl();
+        String appNexusUrl = properties.getPutneyUrl();
         String outputPath = properties.getOutputPath();
         String appNexusUsername = properties.getAppNexusUsername();
         String appNexusPassword = properties.getAppNexusPassword();
@@ -48,8 +48,8 @@ public class RunCampaignBooks {
         } else {
             mxConn = new MxService(mxUrl, mxUsername, mxPassword);
         }
-        AppNexusService anConn = new AppNexusService(appNexusUrl, appNexusUsername,
-                appNexusPassword, properties.getPartitionSize(), properties.getRequestDelayInSeconds());
+        AppNexusService anConn = new AppNexusService(appNexusUrl
+        );
 
         //Parse and save to list of advertisers
         final List<Advertiser> advertiserList = mxConn.requestAllAdvertisers();

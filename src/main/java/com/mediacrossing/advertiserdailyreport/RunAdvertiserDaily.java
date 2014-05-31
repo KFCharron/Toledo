@@ -31,7 +31,7 @@ public class RunAdvertiserDaily {
         //Declare variables
         ConfigurationProperties properties = new ConfigurationProperties(args);
         String mxUrl = properties.getMxUrl();
-        String appNexusUrl = properties.getAppNexusUrl();
+        String appNexusUrl = properties.getPutneyUrl();
         String outputPath = properties.getOutputPath();
         String mxUsername = properties.getMxUsername();
         String mxPassword = properties.getMxPassword();
@@ -41,8 +41,8 @@ public class RunAdvertiserDaily {
         } else {
             mxConn = new MxService(mxUrl, mxUsername, mxPassword);
         }
-        AppNexusService anConn = new AppNexusService(appNexusUrl, properties.getAppNexusUsername(),
-                properties.getAppNexusPassword(), properties.getPartitionSize(), properties.getRequestDelayInSeconds());
+        AppNexusService anConn = new AppNexusService(appNexusUrl
+        );
 
         //Parse and save to list of advertisers
         final List<Advertiser> advertiserList = mxConn.requestAllAdvertisers();

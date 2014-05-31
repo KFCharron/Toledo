@@ -41,7 +41,7 @@ public class RunPublisherCheckUp {
         String anUser = configProps.getAppNexusUsername();
         String anPass = configProps.getAppNexusPassword();
         // TODO change for Putney
-        //String anUrl = configProps.getAppNexusUrl();
+        //String anUrl = configProps.getPutneyUrl();
         String putneyUrl = configProps.getPutneyUrl();
         String mxUsername = configProps.getMxUsername();
         String mxUrl = configProps.getMxUrl();

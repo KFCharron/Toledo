@@ -4,7 +4,6 @@ import com.mediacrossing.connections.AppNexusService;
 import com.mediacrossing.connections.MxService;
 import com.mediacrossing.dailycheckupsreport.Campaign;
 import com.mediacrossing.dailycheckupsreport.ServingFee;
-import com.mediacrossing.dailypnlreport.PnlReportWriter;
 import com.mediacrossing.monthlybillingreport.BillingAdvertiser;
 import com.mediacrossing.monthlybillingreport.BillingCampaign;
 import com.mediacrossing.monthlybillingreport.BillingPublisher;
@@ -37,14 +36,14 @@ public class RunMonthlyPnlReport {
 
         //Declare variables
         ConfigurationProperties properties = new ConfigurationProperties(args);
-        String appNexusUrl = properties.getAppNexusUrl();
+        String appNexusUrl = properties.getPutneyUrl();
         String outputPath = properties.getOutputPath();
         String appNexusUsername = properties.getAppNexusUsername();
         String appNexusPassword = properties.getAppNexusPassword();
         int anPartitionSize = properties.getPartitionSize();
         Duration requestDelayInSeconds = properties.getRequestDelayInSeconds();
-        AppNexusService anConn = new AppNexusService(appNexusUrl, appNexusUsername,
-                appNexusPassword, anPartitionSize, requestDelayInSeconds);
+        AppNexusService anConn = new AppNexusService(appNexusUrl
+        );
         String mxUsername = properties.getMxUsername();
         String mxPass = properties.getMxPassword();
         String mxUrl = properties.getMxUrl();

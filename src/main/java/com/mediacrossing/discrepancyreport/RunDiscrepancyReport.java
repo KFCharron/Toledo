@@ -1,6 +1,5 @@
 package com.mediacrossing.discrepancyreport;
 
-import au.com.bytecode.opencsv.CSVReader;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
 import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
@@ -14,9 +13,7 @@ import com.google.api.client.util.store.DataStoreFactory;
 import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.dfareporting.Dfareporting;
 import com.google.api.services.dfareporting.DfareportingScopes;
-import com.google.api.services.dfareporting.model.*;
 import com.google.api.services.dfareporting.model.File;
-import com.google.api.services.dfareporting.model.Report;
 import com.mediacrossing.campaignbooks.LineItem;
 import com.mediacrossing.connections.AppNexusService;
 import com.mediacrossing.connections.MxService;
@@ -94,12 +91,12 @@ public class RunDiscrepancyReport {
         registerLoggerWithUncaughtExceptions();
 
         ConfigurationProperties properties = new ConfigurationProperties(args);
-        String appNexusUrl = properties.getAppNexusUrl();
+        String appNexusUrl = properties.getPutneyUrl();
         String outputPath = properties.getOutputPath();
         String appNexusUsername = properties.getAppNexusUsername();
         String appNexusPassword = properties.getAppNexusPassword();
-        AppNexusService anConn = new AppNexusService(appNexusUrl, appNexusUsername,
-                appNexusPassword);
+        AppNexusService anConn = new AppNexusService(appNexusUrl
+        );
         MxService mxConn = new MxService(properties.getMxUrl(), properties.getMxUsername(), properties.getMxPassword());
 
         try {
