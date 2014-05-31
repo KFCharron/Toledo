@@ -19,6 +19,7 @@ public class ConfigurationProperties {
     private int partitionSize;
     private Duration requestDelayInSeconds;
     private String outputPath;
+    private String putneyUrl;
 
 
     private static final Logger LOG = LoggerFactory.getLogger(ConfigurationProperties.class);
@@ -47,6 +48,7 @@ public class ConfigurationProperties {
             mxUrl = prop.getProperty("mxUrl");
             mxUsername = prop.getProperty("mxUsername");
             mxPassword = prop.getProperty("mxPassword");
+            putneyUrl = prop.getProperty("putneyUrl");
 
         } else {
             LOG.error("Properties File Failed To Load");
@@ -87,5 +89,9 @@ public class ConfigurationProperties {
 
     public String getOutputPath() {
         return outputPath;
+    }
+
+    public String getPutneyUrl() {
+        return putneyUrl;
     }
 }

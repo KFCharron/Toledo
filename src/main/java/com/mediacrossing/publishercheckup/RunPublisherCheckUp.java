@@ -40,13 +40,17 @@ public class RunPublisherCheckUp {
         ConfigurationProperties configProps = new ConfigurationProperties(args);
         String anUser = configProps.getAppNexusUsername();
         String anPass = configProps.getAppNexusPassword();
-        String anUrl = configProps.getAppNexusUrl();
+        // TODO change for Putney
+        //String anUrl = configProps.getAppNexusUrl();
+        String putneyUrl = configProps.getPutneyUrl();
         String mxUsername = configProps.getMxUsername();
         String mxUrl = configProps.getMxUrl();
         String mxPassword = configProps.getMxPassword();
         int anPartitionSize = configProps.getPartitionSize();
         Duration requestDelayInSeconds = configProps.getRequestDelayInSeconds();
-        AppNexusService anService = new AppNexusService(anUrl, anUser, anPass, anPartitionSize, requestDelayInSeconds);
+        // TODO change for putney
+        //AppNexusService anService = new AppNexusService(anUrl, anUser, anPass, anPartitionSize, requestDelayInSeconds);
+        AppNexusService anService = new AppNexusService(putneyUrl);
         MxService mxConn;
         if (mxUsername == null) {
             mxConn = new MxService(mxUrl);
@@ -54,7 +58,6 @@ public class RunPublisherCheckUp {
             mxConn = new MxService(mxUrl, mxUsername, mxPassword);
         }
         String outPath = configProps.getOutputPath();
-        Workbook wb = new HSSFWorkbook();
 
         //Request publishers from AN
         ArrayList<PublisherConfig> pubs = anService.requestPublisherConfigs();
@@ -92,7 +95,7 @@ public class RunPublisherCheckUp {
         }*/
 
         //build report with all publishers
-        wb = ReportGenerator.writePublisherCheckUpReport(pubs);
+        Workbook wb = ReportGenerator.writePublisherCheckUpReport(pubs);
 
         //write wb to file
         LocalDate today = new LocalDate(DateTimeZone.UTC);

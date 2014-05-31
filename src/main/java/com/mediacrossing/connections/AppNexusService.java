@@ -54,6 +54,11 @@ public class AppNexusService {
         this.url = url;
     }
 
+    public AppNexusService(String url) throws Exception {
+        this.requests = new HTTPRequest();
+        this.url = url;
+    }
+
     private void throttleCheck() throws InterruptedException {
         this.queryCount++;
         if(this.queryCount >= this.partitionSize) {
