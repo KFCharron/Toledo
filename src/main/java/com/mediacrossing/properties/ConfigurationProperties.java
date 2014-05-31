@@ -37,7 +37,7 @@ public class ConfigurationProperties {
 
         //set the properties
         if (!prop.isEmpty()) {
-            putneyUrl = prop.getProperty("appNexusUrl");
+            putneyUrl = prop.getProperty("putneyUrl");
             appNexusUsername = prop.getProperty("appNexusUsername");
             appNexusPassword = prop.getProperty("appNexusPassword");
             partitionSize = Integer.parseInt(prop.getProperty("partitionSize"));
