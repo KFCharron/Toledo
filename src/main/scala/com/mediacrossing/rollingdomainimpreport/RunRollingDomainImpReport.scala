@@ -12,9 +12,7 @@ object RunRollingDomainImpReport extends App {
 
   val props = new ConfigurationProperties(args)
   val anConn = new AppNexusService(
-    props.getPutneyUrl,
-    props.getAppNexusUsername,
-    props.getAppNexusPassword)
+    props.getPutneyUrl)
 
   val wb = new HSSFWorkbook()
 

@@ -20,9 +20,7 @@ object RunPacing extends App {
     else new MxService(props.getMxUrl, props.getMxUsername, props.getMxPassword)
   }
   val anConn = new AppNexusService(
-    props.getPutneyUrl,
-    props.getAppNexusUsername,
-    props.getAppNexusPassword)
+    props.getPutneyUrl)
 
   val dateFormat: DateTimeFormatter = DateTimeFormat
     .forPattern("yy-mm-dd")

@@ -23,9 +23,7 @@ object RunDailyClientPublisherReport extends App {
   })
 
   val props = new ConfigurationProperties(args)
-  val anConn = new AppNexusService(props.getPutneyUrl,
-                                   props.getAppNexusUsername,
-                                   props.getAppNexusPassword)
+  val anConn = new AppNexusService(props.getPutneyUrl)
   val mxConn = new MxService(props.getMxUrl, props.getMxUsername, props.getMxPassword)
   val wb = new HSSFWorkbook()
 

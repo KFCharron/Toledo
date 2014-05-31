@@ -29,11 +29,7 @@ object RunBuyerBrandReport extends App{
   //init variables
   val p = new ConfigurationProperties(args)
   val anConn = new AppNexusService(
-    p.getPutneyUrl,
-    p.getAppNexusUsername,
-    p.getAppNexusPassword,
-    p.getPartitionSize,
-    p.getRequestDelayInSeconds)
+    p.getPutneyUrl)
   val mxConn = {
     if (p.getMxUsername == null) new MxService(p.getMxUrl)
     else new MxService(p.getMxUrl, p.getMxUsername, p.getMxPassword)

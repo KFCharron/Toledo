@@ -25,11 +25,7 @@ object RunMonthlyPubReport extends App {
 
   val props = new ConfigurationProperties(args)
   val anConn = new AppNexusService(
-    props.getPutneyUrl,
-    props.getAppNexusUsername,
-    props.getAppNexusPassword,
-    props.getPartitionSize,
-    props.getRequestDelayInSeconds)
+    props.getPutneyUrl)
 
   val mxConn = {
     if (props.getMxUsername == null) new MxService(props.getMxUrl)

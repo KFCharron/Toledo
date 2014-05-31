@@ -15,9 +15,7 @@ object RunDailyDomainReport extends App {
     else new MxService(props.getMxUrl, props.getMxUsername, props.getMxPassword)
   }
   val anConn = new AppNexusService(
-    props.getPutneyUrl,
-    props.getAppNexusUsername,
-    props.getAppNexusPassword)
+    props.getPutneyUrl)
 
   val ads = mxConn.requestAllAdvertisers().toList.filter(a => a.isLive)
 

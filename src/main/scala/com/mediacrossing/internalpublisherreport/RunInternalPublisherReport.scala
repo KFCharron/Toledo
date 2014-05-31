@@ -24,11 +24,8 @@ object RunInternalPublisherReport extends App {
 
   val props = new ConfigurationProperties(args)
   val anConn = new AppNexusService(
-    props.getPutneyUrl,
-    props.getAppNexusUsername,
-    props.getAppNexusPassword,
-    props.getPartitionSize,
-    props.getRequestDelayInSeconds)
+    props.getPutneyUrl
+   )
   val mxConn = {
     if (props.getMxUsername == null) new MxService(props.getMxUrl)
     else new MxService(props.getMxUrl, props.getMxUsername, props.getMxPassword)
