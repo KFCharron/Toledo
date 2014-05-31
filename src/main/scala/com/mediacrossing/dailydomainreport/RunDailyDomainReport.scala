@@ -6,8 +6,16 @@ import scala.collection.JavaConversions._
 import org.apache.poi.hssf.usermodel.HSSFWorkbook
 import java.io.{File, FileOutputStream}
 import org.joda.time.{DateTimeZone, LocalDate}
+import org.slf4j.LoggerFactory
 
 object RunDailyDomainReport extends App {
+
+  val LOG = LoggerFactory.getLogger(RunDailyDomainReport.getClass)
+  Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler {
+    def uncaughtException(t: Thread, e: Throwable) {
+      LOG.error(e.getMessage, e)
+    }
+  })
 
   val props = new ConfigurationProperties(args)
   val mxConn = {
