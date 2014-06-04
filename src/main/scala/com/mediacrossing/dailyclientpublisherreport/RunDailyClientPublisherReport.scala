@@ -135,7 +135,7 @@ object RunDailyClientPublisherReport extends App {
 
   // Workbook Output
   val today = new LocalDate(DateTimeZone.UTC)
-  val out = new FileOutputStream(new File(props.getOutputPath, "Daily_Pub_Client_Report" + today.toString+ ".xls"))
+  val out = new FileOutputStream(new File(props.getOutputPath, "Daily_Pub_Client_Report_" + today.toString+ ".xls"))
   wb.write(out)
   out.close()
 
