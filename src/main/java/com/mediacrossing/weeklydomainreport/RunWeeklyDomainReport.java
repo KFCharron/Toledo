@@ -30,24 +30,12 @@ public class RunWeeklyDomainReport {
         ConfigurationProperties properties = new ConfigurationProperties(args);
         String appNexusUrl = properties.getPutneyUrl();
         String outputPath = properties.getOutputPath();
-        String appNexusUsername = properties.getAppNexusUsername();
-        String appNexusPassword = properties.getAppNexusPassword();
+
         AppNexusService anConn = new AppNexusService(appNexusUrl
         );
 
         //Parse and save to list of advertisers
         final ArrayList<Domain> domains = anConn.requestDomainReport();
-
-        // Serialize data object to a file
-        /*try {
-            ObjectOutputStream out = new ObjectOutputStream
-                    (new FileOutputStream("/Users/charronkyle/Desktop/ReportData/DomainList.ser"));
-            out.writeObject(domains);
-            out.close();
-        } catch (IOException e) {
-            LOG.error("Serialization Failed!");
-            LOG.error(e.toString());
-        }*/
 
         //Write report
         WeeklyDomainReportWriter.writeReportToFile(domains, outputPath);

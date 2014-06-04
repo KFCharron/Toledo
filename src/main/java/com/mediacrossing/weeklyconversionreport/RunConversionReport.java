@@ -34,8 +34,7 @@ public class RunConversionReport {
         String mxUrl = properties.getMxUrl();
         String appNexusUrl = properties.getPutneyUrl();
         String outputPath = properties.getOutputPath();
-        String appNexusUsername = properties.getAppNexusUsername();
-        String appNexusPassword = properties.getAppNexusPassword();
+
         String mxUsername = properties.getMxUsername();
         String mxPassword = properties.getMxPassword();
         MxService mxConn;

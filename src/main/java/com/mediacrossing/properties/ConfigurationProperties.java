@@ -11,8 +11,6 @@ import java.util.concurrent.TimeUnit;
 public class ConfigurationProperties {
 
     private String putneyUrl;
-    private String appNexusUsername;
-    private String appNexusPassword;
     private String mxUrl;
     private String mxUsername;
     private String mxPassword;
@@ -38,8 +36,6 @@ public class ConfigurationProperties {
         //set the properties
         if (!prop.isEmpty()) {
             putneyUrl = prop.getProperty("putneyUrl");
-            appNexusUsername = prop.getProperty("appNexusUsername");
-            appNexusPassword = prop.getProperty("appNexusPassword");
             partitionSize = Integer.parseInt(prop.getProperty("partitionSize"));
             requestDelayInSeconds = Duration
                     .apply((Integer.parseInt(prop.getProperty("requestDelayInSeconds"))),
@@ -57,14 +53,6 @@ public class ConfigurationProperties {
 
     public String getPutneyUrl() {
         return putneyUrl;
-    }
-
-    public String getAppNexusUsername() {
-        return appNexusUsername;
-    }
-
-    public String getAppNexusPassword() {
-        return appNexusPassword;
     }
 
     public String getMxUrl() {

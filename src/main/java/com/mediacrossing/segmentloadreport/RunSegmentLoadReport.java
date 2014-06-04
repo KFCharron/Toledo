@@ -65,9 +65,6 @@ public class RunSegmentLoadReport {
         DataStore dataStore = new DataStore();
         String fileOutputPath = properties.getOutputPath();
 
-        APPNEXUS_PARTITION_SIZE = properties.getPartitionSize();
-        APPNEXUS_REQUEST_DELAY = properties.getRequestDelayInSeconds();
-
         //for faster debugging
         boolean development = false;
         if (development) {

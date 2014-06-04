@@ -38,18 +38,11 @@ public class RunPublisherCheckUp {
 
         //Declare Variables
         ConfigurationProperties configProps = new ConfigurationProperties(args);
-        String anUser = configProps.getAppNexusUsername();
-        String anPass = configProps.getAppNexusPassword();
-        // TODO change for Putney
-        //String anUrl = configProps.getPutneyUrl();
+
         String putneyUrl = configProps.getPutneyUrl();
         String mxUsername = configProps.getMxUsername();
         String mxUrl = configProps.getMxUrl();
         String mxPassword = configProps.getMxPassword();
-        int anPartitionSize = configProps.getPartitionSize();
-        Duration requestDelayInSeconds = configProps.getRequestDelayInSeconds();
-        // TODO change for putney
-        //AppNexusService anService = new AppNexusService(anUrl, anUser, anPass, anPartitionSize, requestDelayInSeconds);
         AppNexusService anService = new AppNexusService(putneyUrl);
         MxService mxConn;
         if (mxUsername == null) {
@@ -82,17 +75,6 @@ public class RunPublisherCheckUp {
                 for (IdName x : indList) pm.getFilteredAdvertisers().remove(x);
             }
         }
-
-        // Serialize data object to a file
-        /*try {
-            ObjectOutputStream out = new ObjectOutputStream
-                    (new FileOutputStream("/Users/charronkyle/Desktop/ReportData/PublisherCheckUpData.ser"));
-            out.writeObject(pubs);
-            out.close();
-        } catch (IOException e) {
-            LOG.error("Serialization Failed!");
-            LOG.error(e.toString());
-        }*/
 
         //build report with all publishers
         Workbook wb = ReportGenerator.writePublisherCheckUpReport(pubs);

@@ -33,10 +33,7 @@ public class RunPublisherReporting {
         ConfigurationProperties properties = new ConfigurationProperties(args);
         String appNexusUrl = properties.getPutneyUrl();
         String outputPath = properties.getOutputPath();
-        String appNexusUsername = properties.getAppNexusUsername();
-        String appNexusPassword = properties.getAppNexusPassword();
-        int anPartitionSize = properties.getPartitionSize();
-        Duration requestDelayInSeconds = properties.getRequestDelayInSeconds();
+
         AppNexusService anConn = new AppNexusService(appNexusUrl
         );
 

@@ -93,8 +93,6 @@ public class RunDiscrepancyReport {
         ConfigurationProperties properties = new ConfigurationProperties(args);
         String appNexusUrl = properties.getPutneyUrl();
         String outputPath = properties.getOutputPath();
-        String appNexusUsername = properties.getAppNexusUsername();
-        String appNexusPassword = properties.getAppNexusPassword();
         AppNexusService anConn = new AppNexusService(appNexusUrl
         );
         MxService mxConn = new MxService(properties.getMxUrl(), properties.getMxUsername(), properties.getMxPassword());

@@ -68,23 +68,6 @@ public class RunDailyCheckUps {
         APPNEXUS_PARTITION_SIZE = properties.getPartitionSize();
         APPNEXUS_REQUEST_DELAY = properties.getRequestDelayInSeconds();
 
-        //for faster debugging
-        boolean development = false;
-        if (development) {
-            try{
-                FileInputStream door = new FileInputStream("/Users/charronkyle/Desktop/ReportData/TargetSegmentingData.ser");
-                ObjectInputStream reader = new ObjectInputStream(door);
-                dataStore.setLiveCampaignArrayList((ArrayList<Campaign>) reader.readObject());
-                //Write xls file for all target segment reports
-                XlsWriter.writeAllReports(dataStore.getLiveCampaignArrayList(), fileOutputPath);
-                System.exit(0);
-
-            }catch (IOException e){
-                e.printStackTrace();
-                System.exit(1);
-            }
-        }
-
         //Get All Campaigns from MX, save them into list
         dataStore.setCampaignArrayList(mxConn.requestAllCampaigns());
         LOG.info(dataStore.getLiveCampaignArrayList().size() + " campaigns are live.");
@@ -110,15 +93,5 @@ public class RunDailyCheckUps {
         //Write xls file for all target segment reports
         XlsWriter.writeAllReports(dataStore.getLiveCampaignArrayList(), fileOutputPath);
 
-       // Serialize data object to a file
-        /*try {
-            ObjectOutputStream out = new ObjectOutputStream
-                    (new FileOutputStream("/Users/charronkyle/Desktop/ReportData/TargetSegmentingData.ser"));
-            out.writeObject(dataStore.getLiveCampaignArrayList());
-            out.close();
-        } catch (IOException e) {
-            LOG.error("Serialization Failed!");
-            LOG.error(e.toString());
-        }*/
     }
 }

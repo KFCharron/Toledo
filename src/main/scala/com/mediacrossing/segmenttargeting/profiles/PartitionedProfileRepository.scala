@@ -29,7 +29,7 @@ class PartitionedProfileRepository(http: HTTPRequest,
           var json = ""
           while (!success) {
             try {
-              json = http.getRequest("http://api.appnexus.com/profile?id=" + profileId + "&advertiser_id=" + advertiserId)
+              json = http.getRequest("http://putney-01.mx:8888/an/profile?id=" + profileId + "&advertiser_id=" + advertiserId)
               success = true
 
               log.info("Received profile [profileId = " + profileId +
@@ -42,8 +42,6 @@ class PartitionedProfileRepository(http: HTTPRequest,
                   ", advertiserId = " + advertiserId + "], request attempts = " +
                   requestCount, e)
                 requestCount = requestCount + 1
-
-                Thread.sleep(65 * 1000)
             }
           }
 
