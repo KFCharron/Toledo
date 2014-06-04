@@ -876,6 +876,7 @@ public class AppNexusService {
                 "        \"report_interval\":\"lifetime\",\n" +
                 "        \"format\":\"csv\",\n" +
                 "        \"emails\":[\n" +
+                "\"kyle.charron@mediacrossing.com\"" +
                 "        ],\n" +
                 "        \"orders\": [\n" +
                 "                    {\n" +
@@ -1211,6 +1212,12 @@ public class AppNexusService {
 
     private List<String[]> downloadReportWhenReady(String json) throws Exception {
         CSVReader reader = new CSVReader(new StringReader(json));
-        return reader.readAll();
+
+        List<String[]> result = new ArrayList<>();
+        String[] nextLine;
+        while ((nextLine = reader.readNext()) != null) {
+            result.add(nextLine);
+        }
+        return result;
     }
 }

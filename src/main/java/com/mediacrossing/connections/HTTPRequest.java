@@ -1,6 +1,7 @@
 package com.mediacrossing.connections;
 
 import au.com.bytecode.opencsv.CSVReader;
+import com.fasterxml.jackson.core.util.BufferRecycler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scala.Tuple2;
@@ -70,12 +71,6 @@ public class HTTPRequest implements Request {
         URL obj = new URL(url);
         HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 
-        if (requestProperties != null) {
-            for (Tuple2<String, String> kv : requestProperties) {
-                con.setRequestProperty(kv._1(), kv._2());
-            }
-        }
-
         //add request header
         con.setRequestMethod("POST");
         con.setRequestProperty("Content-Type", "application/json");
@@ -97,16 +92,14 @@ public class HTTPRequest implements Request {
 
         BufferedReader in = new BufferedReader(
                 new InputStreamReader(con.getInputStream()));
+
         String inputLine;
         StringBuilder response = new StringBuilder();
-
         while ((inputLine = in.readLine()) != null) {
-            response.append(inputLine);
+            response.append(inputLine + "\n");
         }
         in.close();
 
-        //Received JSON data
-        LOG.debug(response.toString());
         return response.toString();
     }
 
