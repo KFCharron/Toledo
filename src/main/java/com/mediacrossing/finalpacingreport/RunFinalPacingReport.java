@@ -14,7 +14,6 @@ import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import play.libs.F;
-import scala.concurrent.duration.Duration;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -109,7 +108,7 @@ public class RunFinalPacingReport {
         Workbook wb = PacingReportWriter.writeReport(finalAdvertisers, flightNames);
         LocalDate now = new LocalDate(DateTimeZone.UTC);
         FileOutputStream fileOut =
-                new FileOutputStream(new File(outputPath, "Daily_Pacing_Report_"
+                new FileOutputStream(new File(outputPath, "Daily_Pacing_Report_Yesterday_"
                         + now.toString() + ".xls"));
         wb.write(fileOut);
         fileOut.close();

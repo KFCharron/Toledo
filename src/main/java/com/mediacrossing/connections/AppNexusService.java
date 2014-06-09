@@ -876,7 +876,6 @@ public class AppNexusService {
                 "        \"report_interval\":\"lifetime\",\n" +
                 "        \"format\":\"csv\",\n" +
                 "        \"emails\":[\n" +
-                "\"kyle.charron@mediacrossing.com\"" +
                 "        ],\n" +
                 "        \"orders\": [\n" +
                 "                    {\n" +
