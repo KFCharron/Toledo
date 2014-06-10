@@ -91,15 +91,15 @@ object RunBuyerBrandReport extends App{
 
     new Publisher(p.id, p.name, {
       val placements = mutable.Set[(String, String)]()
-      brandRows.foreach(r =>placements.add(r.placementId, r.placementName))
-      buyerRows.foreach(r =>placements.add(r.placementId, r.placementName))
+      brandRows.foreach(r =>placements.add(r.placementId -> r.placementName))
+      buyerRows.foreach(r =>placements.add(r.placementId -> r.placementName))
       for {place <- placements} yield new Placement(place._1, place._2, {
         val brands = mutable.Set[(String, String)]()
-        brandRows.foreach(b => brands.add(b.id, b.name))
+        brandRows.foreach(b => brands.add(b.id -> b.name))
         for {b <- brands} yield new BuyerBrand(b._1, b._2,
           brandRows.filter(d => d.placementId == place._1 && d.id == b._1))}, {
         val buyers = mutable.Set[(String, String)]()
-        buyerRows.foreach(b => buyers.add(b.id, b.name))
+        buyerRows.foreach(b => buyers.add(b.id -> b.name))
         for {b <- buyers} yield new BuyerBrand(b._1, b._2,
           buyerRows.filter(d => d.placementId == place._1 && d.id == b._1))})
     }, {

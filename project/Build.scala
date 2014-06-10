@@ -6,12 +6,13 @@ import sbtrelease._
 import sbtrelease.ReleasePlugin.ReleaseKeys
 import org.scalastyle.sbt.ScalastylePlugin
 
-object BuildSettings {
-  lazy val releaseSettings = ReleasePlugin.releaseSettings ++ Seq(
-    ReleaseKeys.versionBump := Version.Bump.Minor
+object BuildSettings {    ReleaseKeys.versionBump := Version.Bump.Minor
   )
 
-  lazy val buildSettings210 = settings(_scalaVersion = "2.10.3", Seq("-unchecked", "-deprecation", "-feature"))
+  lazy val buildSettings210 =
+    settings(
+      _scalaVersion = "2.10.3",
+      Seq("-unchecked", "-deprecation", "-feature", "-Xlint"))
 
   private def settings(_scalaVersion: String, _scalacOptions: Seq[String]) =
     Defaults.defaultSettings ++
