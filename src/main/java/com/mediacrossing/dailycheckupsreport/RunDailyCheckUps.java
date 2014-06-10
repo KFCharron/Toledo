@@ -57,9 +57,6 @@ public class RunDailyCheckUps {
         DataStore dataStore = new DataStore();
         String fileOutputPath = properties.getOutputPath();
 
-        APPNEXUS_PARTITION_SIZE = properties.getPartitionSize();
-        APPNEXUS_REQUEST_DELAY = properties.getRequestDelayInSeconds();
-
         //Get All Campaigns from MX, save them into list
         dataStore.setCampaignArrayList(mxConn.requestAllCampaigns());
         LOG.info(dataStore.getLiveCampaignArrayList().size() + " campaigns are live.");
