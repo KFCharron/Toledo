@@ -10,8 +10,16 @@ import play.api.libs.json.JsSuccess
 import com.mediacrossing.connections.HTTPRequest
 import org.joda.time.{DateTimeZone, LocalDate, DateTime}
 import java.io.{File, FileOutputStream}
+import org.slf4j.LoggerFactory
 
 object RunChronosJobReport extends App {
+
+  val LOG = LoggerFactory.getLogger(RunChronosJobReport.getClass)
+  Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler {
+    def uncaughtException(t: Thread, e: Throwable) {
+      LOG.error(e.getMessage, e)
+    }
+  })
 
   val outPath = new ConfigurationProperties(args).getOutputPath
 
