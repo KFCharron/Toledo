@@ -7,11 +7,15 @@ import sbtrelease.ReleasePlugin.ReleaseKeys
 import org.scalastyle.sbt.ScalastylePlugin
 
 object BuildSettings {
-  lazy val releaseSettings = ReleasePlugin.releaseSettings ++ Seq(
-    ReleaseKeys.versionBump := Version.Bump.Minor
-  )
 
-  lazy val buildSettings210 = settings(_scalaVersion = "2.10.3", Seq("-unchecked", "-deprecation", "-feature"))
+  lazy val releaseSettings =
+    ReleasePlugin.releaseSettings ++
+      Seq(ReleaseKeys.versionBump := Version.Bump.Minor)
+
+  lazy val buildSettings210 =
+    settings(
+      _scalaVersion = "2.10.3",
+      Seq("-unchecked", "-deprecation", "-feature", "-Xlint"))
 
   private def settings(_scalaVersion: String, _scalacOptions: Seq[String]) =
     Defaults.defaultSettings ++
@@ -21,10 +25,10 @@ object BuildSettings {
         scalacOptions ++= _scalacOptions,
         testOptions in Test := Seq(Tests.Filter(s => s.endsWith("Spec"))))
 
-  lazy val standardSettings = 
-    buildSettings210 ++ 
-    releaseSettings ++ 
-    ScalastylePlugin.Settings
+  lazy val standardSettings =
+    buildSettings210 ++
+      releaseSettings ++
+      ScalastylePlugin.Settings
 
   lazy val customAssemblySettings = assemblySettings ++ Seq(
     mergeStrategy in assembly <<= (mergeStrategy in assembly) {
@@ -44,10 +48,10 @@ object BuildSettings {
       art =>
         art.copy(`classifier` = Some("assembly"))
     }, excludedJars in assembly <<= (fullClasspath in assembly) map { cp =>
-      cp filter {_.data.getName == "xml-apis-1.0.b2.jar"}
+      cp filter {
+        _.data.getName == "xml-apis-1.0.b2.jar"
+      }
     }) ++ addArtifact(artifact in(Compile, assembly), assembly)
-
-
 
 
   object Dependencies {
@@ -95,7 +99,7 @@ object TargetSegmentingBuild extends Build {
               guava,
               xerces,
               temp
-          )) ++
+            )) ++
         customAssemblySettings
   )
 }

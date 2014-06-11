@@ -5,21 +5,16 @@ import com.mediacrossing.connections.HTTPRequest;
 import com.mediacrossing.connections.MxService;
 import com.mediacrossing.dailycheckupsreport.profiles.ProfileRepository;
 import com.mediacrossing.properties.ConfigurationProperties;
-import com.mediacrossing.segmenttargeting.profiles.PartitionedProfileRepository;
+import com.mediacrossing.segmenttargeting.profiles.PutneyProfileRepository;
 import com.mediacrossing.segmenttargeting.profiles.TruncatedProfileRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scala.Tuple2;
-import scala.concurrent.duration.Duration;
-
-import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class RunDailyCheckUps {
 
-    private static int APPNEXUS_PARTITION_SIZE;
-    private static Duration APPNEXUS_REQUEST_DELAY;
     private static final Logger LOG = LoggerFactory.getLogger(RunDailyCheckUps.class);
 
     private static ProfileRepository development(HTTPRequest r) {
@@ -27,10 +22,7 @@ public class RunDailyCheckUps {
     }
 
     private static ProfileRepository production(HTTPRequest r) {
-        return new PartitionedProfileRepository(
-                r,
-                APPNEXUS_PARTITION_SIZE,
-                APPNEXUS_REQUEST_DELAY);
+        return new PutneyProfileRepository(r);
     }
 
     public static void registerLoggerWithUncaughtExceptions() {
@@ -64,9 +56,6 @@ public class RunDailyCheckUps {
         );
         DataStore dataStore = new DataStore();
         String fileOutputPath = properties.getOutputPath();
-
-        APPNEXUS_PARTITION_SIZE = properties.getPartitionSize();
-        APPNEXUS_REQUEST_DELAY = properties.getRequestDelayInSeconds();
 
         //Get All Campaigns from MX, save them into list
         dataStore.setCampaignArrayList(mxConn.requestAllCampaigns());

@@ -2,11 +2,12 @@ package com.mediacrossing.properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import scala.concurrent.duration.Duration;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
-import java.util.concurrent.TimeUnit;
 
 public class ConfigurationProperties {
 
@@ -14,10 +15,7 @@ public class ConfigurationProperties {
     private String mxUrl;
     private String mxUsername;
     private String mxPassword;
-    private int partitionSize;
-    private Duration requestDelayInSeconds;
     private String outputPath;
-    private String appNexusUrl;
 
 
     private static final Logger LOG = LoggerFactory.getLogger(ConfigurationProperties.class);
@@ -36,15 +34,10 @@ public class ConfigurationProperties {
         //set the properties
         if (!prop.isEmpty()) {
             putneyUrl = prop.getProperty("putneyUrl");
-            partitionSize = Integer.parseInt(prop.getProperty("partitionSize"));
-            requestDelayInSeconds = Duration
-                    .apply((Integer.parseInt(prop.getProperty("requestDelayInSeconds"))),
-                            TimeUnit.SECONDS);
             outputPath = prop.getProperty("outputPath");
             mxUrl = prop.getProperty("mxUrl");
             mxUsername = prop.getProperty("mxUsername");
             mxPassword = prop.getProperty("mxPassword");
-            appNexusUrl = prop.getProperty("appNexusUrl");
 
         } else {
             LOG.error("Properties File Failed To Load");
@@ -67,19 +60,8 @@ public class ConfigurationProperties {
         return mxPassword;
     }
 
-    public int getPartitionSize() {
-        return partitionSize;
-    }
-
-    public Duration getRequestDelayInSeconds() {
-        return requestDelayInSeconds;
-    }
-
     public String getOutputPath() {
         return outputPath;
     }
 
-    public String getAppNexusUrl() {
-        return appNexusUrl;
-    }
 }

@@ -6,7 +6,7 @@ import com.mediacrossing.connections.AppNexusService;
 import com.mediacrossing.connections.MxService;
 import com.mediacrossing.dailycheckupsreport.profiles.ProfileRepository;
 import com.mediacrossing.properties.ConfigurationProperties;
-import com.mediacrossing.segmenttargeting.profiles.PartitionedProfileRepository;
+import com.mediacrossing.segmenttargeting.profiles.PutneyProfileRepository;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -16,7 +16,6 @@ import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scala.Tuple2;
-import scala.concurrent.duration.Duration;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -38,13 +37,8 @@ public class RunLotameReport {
         );
     }
 
-    private static int APPNEXUS_PARTITION_SIZE;
-    private static Duration APPNEXUS_REQUEST_DELAY;
     private static ProfileRepository production(HTTPRequest r) {
-        return new PartitionedProfileRepository(
-                r,
-                APPNEXUS_PARTITION_SIZE,
-                APPNEXUS_REQUEST_DELAY);
+        return new PutneyProfileRepository(r);
     }
 
     public static void main(String[] args) throws Exception {
