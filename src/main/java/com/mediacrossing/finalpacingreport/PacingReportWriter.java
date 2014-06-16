@@ -95,7 +95,7 @@ public class PacingReportWriter {
         header.createCell(9).setCellValue("% Needed Delivered Yest.");
         header.createCell(10).setCellValue("New Daily Imps Needed");
         header.createCell(11).setCellValue("Past 7 Day Imps Delivery Avg");
-        header.createCell(12).setCellValue("% Needed / 7 Day Avg");
+        header.createCell(12).setCellValue("% Change Needed / 7 Day Avg");
 
         int rowCount = 1;
         for (String flightName : flightNames) {
