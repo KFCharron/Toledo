@@ -93,7 +93,6 @@ public class RunFinalPacingReport {
             PacingAdvertiser pacingAdvertiser = new PacingAdvertiser(a.getAdvertiserName(), a.getAdvertiserID());
             for (PacingLineItem l : activeLines) {
                 if (l.getAdvertiserId().equals(pacingAdvertiser.getId())) {
-                    // TODO Line Name
                     String lName = l.getName();
                     String flightName;
                     if (lName.contains("Radio")) flightName = "Radio";

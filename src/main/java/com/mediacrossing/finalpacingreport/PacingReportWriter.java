@@ -119,7 +119,6 @@ public class PacingReportWriter {
             for (PacingAdvertiser a : ads) {
                 for (PacingLineItem l : a.getLineList()) {
 
-                    // TODO Line Name
                     String lName = l.getName();
                     String flightType;
                     if (lName.contains("Radio")) flightType = "Radio";
