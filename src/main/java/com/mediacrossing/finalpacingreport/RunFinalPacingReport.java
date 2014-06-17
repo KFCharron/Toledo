@@ -93,9 +93,12 @@ public class RunFinalPacingReport {
             PacingAdvertiser pacingAdvertiser = new PacingAdvertiser(a.getAdvertiserName(), a.getAdvertiserID());
             for (PacingLineItem l : activeLines) {
                 if (l.getAdvertiserId().equals(pacingAdvertiser.getId())) {
+                    // TODO Line Name
                     String lName = l.getName();
-                    String[] parsed = lName.split("]");
-                    String flightName = parsed[1].substring(4, parsed[1].length());
+                    String flightName;
+                    if (lName.contains("Radio")) flightName = "Radio";
+                    else if (lName.contains("PreRoll")) flightName = "Video";
+                    else flightName = "Display";
                     flightNames.add(a.getAdvertiserName() + " - " + flightName);
                     pacingAdvertiser.getLineList().add(l);
                     if (l.getStartDate().isBefore(pacingAdvertiser.getStart())) pacingAdvertiser.setStart(l.getStartDate());

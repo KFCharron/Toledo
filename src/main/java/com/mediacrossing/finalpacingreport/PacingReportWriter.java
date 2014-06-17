@@ -119,10 +119,13 @@ public class PacingReportWriter {
             for (PacingAdvertiser a : ads) {
                 for (PacingLineItem l : a.getLineList()) {
 
+                    // TODO Line Name
                     String lName = l.getName();
-                    String[] parsed = lName.split("]");
-                    String fName = parsed[1].substring(4, parsed[1].length());
-                    String lineFlightName = a.getName() + " - " + fName;
+                    String flightType;
+                    if (lName.contains("Radio")) flightType = "Radio";
+                    else if (lName.contains("PreRoll")) flightType = "Video";
+                    else flightType = "Display";
+                    String lineFlightName = a.getName() + " - " + flightType;
 
                     if (lineFlightName.equals(flightName)) {
                         Row dataRow = summarySheet.createRow(rowCount++);
