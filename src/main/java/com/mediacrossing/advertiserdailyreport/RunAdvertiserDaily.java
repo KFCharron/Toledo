@@ -182,7 +182,7 @@ public class RunAdvertiserDaily {
                             data.setLifetimeBudget(li.getLifetimeBudget());
                             data.setLifetimeBudgetImps(li.getLifetimeImpBudget());
                             data.setStatus(li.getStatus());
-                            data.setDailyBudgetImps(li.getLifetimeImpBudget());
+                            data.setDailyBudgetImps(li.getDailyImpBudget());
                         }
                     }
 
