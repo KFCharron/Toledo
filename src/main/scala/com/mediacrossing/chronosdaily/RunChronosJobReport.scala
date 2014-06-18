@@ -1,4 +1,4 @@
-package com.mediacrossing
+package com.mediacrossing.chronosdaily
 
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
