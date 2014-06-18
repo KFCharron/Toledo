@@ -37,6 +37,8 @@ object RunChronosJobReport extends App {
     case JsSuccess(v, _) => v
   }
 
+  val failedJobs = jobs.filter(j => j.errorDate.isAfter(new DateTime().toDateMidnight))
+
 
   // For each job, list in wb
   val today = new DateTime().withTimeAtStartOfDay()
@@ -50,12 +52,38 @@ object RunChronosJobReport extends App {
   val jobFailureCount = jobs.count(j => j.errorDate.isAfter(today))
   header.createCell(0).setCellValue("Failed Jobs Today:")
   header.createCell(1).setCellValue(jobFailureCount)
-  val jobHeaders = sheet.createRow(3)
+
+  var rowCount = 3
+  if (failedJobs.size > 0) {
+    header = sheet.createRow(rowCount)
+    header.createCell(0).setCellValue("Today's Failed Jobs")
+    rowCount += 1
+    failedJobs.foreach(j => {
+      val row = sheet.createRow(rowCount)
+      row.createCell(0).setCellValue(j.name)
+      row.createCell(1).setCellValue(j.lastError)
+      row.createCell(2).setCellValue(j.lastSuccess)
+      row.createCell(3).setCellValue(j.scheduleRaw)
+      sheet.autoSizeColumn(0)
+      sheet.autoSizeColumn(1)
+      sheet.autoSizeColumn(2)
+      sheet.autoSizeColumn(3)
+      rowCount += 1
+    })
+  }
+
+  rowCount += 1
+  val allJobHeader = sheet.createRow(rowCount)
+  allJobHeader.createCell(0).setCellValue("All Jobs")
+
+  rowCount += 1
+
+  val jobHeaders = sheet.createRow(rowCount)
+  rowCount += 1
   jobHeaders.createCell(0).setCellValue("Name")
   jobHeaders.createCell(1).setCellValue("Last Error")
   jobHeaders.createCell(2).setCellValue("Last Success")
   jobHeaders.createCell(3).setCellValue("Schedule")
-  var rowCount = 4
   jobs.foreach(j => {
     val row = sheet.createRow(rowCount)
     row.createCell(0).setCellValue(j.name)
