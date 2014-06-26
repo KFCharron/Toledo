@@ -96,7 +96,7 @@ object TargetSegmentingBuild extends Build {
               jackson,
               oauth,
               guava,
-              xerces,
+              xerces
             )) ++
         customAssemblySettings
   )
