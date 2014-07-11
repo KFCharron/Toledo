@@ -19,6 +19,7 @@ import java.io.FileReader;
 import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
@@ -39,23 +40,29 @@ public class RunDmaUpdate {
         MxService mxConn = new MxService(anUrl);
         MxService mxApi = new MxService(properties.getMxUrl(), properties.getMxUsername(), properties.getMxPassword());
         ArrayList<Campaign> camps = mxApi.requestAllCampaigns();
+
         HashSet<String> campIds = new HashSet<>();
+//        for (Campaign c : camps) {
+//            if (c.getAdvertiserID().equals(advertiserId) && c.getName().contains("USA")) campIds.add(c.getId());
+//        }
 
 
-        CSVReader reader = new CSVReader(new FileReader("/Users/charronkyle/Desktop/DMA_removal_Regis_63014.csv"));
+        CSVReader reader = new CSVReader(new FileReader("/Users/charronkyle/Desktop/Regis_Whitelist_Campaigns.csv"));
         List<String[]> result = reader.readAll();
+        result.remove(0);
         for (String[] line : result) {
             campIds.add(line[0]);
         }
+
+        reader = new CSVReader(new FileReader("/Users/charronkyle/Desktop/city_list.csv"));
+        List<String[]> cities = reader.readAll();
+
         ArrayList<DmaCampaign> dmaCamps = new ArrayList<>();
 
         for (String id : campIds) {
             DmaCampaign d = new DmaCampaign(id);
-            for (String[] line : result) {
-                if (line[0].equals(d.getCampId())) {
-                    String num = line[1].substring(line[1].indexOf("(")+1, line[1].indexOf(")"));
-                    d.getDmas().add(Integer.parseInt(num));
-                }
+            for (String[] line : cities) {
+                d.getDmas().add(line[0]);
             }
             dmaCamps.add(d);
         }
@@ -73,27 +80,27 @@ public class RunDmaUpdate {
                     new Tuple2<String, String>(advertiserId, c.getProfileId()));
         }
 
-        final ProfileRepository profileRepository = production(anConn.requests);
+//        final ProfileRepository profileRepository = production(anConn.requests);
 
-        final List<Profile> profiles = profileRepository.findBy(advertiserIdAndProfileIds);
-
-        for (Profile p : profiles) {
-            for (DmaCampaign c : dmaCamps) {
-                if (c.getProfileId().equals(p.getId())) {
-                    for (DMATarget d : p.getGeographyTarget().getDmaTargetList()) {
-                        c.getDmas().add(Integer.parseInt(d.getDma()));
-                    }
-                }
-            }
-        }
+//        final List<Profile> profiles = profileRepository.findBy(advertiserIdAndProfileIds);
+//
+//        for (Profile p : profiles) {
+//            for (DmaCampaign c : dmaCamps) {
+//                if (c.getProfileId().equals(p.getId())) {
+//                    for (DMATarget d : p.getGeographyTarget().getDmaTargetList()) {
+//                        c.getDmas().add(d.getDma());
+//                    }
+//                }
+//            }
+//        }
 
         for (DmaCampaign c : dmaCamps) {
             String json = "{\n" +
                     "  \"profile\" : {\n" +
-                    "    \"dma_action\" : \"exclude\" ,\n" +
-                    "    \"dma_targets\" : [\n";
-            for (Integer dma : c.getDmas()) {
-                json = json.concat("{\"dma\" :\"" + dma.toString() + "\"},\n");
+                    "    \"city_action\" : \"include\" ,\n" +
+                    "    \"city_targets\" : [\n";
+            for (String dma : c.getDmas()) {
+                json = json.concat("{\"id\" :\"" + dma + "\"},\n");
             }
             json = json.substring(0, json.length()-2);
             json = json.concat("    ]\n" +

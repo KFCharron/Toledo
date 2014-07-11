@@ -6,13 +6,13 @@ public class DmaCampaign {
 
     private String campId;
     private String profileId;
-    private ArrayList<Integer> dmas = new ArrayList<>();
+    private ArrayList<String> dmas = new ArrayList<>();
 
     public DmaCampaign(String campId) {
         this.campId = campId;
     }
 
-    public ArrayList<Integer> getDmas() {
+    public ArrayList<String> getDmas() {
         return dmas;
     }
 
