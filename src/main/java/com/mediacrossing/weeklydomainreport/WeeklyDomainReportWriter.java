@@ -2,6 +2,7 @@ package com.mediacrossing.weeklydomainreport;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDate;
 
@@ -14,7 +15,7 @@ public class WeeklyDomainReportWriter {
 
     public static void writeReportToFile (ArrayList<Domain> domainList, String outputPath) throws IOException {
 
-        Workbook wb = new HSSFWorkbook();
+        Workbook wb = new XSSFWorkbook();
 
         Sheet sheet = wb.createSheet("Domain Performance");
 
@@ -103,7 +104,7 @@ public class WeeklyDomainReportWriter {
         LocalDate now = new LocalDate(DateTimeZone.UTC);
         FileOutputStream fileOut =
                 new FileOutputStream(new File(outputPath, "WeeklyDomainPerformanceReport_"
-                        +now.toString()+".xls"));
+                        +now.toString()+".xlsx"));
         wb.write(fileOut);
         fileOut.close();
     }

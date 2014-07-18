@@ -5,6 +5,7 @@ import com.mediacrossing.campaignbooks.DataParse;
 import com.mediacrossing.campaignbooks.LineItem;
 import com.mediacrossing.dailycheckupsreport.Campaign;
 import com.mediacrossing.dailycheckupsreport.JSONParse;
+import com.mediacrossing.dailycheckupsreport.SegmentGroupTarget;
 import com.mediacrossing.publisherreporting.Publisher;
 import com.mediacrossing.weeklyconversionreport.ConversionAdvertiser;
 import com.mediacrossing.weeklyconversionreport.ConversionParser;
@@ -47,6 +48,8 @@ public class MxService {
         String json = requests.getRequest(url + "/api/catalog/campaigns");
         return JSONParse.populateCampaignArrayList(json);
     }
+
+
 
     public ArrayList<Publisher> requestAllPublishers() throws Exception {
         String json = requests.getRequest(url + "/api/catalog/publishers");

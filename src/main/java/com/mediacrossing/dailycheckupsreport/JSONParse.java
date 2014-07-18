@@ -13,6 +13,7 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import scala.Tuple2;
 
 public class JSONParse {
 
@@ -246,6 +247,50 @@ public class JSONParse {
         }
 
         return newSegmentGroupTargetList;
+    }
+
+    public static ArrayList<Tuple2<String,ArrayList<SegmentGroupTarget>>> populateAllProfileSegmentGroupTargetList(String rawData) {
+        JsonElement jelement = new JsonParser().parse(rawData);
+        JsonObject jobject = jelement.getAsJsonObject();
+        jobject = jobject.getAsJsonObject("response");
+        JsonArray jarray = jobject.getAsJsonArray("profiles");
+        ArrayList<Tuple2<String,ArrayList<SegmentGroupTarget>>> masterList = new ArrayList<>();
+        for (JsonElement je : jarray) {
+            jobject = je.getAsJsonObject();
+            String proId = jobject.get("id").getAsString();
+            ArrayList<SegmentGroupTarget> newSegmentGroupTargetList = new ArrayList<>();
+            String segmentGroupBoolOp = jobject.get("segment_boolean_operator").toString().replace("\"", "");
+            if (!jobject.get("segment_group_targets").isJsonNull()) {
+                //Move to segment target array
+                JsonArray segArray = jobject.getAsJsonArray("segment_group_targets");
+                for (int x = 0; x < segArray.size(); x++) {
+                    JsonObject jsonObject = segArray.get(x).getAsJsonObject();
+                    String segmentBoolOp = jsonObject.get("boolean_operator").toString().replace("\"", "");
+                    ArrayList<Segment> newSegmentArrayList = new ArrayList<>();
+                    if (!jsonObject.get("segments").isJsonNull()) {
+                        JsonArray karray = jsonObject.getAsJsonArray("segments");
+                        for (int y = 0; y < karray.size(); y++) {
+
+                            JsonObject kobject = karray.get(y).getAsJsonObject();
+                            String action = kobject.get("action").toString().replace("\"", "");
+                            String id = kobject.get("id").toString().replace("\"", "");
+                            String name = kobject.get("name").toString().replace("\"", "");
+                            String code = kobject.get("code").toString().replace("\"", "");
+                            Segment newSegment = new Segment(id, name, action, segmentBoolOp, code);
+                            newSegmentArrayList.add(y, newSegment);
+                        }
+                    }
+                    SegmentGroupTarget newSegmentGroupTarget =
+                            new SegmentGroupTarget(segmentGroupBoolOp, newSegmentArrayList);
+                    newSegmentGroupTargetList.add(x, newSegmentGroupTarget);
+                }
+
+            }
+            masterList.add(new Tuple2<>(proId, newSegmentGroupTargetList));
+        }
+
+
+        return masterList;
     }
 
     public static String obtainLineItemName (String rawData, String lineItemId) {

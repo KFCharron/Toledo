@@ -5,6 +5,7 @@ import com.mediacrossing.campaignbooks.Campaign;
 import com.mediacrossing.campaignbooks.LineItem;
 import com.mediacrossing.campaignbooks.DataParse;
 import com.mediacrossing.dailycheckupsreport.JSONParse;
+import com.mediacrossing.dailycheckupsreport.SegmentGroupTarget;
 import com.mediacrossing.discrepancyreport.Creative;
 import com.mediacrossing.monthlybillingreport.BillingAdvertiser;
 import com.mediacrossing.monthlybillingreport.BillingCampaign;
@@ -17,8 +18,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scala.Tuple2;
 import scala.concurrent.duration.Duration;
+import scalax.io.support.FileUtils;
 
-import java.io.StringReader;
+import java.io.*;
+import java.nio.charset.Charset;
 import java.util.*;
 
 public class AppNexusService {
@@ -43,6 +46,11 @@ public class AppNexusService {
     public ArrayList<Publisher> requestPublishers() throws Exception {
         String json = requests.getRequest(url + "/publisher");
         return DataParse.parsePublisherIdAndName(json);
+    }
+
+    public ArrayList<Tuple2<String,ArrayList<SegmentGroupTarget>>> requestAllProfileSegments() throws Exception {
+        String json = requests.getRequest(url + "/profile");
+        return JSONParse.populateAllProfileSegmentGroupTargetList(json);
     }
 
     public ArrayList<String> requestAllProfilesForAdvertiser(String adId) throws Exception {
@@ -132,6 +140,22 @@ public class AppNexusService {
                 "    \"timezone\": \"EST\",\n" +
                 "    \"start_date\": \"" + earliest.toString("YYYY-MM-dd") + "\"," +
                 "    \"end_date\": \"" + new DateTime().toString("YYYY-MM-dd") + "\"" +
+                "  }\n" +
+                "}";
+        String json = requests.postRequest(url+"/report", jsonPost);
+        return downloadReportWhenReady(json);
+    }
+
+    public List<String[]> getLifetimeCampaignImpsAndSpend() throws Exception {
+        String jsonPost = "{\n" +
+                "  \"report\": {\n" +
+                "    \"report_type\": \"network_analytics\",\n" +
+                "    \"columns\" : [\n" +
+                "      \"advertiser_id\",\n" +
+                "      \"imps\",\n" +
+                "    ],\n" +
+                "    \"timezone\": \"EST\",\n" +
+                "    \"report_interval\": \"yesterday\"" +
                 "  }\n" +
                 "}";
         String json = requests.postRequest(url+"/report", jsonPost);
@@ -256,6 +280,49 @@ public class AppNexusService {
 
         String json = requests.postRequest(url+"/report", jsonPost);
         return ResponseParser.parseBillingReport(downloadReportWhenReady(json));
+    }
+
+    public List<String[]> requestAnalyticsReport() throws Exception {
+        DateTime today = new DateTime().withTimeAtStartOfDay();
+        DateTime startDate = today.minusDays(31);
+        DateTime endDate = today;
+        String jsonPost = "{\n" +
+                "    \"report\":\n" +
+                "    {\n" +
+                "        \"report_type\": \"network_analytics\",\n" +
+                "        \"columns\": [\n" +
+                "            \"campaign_id\",\n" +
+                "            \"campaign_name\",\n" +
+                "            \"line_item_id\",\n" +
+                "            \"line_item_name\",\n" +
+                "            \"advertiser_id\",\n" +
+                "            \"advertiser_name\",\n" +
+                "            \"campaign_type\",\n" +
+                "            \"imps\",\n" +
+                "            \"clicks\",\n" +
+                "            \"total_convs\",\n" +
+                "            \"cost\",\n" +
+                "            \"revenue\",\n" +
+                "            \"seller_member_name\",\n" +
+                "            \"day\"\n" +
+                "        ],\n" +
+                "        \"start_date\": \""+ startDate.toString("YYYY-MM-dd") + "\",\n" +
+                "        \"end_date\": \"" + endDate.toString("YYYY-MM-dd") + "\",\n" +
+                "        \"timezone\": \"EST5EDT\"\n" +
+                "    }\n" +
+                "}";
+        String json = new Scanner(new File("/users/charronkyle/Desktop/pnl_json.txt")).useDelimiter("\\A").next();
+
+//        String json = requests.postRequest(url+"/report", jsonPost);
+//        LOG.debug("Received Data: Writing To File");
+//        File file = new File("/users/charronkyle/Desktop/pnl_json.txt");
+//        file.createNewFile();
+//        FileWriter fw = new FileWriter(file.getAbsoluteFile());
+//        BufferedWriter bw = new BufferedWriter(fw);
+//        bw.write(json);
+//        bw.close();
+
+        return downloadReportWhenReady(json);
     }
 
     public ArrayList<ImpType> requestPublisherBillingReport(String publisherId, String interval) throws Exception {

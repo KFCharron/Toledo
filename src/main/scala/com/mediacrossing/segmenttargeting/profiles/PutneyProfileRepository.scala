@@ -22,7 +22,7 @@ class PutneyProfileRepository(http: HTTPRequest) extends ProfileRepository {
         var json = ""
         while (!success) {
           try {
-            json = http.getRequest("http://putney-01.mx:8888/an/profile?id=" + profileId + "&advertiser_id=" + advertiserId)
+            json = http.getRequest("http://localhost:8888/an/profile?id=" + profileId + "&advertiser_id=" + advertiserId)
             success = true
 
             log.info("Received profile [profileId = " + profileId +

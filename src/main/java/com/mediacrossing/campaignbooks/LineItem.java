@@ -39,7 +39,7 @@ public class LineItem implements Serializable {
         if(!startDate.equals("null") && !endDate.equals("null")) {
             this.startDateTime = new DateTime(formatter.parseDateTime(startDate));
             this.endDateTime = new DateTime(formatter.parseDateTime(endDate));
-        }
+        } else this.endDateTime = new DateTime(1);
 
         Duration startToEnd = new Duration(startDateTime, endDateTime);
         DateTime now = new DateTime();

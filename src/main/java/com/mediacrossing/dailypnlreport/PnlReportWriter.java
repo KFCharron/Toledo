@@ -669,8 +669,6 @@ public class PnlReportWriter {
 
         for (int x = 0; x <= 50; x++) advertiserSummary.autoSizeColumn(x);
 
-        //TODO *********** Publisher Overview, Publisher list, each individual pub
-
         CellStyle pubHeadStyle = wb.createCellStyle();
         Font pubHeadFont = wb.createFont();
         pubHeadFont.setColor(IndexedColors.WHITE.getIndex());

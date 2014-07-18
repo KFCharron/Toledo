@@ -19,6 +19,29 @@ public class Campaign implements Serializable {
     private String lineItemName;
     private float maxBid;
     private float baseBid;
+    private ArrayList<SegmentGroupTarget> targets = new ArrayList<>();
+    private int imps;
+    private float spend;
+
+    public int getImps() {
+        return imps;
+    }
+
+    public void setImps(int imps) {
+        this.imps = imps;
+    }
+
+    public float getSpend() {
+        return spend;
+    }
+
+    public void setSpend(float spend) {
+        this.spend = spend;
+    }
+
+    public ArrayList<SegmentGroupTarget> getTargets() {
+        return targets;
+    }
 
     public String getStartDate() {
         return startDate;

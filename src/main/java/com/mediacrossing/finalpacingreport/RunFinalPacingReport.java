@@ -64,7 +64,7 @@ public class RunFinalPacingReport {
         ArrayList<PacingLineItem> activeLines = new ArrayList<>();
 
         for (PacingLineItem l : allLines)
-            if (l.getEndDate().isAfter(today) && l.getStartDate().isBefore(today))
+            if (l.getEndDate().plusDays(2).isAfter(today) && l.getStartDate().minusDays(2).isBefore(today))
                 activeLines.add(l);
 
         // Grab Earliest Start
@@ -94,11 +94,8 @@ public class RunFinalPacingReport {
             for (PacingLineItem l : activeLines) {
                 if (l.getAdvertiserId().equals(pacingAdvertiser.getId())) {
                     String lName = l.getName();
-                    String flightName;
-                    if (lName.contains("Radio")) flightName = "Radio";
-                    else if (lName.contains("PreRoll")) flightName = "Video";
-                    else flightName = "Display";
-                    flightNames.add(a.getAdvertiserName() + " - " + flightName);
+                    String[] parsed = lName.split("]");
+                    flightNames.add(a.getAdvertiserName() + " - " + parsed[1].substring(4));
                     pacingAdvertiser.getLineList().add(l);
                     if (l.getStartDate().isBefore(pacingAdvertiser.getStart())) pacingAdvertiser.setStart(l.getStartDate());
                     if (l.getEndDate().isAfter(pacingAdvertiser.getEnd())) pacingAdvertiser.setEnd(l.getEndDate());
