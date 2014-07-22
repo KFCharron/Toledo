@@ -918,6 +918,7 @@ public class AppNexusService {
                 "}";
 
         String json = requests.postRequest(url+"/report?advertiser_id="+adId,jsonPost);
+        System.out.println(json);
         return downloadReportWhenReady(json);
     }
 

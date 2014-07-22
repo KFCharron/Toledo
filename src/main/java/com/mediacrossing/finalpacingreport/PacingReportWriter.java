@@ -169,6 +169,7 @@ public class PacingReportWriter {
                         // Imps left before yesterday
                         int impsLeft = l.getLifetimeBudget() - pastDelivery;
                         int daysLeft = totalDays - daysPassed + 1;
+                        if (daysLeft < 1) daysLeft = 1;
                         int dailyBudget = impsLeft / daysLeft;
 
                         // Imps needed yesterday
@@ -378,6 +379,7 @@ public class PacingReportWriter {
                         // Imps left before yesterday
                         int impsLeft = l.getLifetimeBudget() - pastDelivery;
                         int daysLeft = totalDays - daysPassed + 1;
+                        if (daysLeft < 1) daysLeft = 1;
                         int dailyBudget = impsLeft / daysLeft;
 
                         // Imps needed yesterday
@@ -464,7 +466,7 @@ public class PacingReportWriter {
             float totalPercentNeededVsSevenDay = (float)totalNeededYesterday / totalSevenDayAverage;
 
 
-            Row totalRow = summarySheet.createRow(rowCount++);
+            Row totalRow = troubleSheet.createRow(rowCount++);
             totalRow.createCell(0).setCellValue("Flight Totals: ");
             totalRow.createCell(1);
             totalRow.createCell(2);
@@ -483,7 +485,7 @@ public class PacingReportWriter {
             totalRow.getCell(9).setCellStyle(percentage);
             totalRow.getCell(12).setCellStyle(percentage);
 
-            int totalFlightDaysPassed = (int)new Duration(flightStart, new DateTime().withTimeAtStartOfDay().plusDays(1)).getStandardDays();
+            int totalFlightDaysPassed = (int)new Duration(flightStart, new DateTime().withTimeAtStartOfDay()).getStandardDays();
             int totalFlightDays = (int)new Duration(flightStart, flightEnd).getStandardDays();
             totalRow.createCell(3).setCellValue((float)totalFlightDaysPassed / totalFlightDays);
             totalRow.getCell(3).setCellStyle(percentage);
