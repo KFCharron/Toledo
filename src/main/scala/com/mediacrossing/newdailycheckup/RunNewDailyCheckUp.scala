@@ -39,8 +39,7 @@ object RunNewDailyCheckUp extends App {
 
   val pros = groupByAdvert.map(m => {
     // Request Profiles for Advertiser
-    // TODO CHANGE URL BEFORE RELEASE
-    val json = anConn.requests.getRequest("http://localhost:8888/an/profile?advertiser_id=" + m._1)
+    val json = anConn.requests.getRequest(props.getPutneyUrl + "/profile?advertiser_id=" + m._1)
     JSONParse.parseProfiles(json).toList
   })
     .flatten
