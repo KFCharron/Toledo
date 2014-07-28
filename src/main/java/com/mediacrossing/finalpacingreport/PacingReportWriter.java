@@ -124,7 +124,11 @@ public class PacingReportWriter {
 
                     String lName = l.getName();
                     String[] parsed = lName.split("]");
-                    String lineFlightName = a.getName() + " - " + parsed[1].substring(4);
+                    String type;
+                    if (lName.contains("Audio")) type = "Radio";
+                    else if (lName.contains("PreRoll")) type = "Video";
+                    else type = "Display";
+                    String lineFlightName = a.getName() + " - " + parsed[1].substring(4) + " (" + type + ")";
 
                     if (lineFlightName.equals(flightName)) {
 
@@ -334,7 +338,11 @@ public class PacingReportWriter {
 
                     String lName = l.getName();
                     String[] parsed = lName.split("]");
-                    String lineFlightName = a.getName() + " - " + parsed[1].substring(4);
+                    String type;
+                    if (lName.contains("Audio")) type = "Radio";
+                    else if (lName.contains("PreRoll")) type = "Video";
+                    else type = "Display";
+                    String lineFlightName = a.getName() + " - " + parsed[1].substring(4) + " (" + type + ")";
 
                     if (lineFlightName.equals(flightName)) {
 
