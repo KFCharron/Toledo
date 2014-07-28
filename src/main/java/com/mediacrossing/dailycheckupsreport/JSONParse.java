@@ -4,6 +4,7 @@ import com.google.gson.*;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import com.mediacrossing.publisherreporting.Publisher;
@@ -18,6 +19,148 @@ import scala.Tuple2;
 public class JSONParse {
 
     private static final Logger LOG = LoggerFactory.getLogger(JSONParse.class);
+
+    public static List<Profile> parseProfiles(String json) {
+
+        JsonElement jEl = new JsonParser().parse(json);
+        JsonObject jOb = jEl.getAsJsonObject();
+        jOb = jOb.getAsJsonObject("response");
+        JsonArray jAr = jOb.getAsJsonArray("profiles");
+        List<Profile> proList = new ArrayList<>();
+        for (JsonElement p : jAr) {
+            Profile pro = new Profile();
+            JsonObject proOb = p.getAsJsonObject();
+
+            // ID
+            pro.setId(proOb.get("id").toString());
+
+            // Last Modified
+            String dateString = proOb.get("last_modified").toString().replace("\"", "");
+            DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+            pro.setLastModified(new DateTime(dtf.parseDateTime(dateString), DateTimeZone.UTC));
+            
+            // Frequency Target
+            String maxDayImps = proOb.get("max_day_imps").toString();
+            String maxLifetimeImps = proOb.get("max_lifetime_imps").toString();
+            String maxPageImps = proOb.get("max_page_imps").toString();
+            String maxSessionImps = proOb.get("max_session_imps").toString();
+            String minMinPerImp = proOb.get("min_minutes_per_imp").toString();
+            String minSessionImps = proOb.get("min_session_imps").toString();
+
+            pro.setFrequencyTarget(new FrequencyTarget(maxLifetimeImps, minSessionImps, maxSessionImps,
+                    maxDayImps, minMinPerImp, maxPageImps));
+            
+            // Daypart Target
+            ArrayList<DaypartTarget> newDaypartTarget = new ArrayList<DaypartTarget>();
+            if (!proOb.get("daypart_targets").isJsonNull()) {
+                JsonArray karray = proOb.getAsJsonArray("daypart_targets");
+                for (int y = 0; y < karray.size(); y++) {
+                    JsonObject kobject = karray.get(y).getAsJsonObject();
+                    //add variables to DaypartTarget
+                    String day = kobject.get("day").toString().replace("\"", "");
+                    int start = kobject.get("start_hour").getAsInt();
+                    int end = kobject.get("end_hour").getAsInt();
+                    DaypartTarget newDaypart = new DaypartTarget(day, start, end);
+                    //add DaypartTargat to daypartTargetList
+                    newDaypartTarget.add(y, newDaypart);
+                }
+            }
+            pro.setDaypartTargetList(newDaypartTarget);
+            
+            // Geo Target
+            ArrayList<CountryTarget> countryTargetList = new ArrayList<CountryTarget>();
+            if (!proOb.get("country_targets").isJsonNull()) {
+                JsonArray karray = proOb.getAsJsonArray("country_targets");
+
+                for (int z = 0; z < karray.size(); z++) {
+                    JsonObject lobject = karray.get(z).getAsJsonObject();
+                    String country = lobject.get("country").toString().replace("\"", "");
+                    String name = lobject.get("name").toString().replace("\"", "");
+                    CountryTarget newCountry = new CountryTarget(country, name);
+                    countryTargetList.add(z, newCountry);
+                }
+
+            }
+
+            //set country action
+            String countryAction = proOb.get("country_action").toString().replace("\"", "");
+
+            //Create new dma list
+            ArrayList<DMATarget> dmaTargetList = new ArrayList<DMATarget>();
+
+            //Check for null value
+            if (!proOb.get("dma_targets").isJsonNull()) {
+                //Move to dma target array
+                JsonArray karray = proOb.getAsJsonArray("dma_targets");
+
+                for (int i = 0; i < karray.size(); i++) {
+                    JsonObject pobject = karray.get(i).getAsJsonObject();
+                    String dma = pobject.get("dma").toString().replace("\"", "");
+                    String name = pobject.get("name").toString().replace("\"", "");
+                    DMATarget newDMATarget = new DMATarget(dma, name);
+                    dmaTargetList.add(i, newDMATarget);
+                }
+
+            }
+
+            //set dma action
+            String dmaAction = proOb.get("dma_action").toString().replace("\"", "");
+
+            //Create new zip target list
+            ArrayList<ZipTarget> zipTargetList = new ArrayList<ZipTarget>();
+
+            if (!proOb.get("zip_targets").isJsonNull()) {
+                //Move to zip target array
+                JsonArray zarray = proOb.getAsJsonArray("zip_targets");
+
+                for (int a = 0; a < zarray.size(); a++) {
+                    JsonObject zobject = zarray.get(a).getAsJsonObject();
+                    String fromZip = zobject.get("from_zip").toString().replace("\"", "");
+                    String toZip = zobject.get("to_zip").toString().replace("\"", "");
+                    ZipTarget newZipTarget = new ZipTarget(fromZip, toZip);
+                    zipTargetList.add(a, newZipTarget);
+
+                }
+            }
+
+            pro.setGeographyTarget(new GeographyTarget(countryTargetList, dmaTargetList, countryAction, dmaAction, zipTargetList));
+            
+            // Segment Target
+            ArrayList<SegmentGroupTarget> newSegmentGroupTargetList = new ArrayList<SegmentGroupTarget>();
+            String segmentGroupBoolOp = proOb.get("segment_boolean_operator").toString().replace("\"", "");
+            if (!proOb.get("segment_group_targets").isJsonNull()) {
+                //Move to segment target array
+                JsonArray jarray = proOb.getAsJsonArray("segment_group_targets");
+                for (int x = 0; x < jarray.size(); x++) {
+
+                    JsonObject jsonObject = jarray.get(x).getAsJsonObject();
+                    String segmentBoolOp = jsonObject.get("boolean_operator").toString().replace("\"", "");
+                    ArrayList<Segment> newSegmentArrayList = new ArrayList<Segment>();
+                    if (!jsonObject.get("segments").isJsonNull()) {
+                        JsonArray karray = jsonObject.getAsJsonArray("segments");
+                        for (int y = 0; y < karray.size(); y++) {
+
+                            JsonObject kobject = karray.get(y).getAsJsonObject();
+                            String action = kobject.get("action").toString().replace("\"", "");
+                            String id = kobject.get("id").toString().replace("\"", "");
+                            String name = kobject.get("name").toString().replace("\"", "");
+                            String code = kobject.get("code").toString().replace("\"", "");
+                            Segment newSegment = new Segment(id, name, action, segmentBoolOp, code);
+                            newSegmentArrayList.add(y, newSegment);
+                        }
+                    }
+                    SegmentGroupTarget newSegmentGroupTarget =
+                            new SegmentGroupTarget(segmentGroupBoolOp, newSegmentArrayList);
+                    newSegmentGroupTargetList.add(x, newSegmentGroupTarget);
+                }
+
+            }
+            pro.setSegmentGroupTargets(newSegmentGroupTargetList);
+
+            proList.add(pro);
+        }
+        return proList;
+    }
 
     public static String obtainReportId (String json) {
         JsonElement jelement = new JsonParser().parse(json);

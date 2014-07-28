@@ -59,7 +59,6 @@ public class HTTPRequest implements Request {
         if (rawJSON.isEmpty()) {
             LOG.error("No JSON received.");
         }
-        LOG.debug(rawJSON);
         if (responseCode != 200) {
             LOG.error("Exiting Program Due to Non-200");
         }
