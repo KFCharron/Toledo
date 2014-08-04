@@ -61,6 +61,31 @@ public class WeeklyDomainReportWriter {
         int rowCount = 1;
 
         for (Domain d : domainList) {
+
+            if (rowCount % 65000 == 0) {
+                sheet = wb.createSheet("Domains (Continued)");
+                header = sheet.createRow(0);
+                header.createCell(0).setCellValue("Domain");
+                header.createCell(1).setCellValue("Revenue");
+                header.createCell(2).setCellValue("Clicks");
+                header.createCell(3).setCellValue("ClickThrough %");
+                header.createCell(4).setCellValue("ConvsPerMM");
+                header.createCell(5).setCellValue("ConvsRate");
+                header.createCell(6).setCellValue("Cost eCPA");
+                header.createCell(7).setCellValue("Cost eCPC");
+                header.createCell(8).setCellValue("CPM");
+                header.createCell(9).setCellValue("CTR");
+                header.createCell(10).setCellValue("Imps");
+                header.createCell(11).setCellValue("Media Cost");
+                header.createCell(12).setCellValue("Post Click Convs");
+                header.createCell(13).setCellValue("Post Click Conv Rate");
+                header.createCell(14).setCellValue("Post View Convs");
+                header.createCell(15).setCellValue("Post View Convs Rate");
+                header.createCell(16).setCellValue("Profit");
+                header.createCell(17).setCellValue("Profit eCPM");
+                rowCount = 1;
+            }
+
             Row data = sheet.createRow(++rowCount);
             data.createCell(0).setCellValue(d.getName());
             data.createCell(1).setCellValue(d.getBookedRevenue());
@@ -98,13 +123,15 @@ public class WeeklyDomainReportWriter {
             data.getCell(4).setCellStyle(decimal);
         }
 
-        for (int x = 0; x < 18; x++) sheet.autoSizeColumn(x);
+        for (int z = 0; z < wb.getNumberOfSheets(); z++) {
+            for (int x = 0; x < 18; x++) wb.getSheetAt(z).autoSizeColumn(x);
+        }
 
         //Export file
         LocalDate now = new LocalDate(DateTimeZone.UTC);
         FileOutputStream fileOut =
                 new FileOutputStream(new File(outputPath, "WeeklyDomainPerformanceReport_"
-                        +now.toString()+".xlsx"));
+                        +now.toString()+".xls"));
         wb.write(fileOut);
         fileOut.close();
     }
