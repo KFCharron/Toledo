@@ -21,7 +21,8 @@ public class JSONParse {
     private static final Logger LOG = LoggerFactory.getLogger(JSONParse.class);
 
     public static List<Profile> parseProfiles(String json) {
-
+        // FIXME DEBUG
+        //System.out.println(json);
         JsonElement jEl = new JsonParser().parse(json);
         JsonObject jOb = jEl.getAsJsonObject();
         jOb = jOb.getAsJsonObject("response");

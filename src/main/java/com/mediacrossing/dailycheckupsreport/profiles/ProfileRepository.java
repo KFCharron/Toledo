@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface ProfileRepository {
 
-    List<Profile> findBy(List<Tuple2<String, String>> advertiserIdAndProfileIds);
+    List<Profile> findBy(List<Tuple2<String, String>> advertiserIdAndProfileIds, String putneyUrl);
 }

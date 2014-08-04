@@ -80,7 +80,7 @@ public class RunLotameReport {
                     new Tuple2<String, String>(c.getAdvertiserID(), c.getProfileID()));
         }
 
-        final List<Profile> profiles = profileRepository.findBy(advertiserIdAndProfileIds);
+        final List<Profile> profiles = profileRepository.findBy(advertiserIdAndProfileIds, properties.getPutneyUrl());
 
         for (Campaign c : lotameCamps) {
             for (Profile p : profiles) {

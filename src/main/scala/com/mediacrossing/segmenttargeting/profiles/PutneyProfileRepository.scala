@@ -4,7 +4,7 @@ import java.util
 import scala.collection.JavaConverters._
 import java.io.IOException
 import org.slf4j.LoggerFactory
-import com.mediacrossing.dailycheckupsreport.{Profile, JSONParse}
+import com.mediacrossing.dailycheckupsreport.{Segment, Profile, JSONParse}
 import com.mediacrossing.dailycheckupsreport.profiles.ProfileRepository
 import com.mediacrossing.connections.HTTPRequest
 
@@ -12,17 +12,20 @@ class PutneyProfileRepository(http: HTTPRequest) extends ProfileRepository {
 
   private val log = LoggerFactory.getLogger(classOf[HTTPRequest])
 
-  def findBy(advertiserIdAndProfileIds: util.List[(String, String)]): util.List[Profile] =
+  def findBy(advertiserIdAndProfileIds: util.List[(String, String)], putneyUrl: String): util.List[Profile] =
     (
       for {
-        (advertiserId, profileId) <- advertiserIdAndProfileIds.asScala
+        (advertiserId) <- advertiserIdAndProfileIds.asScala.groupBy{
+          case(adId, proId) => adId}.map(m => m._1)
       } yield {
+        // FIXME
+        val profileId = ""
         var success = false
         var requestCount = 1
         var json = ""
         while (!success) {
           try {
-            json = http.getRequest("http://localhost:8888/an/profile?id=" + profileId + "&advertiser_id=" + advertiserId)
+            json = http.getRequest(putneyUrl + "/profile?advertiser_id=" + advertiserId)
             success = true
 
             log.info("Received profile [profileId = " + profileId +
@@ -35,19 +38,13 @@ class PutneyProfileRepository(http: HTTPRequest) extends ProfileRepository {
                 ", advertiserId = " + advertiserId + "], request attempts = " +
                 requestCount, e)
               requestCount = requestCount + 1
+              if (requestCount > 9) System.exit(1)
           }
         }
 
-
-        val p = new Profile
-        p.setId(profileId)
-        p.setLastModified(JSONParse.obtainLastModified(json))
-        p.setFrequencyTarget(JSONParse.populateFrequencyTarget(json))
-        p.setDaypartTargetList(JSONParse.populateDaypartTarget(json))
-        p.setGeographyTarget(JSONParse.populateGeographyTarget(json))
-        p.setSegmentGroupTargets(JSONParse.populateSegmentGroupTargetList(json))
-
-        p
+        JSONParse.parseProfiles(json).asScala
       })
+      .toList
+      .flatten
       .asJava
 }

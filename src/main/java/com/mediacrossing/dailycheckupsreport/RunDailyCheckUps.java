@@ -6,7 +6,6 @@ import com.mediacrossing.connections.MxService;
 import com.mediacrossing.dailycheckupsreport.profiles.ProfileRepository;
 import com.mediacrossing.properties.ConfigurationProperties;
 import com.mediacrossing.segmenttargeting.profiles.PutneyProfileRepository;
-import com.mediacrossing.segmenttargeting.profiles.TruncatedProfileRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scala.Tuple2;
@@ -16,10 +15,6 @@ import java.util.List;
 public class RunDailyCheckUps {
 
     private static final Logger LOG = LoggerFactory.getLogger(RunDailyCheckUps.class);
-
-    private static ProfileRepository development(HTTPRequest r) {
-        return new TruncatedProfileRepository(r, 10);
-    }
 
     private static ProfileRepository production(HTTPRequest r) {
         return new PutneyProfileRepository(r);
@@ -72,7 +67,7 @@ public class RunDailyCheckUps {
                     new Tuple2<String, String>(c.getAdvertiserID(), c.getProfileID()));
         }
 
-        final List<Profile> profiles = profileRepository.findBy(advertiserIdAndProfileIds);
+        final List<Profile> profiles = profileRepository.findBy(advertiserIdAndProfileIds, properties.getPutneyUrl());
 
         for (int index = 0; index < profiles.size(); index++) {
             Campaign c = dataStore.getLiveCampaignArrayList().get(index);

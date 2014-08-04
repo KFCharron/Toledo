@@ -5,12 +5,10 @@ import com.mediacrossing.dailycheckupsreport.*;
 import com.mediacrossing.dailycheckupsreport.profiles.ProfileRepository;
 import com.mediacrossing.properties.ConfigurationProperties;
 import com.mediacrossing.segmenttargeting.profiles.PutneyProfileRepository;
-import com.mediacrossing.segmenttargeting.profiles.TruncatedProfileRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scala.Tuple2;
 
-import java.io.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -18,10 +16,6 @@ import java.util.List;
 public class RunSegmentLoadReport {
 
     private static final Logger LOG = LoggerFactory.getLogger(RunSegmentLoadReport.class);
-
-    private static ProfileRepository development(HTTPRequest r) {
-        return new TruncatedProfileRepository(r, 10);
-    }
 
     private static ProfileRepository production(HTTPRequest r) {
         return new PutneyProfileRepository(r);
@@ -59,23 +53,6 @@ public class RunSegmentLoadReport {
         DataStore dataStore = new DataStore();
         String fileOutputPath = properties.getOutputPath();
 
-        //for faster debugging
-        boolean development = false;
-        if (development) {
-            try{
-                FileInputStream door = new FileInputStream("/Users/charronkyle/Desktop/ReportData/TargetSegmentingData.ser");
-                ObjectInputStream reader = new ObjectInputStream(door);
-                dataStore.setLiveCampaignArrayList((ArrayList<Campaign>) reader.readObject());
-                //Write xls file for all target segment reports
-                XlsWriter.writeAllReports(dataStore.getLiveCampaignArrayList(), fileOutputPath);
-                System.exit(0);
-
-            }catch (IOException e){
-                e.printStackTrace();
-                System.exit(1);
-            }
-        }
-
         //Get All Campaigns from MX, save them into list
         dataStore.setCampaignArrayList(mxConn.requestAllCampaigns());
         LOG.info(dataStore.getLiveCampaignArrayList().size() + " campaigns are live.");
@@ -91,11 +68,12 @@ public class RunSegmentLoadReport {
                     new Tuple2<String, String>(c.getAdvertiserID(), c.getProfileID()));
         }
 
-        final List<Profile> profiles = profileRepository.findBy(advertiserIdAndProfileIds);
+        final List<Profile> profiles = profileRepository.findBy(advertiserIdAndProfileIds, properties.getPutneyUrl());
 
-        for (int index = 0; index < profiles.size(); index++) {
-            Campaign c = dataStore.getLiveCampaignArrayList().get(index);
-            c.setProfile(profiles.get(index));
+        for (Campaign c : dataStore.getLiveCampaignArrayList()) {
+            for(Profile p : profiles) {
+                if (c.getProfileID().equals(c.getProfileID())) c.setProfile(p);
+            }
         }
 
         /*
@@ -194,19 +172,9 @@ public class RunSegmentLoadReport {
                 }
             }
         }
+
         //update live campaign list
         dataStore.setLiveCampaignArrayList(newCampaignArrayList);
-
-        // Serialize data object to a file
-        /*try {
-            ObjectOutputStream out = new ObjectOutputStream
-                    (new FileOutputStream("/Users/charronkyle/Desktop/ReportData/SegmentLoadData.ser"));
-            out.writeObject(newCampaignArrayList);
-            out.close();
-        } catch (IOException e) {
-            LOG.error("Serialization Failed!");
-            LOG.error(e.toString());
-        }*/
 
         XlsWriter xlsWriter = new XlsWriter();
         xlsWriter.writeSegmentLoadFile(dataStore.getLiveCampaignArrayList(), fileOutputPath);
