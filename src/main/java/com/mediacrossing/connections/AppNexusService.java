@@ -53,26 +53,6 @@ public class AppNexusService {
         return JSONParse.populateAllProfileSegmentGroupTargetList(json);
     }
 
-    public ArrayList<String> requestAllProfilesForAdvertiser(String adId) throws Exception {
-        // FIXME This returns Line Item Profiles that you don't want to make changes to.
-        return null;
-    }
-
-    public ArrayList<LineItem> requestLineItems(String adId) throws Exception {
-        String json = requests.getRequest(url + "/line-item?advertiser_id=" + adId);
-        return DataParse.parseLineItems(json);
-    }
-
-    public ArrayList<Campaign> requestCampaigns(String adId, String liId) throws Exception {
-        String json = requests.getRequest(url + "/campaign?advertiser_id=" + adId);
-        return DataParse.parseCampaigns(json, liId);
-    }
-
-    public boolean checkForSegment(String code) throws Exception {
-        String json = requests.getRequest(url + "/segment?code=" + code);
-        return DataParse.parseSegment(json);
-    }
-
     public ArrayList<PublisherConfig> requestPublisherConfigs() throws Exception {
         ArrayList<Publisher> temp = requestPublishers();
         ArrayList<PublisherConfig> pubConfigs = new ArrayList<>();
