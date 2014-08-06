@@ -49,7 +49,9 @@ public class MxService {
         return JSONParse.populateCampaignArrayList(json);
     }
 
-
+    public String requestAllLiveRailLineItemJson() throws Exception {
+        return requests.getRequest(url + "/api/catalog/line-items?channelType=preRoll");
+    }
 
     public ArrayList<Publisher> requestAllPublishers() throws Exception {
         String json = requests.getRequest(url + "/api/catalog/publishers");

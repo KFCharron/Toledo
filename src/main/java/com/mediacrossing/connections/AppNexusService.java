@@ -43,6 +43,10 @@ public class AppNexusService {
         return requests.putRequest(url + url2, json);
     }
 
+    public String requestActiveLineItemJson() throws Exception {
+        return requests.getRequest(url + "/line-item?status=active");
+    }
+
     public ArrayList<Publisher> requestPublishers() throws Exception {
         String json = requests.getRequest(url + "/publisher");
         return DataParse.parsePublisherIdAndName(json);
