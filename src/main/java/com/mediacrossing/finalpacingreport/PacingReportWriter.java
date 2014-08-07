@@ -259,7 +259,6 @@ public class PacingReportWriter {
             float totalPercentDeliveredYesterday = (float)totalDeliveredYesterday / totalNeededYesterday;
             float totalPercentNeededVsSevenDay = (float)totalNeededYesterday / totalSevenDayAverage;
 
-
             Row totalRow = summarySheet.createRow(rowCount++);
             totalRow.createCell(0).setCellValue("Flight Totals: ");
             totalRow.createCell(1);
@@ -276,13 +275,17 @@ public class PacingReportWriter {
 
             for (Cell c : totalRow) totalRow.getCell(c.getColumnIndex()).setCellStyle(number);
             totalRow.getCell(4).setCellStyle(percentage);
+            if (totalRow.getCell(4).getCellType() == 5) totalRow.getCell(4).setCellValue(0);
+
             totalRow.getCell(9).setCellStyle(percentage);
             totalRow.getCell(12).setCellStyle(percentage);
 
             int totalFlightDaysPassed = (int)new Duration(flightStart, new DateTime().withTimeAtStartOfDay().plusDays(1)).getStandardDays();
             int totalFlightDays = (int)new Duration(flightStart, flightEnd).getStandardDays();
             int daysLeft = totalFlightDays - totalFlightDaysPassed;
-            totalRow.createCell(3).setCellValue((float)totalFlightDaysPassed / totalFlightDays);
+            float totalFlightPercentage = (float)totalFlightDaysPassed / totalFlightDays;
+            if (totalFlightPercentage == Float.NaN) totalFlightPercentage = 0.0f;
+            totalRow.createCell(3).setCellValue(totalFlightPercentage);
             totalRow.getCell(3).setCellStyle(percentage);
             if (((totalRow.getCell(3).getNumericCellValue() - .20d) > totalRow.getCell(4).getNumericCellValue()) ||
                     (((totalRow.getCell(3).getNumericCellValue() - .10d) > totalRow.getCell(4).getNumericCellValue())

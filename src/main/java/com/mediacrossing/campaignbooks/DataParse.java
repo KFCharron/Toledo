@@ -173,15 +173,17 @@ public class DataParse {
             if (!li.get("advertiserId").isJsonNull() &&
                 !li.get("name").isJsonNull() &&
                 !li.get("startDate").isJsonNull() &&
-                !li.get("endDate").isJsonNull() &&
-                !li.get("lifetimeBudgetImps").isJsonNull()) {
-
+                !li.get("endDate").isJsonNull()) {
+                int lifetimeBudget;
+                if(li.get("lifetimeBudgetImps").isJsonNull()) lifetimeBudget = 0;
+                else lifetimeBudget = Integer.parseInt(li.get("lifetimeBudgetImps").getAsString().replace("\"",""));
                 lis.add(new PacingLineItem(li.get("advertiserId").getAsString().replace("\"",""),
-                        li.get("name").getAsString().replace("\"",""),
-                        dtf.parseDateTime(li.get("startDate").getAsString().replace("\"","")),
-                        dtf.parseDateTime(li.get("endDate").getAsString().replace("\"","")),
-
-                        Integer.parseInt(li.get("lifetimeBudgetImps").getAsString().replace("\"",""))));
+                                            li.get("name").getAsString().replace("\"",""),
+                                            dtf.parseDateTime(li.get("startDate").getAsString().replace("\"","")),
+                                            dtf.parseDateTime(li.get("endDate").getAsString().replace("\"","")),
+                                            lifetimeBudget
+                                          )
+                );
             }
 
         }
