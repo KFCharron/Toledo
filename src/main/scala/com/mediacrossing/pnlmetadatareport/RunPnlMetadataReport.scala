@@ -1,4 +1,4 @@
-package com.mediacrossing
+package com.mediacrossing.pnlmetadatareport
 
 import org.slf4j.LoggerFactory
 import com.mediacrossing.properties.ConfigurationProperties
