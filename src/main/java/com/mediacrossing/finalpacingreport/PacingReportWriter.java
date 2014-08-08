@@ -191,7 +191,6 @@ public class PacingReportWriter {
                         } else percentDeliveredYesterday = (float)yesterdayDelivery/dailyBudget;
                         dataRow.createCell(9).setCellValue(percentDeliveredYesterday);
                         dataRow.getCell(9).setCellStyle(percentage);
-                        if (dataRow.getCell(9).getNumericCellValue() < .9f) dataRow.getCell(9).setCellStyle(redPercentage);
 
                         if (daysLeft == 1) daysLeft = 2;
                         int deliveryRemaining = (l.getLifetimeBudget() - totalDelivery) / (daysLeft - 1);
@@ -278,6 +277,9 @@ public class PacingReportWriter {
             if (totalRow.getCell(4).getCellType() == 5) totalRow.getCell(4).setCellValue(0);
 
             totalRow.getCell(9).setCellStyle(percentage);
+            if (totalRow.getCell(9).getCellType() == 5 ||
+                    totalRow.getCell(9).getNumericCellValue() < .9f) totalRow.getCell(9).setCellStyle(redPercentage);
+
             totalRow.getCell(12).setCellStyle(percentage);
 
             int totalFlightDaysPassed = (int)new Duration(flightStart, new DateTime().withTimeAtStartOfDay().plusDays(1)).getStandardDays();
@@ -408,7 +410,6 @@ public class PacingReportWriter {
                         } else percentDeliveredYesterday = (float)yesterdayDelivery/dailyBudget;
                         dataRow.createCell(9).setCellValue(percentDeliveredYesterday);
                         dataRow.getCell(9).setCellStyle(percentage);
-                        if (dataRow.getCell(9).getNumericCellValue() < .9f) dataRow.getCell(9).setCellStyle(redPercentage);
 
                         if (daysLeft == 1) daysLeft = 2;
                         int deliveryRemaining = (l.getLifetimeBudget() - totalDelivery) / (daysLeft - 1);
@@ -494,6 +495,8 @@ public class PacingReportWriter {
             for (Cell c : totalRow) totalRow.getCell(c.getColumnIndex()).setCellStyle(number);
             totalRow.getCell(4).setCellStyle(percentage);
             totalRow.getCell(9).setCellStyle(percentage);
+            if (totalRow.getCell(9).getCellType() == 5 ||
+                    totalRow.getCell(9).getNumericCellValue() < .9f) totalRow.getCell(9).setCellStyle(redPercentage);
             totalRow.getCell(12).setCellStyle(percentage);
 
             int totalFlightDaysPassed = (int)new Duration(flightStart, new DateTime().withTimeAtStartOfDay()).getStandardDays();
