@@ -116,6 +116,8 @@ public class HTTPSRequest implements Request {
 
     public String postRequest(String url, String jsonRequest) throws Exception {
 
+        LOG.debug("\nSending 'POST' request to URL : " + url);
+
         URL obj = new URL(url);
         HttpsURLConnection con = (HttpsURLConnection) obj.openConnection();
 
@@ -136,15 +138,6 @@ public class HTTPSRequest implements Request {
         wr.flush();
         wr.close();
 
-        int responseCode = con.getResponseCode();
-        if (responseCode != 200) {
-            LOG.error("Received Response Code " + responseCode + " from " + url);
-            LOG.error("Exiting Program");
-            System.exit(1);
-        }
-        LOG.debug("\nSending 'POST' request to URL : " + url);
-        LOG.debug("Response Code : " + responseCode);
-
         BufferedReader in = new BufferedReader(
                 new InputStreamReader(con.getInputStream()));
         String inputLine;
@@ -154,6 +147,16 @@ public class HTTPSRequest implements Request {
             response.append(inputLine);
         }
         in.close();
+
+        int responseCode = con.getResponseCode();
+        LOG.debug("Response Code : " + responseCode);
+
+        if (responseCode != 200) {
+            LOG.error("Received Response Code " + responseCode + " from " + url);
+            LOG.error(response.toString());
+            LOG.error("Exiting Program");
+            System.exit(1);
+        }
 
         //Received JSON data
         return response.toString();
