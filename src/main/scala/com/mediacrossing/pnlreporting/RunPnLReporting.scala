@@ -604,27 +604,27 @@ case class Campaign(dataRows: List[AnalyticsDataRow],
   }
   val yestAmazonCost = yestImps * (.095f / 1000)
   // TODO Yesterday Total Cost
-//  val yestTotalCost = {
-//    val campType = dataRows.head.campType
-//    if (campType.equals("cross")) {
-//      //val crossRev = .4 * (yestRevenue - (yestRevenue * .135 - .1))
-//
-//      0
-//    }
-//    else if (campType.equals("direct")) {
-//      // TODO
-//      0
-//    }
-//    else {
-//      yestMediaCost +
-//        yestServingFees.map(f => f._2).foldLeft(0.0)(_ + _) +
-//        yestAnCommission +
-//        yestMxCommission
-//    }
-//  }
+  val yestTotalCost = {
+    val campType = dataRows.head.campType
+    if (campType.equals("cross")) {
+      //val crossRev = .4 * (yestRevenue - (yestRevenue * .135 - .1))
+
+      0
+    }
+    else if (campType.equals("direct")) {
+      // TODO
+      0
+    }
+    else {
+      yestMediaCost +
+        yestServingFees.map(f => f._2).foldLeft(0.0)(_ + _) +
+        yestAnCommission +
+        yestMxCommission
+    }
+  }
 
   // TODO
-  //val yestGrossProfit = yestRevenue - yestTotalCost
+  val yestGrossProfit = yestRevenue - yestTotalCost
 
   //TODO calculate daily PnL for each stream
   /*
@@ -680,26 +680,26 @@ case class Campaign(dataRows: List[AnalyticsDataRow],
 
   val weekAmazonCost = weekImps * (.095f / 1000)
   // TODO WEEK TOTAL COST
-//  val weekTotalCost = {
-//    val campType = dataRows.head.campType
-//    if (campType.equals("cross")) {
-//      // TODO
-//      0
-//    }
-//    else if (campType.equals("direct")) {
-//      // TODO
-//      0
-//    }
-//    else {
-//      weekMediaCost +
-//        weekServingFees.map(f => f._2).foldLeft(0.0)(_ + _) +
-//        weekAnCommission +
-//        weekMxCommission
-//    }
-//  }
+  val weekTotalCost = {
+    val campType = dataRows.head.campType
+    if (campType.equals("cross")) {
+      // TODO
+      0
+    }
+    else if (campType.equals("direct")) {
+      // TODO
+      0
+    }
+    else {
+      weekMediaCost +
+        weekServingFees.map(f => f._2).foldLeft(0.0)(_ + _) +
+        weekAnCommission +
+        weekMxCommission
+    }
+  }
 
   // TODO Week PnL for each Stream
-  //val weekGrossProfit = weekRevenue - weekTotalCost
+  val weekGrossProfit = weekRevenue - weekTotalCost
 
 
   private val monthRows = dataRows
@@ -750,25 +750,25 @@ case class Campaign(dataRows: List[AnalyticsDataRow],
   val monthAmazonCost = monthImps * (.095f / 1000)
 
   // TODO Total Cost
-//  val monthTotalCost = {
-//    val campType = dataRows.head.campType
-//    if (campType.equals("cross")) {
-//      // TODO
-//      0
-//    }
-//    else if (campType.equals("direct")) {
-//      // TODO
-//      0
-//    }
-//    else {
-//      monthMediaCost +
-//        monthServingFees.map(f => f._2).foldLeft(0.0)(_ + _) +
-//        monthAnCommission +
-//        monthMxCommission
-//    }
-//  }
+  val monthTotalCost = {
+    val campType = dataRows.head.campType
+    if (campType.equals("cross")) {
+      // TODO
+      0
+    }
+    else if (campType.equals("direct")) {
+      // TODO
+      0
+    }
+    else {
+      monthMediaCost +
+        monthServingFees.map(f => f._2).foldLeft(0.0)(_ + _) +
+        monthAnCommission +
+        monthMxCommission
+    }
+  }
 
   // TODO Month PnL for each Stream
-  //val monthGrossProfit = monthRevenue - monthTotalCost
+  val monthGrossProfit = monthRevenue - monthTotalCost
   
 }
