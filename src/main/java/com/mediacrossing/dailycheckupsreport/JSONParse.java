@@ -303,6 +303,7 @@ public class JSONParse {
                 JsonObject jsonObject = values.getAsJsonObject();
                 newCampaign.setAdvertiserID(currentAdvertiserID);
                 newCampaign.setId(jsonObject.get("id").toString().replace("\"", ""));
+                newCampaign.setStatus(jsonObject.get("status").toString().replace("\"", ""));
                 newCampaign.setName(jsonObject.get("name").toString().replace("\"", ""));
                 newCampaign.setProfileID(jsonObject.get("profileId").toString().replace("\"", ""));
                 newCampaign.setLineItemID(jsonObject.get("lineItemId").toString().replace("\"", ""));

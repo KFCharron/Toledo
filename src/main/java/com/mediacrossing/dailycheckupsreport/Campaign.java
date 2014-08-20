@@ -22,6 +22,15 @@ public class Campaign implements Serializable {
     private ArrayList<SegmentGroupTarget> targets = new ArrayList<>();
     private int imps;
     private float spend;
+    private String status;
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
     public int getImps() {
         return imps;
