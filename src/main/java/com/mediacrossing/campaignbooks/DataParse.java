@@ -177,11 +177,17 @@ public class DataParse {
                 int lifetimeBudget;
                 if(li.get("lifetimeBudgetImps").isJsonNull()) lifetimeBudget = 0;
                 else lifetimeBudget = Integer.parseInt(li.get("lifetimeBudgetImps").getAsString().replace("\"",""));
-                lis.add(new PacingLineItem(li.get("advertiserId").getAsString().replace("\"",""),
+                int dailyBudget;
+                if(li.get("dailyBudgetImps").isJsonNull()) dailyBudget = 0;
+                else dailyBudget = Integer.parseInt(li.get("dailyBudgetImps").getAsString().replace("\"",""));
+                lis.add(new PacingLineItem(li.get("id").getAsString().replace("\"",""),
+                                            li.get("advertiserId").getAsString().replace("\"",""),
                                             li.get("name").getAsString().replace("\"",""),
                                             dtf.parseDateTime(li.get("startDate").getAsString().replace("\"","")),
                                             dtf.parseDateTime(li.get("endDate").getAsString().replace("\"","")),
-                                            lifetimeBudget
+                                            lifetimeBudget,
+                                            dailyBudget,
+                                            li.get("status").getAsString().replace("\"","")
                                           )
                 );
             }

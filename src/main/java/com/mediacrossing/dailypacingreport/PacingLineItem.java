@@ -8,24 +8,38 @@ import java.util.ArrayList;
 
 public class PacingLineItem {
 
+    private String id;
     private String advertiserId;
     private String name;
     private DateTime startDate;
     private DateTime endDate;
     private int lifetimeBudget;
+    private int dailyBudget;
     private int daysActive;
     private ArrayList<F.Tuple<DateTime, Integer>> dailyData = new ArrayList<>();
+    private String status;
 
-    public PacingLineItem(String advertiserId, String name, DateTime startDate, DateTime endDate, int lifetimeBudget) {
+    public PacingLineItem(String id, String advertiserId, String name, DateTime startDate, DateTime endDate, int lifetimeBudget, int dailyBudget, String status) {
+        this.id = id;
         this.advertiserId = advertiserId;
         this.name = name;
         this.startDate = startDate.withTimeAtStartOfDay();
         this.endDate = endDate.withTimeAtStartOfDay();
         this.lifetimeBudget = lifetimeBudget;
         this.daysActive = (int)new Duration(startDate, endDate).getStandardDays();
+        this.status = status;
     }
 
-    public PacingLineItem() {
+    public String getStatus() {
+        return status;
+    }
+
+    public int getDailyBudget() {
+        return dailyBudget;
+    }
+
+    public String getId() {
+        return id;
     }
 
     public String getAdvertiserId() {
