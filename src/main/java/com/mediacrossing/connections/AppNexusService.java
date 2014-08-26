@@ -111,6 +111,39 @@ public class AppNexusService {
         return downloadReportWhenReady(json);
     }
 
+    public List<String[]> requestLifetimeLineItemImps(DateTime earliest) throws Exception {
+        String jsonPost = "{\n" +
+                "  \"report\": {\n" +
+                "    \"report_type\": \"network_analytics\",\n" +
+                "    \"columns\" : [\n" +
+                "      \"line_item_id\",\n" +
+                "      \"imps\"\n" +
+                "    ],\n" +
+                "    \"timezone\": \"EST\",\n" +
+                "    \"start_date\": \"" + earliest.toString("YYYY-MM-dd") + "\"," +
+                "    \"end_date\": \"" + new DateTime().toString("YYYY-MM-dd") + "\"" +
+                "  }\n" +
+                "}";
+        String json = requests.postRequest(url + "/report", jsonPost);
+        return downloadReportWhenReady(json);
+    }
+
+    public List<String[]> requestYesterdayLineItemImps() throws Exception {
+        String jsonPost = "{\n" +
+                "  \"report\": {\n" +
+                "    \"report_type\": \"network_analytics\",\n" +
+                "    \"columns\" : [\n" +
+                "      \"line_item_id\",\n" +
+                "      \"imps\"\n" +
+                "    ],\n" +
+                "    \"timezone\": \"EST\",\n" +
+                "    \"report_interval\": \"yesterday\"" +
+                "  }\n" +
+                "}";
+        String json = requests.postRequest(url + "/report", jsonPost);
+        return downloadReportWhenReady(json);
+    }
+
     public List<String[]> requestDailyPacingReport(DateTime earliest) throws Exception {
         String jsonPost = "{\n" +
                 "  \"report\": {\n" +
