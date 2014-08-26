@@ -158,6 +158,22 @@ public class JSONParse {
             }
             pro.setSegmentGroupTargets(newSegmentGroupTargetList);
 
+            // Domain List Targets
+            ArrayList<String> newDomainListTargetList = new ArrayList<>();
+            String domainListAction = proOb.get("domain_list_action").toString().replace("\"","");
+            if (!proOb.get("domain_list_targets").isJsonNull()) {
+                // Move to Domain List Array
+                JsonArray jarray = proOb.getAsJsonArray("domain_list_targets");
+                for (JsonElement j : jarray) {
+                    JsonObject jo = j.getAsJsonObject();
+                    newDomainListTargetList.add(jo.get("id").toString().replace("\"",""));
+                }
+            }
+
+            // Domain List Action
+            pro.setDomainListTargetList(newDomainListTargetList);
+            pro.setDomainListAction(domainListAction);
+
             proList.add(pro);
         }
         return proList;

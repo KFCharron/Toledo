@@ -13,6 +13,24 @@ public class Profile implements Serializable{
     private GeographyTarget geographyTarget;
     private ArrayList<DaypartTarget> daypartTargetList = new ArrayList<DaypartTarget>();
     private List<SegmentGroupTarget> segmentGroupTargets = new ArrayList<SegmentGroupTarget>();
+    private List<String> domainListTargetList = new ArrayList<>();
+    private String domainListAction;
+
+    public List<String> getDomainListTargetList() {
+        return domainListTargetList;
+    }
+
+    public void setDomainListTargetList(List<String> domainListTargetList) {
+        this.domainListTargetList = domainListTargetList;
+    }
+
+    public String getDomainListAction() {
+        return domainListAction;
+    }
+
+    public void setDomainListAction(String domainListAction) {
+        this.domainListAction = domainListAction;
+    }
 
     public boolean modifiedYesterday() {
         if (lastModified.isAfter(new DateTime().toDateMidnight().minusDays(1))) return true;
