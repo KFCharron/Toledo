@@ -73,7 +73,7 @@ public class HTTPRequest implements Request {
         //add request header
         con.setRequestMethod("POST");
         con.setRequestProperty("Content-Type", "application/json");
-
+        LOG.debug("\nSending 'POST' request to URL : " + url);
         // Send post request
         con.setDoOutput(true);
         DataOutputStream wr = new DataOutputStream(con.getOutputStream());
@@ -86,7 +86,7 @@ public class HTTPRequest implements Request {
             LOG.error("Received Response Code " + responseCode + " from " + url);
             LOG.error("Exiting Program");
         }
-        LOG.debug("\nSending 'POST' request to URL : " + url);
+
         LOG.debug("Response Code : " + responseCode);
 
         BufferedReader in = new BufferedReader(
