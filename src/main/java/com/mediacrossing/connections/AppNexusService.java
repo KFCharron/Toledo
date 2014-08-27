@@ -112,6 +112,10 @@ public class AppNexusService {
     }
 
     public List<String[]> requestLifetimeLineItemImps(DateTime earliest) throws Exception {
+
+        String start = earliest.toString("YYYY-MM-dd");
+        String end = new DateTime().toString("YYYY-MM-dd");
+
         String jsonPost = "{\n" +
                 "  \"report\": {\n" +
                 "    \"report_type\": \"network_analytics\",\n" +
@@ -120,10 +124,13 @@ public class AppNexusService {
                 "      \"imps\"\n" +
                 "    ],\n" +
                 "    \"timezone\": \"EST\",\n" +
-                "    \"start_date\": \"" + earliest.toString("YYYY-MM-dd") + "\"," +
-                "    \"end_date\": \"" + new DateTime().toString("YYYY-MM-dd") + "\"" +
+//                "    \"start_date\": \"" + start + "\"," +
+//                "    \"end_date\": \"" + end + "\"" +
+                "\"report_interval\":\"lifetime\"" +
                 "  }\n" +
                 "}";
+        LOG.debug("Start = " + start);
+        LOG.debug("End = " + end);
         String json = requests.postRequest(url + "/report", jsonPost);
         return downloadReportWhenReady(json);
     }
