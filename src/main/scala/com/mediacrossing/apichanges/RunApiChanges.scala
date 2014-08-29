@@ -103,7 +103,7 @@ object RunApiChanges extends App {
     pw.close()
   */
 
-  val reader: CSVReader = new CSVReader(new FileReader("/Users/charronkyle/Downloads/Blacklist_Campaigns.csv"))
+  /*val reader: CSVReader = new CSVReader(new FileReader("/Users/charronkyle/Downloads/Blacklist_Campaigns.csv"))
   val blacklistCampIds = reader
     .readAll
     .toList
@@ -120,6 +120,16 @@ object RunApiChanges extends App {
   blacklistProIds.foreach(id => {
     val json = "{\n  \"profile\": {\n    \"domain_list_action\": \"exclude\",\n    \"domain_list_targets\":[\n      " +
       "{\n        \"id\": \"277861\"\n      }\n    ]\n  }\n}"
+    anConn.putRequest(s"/profile?id=$id", json)
+  })*/
+  val adIds = {"186354" :: "186355" :: "186356" :: Nil}
+  val blackListProIds = mxConn.requestAllCampaigns().toList
+    .filter(c => adIds.contains(c.getAdvertiserID))
+    .map(c => c.getProfileID)
+
+  blackListProIds.foreach(id => {
+    val json = "{\n  \"profile\": {\n    \"domain_list_action\": \"exclude\",\n    \"domain_list_targets\":[\n      " +
+      "{\n        \"id\": \"277861\"\n },{ \"id\":\"293756\"      }\n    ]\n  }\n}"
     anConn.putRequest(s"/profile?id=$id", json)
   })
 }
