@@ -28,10 +28,12 @@ object RunChronosJobReport extends App {
     (__ \ "name").read[String] ~
       (__ \ "lastSuccess").read[String] ~
       (__ \ "lastError").read[String] ~
-      (__ \ "schedule").read[String]
+      (__ \ "schedule").readNullable[String] ~
+      (__ \ "parents").readNullable[Array[String]]
     ).apply(ChronosJob.apply _)
 
-  val jobs = Json.parse(new HTTPRequest().getRequest("http://mesos-test-01.mx:4400/scheduler/jobs"))
+  //val jobs = Json.parse(new HTTPRequest().getRequest("http://mesos-test-01.mx:4400/scheduler/jobs"))
+  val jobs: List[ChronosJob] = Json.parse(new HTTPRequest().getRequest("http://localhost:4400/scheduler/jobs"))
     .validate(list(jobR)) match {
     case e@JsError(_) => sys.error(JsError.toFlatJson(e).toString())
     case JsSuccess(v, _) => v
@@ -63,7 +65,7 @@ object RunChronosJobReport extends App {
       row.createCell(0).setCellValue(j.name)
       row.createCell(1).setCellValue(j.lastError)
       row.createCell(2).setCellValue(j.lastSuccess)
-      row.createCell(3).setCellValue(j.scheduleRaw)
+      row.createCell(3).setCellValue(j.scheduleRaw.getOrElse(s"Dependant on ${j.parentString}"))
       sheet.autoSizeColumn(0)
       sheet.autoSizeColumn(1)
       sheet.autoSizeColumn(2)
@@ -89,7 +91,7 @@ object RunChronosJobReport extends App {
     row.createCell(0).setCellValue(j.name)
     row.createCell(1).setCellValue(j.lastError)
     row.createCell(2).setCellValue(j.lastSuccess)
-    row.createCell(3).setCellValue(j.scheduleRaw)
+    row.createCell(3).setCellValue(j.scheduleRaw.getOrElse(s"Dependant on ${j.parentString}"))
     sheet.autoSizeColumn(0)
     sheet.autoSizeColumn(1)
     sheet.autoSizeColumn(2)
@@ -102,7 +104,7 @@ object RunChronosJobReport extends App {
 
 
 }
-case class ChronosJob(name: String, successString: String, errorString: String, scheduleRaw: String) {
+case class ChronosJob(name: String, successString: String, errorString: String, scheduleRaw: Option[String], parents: Option[Array[String]]) {
   val timestamp = DateTimeFormat.forPattern("yyyy-M-d'T'HH:mm:ss.SSS'z'")
   val lastSuccess = {
     if(successString.size <= 1) "None"
@@ -126,6 +128,6 @@ case class ChronosJob(name: String, successString: String, errorString: String, 
     if(errorString.size <= 1) new DateTime().withYearOfCentury(1)
     else timestamp.parseDateTime(errorString)
   }
-  val scheduleString = scheduleRaw.substring(0, scheduleRaw.length-4)
-  val frequency = scheduleRaw.substring(scheduleRaw.length-4, scheduleRaw.length)
+
+  val parentString = parents.getOrElse(Array[String]("?")).mkString(", ")
 }
