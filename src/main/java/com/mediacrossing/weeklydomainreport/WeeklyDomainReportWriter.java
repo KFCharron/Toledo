@@ -61,9 +61,10 @@ public class WeeklyDomainReportWriter {
         int rowCount = 1;
 
         for (Domain d : domainList) {
-
+            int sheetCount = 0;
             if (rowCount % 65000 == 0) {
-                sheet = wb.createSheet("Domains (Continued)");
+                sheetCount++;
+                sheet = wb.createSheet("Domains (Continued)" + sheetCount);
                 header = sheet.createRow(0);
                 header.createCell(0).setCellValue("Domain");
                 header.createCell(1).setCellValue("Revenue");
