@@ -1,6 +1,5 @@
 package com.mediacrossing.weeklydomainreport;
 
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.joda.time.DateTimeZone;
@@ -64,7 +63,7 @@ public class WeeklyDomainReportWriter {
             int sheetCount = 0;
             if (rowCount % 65000 == 0) {
                 sheetCount++;
-                sheet = wb.createSheet("Domains (Continued)" + sheetCount);
+                sheet = wb.createSheet( sheetCount + "Domains (Continued)" );
                 header = sheet.createRow(0);
                 header.createCell(0).setCellValue("Domain");
                 header.createCell(1).setCellValue("Revenue");
