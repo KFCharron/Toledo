@@ -28,6 +28,7 @@ public class PacingLineItem {
         this.lifetimeBudget = lifetimeBudget;
         this.daysActive = (int)new Duration(startDate, endDate).getStandardDays();
         this.status = status;
+        this.dailyBudget = dailyBudget;
     }
 
     public String getStatus() {

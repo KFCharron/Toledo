@@ -102,8 +102,11 @@ case class LineItem(config: PacingLineItem, lt: Int, yest: Int) {
   val yestDelivery = yest
   val dailyImpsNeeded = {
     if (config.getLifetimeBudget == 0) 0
-    else (config.getLifetimeBudget - lt) / daysLeft
+    else {
+      if (daysLeft <= 0) 0 else (config.getLifetimeBudget - lt) / daysLeft
+    }
   }
   val ltBudget = config.getLifetimeBudget
   val ltDelivery = lt
+  val budgetLeft = ltBudget - ltDelivery
 }
