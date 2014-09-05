@@ -91,6 +91,25 @@ public class AppNexusService {
         return ResponseParser.parseCreatives(json);
     }
 
+    public List<String[]> requestClickFraudReport() throws Exception {
+        String jsonPost = "{\n" +
+                "  \"report\": {\n" +
+                "    \"report_type\": \"network_analytics\",\n" +
+                "    \"columns\" : [\n" +
+                "           \"campaign_id\",\n" +
+                "           \"campaign_name\",\n" +
+                "           \"imps\",\n" +
+                "           \"clicks\",\n" +
+                "           \"ctr\"\n" +
+                "       ],\n" +
+                "    \"report_interval\":\"yesterday\"," +
+                "    \"timezone\": \"EST\"\n" +
+                "  }\n" +
+                "}";
+        String json = requests.postRequest(url + "/report", jsonPost);
+        return downloadReportWhenReady(json);
+    }
+
     public List<String[]> requestPacingReport(DateTime earliest) throws Exception {
         System.out.println(earliest.toString("YYYY-MM-dd"));
         String jsonPost = "{\n" +
