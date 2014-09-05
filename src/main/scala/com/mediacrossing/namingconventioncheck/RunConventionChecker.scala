@@ -35,7 +35,7 @@ object RunConventionChecker extends App {
           c.getName.toLowerCase.substring(c.getName.length - "contextual".length).contains("contextual"))) {
         val oldName = c.getName
         val newName = {c.getName :: "_Contextual" :: Nil}.mkString
-        println(s"Changing ${c.getName} to $newName")
+        LOG.info(s"Changing ${c.getName} to $newName")
         val json = "{" + "\"campaign\":" + "{" + "\"name\":" + "\"" + newName + "\"" +"}}"
         anConn.putRequest("/campaign?id=" + c.getId + "&advertiser_id=" + c.getAdvertiserID, json)
         changedCamps += ((oldName, newName))
@@ -47,7 +47,7 @@ object RunConventionChecker extends App {
             c.getName.toLowerCase.substring(c.getName.length - "contextual".length).contains("contextual"))) {
         val oldName = c.getName
         val newName = {c.getName :: "_Mobile" :: Nil}.mkString
-        println(s"Changing ${c.getName} to $newName")
+        LOG.info(s"Changing ${c.getName} to $newName")
         val json = "{" + "\"campaign\":" + "{" + "\"name\":" + "\"" + newName + "\"" +"}}"
         anConn.putRequest("/campaign?id=" + c.getId + "&advertiser_id=" + c.getAdvertiserID, json)
         changedCamps += ((oldName, newName))
