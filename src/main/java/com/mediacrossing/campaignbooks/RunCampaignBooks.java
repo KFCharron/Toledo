@@ -46,8 +46,7 @@ public class RunCampaignBooks {
         } else {
             mxConn = new MxService(mxUrl, mxUsername, mxPassword);
         }
-        AppNexusService anConn = new AppNexusService(appNexusUrl
-        );
+        AppNexusService anConn = new AppNexusService(appNexusUrl);
 
         //Parse and save to list of advertisers
         final List<Advertiser> advertiserList = mxConn.requestAllAdvertisers();

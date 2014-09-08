@@ -310,7 +310,6 @@ public class AppNexusService {
                 "        \"report_interval\": \"" + interval + "\",\n" +
                 //"           \"start_date\": \"2014-04-15\", \"end_date\": \"2014-05-09\","+
                 "        \"format\": \"csv\",\n" +
-                "        \"emails\":[],\n" +
                 "        \"orders\": [\n" +
                 "            {\n" +
                 "            \"order_by\" : \"campaign_id\",\n" +
@@ -412,7 +411,6 @@ public class AppNexusService {
                 "           \"report_interval\": \"last_month\"," +
                 //"        \"start_date\": \"2014-02-12\", \"end_date\": \"2014-03-01\","+
                 "        \"format\": \"csv\",\n" +
-                "        \"emails\":[],\n" +
                 "        \"orders\": [\n" +
                 "            {\n" +
                 "            \"order_by\" : \"campaign_id\",\n" +
@@ -499,7 +497,6 @@ public class AppNexusService {
                 "        \"report_interval\": \"last_month\",\n" +
                 //"           \"start_date\": \"2013-11-01\", \"end_date\": \"2013-12-01\","+
                 "        \"format\": \"csv\",\n" +
-                "        \"emails\":[],\n" +
                 "        \"orders\": [\n" +
                 "            {\n" +
                 "            \"order_by\" : \"campaign_id\",\n" +
@@ -532,7 +529,6 @@ public class AppNexusService {
                 "        \"report_interval\": \"" + interval + "\",\n" +
                 //"           \"start_date\": \"2014-04-15\", \"end_date\": \"2014-05-0\","+
                 "        \"format\": \"csv\",\n" +
-                "        \"emails\":[],\n" +
                 "        \"orders\": [\n" +
                 "            {\n" +
                 "            \"order_by\" : \"seller_member_id\",\n" +
@@ -565,7 +561,6 @@ public class AppNexusService {
                 "        \"report_interval\": \"last_month\",\n" +
                 //"           \"start_date\": \"2013-11-01\", \"end_date\": \"2013-12-01\","+
                 "        \"format\": \"csv\",\n" +
-                "        \"emails\":[],\n" +
                 "        \"orders\": [\n" +
                 "            {\n" +
                 "            \"order_by\" : \"seller_member_id\",\n" +
@@ -612,7 +607,6 @@ public class AppNexusService {
                 "            }\n" +
                 "        ],\n" +
                 "        \"report_interval\":\"last_7_days\",\n" +
-                "        \"emails\": [],\n" +
                 "        \"format\": \"csv\"\n" +
                 "    }\n" +
                 "}";
@@ -695,8 +689,6 @@ public class AppNexusService {
                 "            \"day\"\n" +
                 "        ],\n" +
                 "        \"report_interval\":\"lifetime\",\n" +
-                "        \"emails\":[\n" +
-                "        ],\n" +
                 "        \"orders\": [\n" +
                 "            {\n" +
                 "            \"order_by\" : \"day\",\n" +
@@ -739,8 +731,6 @@ public class AppNexusService {
                 "            \"day\"\n" +
                 "        ],\n" +
                 "        \"report_interval\":\"lifetime\",\n" +
-                "        \"emails\":[\n" +
-                "        ],\n" +
                 "        \"orders\": [\n" +
                 "            {\n" +
                 "            \"order_by\" : \"day\",\n" +
@@ -772,8 +762,6 @@ public class AppNexusService {
                 "        ],\n" +
                 "        \"report_interval\":\"last_month\",\n" +
                 "        \"format\":\"csv\",\n" +
-                "        \"emails\":[\n" +
-                "        ],\n" +
                 "        \"orders\": [\n" +
                 "                    {\n" +
                 "                        \"order_by\":\"imps_total\", \n" +
@@ -809,8 +797,6 @@ public class AppNexusService {
                 "        ],\n" +
                 "        \"report_interval\":\""+ interval +"\",\n" +
                 "        \"format\":\"csv\",\n" +
-                "        \"emails\":[\n" +
-                "        ],\n" +
                 "        \"orders\": [\n" +
                 "                    {\n" +
                 "                        \"order_by\":\"publisher_id\", \n" +
@@ -844,8 +830,6 @@ public class AppNexusService {
                 "            \"imp_type\"\n" +
                 "        ],\n" +
                 "        \"report_interval\":\""+ interval +"\",\n" +
-                "        \"emails\":[\n" +
-                "        ],\n" +
                 "        \"timezone\": \"EST5EDT\""+
                 "    }\n" +
                 "}";
@@ -954,7 +938,6 @@ public class AppNexusService {
                 "            \"order_by\":\"datetime\", \"direction\":\"DESC\" } \n" +
                 "        ],\n" +
                 "       \"report_interval\": \"last_7_days\"," +
-                "        \"emails\": [],\n" +
                 "        \"format\": \"csv\",\n" +
                 "        \"timezone\": \"EST5EDT\""+
                 "    }\n" +
@@ -986,8 +969,6 @@ public class AppNexusService {
                 "        ],\n" +
                 "        \"report_interval\":\"lifetime\",\n" +
                 "        \"format\":\"csv\",\n" +
-                "        \"emails\":[\n" +
-                "        ],\n" +
                 "        \"orders\": [\n" +
                 "                    {\n" +
                 "                        \"order_by\":\"day\", \n" +
@@ -1025,8 +1006,6 @@ public class AppNexusService {
                 "        ],\n" +
                 "        \"report_interval\":\"lifetime\",\n" +
                 "        \"format\":\"csv\",\n" +
-                "        \"emails\":[\n" +
-                "        ],\n" +
                 "        \"timezone\": \"EST5EDT\""+
                 "    }\n" +
                 "}";
@@ -1049,8 +1028,6 @@ public class AppNexusService {
                 "        ],\n" +
                 "        \"report_interval\":\"yesterday\",\n" +
                 "        \"format\":\"csv\",\n" +
-                "        \"emails\":[\n" +
-                "        ],\n" +
                 "        \"orders\": [\n" +
                 "                    {\n" +
                 "                        \"order_by\":\"campaign_id\",\n" +
@@ -1105,7 +1082,6 @@ public class AppNexusService {
                 "        \"orders\": [\n" +
                 "            \"day\"\n" +
                 "        ],\n" +
-                "        \"emails\": [],\n" +
                 "        \"format\": \"csv\",\n" +
                 "        \"timezone\": \"EST5EDT\""+
                 "    }\n" +
@@ -1201,8 +1177,6 @@ public class AppNexusService {
                 "        ],\n" +
                 "        \"report_interval\":\"last_7_days\",\n" +
                 "        \"format\":\"csv\",\n" +
-                "        \"emails\":[\n" +
-                "        ],\n" +
                 "        \"orders\": [\n" +
                 "                    {\n" +
                 "                        \"order_by\":\"buyer_member_name\", \n" +
@@ -1251,8 +1225,6 @@ public class AppNexusService {
                 "        ],\n" +
                 "        \"report_interval\":\"last_7_days\",\n" +
                 "        \"format\":\"csv\",\n" +
-                "        \"emails\":[\n" +
-                "        ],\n" +
                 "        \"orders\": [\n" +
                 "                    {\n" +
                 "                        \"order_by\":\"imps_total\", \n" +
@@ -1286,8 +1258,6 @@ public class AppNexusService {
                 "        ],\n" +
                 "        \"report_interval\":\"last_7_days\",\n" +
                 "        \"format\":\"csv\",\n" +
-                "        \"emails\":[\n" +
-                "        ],\n" +
                 "        \"orders\": [\n" +
                 "                    {\n" +
                 "                        \"order_by\":\"imps_total\", \n" +
