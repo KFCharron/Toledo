@@ -10,9 +10,8 @@ class PacingReport {
 
     val wb = new HSSFWorkbook
 
-
     val noBudgetFlights = (
-      "AdX / Search",
+      "AdX & Search",
       SortedMap(
         flightMap
           .mapValues(lineList => lineList.filter(line => line.name.contains("AdX") ||
@@ -31,7 +30,7 @@ class PacingReport {
                                                             line.name.contains("Search")))
           .filter(m => m._2.size > 0)
           .filter(flight => {
-            flight._2.map(_.yestDelivery).foldLeft(0)(_+_) < (.9f * flight._2.map(_.dailyImpsNeeded).foldLeft(0L)(_+_))
+            flight._2.map(_.yestDelivery).sum < (.9f * flight._2.map(_.dailyImpsNeeded).foldLeft(0L)(_+_))
           })
           .toSeq:_*
       )
@@ -76,7 +75,6 @@ class PacingReport {
         }
         flightHeaderRow.getCell(0).setCellValue(f._1)
 
-
         rowCount += 1
 
         val headerRow = sheet.createRow(rowCount)
@@ -91,7 +89,6 @@ class PacingReport {
         headerRow.createCell(8).setCellValue("Lifetime Budget")
         headerRow.createCell(9).setCellValue("Lifetime Delivery")
         for(x <- 0 to 9) headerRow.getCell(x).setCellStyle(boldStyle)
-
 
         rowCount += 1
 
