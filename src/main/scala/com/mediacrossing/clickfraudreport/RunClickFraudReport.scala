@@ -10,6 +10,10 @@ import java.io.{File, FileOutputStream}
 
 object RunClickFraudReport extends App {
 
+  // Adjustable Values Used To Determine Fraud
+  val minimumClicks = 100
+  val minimumCtr = .5f
+
   // Global Vars
   val LOG = LoggerFactory.getLogger(RunClickFraudReport.getClass)
   Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler {
@@ -26,7 +30,7 @@ object RunClickFraudReport extends App {
     .toList
     .tail
     .map(a => (a(0), a(1), a(2).toInt, a(3).toInt, a(4).toFloat * 100))
-    .filter(r => r._4 > 100 && r._5 > .5f)
+    .filter(r => r._4 > minimumClicks && r._5 > minimumCtr)
 
   if (dataRowsFromAn.size > 0) {
     val wb = new HSSFWorkbook()
