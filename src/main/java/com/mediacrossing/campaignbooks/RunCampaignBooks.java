@@ -7,10 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 public class RunCampaignBooks {
 
@@ -56,6 +53,11 @@ public class RunCampaignBooks {
         for (Advertiser ad : advertiserList) {
             try {
                 ArrayList<LineItem> lineItemList = mxConn.requestLineItemsForAdvertiser(ad.getAdvertiserID());
+
+                for (Iterator<LineItem> it = lineItemList.iterator(); it.hasNext();) {
+                    if (it.next().getDaysRemaining() <= 0) it.remove();
+                }
+
                 Collections.sort(lineItemList, new Comparator<LineItem>() {
                     @Override
                     public int compare(LineItem o1, LineItem o2) {
