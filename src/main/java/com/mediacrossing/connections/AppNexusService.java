@@ -91,6 +91,40 @@ public class AppNexusService {
         return ResponseParser.parseCreatives(json);
     }
 
+    public List<String[]> requestPixelReport() throws Exception {
+        String jsonPost = "{\n" +
+                        "    \"report\": {\n" +
+                        "        \"report_type\": \"pixel_fired\",\n" +
+                        "        \"columns\": [\n" +
+                        "            \"pixel_id\",\n" +
+                        "            \"last_fired\",\n" +
+                        "            \"advertiser\"\n" +
+                        "        ],\n" +
+                        "        \"timezone\": \"EST\"\n" +
+                        "    }\n" +
+                        "} ";
+        String json = requests.postRequest(url + "/report", jsonPost);
+        return downloadReportWhenReady(json);
+    }
+
+    public List<String[]> requestConversionReport(String start, String end) throws Exception {
+        String jsonPost = "{\n" +
+                "  \"report\": {\n" +
+                "    \"report_type\": \"network_analytics\",\n" +
+                "    \"columns\" : [\n" +
+                "           \"campaign_id\",\n" +
+                "           \"campaign_name\",\n" +
+                "           \"total_convs\"\n" +
+                "       ],\n" +
+                "    \"timezone\": \"EST\",\n" +
+                "    \"start_date\": \"" + start + "\"," +
+                "    \"end_date\": \"" + end + "\"" +
+                "  }\n" +
+                "}";
+        String json = requests.postRequest(url + "/report", jsonPost);
+        return downloadReportWhenReady(json);
+    }
+
     public List<String[]> requestClickFraudReport() throws Exception {
         String jsonPost = "{\n" +
                 "  \"report\": {\n" +
