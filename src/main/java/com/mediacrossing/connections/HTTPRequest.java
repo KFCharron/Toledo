@@ -67,37 +67,47 @@ public class HTTPRequest implements Request {
 
     public String postRequest(String url, String jsonRequest) throws Exception {
 
-        URL obj = new URL(url);
-        HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+        int requestAttempts = 1;
+        int responseCode;
+        StringBuilder response;
+        do {
+            URL obj = new URL(url);
+            HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 
-        //add request header
-        con.setRequestMethod("POST");
-        con.setRequestProperty("Content-Type", "application/json");
-        LOG.debug("\nSending 'POST' request to URL : " + url);
-        // Send post request
-        con.setDoOutput(true);
-        DataOutputStream wr = new DataOutputStream(con.getOutputStream());
-        wr.writeBytes(jsonRequest);
-        wr.flush();
-        wr.close();
+            //add request header
+            con.setRequestMethod("POST");
+            con.setRequestProperty("Content-Type", "application/json");
+            LOG.debug("\nSending 'POST' request to URL : " + url);
+            // Send post request
+            con.setDoOutput(true);
+            DataOutputStream wr = new DataOutputStream(con.getOutputStream());
+            wr.writeBytes(jsonRequest);
+            wr.flush();
+            wr.close();
 
-        int responseCode = con.getResponseCode();
+            responseCode = con.getResponseCode();
+
+            LOG.debug("Response Code : " + responseCode);
+
+            BufferedReader in = new BufferedReader(
+                    new InputStreamReader(con.getInputStream()));
+
+            String inputLine;
+            response = new StringBuilder();
+            while ((inputLine = in.readLine()) != null) {
+                response.append(inputLine + "\n");
+            }
+            in.close();
+            requestAttempts++;
+
+        } while(requestAttempts <= 3 && responseCode != 200);
+
         if (responseCode != 200) {
-            LOG.error("Received Response Code " + responseCode + " from " + url);
+            LOG.error("Received Response Code " + responseCode + " from " + url + " after " + requestAttempts + " tries");
+            LOG.error("Error Message: " + response.toString());
             LOG.error("Exiting Program");
+            System.exit(1);
         }
-
-        LOG.debug("Response Code : " + responseCode);
-
-        BufferedReader in = new BufferedReader(
-                new InputStreamReader(con.getInputStream()));
-
-        String inputLine;
-        StringBuilder response = new StringBuilder();
-        while ((inputLine = in.readLine()) != null) {
-            response.append(inputLine + "\n");
-        }
-        in.close();
 
         return response.toString();
     }
