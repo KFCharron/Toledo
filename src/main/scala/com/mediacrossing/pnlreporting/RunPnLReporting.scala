@@ -15,6 +15,7 @@ import org.apache.poi.ss.usermodel.{CellStyle, IndexedColors}
 
 object RunPnLReporting extends App {
 
+  // Global Vars
   val LOG = LoggerFactory.getLogger(RunPnLReporting.getClass)
   Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler {
     def uncaughtException(t: Thread, e: Throwable) {
@@ -31,7 +32,7 @@ object RunPnLReporting extends App {
 
   val dateFormat = DateTimeFormat.forPattern("yyyy-MM-dd")
 
-  // Get Report, Convert To Data Rows, Campaign 0s?
+  // Get Report, Convert To Data Rows, **Campaign 0s?**
   val data = anConn.requestAnalyticsReport()
     .toList
     .tail
@@ -58,6 +59,7 @@ object RunPnLReporting extends App {
     .toList
     .groupBy(c => c.getId)
 
+  // Map Each DataRow to a Campaign
   val finalCamps = data.map(d => {
     Campaign(
       d._2,
@@ -276,10 +278,31 @@ object RunPnLReporting extends App {
   row.foreach(c => c.setCellStyle(currency))
 
   row = homeSheet.createRow(rowCount+1)
-  row.createCell(0).setCellValue("Gross Profit:")
-  row.createCell(1).setCellValue(finalCamps.map(c => c.yestGrossProfit).foldLeft(0.0)(_+_))
-  row.createCell(2).setCellValue(finalCamps.map(c => c.weekGrossProfit).foldLeft(0.0)(_+_))
-  row.createCell(3).setCellValue(finalCamps.map(c => c.monthGrossProfit).foldLeft(0.0)(_+_))
+  row.createCell(0).setCellValue("Advertiser PnL:")
+  row.createCell(1).setCellValue(finalCamps.map(c => c.yestAdvertPnL).foldLeft(0.0)(_+_))
+  row.createCell(2).setCellValue(finalCamps.map(c => c.weekAdvertPnL).foldLeft(0.0)(_+_))
+  row.createCell(3).setCellValue(finalCamps.map(c => c.monthAdvertPnL).foldLeft(0.0)(_+_))
+  row.foreach(c => c.setCellStyle(currency))
+
+  row = homeSheet.createRow(rowCount+2)
+  row.createCell(0).setCellValue("Exchange PnL:")
+  row.createCell(1).setCellValue(finalCamps.map(c => c.yestExchangePnL).foldLeft(0.0)(_+_))
+  row.createCell(2).setCellValue(finalCamps.map(c => c.weekExchangePnL).foldLeft(0.0)(_+_))
+  row.createCell(3).setCellValue(finalCamps.map(c => c.monthExchangePnL).foldLeft(0.0)(_+_))
+  row.foreach(c => c.setCellStyle(currency))
+
+  row = homeSheet.createRow(rowCount+3)
+  row.createCell(0).setCellValue("Direct PnL:")
+  row.createCell(1).setCellValue(finalCamps.map(c => c.yestDirectPnL).foldLeft(0.0)(_+_))
+  row.createCell(2).setCellValue(finalCamps.map(c => c.weekDirectPnL).foldLeft(0.0)(_+_))
+  row.createCell(3).setCellValue(finalCamps.map(c => c.monthDirectPnL).foldLeft(0.0)(_+_))
+  row.foreach(c => c.setCellStyle(currency))
+
+  row = homeSheet.createRow(rowCount+4)
+  row.createCell(0).setCellValue("Publisher PnL:")
+  row.createCell(1).setCellValue(finalCamps.map(c => c.yestAdvertPnL).foldLeft(0.0)(_+_))
+  row.createCell(2).setCellValue(finalCamps.map(c => c.weekAdvertPnL).foldLeft(0.0)(_+_))
+  row.createCell(3).setCellValue(finalCamps.map(c => c.monthAdvertPnL).foldLeft(0.0)(_+_))
   row.foreach(c => c.setCellStyle(currency))
 
   for (x <- 0 to 3) homeSheet.autoSizeColumn(x)
@@ -402,7 +425,7 @@ object RunPnLReporting extends App {
     adRow.getCell(cellCount).setCellStyle(currency)
     adRow.createCell(cellCount + 1).setCellValue(a._2.map(c => c.yestTotalCost).foldLeft(0.0d)(_+_))
     adRow.getCell(cellCount + 1).setCellStyle(currency)
-    adRow.createCell(cellCount + 2).setCellValue(a._2.map(c => c.yestGrossProfit).foldLeft(0.0d)(_+_))
+    //adRow.createCell(cellCount + 2).setCellValue(a._2.map(c => c.yestGrossProfit).foldLeft(0.0d)(_+_))
     adRow.getCell(cellCount + 2).setCellStyle(currency)
     rowCount += 1
 
@@ -511,7 +534,7 @@ object RunPnLReporting extends App {
       campRow.getCell(cellCount).setCellStyle(currency)
       campRow.createCell(cellCount + 1).setCellValue(c.yestTotalCost)
       campRow.getCell(cellCount + 1).setCellStyle(currency)
-      campRow.createCell(cellCount + 2).setCellValue(c.yestGrossProfit)
+      //campRow.createCell(cellCount + 2).setCellValue(c.yestGrossProfit)
       campRow.getCell(cellCount + 2).setCellStyle(currency)
       campRowCount += 1
     })
@@ -602,35 +625,17 @@ case class Campaign(dataRows: List[AnalyticsDataRow],
     if (yestServingFees.contains("Lotame")) yestImps
     else 0
   }
+  
   val yestAmazonCost = yestImps * (.095f / 1000)
-  // TODO Yesterday Total Cost
-  val yestTotalCost = {
-    val campType = dataRows.head.campType
-    if (campType.equals("cross")) {
-      //val crossRev = .4 * (yestRevenue - (yestRevenue * .135 - .1))
 
-      0
-    }
-    else if (campType.equals("direct")) {
-      // TODO
-      0
-    }
-    else {
-      yestMediaCost +
-        yestServingFees.map(f => f._2).foldLeft(0.0)(_ + _) +
-        yestAnCommission +
-        yestMxCommission
-    }
-  }
-
-  // TODO
-  val yestGrossProfit = yestRevenue - yestTotalCost
-
-  //TODO calculate daily PnL for each stream
   /*
     If campType.equals direct or crossed, do the calcs, else, it's normal
    */
-
+  val yestTotalCost = 0 // TODO
+  val yestAdvertPnL = 0 // TODO
+  val yestExchangePnL = 0 // TODO
+  val yestDirectPnL = 0 // TODO
+  val yestPubPnL = 0 // TODO
 
   private val weekRows = dataRows.filter(r => r.day.isAfter(today.minusDays(8)))
   private val weekMxRows = weekRows.filter(r => r.sellerName.equals("MediaCrossing Inc."))
@@ -679,27 +684,15 @@ case class Campaign(dataRows: List[AnalyticsDataRow],
   }
 
   val weekAmazonCost = weekImps * (.095f / 1000)
-  // TODO WEEK TOTAL COST
-  val weekTotalCost = {
-    val campType = dataRows.head.campType
-    if (campType.equals("cross")) {
-      // TODO
-      0
-    }
-    else if (campType.equals("direct")) {
-      // TODO
-      0
-    }
-    else {
-      weekMediaCost +
-        weekServingFees.map(f => f._2).foldLeft(0.0)(_ + _) +
-        weekAnCommission +
-        weekMxCommission
-    }
-  }
 
-  // TODO Week PnL for each Stream
-  val weekGrossProfit = weekRevenue - weekTotalCost
+  /*
+    If campType.equals direct or crossed, do the calcs, else, it's normal
+   */
+  val weekTotalCost = 0 // TODO
+  val weekAdvertPnL = 0 // TODO
+  val weekExchangePnL = 0 // TODO
+  val weekDirectPnL = 0 // TODO
+  val weekPubPnL = 0 // TODO
 
 
   private val monthRows = dataRows
@@ -748,27 +741,14 @@ case class Campaign(dataRows: List[AnalyticsDataRow],
     else 0
   }
   val monthAmazonCost = monthImps * (.095f / 1000)
-
-  // TODO Total Cost
-  val monthTotalCost = {
-    val campType = dataRows.head.campType
-    if (campType.equals("cross")) {
-      // TODO
-      0
-    }
-    else if (campType.equals("direct")) {
-      // TODO
-      0
-    }
-    else {
-      monthMediaCost +
-        monthServingFees.map(f => f._2).foldLeft(0.0)(_ + _) +
-        monthAnCommission +
-        monthMxCommission
-    }
-  }
-
-  // TODO Month PnL for each Stream
-  val monthGrossProfit = monthRevenue - monthTotalCost
+  
+  /*
+      If campType.equals direct or crossed, do the calcs, else, it's normal
+     */
+  val monthTotalCost = 0 // TODO
+  val monthAdvertPnL = 0 // TODO
+  val monthExchangePnL = 0 // TODO
+  val monthDirectPnL = 0 // TODO
+  val monthPubPnL = 0 // TODO
   
 }
