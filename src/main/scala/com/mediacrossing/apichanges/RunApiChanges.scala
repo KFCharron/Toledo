@@ -1,11 +1,13 @@
 package com.mediacrossing.apichanges
 
 import com.mediacrossing.properties.ConfigurationProperties
-import com.mediacrossing.connections.{MxService, AppNexusService}
+import com.mediacrossing.connections.{HTTPRequest, MxService, AppNexusService}
 import scala.collection.JavaConversions._
 import com.mediacrossing.dailycheckupsreport.JSONParse
 import au.com.bytecode.opencsv.CSVReader
 import java.io.FileReader
+import com.mediacrossing.dailycheckupsreport.profiles.ProfileRepository
+import com.mediacrossing.segmenttargeting.profiles.PutneyProfileRepository
 
 object RunApiChanges extends App {
   val properties: ConfigurationProperties = new ConfigurationProperties(args)
@@ -122,14 +124,29 @@ object RunApiChanges extends App {
       "{\n        \"id\": \"277861\"\n      }\n    ]\n  }\n}"
     anConn.putRequest(s"/profile?id=$id", json)
   })*/
-  val adIds = {"186354" :: "186355" :: "186356" :: Nil}
+
+
+  val adIds = {"206084" :: Nil}
   val blackListProIds = mxConn.requestAllCampaigns().toList
     .filter(c => adIds.contains(c.getAdvertiserID))
-    .map(c => c.getProfileID)
+    .map(c => (c.getAdvertiserID, c.getProfileID))
 
-  blackListProIds.foreach(id => {
-    val json = "{\n  \"profile\": {\n    \"domain_list_action\": \"exclude\",\n    \"domain_list_targets\":[\n      " +
-      "{\n        \"id\": \"277861\"\n },{ \"id\":\"293756\"      }\n    ]\n  }\n}"
-    anConn.putRequest(s"/profile?id=$id", json)
+  val proIds = blackListProIds.map(p => p._2)
+
+  private def production(r: HTTPRequest): ProfileRepository = {
+    return new PutneyProfileRepository(r)
+  }
+  val profileRepository: ProfileRepository = production(anConn.requests)
+
+  val profiles = profileRepository.findBy(blackListProIds, properties.getPutneyUrl)
+    .filter(p => proIds.contains(p.getId))
+    .filterNot(p => p.getDomainListAction.equals("include"))
+    .map(p => (p.getId, p.getDomainListTargetList))
+
+
+  profiles.foreach(p => {
+    val targetString = (p._2.map(s => "{\"id\":\"" + s + "\"}") ++ List("{\"id\": \"298628\"}")).mkString(",")
+    val json = "{\n  \"profile\": {\n    \"domain_list_action\": \"exclude\",\n    \"domain_list_targets\":[" + targetString + "]\n  }\n}"
+    anConn.putRequest(s"/profile?id=${p._1}", json)
   })
 }
