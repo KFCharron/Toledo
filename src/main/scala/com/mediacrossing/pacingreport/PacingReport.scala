@@ -60,7 +60,7 @@ class PacingReport {
 
     val dtf = DateTimeFormat.forPattern("MM/dd/YYYY")
 
-    {noBudgetFlights :: pacingConcernFlights :: allFlights :: Nil}
+    {pacingConcernFlights :: noBudgetFlights :: allFlights :: Nil}
       .foreach(a => writePacingSheet(a._1, a._2))
 
     // Write method that writes a sheet with the given flight map
