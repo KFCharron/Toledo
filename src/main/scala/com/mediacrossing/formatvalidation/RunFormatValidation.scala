@@ -38,7 +38,7 @@ object RunFormatValidation extends App {
 
   val paymentRules: List[mutable.Buffer[(PaymentRule, String)]] = {
 
-    val excludedPubIds: List[String] = List("176863", "311754", "336335", "395998", "401244", "434706", "420529")
+    val excludedPubIds: List[String] = List("176863", "311754", "336335", "395998", "401244", "434706", "420529", "437359")
 
     mxConn.requestAllPublishers()
       .toList
