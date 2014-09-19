@@ -12,6 +12,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import static java.lang.Math.abs;
+
 
 public class ExcelWriter {
 
@@ -246,7 +248,7 @@ public class ExcelWriter {
             Float totalCumulativeDelivery = 0.0f;
             int totalCumulativeImpDelivery = 0;
             ArrayList<Float> tots =
-                    new ArrayList<>(Collections.nCopies((int)(startToNow.getStandardDays()+9), 0f));
+                    new ArrayList<>(Collections.nCopies((int)(abs(startToNow.getStandardDays())+9), 0f));
 
             int cellTrack = 0;
 
