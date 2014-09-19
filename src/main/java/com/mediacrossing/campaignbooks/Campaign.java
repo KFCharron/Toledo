@@ -61,7 +61,7 @@ public class Campaign implements Serializable {
         DateTime now = new DateTime();
         Duration nowToEndPeriod = new Duration(now, this.endDate);
 
-        this.daysActive = startToEndDuration.getStandardDays();
+        this.daysActive = startToEndDuration.getStandardDays() + 1;
         this.daysRemaining = nowToEndPeriod.getStandardDays() + 1;
     }
 

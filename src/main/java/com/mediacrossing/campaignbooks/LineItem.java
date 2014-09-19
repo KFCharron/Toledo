@@ -45,7 +45,7 @@ public class LineItem implements Serializable {
         DateTime now = new DateTime();
         Duration nowToEnd = new Duration(now, endDateTime);
 
-        this.daysActive = startToEnd.getStandardDays();
+        this.daysActive = startToEnd.getStandardDays() + 1;
 
         if(!lifetimeBudget.equals("null")) {
             this.lifetimeBudget = Float.parseFloat(lifetimeBudget);
