@@ -13,10 +13,10 @@ import play.api.libs.functional.syntax._
 import play.api.libs.json.Reads._
 import play.api.libs.json.JsSuccess
 
-object RunConvWatch extends App {
+object RunConversionWatch extends App {
 
   // Global Vars
-  val LOG = LoggerFactory.getLogger(RunConvWatch.getClass)
+  val LOG = LoggerFactory.getLogger(RunConversionWatch.getClass)
   Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler {
     def uncaughtException(t: Thread, e: Throwable) {
       LOG.error(e.getMessage, e)
