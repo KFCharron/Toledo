@@ -209,7 +209,7 @@ object RunFormatValidation extends App {
   val lineItems = checkLineItems(activeLineItemsFromMx)
   val liveRailLineItems = checkLiveRailLineItems(activeLineItemsFromMx)
 
-  if(!(paymentRules.size == 0 && lineItems.size == 0 && liveRailLineItems.size == 0)) {
+  if(!(brokenPaymentRules.size == 0 && lineItems.size == 0 && liveRailLineItems.size == 0)) {
     val report = writeReport(pubsMissingPaymentRules, brokenPaymentRules, lineItems, liveRailLineItems)
     val fileOut = new FileOutputStream(new File(props.getOutputPath, "Format_Validation_" + new LocalDate(DateTimeZone.UTC).toString + ".xls"))
     report.write(fileOut)
