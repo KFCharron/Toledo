@@ -3,11 +3,17 @@ package com.mediacrossing.apichanges
 import com.mediacrossing.properties.ConfigurationProperties
 import com.mediacrossing.connections.{HTTPRequest, MxService, AppNexusService}
 import scala.collection.JavaConversions._
-import com.mediacrossing.dailycheckupsreport.JSONParse
+import com.mediacrossing.dailycheckupsreport.{SegmentGroupTarget, JSONParse}
 import au.com.bytecode.opencsv.CSVReader
 import java.io.FileReader
 import com.mediacrossing.dailycheckupsreport.profiles.ProfileRepository
 import com.mediacrossing.segmenttargeting.profiles.PutneyProfileRepository
+import play.api.libs.json._
+import play.api.libs.json.Reads._
+import play.api.libs.functional.syntax._
+import org.joda.time.format.{DateTimeFormat, DateTimeFormatter}
+import org.joda.time.DateTime
+import java.util
 
 object RunApiChanges extends App {
   val properties: ConfigurationProperties = new ConfigurationProperties(args)
@@ -126,7 +132,7 @@ object RunApiChanges extends App {
   })*/
 
 
-  val adIds = {"206084" :: Nil}
+  /*val adIds = {"206084" :: Nil}
   val blackListProIds = mxConn.requestAllCampaigns().toList
     .filter(c => adIds.contains(c.getAdvertiserID))
     .map(c => (c.getAdvertiserID, c.getProfileID))
@@ -148,5 +154,114 @@ object RunApiChanges extends App {
     val targetString = (p._2.map(s => "{\"id\":\"" + s + "\"}") ++ List("{\"id\": \"298628\"}")).mkString(",")
     val json = "{\n  \"profile\": {\n    \"domain_list_action\": \"exclude\",\n    \"domain_list_targets\":[" + targetString + "]\n  }\n}"
     anConn.putRequest(s"/profile?id=${p._1}", json)
+  })*/
+
+
+  // Get all creative for Regis 324264
+ /* val creativeR = (
+    (__ \ "id").read[Int] ~
+      (__ \ "name").read[String]
+    ).tupled
+
+  val creativeUrl = s"/creative?advertiser_id=324264"
+  val fullUrl = properties.getPutneyUrl + creativeUrl
+  val creatives: List[(Int, String)] = Json.parse(anConn.requests.getRequest(fullUrl)).\("response").\("creatives")
+    .validate(list(creativeR)) match {
+    case e@JsError(_) => sys.error(JsError.toFlatJson(e).toString())
+    case JsSuccess(v, _) => v
+  }
+  val mapped: Map[Int, String] = creatives.toMap
+
+  val reader: CSVReader = new CSVReader(new FileReader("/Users/charronkyle/Desktop/Regis_Numbers.csv"))
+  val csvData = reader
+    .readAll
+    .toList
+    .tail
+    .map(l => (l(0), mapped.get(l(1).substring(1).toInt).get, l(2)))
+
+  val outputFilename = "/Users/charronkyle/Desktop/Regis_Numbers_2.csv"
+
+  val pw = new java.io.PrintWriter(outputFilename)
+  val header = {
+    ("Date" :: "Creative" :: "Imps" :: Nil).
+      mkString(",")
+  }
+  pw.println(header)
+
+  csvData.foreach(t => {
+    val line = (t._1 :: t._2 :: t._3 :: Nil).mkString(",")
+    pw.println(line)
   })
+
+  pw.close()*/
+
+ /*val lines = mxConn.requestAllLineItems()
+    .toList
+    .map(l => l.getId -> l.getName)
+    .toMap
+
+  val reader: CSVReader = new CSVReader(new FileReader("/Users/charronkyle/Desktop/FELD_QUERY_1.csv"))
+  val csvData = reader
+    .readAll
+    .toList
+    .tail
+
+  val outputFilename = "/Users/charronkyle/Desktop/Final_FELD.csv"
+
+  val pw = new java.io.PrintWriter(outputFilename)
+  val header = {
+    ("LineItem" :: "DMA" :: "Imps" :: Nil).
+      mkString(",")
+  }
+  pw.println(header)
+
+  csvData.foreach(l => {
+    val line = (s"${lines.get(l(0)).getOrElse("None")} (${l(0)})" :: l(1) :: l(2) :: Nil).mkString(",")
+    pw.println(line)
+  })
+
+  pw.close()*/
+
+
+  /*// Get all camps
+  // filter to regis w/ start date after sept 29
+  // map to proId
+  val dtf = DateTimeFormat.forPattern("YYYY-MM-dd'T'HH:mm:ss'Z'")
+  val proIds: List[String] = mxConn.requestAllCampaigns().toList
+    .filter(c => c.getAdvertiserID.equals("324264") && dtf.parseDateTime(c.getStartDate).isAfter(new DateTime().minusDays(2)))
+    .map(c => c.getProfileID)
+
+
+  // get all regis pros
+  val regisPros = anConn.requestAllProfileSegments()
+    .toMap
+    .filter(m => proIds.contains(m._1))
+    .filter(m => m._2.size() == 0)
+    .foreach(pro => {
+
+
+      val id = pro._1
+
+      val existingSegmentObjects = pro._2.map(sgt => {
+
+        val segments = sgt.getSegmentArrayList.map(s => s"""{"id":${s.getId}, "action":"${s.getAction}"}""").mkString(",")
+
+        s"""{"boolean_operator": "${sgt.getBoolOp}",""" +
+            s""" "segments": [""" +
+            s"$segments  " +
+            s"]}"
+      }).mkString(",")
+
+
+      val query = s"""{"profile": {  "segment_group_targets" : [    {      "boolean_operator":"and",      "segments":[        {          "id": 1739913,          "action": "exclude"        }      ]    }  ]}}"""
+      println(query)
+      anConn.requests.putRequest(s"http://localhost:8888/an/profile?id=$id", query)
+  })*/
+
+
+
+  // map proIds to pros
+
+  // add exclude pixel to current pro
+
 }
