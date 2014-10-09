@@ -40,6 +40,10 @@ public class MxService {
         this.requests = new HTTPRequest();
     }
 
+    public String requestPacingMetricJson(String fullUrl) throws Exception {
+        return requests.getRequest(fullUrl);
+    }
+
     public String putRequest(String url2, String json) throws Exception {
         return requests.putRequest(url + url2, json);
     }
