@@ -22,6 +22,27 @@ object RunApiChanges extends App {
   val anConn: AppNexusService = new AppNexusService(properties.getPutneyUrl)
   val mxConn: MxService = new MxService(properties.getMxUrl, properties.getMxUsername, properties.getMxPassword)
 
+  val camps = mxConn.requestAllCampaigns().toList.map(c => c.getId -> c.getName).toMap
+
+  val reader: CSVReader = new CSVReader(new FileReader("/Users/charronkyle/Desktop/Motosports_Conv_Report.csv"))
+
+  val home = System.getProperty( "user.home" )
+  val path = (new java.io.File(home, "/Desktop/MotosportsC.csv")).getAbsolutePath()
+  val pw = new java.io.PrintWriter(path)
+  pw.println("MX UserId, First Imp, Last Imp, Num. Of Imps")
+  val report = reader
+    .readAll
+    .toList
+    .tail
+    .foreach(a => {
+
+    a(1) = camps.get(a(1).substring(1)).get
+    a(2) = camps.get(a(2).substring(1)).get
+    pw.println(s"${a(0)},${a(1)},${a(2)},${a(3)}")
+  })
+
+  pw.close()
+
 
   /* FIXES NAMING CONVENTION ISSUES FOR REPORTING MOBILE AND CONTEXTUAL CAMPAIGNS
       val camps = mxConn.requestAllCampaigns()
@@ -257,6 +278,7 @@ object RunApiChanges extends App {
       println(query)
       anConn.requests.putRequest(s"http://localhost:8888/an/profile?id=$id", query)
   })*/
+  //val lines = mxConn.requestAllLineItems().filter(l => l.getAdvertiserId.equals("186356") && l.getName.toLowerCase.contains("retargeting")).map(l => s""""${l.getId}",""").foreach(println)
 
 
 
