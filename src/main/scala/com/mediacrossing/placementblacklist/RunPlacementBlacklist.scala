@@ -25,7 +25,7 @@ object RunPlacementBlacklist extends App {
   val proR = (
     (__ \ "id").read[Int] ~
       (__ \ "action").read[String]
-    ).tupled                           ˜
+    ).tupled
 
   val proToPlacementMap = reader
     .readAll
