@@ -32,7 +32,7 @@ object RunChronosJobReport extends App {
       (__ \ "parents").readNullable[Array[String]]
     ).apply(ChronosJob.apply _)
 
-  val jobs = Json.parse(new HTTPRequest().getRequest("http://mesos-test-01.mx:4400/scheduler/jobs"))
+  val jobs = Json.parse(new HTTPRequest().getRequest("http://mesos-test-02.mx:4400/scheduler/jobs"))
   //val jobs: List[ChronosJob] = Json.parse(new HTTPRequest().getRequest("http://localhost:4400/scheduler/jobs"))
     .validate(list(jobR)) match {
     case e@JsError(_) => sys.error(JsError.toFlatJson(e).toString())

@@ -577,6 +577,36 @@ public class AppNexusService {
         return downloadReportWhenReady(json);
     }
 
+    public List<String[]> sellerReport() throws Exception {
+        String jsonPost = "{\n" +
+                "    \"report\":\n" +
+                "    {\n" +
+                "        \"report_type\": \"network_analytics\",\n" +
+                "        \"columns\": [\n" +
+                "            \"seller_member_id\",\n" +
+                "            \"advertiser_id\",\n" +
+                "            \"imps\",\"cost\"\n" +
+                "        ],\n" +
+                "        \"row_per\" :[\n" +
+                "            \"advertiser_id\",\n" +
+                "            \"seller_member_id\"\n" +
+                "        ],\n" +
+                "        \"report_interval\": \"" + "last_month" + "\",\n" +
+                "        \"format\": \"csv\",\n" +
+                "        \"orders\": [\n" +
+                "            {\n" +
+                "            \"order_by\" : \"seller_member_id\",\n" +
+                "            \"direction\": \"DESC\"\n" +
+                "            }\n" +
+                "        ],\n" +
+                "        \"timezone\": \"EST5EDT\"\n" +
+                "    }\n" +
+                "}";
+
+        String json = requests.postRequest(url+"/report", jsonPost);
+        return downloadReportWhenReady(json);
+    }
+
     public List<String[]> requestCreativeSellerReport () throws Exception {
         String jsonPost = "{\n" +
                 "    \"report\":\n" +
