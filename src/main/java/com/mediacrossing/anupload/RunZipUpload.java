@@ -12,13 +12,13 @@ public class RunZipUpload {
     public static String anUrl = "http://api.appnexus.com/";
     public static String anUsername = "mediacrossing_api_user";
     public static String anPassword = "Z3^at0Fbr";
-    public static String advertiserId = "283120";
+    public static String advertiserId = "186354";
     public static String profileId = "8796201";
 
     public static void main(String[] args) throws Exception {
 
         // Parse in zip code list
-        InputStream is = new FileInputStream("/Users/charronkyle/Desktop/HomeServe Water Zip List.csv");
+        InputStream is = new FileInputStream("/Users/charronkyle/Desktop/Boston DOI zips.csv");
         CSVReader reader = new CSVReader(new BufferedReader(new InputStreamReader(is)));
         List<String[]> csvData = reader.readAll();
 
