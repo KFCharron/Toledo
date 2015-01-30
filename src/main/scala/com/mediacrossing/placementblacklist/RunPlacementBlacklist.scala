@@ -21,7 +21,7 @@ object RunPlacementBlacklist extends App {
   val campProMap = mxConn.requestAllCampaigns().toList.map(c => c.getId -> c.getProfileID).toMap
 
   // Read In Csv
-  val reader: CSVReader = new CSVReader(new FileReader("/Users/charronkyle/Downloads/1LowViewability_Removal_ALL_Advertisers_121214.csv"))
+  val reader: CSVReader = new CSVReader(new FileReader("/Users/charronkyle/Downloads/ServPro_Viewability_Removal_Report_012915.csv"))
   val proR = (
     (__ \ "id").read[Int] ~
       (__ \ "action").read[String]

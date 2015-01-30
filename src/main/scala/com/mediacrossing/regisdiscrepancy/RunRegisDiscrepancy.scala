@@ -15,11 +15,11 @@ object RunRegisDiscrepancy extends App {
 
   // Import MediaMind Report
   val mmSheet = WorkbookFactory.create(
-    new File("/Users/charronkyle/Downloads/Regis_CPS_Regis_Enrollment_Marketing_2015_Custom_Report_110700.xlsx"))
+    new File("/Users/charronkyle/Downloads/Regis_CPS_Regis_Enrollment_Marketing_2015_Custom_Report_230803.xlsx"))
     .getSheetAt(0)
 
   // Import AN Report
-  val anSheet = WorkbookFactory.create(new File("/Users/charronkyle/Downloads/report-1.xlsx"))
+  val anSheet = WorkbookFactory.create(new File("/Users/charronkyle/Downloads/report.xlsx"))
     .getSheetAt(0)
 
   // Buffer To Map Real Names

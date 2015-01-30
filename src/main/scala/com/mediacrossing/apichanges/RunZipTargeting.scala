@@ -22,15 +22,15 @@ object RunZipTargeting extends App {
   val anConn = new AppNexusService(props.getPutneyUrl)
   val mxConn = new MxService(props.getMxUrl, props.getMxUsername, props.getMxPassword)
 
-  val lineIds = List("1579882",
-  "1579884",
-  "1579885")
+  val lineIds = List(
+    "1700197",
+    "1700202"
+  )
 
   //import zip csv
-  val reader: CSVReader = new CSVReader(new FileReader("/Users/charronkyle/Downloads/Bridgeport_ZIP_List.csv"))
+  val reader: CSVReader = new CSVReader(new FileReader("/Users/charronkyle/Downloads/zips.csv"))
   val zipList: List[String] = reader.readAll
     .toList
-    .tail
     .map(_(0))
   //generate zip string
   val zipString = zipList.map(z => s"""{"from_zip": "$z", "to_zip": "$z"}""").mkString(",")
