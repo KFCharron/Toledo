@@ -23,12 +23,13 @@ object RunZipTargeting extends App {
   val mxConn = new MxService(props.getMxUrl, props.getMxUsername, props.getMxPassword)
 
   val lineIds = List(
-    "1700197",
-    "1700202"
+    "1724088",
+    "1724089",
+    "1724090"
   )
 
   //import zip csv
-  val reader: CSVReader = new CSVReader(new FileReader("/Users/charronkyle/Downloads/zips.csv"))
+  val reader: CSVReader = new CSVReader(new FileReader("/Users/charronkyle/Downloads/nassau zips.csv"))
   val zipList: List[String] = reader.readAll
     .toList
     .map(_(0))

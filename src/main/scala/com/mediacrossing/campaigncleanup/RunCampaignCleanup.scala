@@ -10,22 +10,26 @@ object RunCampaignCleanup extends App {
   val mxConn: MxService = new MxService(properties.getMxUrl, properties.getMxUsername, properties.getMxPassword)
 
   val givenLineId = List(
-    "1713868",
-    "1713875",
-    "1713879"
+    "1724088",
+    "1724089",
+    "1724090"
   )
-  val givenDmaName = "MJBaltimore3/1/15"
+  val givenDmaName = "Uniondale3/8/15"
   // YYYY-MM-dd HH:mm:ss
-  val startDate = "2015-01-30 00:00:00"
-  val endDate = "2015-02-25 23:59:59"
+  val startDate = "2015-02-04 00:00:00"
+  val endDate = "2015-03-07 23:59:59"
   val creatives = List(
-    "24845329",
-    "24845332",
-    "24845337",
-    "24845345",
-    "24845342",
-    "24845347",
-    "24845664"
+    "25041646",
+  "25041644",
+  "25041641",
+  "25041637",
+  "24991899",
+  "24991886",
+  "24991894",
+  "24991876",
+  "24991850",
+  "24991861",
+  "24991840"
   )
     .map(s => s"""{"id":"$s"}""").mkString(",")
 

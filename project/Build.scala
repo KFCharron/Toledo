@@ -68,6 +68,7 @@ object BuildSettings {
     val oauth = "com.google.oauth-client" % "google-oauth-client-jetty" % "1.17.0-rc"
     val guava = "com.google.guava" % "guava" % "14.0"
     val xerces = "xerces" % "xerces" % "1.4.0"
+    val drive = "com.google.apis" % "google-api-services-drive" % "v2-rev158-1.19.1"
   }
 
 }
@@ -96,7 +97,8 @@ object TargetSegmentingBuild extends Build {
               jackson,
               oauth,
               guava,
-              xerces
+              xerces,
+              drive
             )) ++
         customAssemblySettings
   )
