@@ -10,26 +10,17 @@ object RunCampaignCleanup extends App {
   val mxConn: MxService = new MxService(properties.getMxUrl, properties.getMxUsername, properties.getMxPassword)
 
   val givenLineId = List(
-    "1724088",
-    "1724089",
-    "1724090"
+    "1823331",
+    "1823328",
+    "1823327"
+
   )
-  val givenDmaName = "Uniondale3/8/15"
+  val givenDmaName = "DL_NewYork4/12/15"
+  val salesforceId = "006d000000Oldbv"
   // YYYY-MM-dd HH:mm:ss
-  val startDate = "2015-02-04 00:00:00"
-  val endDate = "2015-03-07 23:59:59"
+  val startDate = "2015-03-16 00:00:00"
+  val endDate = "2015-04-11 23:59:59"
   val creatives = List(
-    "25041646",
-  "25041644",
-  "25041641",
-  "25041637",
-  "24991899",
-  "24991886",
-  "24991894",
-  "24991876",
-  "24991850",
-  "24991861",
-  "24991840"
   )
     .map(s => s"""{"id":"$s"}""").mkString(",")
 
@@ -43,14 +34,15 @@ object RunCampaignCleanup extends App {
 
   givenLineId.foreach(l => {
     val camps = allCamps
-      .filter(c => c.getLineItemID.equals(l) /*&& c.getName.contains("Copy")*/)
+      .filter(c => c.getLineItemID.equals(l))
       .map(c => (nameChange(c.getName), c.getId, c.getProfileID))
 
+    // Took out creative allocation , "creatives":[$creatives]
     camps.foreach(c => {
-      val campPutString = s"""{"campaign":{"name": "${c._1}","start_date": "$startDate","end_date": "$endDate", "creatives":[$creatives]}}"""
+      val campPutString = s"""{"campaign":{"name": "${c._1}", "code": "$salesforceId ${c._2}", "start_date": "$startDate","end_date": "$endDate"}}"""
       val proPutString = "{\"profile\":{\"dma_action\":\"exclude\", \"country_action\":\"exclude\", \"region_action\":\"exclude\", \"city_action\":\"exclude\", \"country_targets\":[],\"city_targets\":[],\"dma_targets\":[],\"region_targets\":[],\"zip_targets\":[]}}"
       anConn.requests.putRequest(properties.getPutneyUrl + s"/campaign?id=${c._2}", campPutString)
-      anConn.requests.putRequest(properties.getPutneyUrl + s"/profile?id=${c._3}", proPutString)
+      //anConn.requests.putRequest(properties.getPutneyUrl + s"/profile?id=${c._3}", proPutString)
     })
   })
 }
