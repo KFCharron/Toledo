@@ -28,7 +28,7 @@ public class HTTPRequest implements Request {
 
         //Create URL object
         URL obj = new URL(url);
-        LOG.debug("\nSending 'GET' request to URL : " + url);
+        System.out.println("\nSending 'GET' request to URL : " + url);
 
         //Open connection
         HttpURLConnection con = (HttpURLConnection) obj.openConnection();
@@ -41,7 +41,7 @@ public class HTTPRequest implements Request {
 
         //Obtain response code
         int responseCode = con.getResponseCode();
-        LOG.debug("Response Code : " + responseCode);
+        System.out.println("Response Code : " + responseCode);
 
         //Init Input Reader
         BufferedReader in = new BufferedReader(
@@ -57,10 +57,10 @@ public class HTTPRequest implements Request {
         //Return response
         String rawJSON = response.toString();
         if (rawJSON.isEmpty()) {
-            LOG.error("No JSON received.");
+            System.out.println("No JSON received.");
         }
         if (responseCode != 200) {
-            LOG.error("Exiting Program Due to Non-200");
+            System.out.println("Exiting Program Due to Non-200");
         }
         return rawJSON;
     }
@@ -77,7 +77,7 @@ public class HTTPRequest implements Request {
             //add request header
             con.setRequestMethod("POST");
             con.setRequestProperty("Content-Type", "application/json");
-            LOG.debug("\nSending 'POST' request to URL : " + url);
+            System.out.println("\nSending 'POST' request to URL : " + url);
             // Send post request
             con.setDoOutput(true);
             DataOutputStream wr = new DataOutputStream(con.getOutputStream());
@@ -87,7 +87,7 @@ public class HTTPRequest implements Request {
 
             responseCode = con.getResponseCode();
 
-            LOG.debug("Response Code : " + responseCode);
+            System.out.println("Response Code : " + responseCode);
 
             BufferedReader in = new BufferedReader(
                     new InputStreamReader(con.getInputStream()));
@@ -103,9 +103,9 @@ public class HTTPRequest implements Request {
         } while(requestAttempts <= 3 && responseCode != 200);
 
         if (responseCode != 200) {
-            LOG.error("Received Response Code " + responseCode + " from " + url + " after " + requestAttempts + " tries");
-            LOG.error("Error Message: " + response.toString());
-            LOG.error("Exiting Program");
+            System.out.println("Received Response Code " + responseCode + " from " + url + " after " + requestAttempts + " tries");
+            System.out.println("Error Message: " + response.toString());
+            System.out.println("Exiting Program");
             System.exit(1);
         }
 
@@ -136,12 +136,12 @@ public class HTTPRequest implements Request {
 
         int responseCode = con.getResponseCode();
         if (responseCode != 200) {
-            LOG.error("Received Response Code " + responseCode + " from " + url);
-            LOG.error("Exiting Program");
+            System.out.println("Received Response Code " + responseCode + " from " + url);
+            System.out.println("Exiting Program");
             System.exit(1);
         }
-        LOG.debug("\nSending 'PUT' request to URL : " + url);
-        LOG.debug("Response Code : " + responseCode);
+        System.out.println("\nSending 'PUT' request to URL : " + url);
+        System.out.println("Response Code : " + responseCode);
 
         BufferedReader in = new BufferedReader(
                 new InputStreamReader(con.getInputStream()));
@@ -154,7 +154,7 @@ public class HTTPRequest implements Request {
         in.close();
 
         //Received JSON data
-        LOG.debug(response.toString());
+        System.out.println(response.toString());
         return response.toString();
     }
 
@@ -174,8 +174,8 @@ public class HTTPRequest implements Request {
 
         //Obtain response code
         int responseCode = con.getResponseCode();
-        LOG.debug("\nSending 'GET' request to URL : " + url);
-        LOG.debug("Response Code : " + responseCode);
+        System.out.println("\nSending 'GET' request to URL : " + url);
+        System.out.println("Response Code : " + responseCode);
 
         //Input Reader
         InputStream is = con.getInputStream();

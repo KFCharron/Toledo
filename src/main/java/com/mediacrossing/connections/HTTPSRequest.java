@@ -84,12 +84,12 @@ public class HTTPSRequest implements Request {
         //Send GET request
         int responseCode = con.getResponseCode();
         if (responseCode != 200) {
-            LOG.error("Received Response Code " + responseCode + " from " + url);
-            LOG.error("Exiting Program");
+            System.out.println("Received Response Code " + responseCode + " from " + url);
+            System.out.println("Exiting Program");
             System.exit(1);
         }
-        LOG.debug("\nSending 'GET' request to URL : " + url);
-        LOG.debug("Response Code : " + responseCode);
+        System.out.println("\nSending 'GET' request to URL : " + url);
+        System.out.println("Response Code : " + responseCode);
         //Input Reader
         BufferedReader in = new BufferedReader(
                 new InputStreamReader(con.getInputStream()));
@@ -104,7 +104,7 @@ public class HTTPSRequest implements Request {
         //print result
         String rawJSON = response.toString();
         if (rawJSON.isEmpty()) {
-            LOG.error("No JSON received.");
+            System.out.println("No JSON received.");
         }
         return rawJSON;
     }
@@ -116,7 +116,7 @@ public class HTTPSRequest implements Request {
 
     public String postRequest(String url, String jsonRequest) throws Exception {
 
-        LOG.debug("\nSending 'POST' request to URL : " + url);
+        System.out.println("\nSending 'POST' request to URL : " + url);
 
         URL obj = new URL(url);
         HttpsURLConnection con = (HttpsURLConnection) obj.openConnection();
@@ -149,12 +149,12 @@ public class HTTPSRequest implements Request {
         in.close();
 
         int responseCode = con.getResponseCode();
-        LOG.debug("Response Code : " + responseCode);
+        System.out.println("Response Code : " + responseCode);
 
         if (responseCode != 200) {
-            LOG.error("Received Response Code " + responseCode + " from " + url);
-            LOG.error(response.toString());
-            LOG.error("Exiting Program");
+            System.out.println("Received Response Code " + responseCode + " from " + url);
+            System.out.println(response.toString());
+            System.out.println("Exiting Program");
             System.exit(1);
         }
 

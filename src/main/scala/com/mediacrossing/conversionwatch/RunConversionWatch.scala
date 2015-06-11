@@ -60,7 +60,6 @@ object RunConversionWatch extends App {
     .toList
     .tail
     .map(row => ReportData(row(0), dateFormat.parseDateTime(row(1)).withTimeAtStartOfDay(), row(2)))
-    .filter(data => data.lastFired.isBefore(lookbackDate) && activeAdvertisers.contains(data.advertiser))
 
   val pixelR = (
     (__ \ "id").read[Int] ~
@@ -81,6 +80,7 @@ object RunConversionWatch extends App {
   val apiPixelMap = apiPixels.map(p => p.id -> p).toMap
 
   val finalPixels = pixels.map(p => {
+    println(p.id)
     val apiPixel = apiPixelMap.get(p.id).get
     DeadPixel(
       id = p.id,

@@ -22,24 +22,18 @@ object RunApiChanges extends App {
   val anConn: AppNexusService = new AppNexusService(properties.getPutneyUrl)
   val mxConn: MxService = new MxService(properties.getMxUrl, properties.getMxUsername, properties.getMxPassword)
 
-  val camps = mxConn.requestAllCampaigns().toList.map(c => c.getId -> c.getName).toMap
-
-  val reader: CSVReader = new CSVReader(new FileReader("/Users/charronkyle/Desktop/Motosports_Conv_Report.csv"))
+  //val reader: CSVReader = new CSVReader(new FileReader("/Users/charronkyle/Desktop/Motosports_Conv_Report.csv"))
 
   val home = System.getProperty( "user.home" )
-  val path = (new java.io.File(home, "/Desktop/MotosportsC.csv")).getAbsolutePath()
+  val path = (new java.io.File(home, "/Desktop/MJFF_StartEnds.csv")).getAbsolutePath()
   val pw = new java.io.PrintWriter(path)
-  pw.println("MX UserId, First Imp, Last Imp, Num. Of Imps")
-  val report = reader
-    .readAll
-    .toList
-    .tail
-    .foreach(a => {
+  pw.println("Name, Status, Start, End")
 
-    a(1) = camps.get(a(1).substring(1)).get
-    a(2) = camps.get(a(2).substring(1)).get
-    pw.println(s"${a(0)},${a(1)},${a(2)},${a(3)}")
-  })
+  mxConn.requestAllCampaigns().toList
+    .filter(c => c.getAdvertiserID.equals("435502"))
+    .map(c => List(c.getName, c.getStatus, c.getStartDate, c.getEndDate).mkString(","))
+    .foreach(pw.println(_))
+
 
   pw.close()
 
